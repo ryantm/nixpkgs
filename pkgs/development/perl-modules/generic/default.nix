@@ -3,6 +3,9 @@ perl:
 { nativeBuildInputs ? [], name, ... } @ attrs:
 
 perl.stdenv.mkDerivation (
+  perl.stdenv.lib.recursiveUpdate
+  { meta.homepage = "https://metacpan.org/release/${(builtins.parseDrvName name).name}"; }
+  (
   {
     outputs = [ "out" "devdoc" ];
 
@@ -30,4 +33,5 @@ perl.stdenv.mkDerivation (
     nativeBuildInputs = nativeBuildInputs ++ [ (perl.dev or perl) ];
     inherit perl;
   }
+  )
 )
