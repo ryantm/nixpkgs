@@ -3,9 +3,8 @@ perl:
 { nativeBuildInputs ? [], name, ... } @ attrs:
 
 perl.stdenv.mkDerivation (
-  perl.stdenv.lib.recursiveUpdate
-  { meta.homepage = "https://metacpan.org/release/${(builtins.parseDrvName name).name}"; }
   (
+  perl.stdenv.lib.recursiveUpdate
   {
     outputs = [ "out" "devdoc" ];
 
@@ -23,9 +22,11 @@ perl.stdenv.mkDerivation (
     # authors to skip certain tests (or include certain tests) when
     # the results are not being monitored by a human being."
     AUTOMATED_TESTING = true;
+    
+    meta.homepage = "https://metacpan.org/release/${(builtins.parseDrvName name).name}";
   }
-  //
   attrs
+  )
   //
   {
     name = "perl-" + name;
@@ -33,5 +34,4 @@ perl.stdenv.mkDerivation (
     nativeBuildInputs = nativeBuildInputs ++ [ (perl.dev or perl) ];
     inherit perl;
   }
-  )
 )
