@@ -11,6 +11,7 @@ build daemon as so-called channels. To get channel information via git, add
 % git remote add channels https://github.com/NixOS/nixpkgs-channels.git
 ```
 
+
 For stability and maximum binary package support, it is recommended to maintain
 custom changes on top of one of the channels, e.g. `nixos-18.03` for the latest
 release and `nixos-unstable` for the latest successful build of master:
