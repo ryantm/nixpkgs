@@ -60,6 +60,10 @@ stdenv.mkDerivation (rec {
       --set JAVA_HOME "${jre_headless}"
 
     wrapProgram $out/bin/elasticsearch-plugin --set JAVA_HOME "${jre_headless}"
+
+    wrapProgram $out/bin/elasticsearch-users \
+      --prefix PATH : "${makeBinPath [ utillinux coreutils gnugrep ]}" \
+      --set JAVA_HOME "${jre_headless}"
   '';
 
   passthru = { inherit enableUnfree; };
