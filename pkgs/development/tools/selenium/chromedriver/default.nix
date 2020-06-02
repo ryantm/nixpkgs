@@ -6,7 +6,7 @@ let
   allSpecs = {
     x86_64-linux = {
       system = "linux64";
-      sha256 = "1yxcy6gxg1pwyrfjlnk2c5d8rpfz652bbsmpy61012c35anwhvhk";
+      sha256 = "0ikmyd7hir5rvafs3iracs0q1f8z1x6x867dkmvmj6gc9bl4r0sx";
     };
 
     x86_64-darwin = {
@@ -28,7 +28,7 @@ let
 in
 stdenv.mkDerivation rec {
   pname = "chromedriver";
-  version = "78.0.3904.105";
+  version = "81.0.4044.138";
 
   src = fetchurl {
     url = "https://chromedriver.storage.googleapis.com/${version}/chromedriver_${spec.system}.zip";
