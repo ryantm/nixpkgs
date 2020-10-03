@@ -1,0 +1,18 @@
+name: "Node"
+
+on:
+  pull_request:
+    branches:
+      - master
+    paths:
+      - 'pkgs/development/node-packages/node-packages.nix'
+
+jobs:
+  dont-update-node-packages-nix:
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, '[nodepackages ci skip]')"
+    steps:
+    - name: node-packages.nix should not be changed
+      run: |
+        echo "Due to the high chance of merge conflicts, node-packages.nix is batch updated separately from updates that add packages to node-packages.json."
+        exit 1
