@@ -30804,6 +30804,8 @@ in
 
   nixos-install-tools = callPackage ../tools/nix/nixos-install-tools { };
 
+  nixpkgs-manual = callPackage ../../doc/minimal-manual.nix { };
+
   nixui = callPackage ../tools/package-management/nixui { node_webkit = nwjs_0_12; };
 
   nixdoc = callPackage ../tools/nix/nixdoc {};
