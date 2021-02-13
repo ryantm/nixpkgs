@@ -16,6 +16,7 @@ stdenv.mkDerivation {
   unpackCmd = "${dpkg}/bin/dpkg-deb -x $src debcontents";
 
   installPhase = ''
+    runHook preInstall
     substituteInPlace usr/share/jitsi-videobridge/jvb.sh \
       --replace "exec java" "exec ${jre_headless}/bin/java"
 
@@ -24,6 +25,11 @@ stdenv.mkDerivation {
     cp ${./logging.properties-journal} $out/etc/jitsi/videobridge/logging.properties-journal
     mv usr/share/jitsi-videobridge/* $out/share/jitsi-videobridge/
     ln -s $out/share/jitsi-videobridge/jvb.sh $out/bin/jitsi-videobridge
+
+    # work around https://github.com/jitsi/jitsi-videobridge/issues/1547
+    wrapProgram $out/bin/jitsi-videobridge \
+      --set VIDEOBRIDGE_GC_TYPE G1GC
+    runHook postInstall
   '';
 
   passthru.tests = {
