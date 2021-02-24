@@ -1,0 +1,50 @@
+diff -ru -x '*~' Pacemaker-2.0.5-orig/tools/crmadmin.c Pacemaker-2.0.5/tools/crmadmin.c
+--- Pacemaker-2.0.5-orig/tools/crmadmin.c 2011-07-07 06:55:39.000000000 -0400
++++ Pacemaker-2.0.5/tools/crmadmin.c  2011-11-02 14:51:04.000000000 -0400
+@@ -338,6 +338,6 @@
+ // \return Standard Pacemaker return code
+ static int
+-list_nodes()
++list_nodes(void)
+ {
+     cib_t *the_cib = cib_new();
+     xmlNode *output = NULL;
+diff -ru -x '*~' Pacemaker-2.0.5-orig/tools/crm_resource.c Pacemaker-2.0.5/tools/crm_resource.c
+--- Pacemaker-2.0.5-orig/tools/crm_resource.c 2011-07-07 06:55:39.000000000 -0400
++++ Pacemaker-2.0.5/tools/crmresource.c 2011-11-02 14:51:04.000000000 -0400
+@@ -1050,7 +1050,7 @@
+ }
+
+ static int
+-delete()
++delete(void)
+ {
+     int rc = pcmk_rc_ok;
+     xmlNode *msg_data = NULL;
+@@ -1161,7 +1161,7 @@
+ }
+
+ static int
+-list_raw()
++list_raw(void)
+ {
+     int rc = pcmk_rc_ok;
+     int found = 0;
+@@ -1246,7 +1246,7 @@
+ }
+
+ static int
+-refresh()
++refresh(void)
+ {
+     int rc = pcmk_rc_ok;
+     const char *router_node = options.host_uname;
+@@ -1315,7 +1315,7 @@
+ }
+
+ static int
+-set_property()
++set_property(void)
+ {
+     int rc = pcmk_rc_ok;
+     xmlNode *msg_data = NULL;
