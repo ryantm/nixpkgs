@@ -176,6 +176,8 @@ in
         after = [ "network.target" "postgresql.service" ];
 
         preStart = ''
+          function mattermost_setup () {
+
           mkdir -p ${cfg.statePath}/{data,config,logs}
           ln -sf ${pkgs.mattermost}/{bin,fonts,i18n,templates,client} ${cfg.statePath}
         '' + lib.optionalString (!cfg.mutableConfig) ''
@@ -201,6 +203,9 @@ in
         '' + ''
           chown ${cfg.user}:${cfg.group} -R ${cfg.statePath}
           chmod u+rw,g+r,o-rwx -R ${cfg.statePath}
+          }
+
+          (umask 027; mattermost_setup)
         '';
 
         serviceConfig = {
