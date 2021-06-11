@@ -14,6 +14,8 @@ with pkgs; stdenv.mkDerivation {
 
     mkdir -p $out
 
+    docgen asserts 'Assert functions'
+    docgen attrsets 'Attrset functions'
     docgen strings 'String manipulation functions'
     docgen trivial 'Miscellaneous functions'
     docgen lists 'List manipulation functions'

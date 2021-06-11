@@ -10,6 +10,8 @@ Version 21.11
 * [](#chap-overlays)
 * [](#chap-overrides)
 * [](#chap-functions)
+  * [](#sec-functions-library-asserts)
+  * [](#sec-functions-library-attrsets)
   * [](#sec-functions-library-debug)
   * [](#sec-functions-library-lists)
   * [](#sec-functions-library-options)
