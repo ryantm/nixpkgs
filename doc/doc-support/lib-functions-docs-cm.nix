@@ -1,21 +1,18 @@
-# Generates the documentation for library functions via nixdoc. To add
-# another library function file to this list, the include list in the
-# file `doc/functions/library.xml` must also be updated.
-
-{ pkgs ? import ./.. {}, locationsXml }:
+# Generates the documentation for library functions via nixdoc. When you add
+# another library file here, you also need to add it to the `doc/toc.md`.
+{ pkgs ? import ../.. {} }:
 
 with pkgs; stdenv.mkDerivation {
   name = "nixpkgs-lib-docs";
   src = ./../../lib;
 
-  buildInputs = [ nixdoc ];
+  buildInputs = [ nixdoc-commonmark ];
   installPhase = ''
     function docgen {
-      nixdoc -c "$1" -d "$2" -f "../lib/$1.nix"  > "$out/$1.xml"
+      nixdoc -c "$1" -d "$2" -f "../lib/$1.nix"  > "$out/$1.md"
     }
 
     mkdir -p $out
-    ln -s ${locationsXml} $out/locations.xml
 
     docgen strings 'String manipulation functions'
     docgen trivial 'Miscellaneous functions'

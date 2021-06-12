@@ -9,7 +9,12 @@ stdenv.mkDerivation rec {
 
   src = builtins.filterSource (path: type: type == "directory" || builtins.match ".*\.md" path == []) ./.;
 
-  buildInputs = [ mmdoc ];
+  phases = [ "buildPhase" ];
 
-  builder = writeScript "${name}-builder" "${mmdoc}/bin/mmdoc nixpkgs $src $out";
+  buildPhase = ''
+    cp -r $src source
+    chmod -R u+w source
+    cp ${import ./doc-support/lib-functions-docs-cm.nix { inherit pkgs; }}/*.md source/functions/library/
+    ${mmdoc}/bin/mmdoc nixpkgs source $out
+  '';
 }

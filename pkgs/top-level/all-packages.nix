@@ -30809,6 +30809,7 @@ in
   nixui = callPackage ../tools/package-management/nixui { node_webkit = nwjs_0_12; };
 
   nixdoc = callPackage ../tools/nix/nixdoc {};
+  nixdoc-commonmark = callPackage ../tools/nix/nixdoc/nixdoc-commonmark.nix {};
 
   dnadd = callPackage ../tools/nix/dnadd { };
 
