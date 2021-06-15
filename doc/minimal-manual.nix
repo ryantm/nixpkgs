@@ -4,10 +4,10 @@
 
 with pkgs;
 
-stdenv.mkDerivation rec {
+stdenvNoCC.mkDerivation rec {
   name = "nixpkgs-minimal-manual";
 
-  src = builtins.filterSource (path: type: type == "directory" || builtins.match ".*\.md" path == []) ./.;
+  src = builtins.filterSource (path: type: type == "directory" || builtins.match ".*\.md" path == [] || builtins.match ".*\.dot" path == []) ./.;
 
   phases = [ "buildPhase" ];
 
@@ -15,6 +15,8 @@ stdenv.mkDerivation rec {
     cp -r $src source
     chmod -R u+w source
     cp ${import ./doc-support/lib-functions-docs-cm.nix { inherit pkgs; }}/*.md source/functions/library/
+    ls -la source/contributing
+    ${graphviz}/bin/dot -Tsvg source/contributing/staging_workflow.dot > source/staging_workflow.svg
     ${mmdoc}/bin/mmdoc nixpkgs source $out
   '';
 }
