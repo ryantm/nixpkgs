@@ -15,8 +15,8 @@ stdenvNoCC.mkDerivation rec {
     cp -r $src source
     chmod -R u+w source
     cp ${import ./doc-support/lib-functions-docs-cm.nix { inherit pkgs; }}/*.md source/functions/library/
-    ls -la source/contributing
-    ${graphviz}/bin/dot -Tsvg source/contributing/staging_workflow.dot > source/staging_workflow.svg
+    FONTCONFIG_FILE=${fontconfig.out}/etc/fonts/fonts.conf \
+      ${graphviz}/bin/dot -Tsvg source/contributing/staging_workflow.dot > source/staging_workflow.svg
     ${mmdoc}/bin/mmdoc nixpkgs source $out
   '';
 }
