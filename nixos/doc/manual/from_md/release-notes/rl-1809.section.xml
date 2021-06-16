@@ -54,9 +54,7 @@
         <para>
           For example
         </para>
-      </listitem>
-    </itemizedlist>
-    <programlisting language="bash">
+        <programlisting language="bash">
 {
   programs.firejail = {
     enable = true;
@@ -67,12 +65,12 @@
   };
 }
 </programlisting>
-    <para>
-      This will place <literal>firefox</literal> and
-      <literal>mpv</literal> binaries in the global path wrapped by
-      firejail.
-    </para>
-    <itemizedlist>
+        <para>
+          This will place <literal>firefox</literal> and
+          <literal>mpv</literal> binaries in the global path wrapped by
+          firejail.
+        </para>
+      </listitem>
       <listitem>
         <para>
           User channels are now in the default
@@ -85,15 +83,15 @@
         <para>
           For example
         </para>
-      </listitem>
-    </itemizedlist>
-    <programlisting>
+        <programlisting>
 $ nix-channel --add https://nixos.org/channels/nixpkgs-unstable nixpkgsunstable
 $ nix-channel --update
 $ nix-build '&lt;nixpkgsunstable&gt;' -A gitFull
 $ nix run -f '&lt;nixpkgsunstable&gt;' gitFull
 $ nix-instantiate -E '(import &lt;nixpkgsunstable&gt; {}).gitFull'
 </programlisting>
+      </listitem>
+    </itemizedlist>
   </section>
   <section xml:id="sec-release-18.09-new-services">
     <title>New Services</title>
@@ -697,9 +695,7 @@ $ nix-instantiate -E '(import &lt;nixpkgsunstable&gt; {}).gitFull'
           A NixOS system can now be constructed more easily based on a
           preexisting invocation of Nixpkgs. For example:
         </para>
-      </listitem>
-    </itemizedlist>
-    <programlisting language="bash">
+        <programlisting language="bash">
 {
   inherit (pkgs.nixos {
     boot.loader.grub.enable = false;
@@ -707,13 +703,13 @@ $ nix-instantiate -E '(import &lt;nixpkgsunstable&gt; {}).gitFull'
   }) toplevel kernel initialRamdisk manual;
 }
 </programlisting>
-    <para>
-      This benefits evaluation performance, lets you write Nixpkgs
-      packages that depend on NixOS images and is consistent with a
-      deployment architecture that would be centered around Nixpkgs
-      overlays.
-    </para>
-    <itemizedlist>
+        <para>
+          This benefits evaluation performance, lets you write Nixpkgs
+          packages that depend on NixOS images and is consistent with a
+          deployment architecture that would be centered around Nixpkgs
+          overlays.
+        </para>
+      </listitem>
       <listitem>
         <para>
           <literal>lib.traceValIfNot</literal> has been deprecated. Use
@@ -773,30 +769,29 @@ $ nix-instantiate -E '(import &lt;nixpkgsunstable&gt; {}).gitFull'
             </listitem>
           </varlistentry>
         </variablelist>
-      </listitem>
-    </itemizedlist>
-    <note>
-      <para>
-        The path to the actual generated parameter files should now be
-        queried using
-        <literal>config.security.dhparams.params.name.path</literal>
-        because it might be either in the Nix store or in a directory
-        configured by <literal>security.dhparams.path</literal>.
-      </para>
-    </note>
-    <note>
-      <para>
-        <emphasis role="strong">For developers:</emphasis>
-      </para>
-      <para>
-        Module implementers should not set a specific bit size in order
-        to let users configure it by themselves if they want to have a
-        different bit size than the default (2048).
-      </para>
-      <para>
-        An example usage of this would be:
-      </para>
-      <programlisting language="bash">
+        <note>
+          <para>
+            The path to the actual generated parameter files should now
+            be queried using
+            <literal>config.security.dhparams.params.name.path</literal>
+            because it might be either in the Nix store or in a
+            directory configured by
+            <literal>security.dhparams.path</literal>.
+          </para>
+        </note>
+        <note>
+          <para>
+            <emphasis role="strong">For developers:</emphasis>
+          </para>
+          <para>
+            Module implementers should not set a specific bit size in
+            order to let users configure it by themselves if they want
+            to have a different bit size than the default (2048).
+          </para>
+          <para>
+            An example usage of this would be:
+          </para>
+          <programlisting language="bash">
 { config, ... }:
 
 {
@@ -806,8 +801,8 @@ $ nix-instantiate -E '(import &lt;nixpkgsunstable&gt; {}).gitFull'
   '';
 }
 </programlisting>
-    </note>
-    <itemizedlist>
+        </note>
+      </listitem>
       <listitem>
         <para>
           <literal>networking.networkmanager.useDnsmasq</literal> has

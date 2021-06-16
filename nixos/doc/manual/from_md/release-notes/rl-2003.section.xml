@@ -133,23 +133,21 @@
           option to improve support for upstream session files. If you
           used something like:
         </para>
-      </listitem>
-    </itemizedlist>
-    <programlisting language="bash">
+        <programlisting language="bash">
 {
   services.xserver.desktopManager.default = &quot;xfce&quot;;
   services.xserver.windowManager.default = &quot;icewm&quot;;
 }
 </programlisting>
-    <para>
-      you should change it to:
-    </para>
-    <programlisting language="bash">
+        <para>
+          you should change it to:
+        </para>
+        <programlisting language="bash">
 {
   services.xserver.displayManager.defaultSession = &quot;xfce+icewm&quot;;
 }
 </programlisting>
-    <itemizedlist spacing="compact">
+      </listitem>
       <listitem>
         <para>
           The testing driver implementation in NixOS is now in Python
@@ -169,17 +167,17 @@
           implementation. Users of the Perl driver will see this warning
           everytime they use it:
         </para>
-      </listitem>
-    </itemizedlist>
-    <programlisting>
+        <programlisting>
 $ warning: Perl VM tests are deprecated and will be removed for 20.09.
 Please update your tests to use the python test driver.
 See https://github.com/NixOS/nixpkgs/pull/71684 for details.
 </programlisting>
-    <para>
-      API compatibility is planned to be kept for at least the next
-      release with the perl driver.
-    </para>
+        <para>
+          API compatibility is planned to be kept for at least the next
+          release with the perl driver.
+        </para>
+      </listitem>
+    </itemizedlist>
   </section>
   <section xml:id="sec-release-20.03-new-services">
     <title>New Services</title>
@@ -823,9 +821,7 @@ See https://github.com/NixOS/nixpkgs/pull/71684 for details.
           is a <literal>loaOf</literal> option that is commonly used as
           follows:
         </para>
-      </listitem>
-    </itemizedlist>
-    <programlisting language="bash">
+        <programlisting language="bash">
 {
   users.users =
     [ { name = &quot;me&quot;;
@@ -835,11 +831,12 @@ See https://github.com/NixOS/nixpkgs/pull/71684 for details.
     ];
 }
 </programlisting>
-    <para>
-      This should be rewritten by removing the list and using the value
-      of <literal>name</literal> as the name of the attribute set:
-    </para>
-    <programlisting language="bash">
+        <para>
+          This should be rewritten by removing the list and using the
+          value of <literal>name</literal> as the name of the attribute
+          set:
+        </para>
+        <programlisting language="bash">
 {
   users.users.me =
     { description = &quot;My personal user.&quot;;
@@ -847,14 +844,14 @@ See https://github.com/NixOS/nixpkgs/pull/71684 for details.
     };
 }
 </programlisting>
-    <para>
-      For more information on this change have look at these links:
-      <link xlink:href="https://github.com/NixOS/nixpkgs/issues/1800">issue
-      #1800</link>,
-      <link xlink:href="https://github.com/NixOS/nixpkgs/pull/63103">PR
-      #63103</link>.
-    </para>
-    <itemizedlist>
+        <para>
+          For more information on this change have look at these links:
+          <link xlink:href="https://github.com/NixOS/nixpkgs/issues/1800">issue
+          #1800</link>,
+          <link xlink:href="https://github.com/NixOS/nixpkgs/pull/63103">PR
+          #63103</link>.
+        </para>
+      </listitem>
       <listitem>
         <para>
           For NixOS modules, the types
@@ -943,9 +940,7 @@ See https://github.com/NixOS/nixpkgs/pull/71684 for details.
           because it permitted root auto-login you can override the
           lightdm-autologin pam module like:
         </para>
-      </listitem>
-    </itemizedlist>
-    <programlisting language="bash">
+        <programlisting language="bash">
 {
   security.pam.services.lightdm-autologin.text = lib.mkForce ''
       auth     requisite pam_nologin.so
@@ -960,23 +955,23 @@ See https://github.com/NixOS/nixpkgs/pull/71684 for details.
   '';
 }
 </programlisting>
-    <para>
-      The difference is the:
-    </para>
-    <programlisting>
+        <para>
+          The difference is the:
+        </para>
+        <programlisting>
 auth required pam_succeed_if.so quiet
 </programlisting>
-    <para>
-      line, where default it's:
-    </para>
-    <programlisting>
+        <para>
+          line, where default it's:
+        </para>
+        <programlisting>
  auth required pam_succeed_if.so uid &gt;= 1000 quiet
 </programlisting>
-    <para>
-      not permitting users with uid's below 1000 (like root). All other
-      display managers in NixOS are configured like this.
-    </para>
-    <itemizedlist>
+        <para>
+          not permitting users with uid's below 1000 (like root). All
+          other display managers in NixOS are configured like this.
+        </para>
+      </listitem>
       <listitem>
         <para>
           There have been lots of improvements to the Mailman module. As
@@ -1009,21 +1004,24 @@ auth required pam_succeed_if.so quiet
               Additionally, some Postfix configuration must now be set
               manually instead of automatically by the Mailman module:
             </para>
-          </listitem>
-        </itemizedlist>
-      </listitem>
-    </itemizedlist>
-    <programlisting language="bash">
+            <programlisting language="bash">
 {
   services.postfix.relayDomains = [ &quot;hash:/var/lib/mailman/data/postfix_domains&quot; ];
   services.postfix.config.transport_maps = [ &quot;hash:/var/lib/mailman/data/postfix_lmtp&quot; ];
   services.postfix.config.local_recipient_maps = [ &quot;hash:/var/lib/mailman/data/postfix_lmtp&quot; ];
 }
 </programlisting>
-    <programlisting>
-This is because some users may want to include other values in these lists as well, and this was not possible if they were set automatically by the Mailman module. It would not have been possible to just concatenate values from multiple modules each setting the values they needed, because the order of elements in the list is significant.
-</programlisting>
-    <itemizedlist>
+            <para>
+              This is because some users may want to include other
+              values in these lists as well, and this was not possible
+              if they were set automatically by the Mailman module. It
+              would not have been possible to just concatenate values
+              from multiple modules each setting the values they needed,
+              because the order of elements in the list is significant.
+            </para>
+          </listitem>
+        </itemizedlist>
+      </listitem>
       <listitem>
         <para>
           The LLVM versions 3.5, 3.9 and 4 (including the corresponding
@@ -1068,9 +1066,7 @@ This is because some users may want to include other values in these lists as we
           or by passing a TOML configuration file via
           <link xlink:href="options.html#opt-services.dnscrypt-proxy2.configFile">services.dnscrypt-proxy2.configFile</link>.
         </para>
-      </listitem>
-    </itemizedlist>
-    <programlisting language="bash">
+        <programlisting language="bash">
 {
   # Example configuration:
   services.dnscrypt-proxy2.enable = true;
@@ -1088,7 +1084,7 @@ This is because some users may want to include other values in these lists as we
   services.dnsmasq.servers = [ &quot;127.0.0.1#43&quot; ];
 }
 </programlisting>
-    <itemizedlist>
+      </listitem>
       <listitem>
         <para>
           <literal>qesteidutil</literal> has been deprecated in favor of
@@ -1205,17 +1201,15 @@ This is because some users may want to include other values in these lists as we
             </para>
           </listitem>
         </itemizedlist>
+        <warning>
+          <para>
+            Please note that if you're coming from
+            <literal>19.03</literal> or older, you have to manually
+            upgrade to <literal>19.09</literal> first to upgrade your
+            server to Nextcloud v16.
+          </para>
+        </warning>
       </listitem>
-    </itemizedlist>
-    <warning>
-      <para>
-        Please note that if you're coming from <literal>19.03</literal>
-        or older, you have to manually upgrade to
-        <literal>19.09</literal> first to upgrade your server to
-        Nextcloud v16.
-      </para>
-    </warning>
-    <itemizedlist>
       <listitem>
         <para>
           Hydra has gained a massive performance improvement due to
@@ -1224,7 +1218,7 @@ This is because some users may want to include other values in these lists as we
           better indexing. However, it's necessary to upgrade Hydra in
           multiple steps:
         </para>
-        <itemizedlist spacing="compact">
+        <itemizedlist>
           <listitem>
             <para>
               At first, an older version of Hydra needs to be deployed
@@ -1235,33 +1229,29 @@ This is because some users may want to include other values in these lists as we
               upgrading. Otherwise, the package can be deployed using
               the following config:
             </para>
-          </listitem>
-        </itemizedlist>
-      </listitem>
-    </itemizedlist>
-    <programlisting language="bash">
+            <programlisting language="bash">
 { pkgs, ... }: {
   services.hydra.package = pkgs.hydra-migration;
 }
 </programlisting>
-    <itemizedlist spacing="compact">
+          </listitem>
+        </itemizedlist>
+      </listitem>
       <listitem>
         <para>
           Automatically fill the newly added ID columns on the server by
           running the following command:
         </para>
-      </listitem>
-    </itemizedlist>
-    <programlisting>
+        <programlisting>
 $ hydra-backfill-ids
 </programlisting>
-    <warning>
-      <para>
-        Please note that this process can take a while depending on your
-        database-size!
-      </para>
-    </warning>
-    <itemizedlist spacing="compact">
+        <warning>
+          <para>
+            Please note that this process can take a while depending on
+            your database-size!
+          </para>
+        </warning>
+      </listitem>
       <listitem>
         <para>
           Deploy a newer version of Hydra to activate the DB
@@ -1270,34 +1260,32 @@ $ hydra-backfill-ids
           <link xlink:href="https://github.com/nixos/rfcs/pull/49">flake-support</link>
           and is therefore compiled against pkgs.nixFlakes.
         </para>
+        <warning>
+          <para>
+            If your
+            <link xlink:href="options.html#opt-system.stateVersion">stateVersion</link>
+            is set to <literal>20.03</literal> or greater,
+            hydra-unstable will be used automatically! This will break
+            your setup if you didn't run the migration.
+          </para>
+        </warning>
+        <para>
+          Please note that Hydra is currently not available with
+          nixStable as this doesn't compile anymore.
+        </para>
+        <warning>
+          <para>
+            pkgs.hydra has been removed to ensure a graceful
+            database-migration using the dedicated package-attributes.
+            If you still have pkgs.hydra defined in e.g. an overlay, an
+            assertion error will be thrown. To circumvent this, you need
+            to set
+            <link xlink:href="options.html#opt-services.hydra.package">services.hydra.package</link>
+            to pkgs.hydra explicitly and make sure you know what you're
+            doing!
+          </para>
+        </warning>
       </listitem>
-    </itemizedlist>
-    <warning>
-      <para>
-        If your
-        <link xlink:href="options.html#opt-system.stateVersion">stateVersion</link>
-        is set to <literal>20.03</literal> or greater, hydra-unstable
-        will be used automatically! This will break your setup if you
-        didn't run the migration.
-      </para>
-    </warning>
-    <para>
-      Please note that Hydra is currently not available with nixStable
-      as this doesn't compile anymore.
-    </para>
-    <warning>
-      <para>
-        pkgs.hydra has been removed to ensure a graceful
-        database-migration using the dedicated package-attributes. If
-        you still have pkgs.hydra defined in e.g. an overlay, an
-        assertion error will be thrown. To circumvent this, you need to
-        set
-        <link xlink:href="options.html#opt-services.hydra.package">services.hydra.package</link>
-        to pkgs.hydra explicitly and make sure you know what you're
-        doing!
-      </para>
-    </warning>
-    <itemizedlist spacing="compact">
       <listitem>
         <para>
           The TokuDB storage engine will be disabled in mariadb 10.5. It
@@ -1331,15 +1319,13 @@ $ hydra-backfill-ids
         <para>
           To continue to use the old approach, you can configure:
         </para>
-      </listitem>
-    </itemizedlist>
-    <programlisting language="bash">
+        <programlisting language="bash">
 {
   services.nginx.appendConfig = let cfg = config.services.nginx; in ''user ${cfg.user} ${cfg.group};'';
   systemd.services.nginx.serviceConfig.User = lib.mkForce &quot;root&quot;;
 }
 </programlisting>
-    <itemizedlist>
+      </listitem>
       <listitem>
         <para>
           OpenSSH has been upgraded from 7.9 to 8.1, improving security
@@ -1446,11 +1432,7 @@ $ hydra-backfill-ids
               older, you simply need to enable postgresql-support
               explicitly:
             </para>
-          </listitem>
-        </itemizedlist>
-      </listitem>
-    </itemizedlist>
-    <programlisting language="bash">
+            <programlisting language="bash">
 { ... }: {
   services.matrix-synapse = {
     enable = true;
@@ -1459,7 +1441,9 @@ $ hydra-backfill-ids
   services.postgresql.enable = true;
 }
 </programlisting>
-    <itemizedlist>
+          </listitem>
+        </itemizedlist>
+      </listitem>
       <listitem>
         <para>
           If you deploy a fresh matrix-synapse, you need to configure
@@ -1498,16 +1482,16 @@ $ hydra-backfill-ids
         <para>
           mongodb has been updated to version <literal>3.4.24</literal>.
         </para>
+        <warning>
+          <para>
+            Please note that mongodb has been relicensed under their own
+            <link xlink:href="https://www.mongodb.com/licensing/server-side-public-license/faq"><literal>sspl</literal></link>-license.
+            Since it's not entirely free and not OSI-approved, it's
+            listed as non-free. This means that Hydra doesn't provide
+            prebuilt mongodb-packages and needs to be built locally.
+          </para>
+        </warning>
       </listitem>
     </itemizedlist>
-    <warning>
-      <para>
-        Please note that mongodb has been relicensed under their own
-        <link xlink:href="https://www.mongodb.com/licensing/server-side-public-license/faq"><literal>sspl</literal></link>-license.
-        Since it's not entirely free and not OSI-approved, it's listed
-        as non-free. This means that Hydra doesn't provide prebuilt
-        mongodb-packages and needs to be built locally.
-      </para>
-    </warning>
   </section>
 </section>

@@ -378,17 +378,15 @@
         You will need to add an import statement to your NixOS
         configuration in order to use it, e.g.
       </para>
-    </listitem>
-  </itemizedlist>
-  <programlisting language="bash">
+      <programlisting language="bash">
 {
   imports = [ &lt;nixpkgs/nixos/modules/services/misc/gitit.nix&gt; ];
 }
 </programlisting>
-  <para>
-    will include the Gitit service configuration options.
-  </para>
-  <itemizedlist spacing="compact">
+      <para>
+        will include the Gitit service configuration options.
+      </para>
+    </listitem>
     <listitem>
       <para>
         <literal>nginx</literal> does not accept flags for enabling and
@@ -397,14 +395,12 @@
         to be built in. All modules now reside in
         <literal>nginxModules</literal> set. Example configuration:
       </para>
-    </listitem>
-  </itemizedlist>
-  <programlisting language="bash">
+      <programlisting language="bash">
 nginx.override {
   modules = [ nginxModules.rtmp nginxModules.dav nginxModules.moreheaders ];
 }
 </programlisting>
-  <itemizedlist>
+    </listitem>
     <listitem>
       <para>
         <literal>s3sync</literal> is removed, as it hasn't been
@@ -472,9 +468,7 @@ nginx.override {
         continue to work, but print a warning, until the 16.09 release.
         An example of the new style:
       </para>
-    </listitem>
-  </itemizedlist>
-  <programlisting language="bash">
+      <programlisting language="bash">
 {
   fileSystems.&quot;/example&quot; = {
     device = &quot;/dev/sdc&quot;;
@@ -483,7 +477,7 @@ nginx.override {
   };
 }
 </programlisting>
-  <itemizedlist>
+    </listitem>
     <listitem>
       <para>
         CUPS, installed by <literal>services.printing</literal> module,
@@ -530,24 +524,22 @@ nginx.override {
         used input method name, <literal>&quot;ibus&quot;</literal> for
         ibus. An example of the new style:
       </para>
-    </listitem>
-  </itemizedlist>
-  <programlisting language="bash">
+      <programlisting language="bash">
 {
   i18n.inputMethod.enabled = &quot;ibus&quot;;
   i18n.inputMethod.ibus.engines = with pkgs.ibus-engines; [ anthy mozc ];
 }
 </programlisting>
-  <para>
-    That is equivalent to the old version:
-  </para>
-  <programlisting language="bash">
+      <para>
+        That is equivalent to the old version:
+      </para>
+      <programlisting language="bash">
 {
   programs.ibus.enable = true;
   programs.ibus.plugins = with pkgs; [ ibus-anthy mozc ];
 }
 </programlisting>
-  <itemizedlist>
+    </listitem>
     <listitem>
       <para>
         <literal>services.udev.extraRules</literal> option now writes
@@ -575,31 +567,27 @@ nginx.override {
         such it should not be escaped anymore. Thus the following zone
         data:
       </para>
+      <programlisting>
+$ORIGIN example.com.
+$TTL 1800
+@       IN      SOA     ns1.vpn.nbp.name.      admin.example.com. (
+</programlisting>
+      <para>
+        Should modified to look like the actual file expected by nsd:
+      </para>
+      <programlisting>
+$ORIGIN example.com.
+$TTL 1800
+@       IN      SOA     ns1.vpn.nbp.name.      admin.example.com. (
+</programlisting>
     </listitem>
-  </itemizedlist>
-  <programlisting>
-$ORIGIN example.com.
-$TTL 1800
-@       IN      SOA     ns1.vpn.nbp.name.      admin.example.com. (
-</programlisting>
-  <para>
-    Should modified to look like the actual file expected by nsd:
-  </para>
-  <programlisting>
-$ORIGIN example.com.
-$TTL 1800
-@       IN      SOA     ns1.vpn.nbp.name.      admin.example.com. (
-</programlisting>
-  <itemizedlist spacing="compact">
     <listitem>
       <para>
         <literal>service.syncthing.dataDir</literal> options now has to
         point to exact folder where syncthing is writing to. Example
         configuration should look something like:
       </para>
-    </listitem>
-  </itemizedlist>
-  <programlisting language="bash">
+      <programlisting language="bash">
 {
   services.syncthing = {
       enable = true;
@@ -608,7 +596,7 @@ $TTL 1800
   };
 }
 </programlisting>
-  <itemizedlist>
+    </listitem>
     <listitem>
       <para>
         <literal>networking.firewall.allowPing</literal> is now enabled
@@ -625,22 +613,20 @@ $TTL 1800
         Systems with some broadcom cards used to result into a generated
         config that is no longer accepted. If you get errors like
       </para>
-    </listitem>
-  </itemizedlist>
-  <programlisting>
+      <programlisting>
 error: path ‘/nix/store/*-broadcom-sta-*’ does not exist and cannot be created
 </programlisting>
-  <para>
-    you should either re-run <literal>nixos-generate-config</literal> or
-    manually replace
-    <literal>&quot;${config.boot.kernelPackages.broadcom_sta}&quot;</literal>
-    by <literal>config.boot.kernelPackages.broadcom_sta</literal> in
-    your <literal>/etc/nixos/hardware-configuration.nix</literal>. More
-    discussion is on
-    <link xlink:href="https://github.com/NixOS/nixpkgs/pull/12595">the
-    github issue</link>.
-  </para>
-  <itemizedlist spacing="compact">
+      <para>
+        you should either re-run
+        <literal>nixos-generate-config</literal> or manually replace
+        <literal>&quot;${config.boot.kernelPackages.broadcom_sta}&quot;</literal>
+        by <literal>config.boot.kernelPackages.broadcom_sta</literal> in
+        your <literal>/etc/nixos/hardware-configuration.nix</literal>.
+        More discussion is on
+        <link xlink:href="https://github.com/NixOS/nixpkgs/pull/12595">the
+        github issue</link>.
+      </para>
+    </listitem>
     <listitem>
       <para>
         The <literal>services.xserver.startGnuPGAgent</literal> option
@@ -652,42 +638,42 @@ error: path ‘/nix/store/*-broadcom-sta-*’ does not exist and cannot be creat
         following code to <literal>~/.bashrc</literal> or some file
         that’s sourced when your shell is started:
       </para>
-    </listitem>
-  </itemizedlist>
-  <programlisting>
+      <programlisting>
 GPG_TTY=$(tty)
 export GPG_TTY
 </programlisting>
-  <para>
-    If you want to use gpg-agent for SSH, too, add the following to your
-    session initialization
-    (e.g. <literal>displayManager.sessionCommands</literal>)
-  </para>
-  <programlisting>
+      <para>
+        If you want to use gpg-agent for SSH, too, add the following to
+        your session initialization
+        (e.g. <literal>displayManager.sessionCommands</literal>)
+      </para>
+      <programlisting>
     gpg-connect-agent /bye
     unset SSH_AGENT_PID
     export SSH_AUTH_SOCK=&quot;''${HOME}/.gnupg/S.gpg-agent.ssh&quot;
 </programlisting>
-  <para>
-    and make sure that
-  </para>
-  <programlisting>
+      <para>
+        and make sure that
+      </para>
+      <programlisting>
     enable-ssh-support
 </programlisting>
-  <para>
-    is included in your <literal>~/.gnupg/gpg-agent.conf</literal>. You
-    will need to use <literal>ssh-add</literal> to re-add your ssh keys.
-    If gpg’s automatic transformation of the private keys to the new
-    format fails, you will need to re-import your private keyring as
-    well:
-  </para>
-  <programlisting>
+      <para>
+        is included in your <literal>~/.gnupg/gpg-agent.conf</literal>.
+        You will need to use <literal>ssh-add</literal> to re-add your
+        ssh keys. If gpg’s automatic transformation of the private keys
+        to the new format fails, you will need to re-import your private
+        keyring as well:
+      </para>
+      <programlisting>
     gpg --import ~/.gnupg/secring.gpg
 </programlisting>
-  <para>
-    The <literal>gpg-agent(1)</literal> man page has more details about
-    this subject, i.e. in the &quot;EXAMPLES&quot; section.
-  </para>
+      <para>
+        The <literal>gpg-agent(1)</literal> man page has more details
+        about this subject, i.e. in the &quot;EXAMPLES&quot; section.
+      </para>
+    </listitem>
+  </itemizedlist>
   <para>
     Other notable improvements:
   </para>

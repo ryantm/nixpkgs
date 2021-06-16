@@ -25,27 +25,25 @@
           through
           <literal>services.xserver.desktopManager.pantheon.enable</literal>.
         </para>
+        <note>
+          <para>
+            By default,
+            <literal>services.xserver.desktopManager.pantheon</literal>
+            enables LightDM as a display manager, as pantheon's screen
+            locking implementation relies on it. Because of that it is
+            recommended to leave LightDM enabled. If you'd like to
+            disable it anyway, set
+            <literal>services.xserver.displayManager.lightdm.enable</literal>
+            to <literal>false</literal> and enable your preferred
+            display manager.
+          </para>
+        </note>
+        <para>
+          Also note that Pantheon's LightDM greeter is not enabled by
+          default, because it has numerous issues in NixOS and isn't
+          optimal for use here yet.
+        </para>
       </listitem>
-    </itemizedlist>
-    <note>
-      <para>
-        By default,
-        <literal>services.xserver.desktopManager.pantheon</literal>
-        enables LightDM as a display manager, as pantheon's screen
-        locking implementation relies on it. Because of that it is
-        recommended to leave LightDM enabled. If you'd like to disable
-        it anyway, set
-        <literal>services.xserver.displayManager.lightdm.enable</literal>
-        to <literal>false</literal> and enable your preferred display
-        manager.
-      </para>
-    </note>
-    <para>
-      Also note that Pantheon's LightDM greeter is not enabled by
-      default, because it has numerous issues in NixOS and isn't optimal
-      for use here yet.
-    </para>
-    <itemizedlist>
       <listitem>
         <para>
           A major refactoring of the Kubernetes module has been
@@ -376,9 +374,7 @@
           setting the <literal>services.nscd.config</literal> option
           with the desired caching parameters.
         </para>
-      </listitem>
-    </itemizedlist>
-    <programlisting language="bash">
+        <programlisting language="bash">
 {
   services.nscd.config =
   ''
@@ -413,12 +409,12 @@
   '';
 }
 </programlisting>
-    <para>
-      See
-      <link xlink:href="https://github.com/NixOS/nixpkgs/pull/50316">#50316</link>
-      for details.
-    </para>
-    <itemizedlist>
+        <para>
+          See
+          <link xlink:href="https://github.com/NixOS/nixpkgs/pull/50316">#50316</link>
+          for details.
+        </para>
+      </listitem>
       <listitem>
         <para>
           GitLab Shell previously used the nix store paths for the
@@ -668,17 +664,16 @@
           setting their volumes to 100% on startup causing harm to your
           audio hardware and potentially your ears.
         </para>
+        <note>
+          <para>
+            With this change application specific volumes are relative
+            to the master volume which can be adjusted independently,
+            whereas before they were absolute; meaning that in effect,
+            it scaled the device-volume with the volume of the loudest
+            application.
+          </para>
+        </note>
       </listitem>
-    </itemizedlist>
-    <note>
-      <para>
-        With this change application specific volumes are relative to
-        the master volume which can be adjusted independently, whereas
-        before they were absolute; meaning that in effect, it scaled the
-        device-volume with the volume of the loudest application.
-      </para>
-    </note>
-    <itemizedlist>
       <listitem>
         <para>
           The

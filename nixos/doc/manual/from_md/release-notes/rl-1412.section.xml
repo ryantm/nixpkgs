@@ -360,7 +360,7 @@
     When upgrading from a previous release, please be aware of the
     following incompatible changes:
   </para>
-  <itemizedlist spacing="compact">
+  <itemizedlist>
     <listitem>
       <para>
         The default version of Apache httpd is now 2.4. If you use the
@@ -370,14 +370,12 @@
         documentation</link> for details. If you wish to continue to use
         httpd 2.2, add the following line to your NixOS configuration:
       </para>
-    </listitem>
-  </itemizedlist>
-  <programlisting language="bash">
+      <programlisting language="bash">
 {
   services.httpd.package = pkgs.apacheHttpd_2_2;
 }
 </programlisting>
-  <itemizedlist>
+    </listitem>
     <listitem>
       <para>
         PHP 5.3 has been removed because it is no longer supported by

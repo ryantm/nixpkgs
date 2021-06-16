@@ -580,9 +580,7 @@
           <literal>service.nylon</literal> is now declared using named
           instances. As an example:
         </para>
-      </listitem>
-    </itemizedlist>
-    <programlisting language="bash">
+        <programlisting language="bash">
 {
   services.nylon = {
     enable = true;
@@ -592,10 +590,10 @@
   };
 }
 </programlisting>
-    <para>
-      should be replaced with:
-    </para>
-    <programlisting language="bash">
+        <para>
+          should be replaced with:
+        </para>
+        <programlisting language="bash">
 {
   services.nylon.myvpn = {
     enable = true;
@@ -605,10 +603,10 @@
   };
 }
 </programlisting>
-    <para>
-      this enables you to declare a SOCKS proxy for each uplink.
-    </para>
-    <itemizedlist spacing="compact">
+        <para>
+          this enables you to declare a SOCKS proxy for each uplink.
+        </para>
+      </listitem>
       <listitem>
         <para>
           <literal>overridePackages</literal> function no longer exists.
@@ -616,24 +614,22 @@
           <link xlink:href="https://nixos.org/nixpkgs/manual/#sec-overlays-install">overlays</link>.
           For example, the following code:
         </para>
-      </listitem>
-    </itemizedlist>
-    <programlisting language="bash">
+        <programlisting language="bash">
 let
   pkgs = import &lt;nixpkgs&gt; {};
 in
   pkgs.overridePackages (self: super: ...)
 </programlisting>
-    <para>
-      should be replaced by:
-    </para>
-    <programlisting language="bash">
+        <para>
+          should be replaced by:
+        </para>
+        <programlisting language="bash">
 let
   pkgs = import &lt;nixpkgs&gt; {};
 in
   import pkgs.path { overlays = [(self: super: ...)]; }
 </programlisting>
-    <itemizedlist>
+      </listitem>
       <listitem>
         <para>
           Autoloading connection tracking helpers is now disabled by

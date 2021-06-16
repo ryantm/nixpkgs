@@ -651,20 +651,18 @@ nix-env -f &quot;&lt;nixpkgs&gt;&quot; -iA haskellPackages.pandoc
         <literal>--show-trace</literal> command line argument and read
         the line just above the error message.
       </para>
-    </listitem>
-  </itemizedlist>
-  <programlisting>
+      <programlisting>
 $ nixos-rebuild build --show-trace
 …
 while evaluating the module argument `pkgs' in &quot;/etc/nixos/my-module.nix&quot;:
 infinite recursion encountered
 </programlisting>
-  <para>
-    Any use of <literal>pkgs.lib</literal>, should be replaced by
-    <literal>lib</literal>, after adding it as argument of the module.
-    The following module
-  </para>
-  <programlisting language="bash">
+      <para>
+        Any use of <literal>pkgs.lib</literal>, should be replaced by
+        <literal>lib</literal>, after adding it as argument of the
+        module. The following module
+      </para>
+      <programlisting language="bash">
 { config, pkgs, ... }:
 
 with pkgs.lib;
@@ -676,10 +674,10 @@ with pkgs.lib;
   config = mkIf config.foo { … };
 }
 </programlisting>
-  <para>
-    should be modified to look like:
-  </para>
-  <programlisting language="bash">
+      <para>
+        should be modified to look like:
+      </para>
+      <programlisting language="bash">
 { config, pkgs, lib, ... }:
 
 with lib;
@@ -691,13 +689,13 @@ with lib;
   config = mkIf config.foo { option definition };
 }
 </programlisting>
-  <para>
-    When <literal>pkgs</literal> is used to download other projects to
-    import their modules, and only in such cases, it should be replaced
-    by <literal>(import &lt;nixpkgs&gt; {})</literal>. The following
-    module
-  </para>
-  <programlisting language="bash">
+      <para>
+        When <literal>pkgs</literal> is used to download other projects
+        to import their modules, and only in such cases, it should be
+        replaced by <literal>(import &lt;nixpkgs&gt; {})</literal>. The
+        following module
+      </para>
+      <programlisting language="bash">
 { config, pkgs, ... }:
 
 let
@@ -711,10 +709,10 @@ in
   imports = [ &quot;${myProject}/module.nix&quot; ];
 }
 </programlisting>
-  <para>
-    should be modified to look like:
-  </para>
-  <programlisting language="bash">
+      <para>
+        should be modified to look like:
+      </para>
+      <programlisting language="bash">
 { config, pkgs, ... }:
 
 let
@@ -728,6 +726,8 @@ in
   imports = [ &quot;${myProject}/module.nix&quot; ];
 }
 </programlisting>
+    </listitem>
+  </itemizedlist>
   <para>
     Other notable improvements:
   </para>

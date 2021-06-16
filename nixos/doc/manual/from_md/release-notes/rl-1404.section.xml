@@ -80,77 +80,69 @@
         the NixOS configuration. For instance, if a package
         <literal>foo</literal> provides systemd units, you can say:
       </para>
-    </listitem>
-  </itemizedlist>
-  <programlisting language="bash">
+      <programlisting language="bash">
 {
   systemd.packages = [ pkgs.foo ];
 }
 </programlisting>
-  <para>
-    to enable those units. You can then set or override unit options in
-    the usual way, e.g.
-  </para>
-  <programlisting language="bash">
+      <para>
+        to enable those units. You can then set or override unit options
+        in the usual way, e.g.
+      </para>
+      <programlisting language="bash">
 {
   systemd.services.foo.wantedBy = [ &quot;multi-user.target&quot; ];
   systemd.services.foo.serviceConfig.MemoryLimit = &quot;512M&quot;;
 }
 </programlisting>
-  <para>
-    When upgrading from a previous release, please be aware of the
-    following incompatible changes:
-  </para>
-  <itemizedlist spacing="compact">
+      <para>
+        When upgrading from a previous release, please be aware of the
+        following incompatible changes:
+      </para>
+    </listitem>
     <listitem>
       <para>
         Nixpkgs no longer exposes unfree packages by default. If your
         NixOS configuration requires unfree packages from Nixpkgs, you
         need to enable support for them explicitly by setting:
       </para>
-    </listitem>
-  </itemizedlist>
-  <programlisting language="bash">
+      <programlisting language="bash">
 {
   nixpkgs.config.allowUnfree = true;
 }
 </programlisting>
-  <para>
-    Otherwise, you get an error message such as:
-  </para>
-  <programlisting>
+      <para>
+        Otherwise, you get an error message such as:
+      </para>
+      <programlisting>
     error: package ‘nvidia-x11-331.49-3.12.17’ in ‘…/nvidia-x11/default.nix:56’
       has an unfree license, refusing to evaluate
 </programlisting>
-  <itemizedlist spacing="compact">
+    </listitem>
     <listitem>
       <para>
         The Adobe Flash player is no longer enabled by default in the
         Firefox and Chromium wrappers. To enable it, you must set:
       </para>
-    </listitem>
-  </itemizedlist>
-  <programlisting language="bash">
+      <programlisting language="bash">
 {
   nixpkgs.config.allowUnfree = true;
   nixpkgs.config.firefox.enableAdobeFlash = true; # for Firefox
   nixpkgs.config.chromium.enableAdobeFlash = true; # for Chromium
 }
 </programlisting>
-  <itemizedlist spacing="compact">
+    </listitem>
     <listitem>
       <para>
         The firewall is now enabled by default. If you don’t want this,
         you need to disable it explicitly:
       </para>
-    </listitem>
-  </itemizedlist>
-  <programlisting language="bash">
+      <programlisting language="bash">
 {
   networking.firewall.enable = false;
 }
 </programlisting>
-  <itemizedlist>
+    </listitem>
     <listitem>
       <para>
         The option <literal>boot.loader.grub.memtest86</literal> has

@@ -185,7 +185,7 @@
   <para>
     Other notable improvements:
   </para>
-  <itemizedlist spacing="compact">
+  <itemizedlist>
     <listitem>
       <para>
         Revamped grsecurity/PaX support. There is now only a single
@@ -193,18 +193,16 @@
         interface has been streamlined. Desktop users should be able to
         simply set
       </para>
-    </listitem>
-  </itemizedlist>
-  <programlisting language="bash">
+      <programlisting language="bash">
 {
-    security.grsecurity.enable = true;
+  security.grsecurity.enable = true;
 }
 </programlisting>
-  <para>
-    to get a reasonably secure system without having to sacrifice too
-    much functionality.
-  </para>
-  <itemizedlist>
+      <para>
+        to get a reasonably secure system without having to sacrifice
+        too much functionality.
+      </para>
+    </listitem>
     <listitem>
       <para>
         Special filesystems, like <literal>/proc</literal>,

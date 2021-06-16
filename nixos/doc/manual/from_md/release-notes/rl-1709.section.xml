@@ -29,9 +29,7 @@
           head. Apart from that, it's now possible to also set
           additional options by using an attribute set, for example:
         </para>
-      </listitem>
-    </itemizedlist>
-    <programlisting language="bash">
+        <programlisting language="bash">
 { services.xserver.xrandrHeads = [
     &quot;HDMI-0&quot;
     {
@@ -44,12 +42,12 @@
   ];
 }
 </programlisting>
-    <para>
-      This will set the <literal>DVI-0</literal> output to be the
-      primary head, even though <literal>HDMI-0</literal> is the first
-      head in the list.
-    </para>
-    <itemizedlist>
+        <para>
+          This will set the <literal>DVI-0</literal> output to be the
+          primary head, even though <literal>HDMI-0</literal> is the
+          first head in the list.
+        </para>
+      </listitem>
       <listitem>
         <para>
           The handling of SSL in the <literal>services.nginx</literal>
@@ -599,14 +597,12 @@
           either unset it (so the default gets used) or migrate the old
           data manually with
         </para>
-      </listitem>
-    </itemizedlist>
-    <programlisting>
+        <programlisting>
 dataDir=&lt;valueOfDataDir&gt;
 mv /var/lib/ipfs/.ipfs/* $dataDir
 rmdir /var/lib/ipfs/.ipfs
 </programlisting>
-    <itemizedlist>
+      </listitem>
       <listitem>
         <para>
           The <literal>caddy</literal> service was previously using an
@@ -725,9 +721,7 @@ rmdir /var/lib/ipfs/.ipfs
           authentication before using the new options. This can be done
           by running the following SQL script:
         </para>
-      </listitem>
-    </itemizedlist>
-    <programlisting language="sql">
+        <programlisting language="sql">
 CREATE USER 'root'@'%' IDENTIFIED BY '';
 GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION;
 FLUSH PRIVILEGES;
@@ -735,7 +729,7 @@ FLUSH PRIVILEGES;
 -- Optionally, delete the password-authenticated user:
 -- DROP USER 'root'@'localhost';
 </programlisting>
-    <itemizedlist>
+      </listitem>
       <listitem>
         <para>
           <literal>services.mysqlBackup</literal> now works by default

@@ -829,9 +829,7 @@
         <para>
           In order to have the previous default configuration add
         </para>
-      </listitem>
-    </itemizedlist>
-    <programlisting language="bash">
+        <programlisting language="bash">
 {
   services.xserver.displayManager.lightdm.greeters.gtk.indicators = [
     &quot;~host&quot; &quot;~spacer&quot;
@@ -843,10 +841,10 @@
   ];
 }
 </programlisting>
-    <para>
-      to your <literal>configuration.nix</literal>.
-    </para>
-    <itemizedlist>
+        <para>
+          to your <literal>configuration.nix</literal>.
+        </para>
+      </listitem>
       <listitem>
         <para>
           The NixOS test driver supports user services declared by

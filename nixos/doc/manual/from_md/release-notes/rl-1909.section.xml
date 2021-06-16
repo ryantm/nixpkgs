@@ -293,8 +293,6 @@
           <listitem>
             <para>
               <literal>services.xserver.desktopManager.mate</literal>
-            </para>
-            <para>
               Note Mate uses
               <literal>programs.system-config-printer</literal> as it
               doesn't use it as a service, but its graphical interface
