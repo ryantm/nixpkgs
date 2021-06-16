@@ -784,19 +784,19 @@ $ nix-instantiate -E '(import &lt;nixpkgsunstable&gt; {}).gitFull'
         configured by <literal>security.dhparams.path</literal>.
       </para>
     </note>
-  </section>
-</section>
-<section xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xml:id="for-developers">
-  <title>For developers:</title>
-  <para>
-    Module implementers should not set a specific bit size in order to
-    let users configure it by themselves if they want to have a
-    different bit size than the default (2048).
-  </para>
-  <para>
-    An example usage of this would be:
-  </para>
-  <programlisting language="bash">
+    <note>
+      <para>
+        <emphasis role="strong">For developers:</emphasis>
+      </para>
+      <para>
+        Module implementers should not set a specific bit size in order
+        to let users configure it by themselves if they want to have a
+        different bit size than the default (2048).
+      </para>
+      <para>
+        An example usage of this would be:
+      </para>
+      <programlisting language="bash">
 { config, ... }:
 
 {
@@ -806,138 +806,141 @@ $ nix-instantiate -E '(import &lt;nixpkgsunstable&gt; {}).gitFull'
   '';
 }
 </programlisting>
+    </note>
+    <itemizedlist>
+      <listitem>
+        <para>
+          <literal>networking.networkmanager.useDnsmasq</literal> has
+          been deprecated. Use
+          <literal>networking.networkmanager.dns</literal> instead.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          The Kubernetes package has been bumped to major version 1.11.
+          Please consult the
+          <link xlink:href="https://github.com/kubernetes/kubernetes/blob/release-1.11/CHANGELOG-1.11.md">release
+          notes</link> for details on new features and api changes.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          The option
+          <literal>services.kubernetes.apiserver.admissionControl</literal>
+          was renamed to
+          <literal>services.kubernetes.apiserver.enableAdmissionPlugins</literal>.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          Recommended way to access the Kubernetes Dashboard is via
+          HTTPS (TLS) Therefore; public service port for the dashboard
+          has changed to 443 (container port 8443) and scheme to https.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          The option
+          <literal>services.kubernetes.apiserver.address</literal> was
+          renamed to
+          <literal>services.kubernetes.apiserver.bindAddress</literal>.
+          Note that the default value has changed from 127.0.0.1 to
+          0.0.0.0.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          The option
+          <literal>services.kubernetes.apiserver.publicAddress</literal>
+          was not used and thus has been removed.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          The option
+          <literal>services.kubernetes.addons.dashboard.enableRBAC</literal>
+          was renamed to
+          <literal>services.kubernetes.addons.dashboard.rbac.enable</literal>.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          The Kubernetes Dashboard now has only minimal RBAC permissions
+          by default. If dashboard cluster-admin rights are desired, set
+          <literal>services.kubernetes.addons.dashboard.rbac.clusterAdmin</literal>
+          to true. On existing clusters, in order for the revocation of
+          privileges to take effect, the current ClusterRoleBinding for
+          kubernetes-dashboard must be manually removed:
+          <literal>kubectl delete clusterrolebinding kubernetes-dashboard</literal>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          The <literal>programs.screen</literal> module provides allows
+          to configure <literal>/etc/screenrc</literal>, however the
+          module behaved fairly counterintuitive as the config exists,
+          but the package wasn't available. Since 18.09
+          <literal>pkgs.screen</literal> will be added to
+          <literal>environment.systemPackages</literal>.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          The module <literal>services.networking.hostapd</literal> now
+          uses WPA2 by default.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <literal>s6Dns</literal>, <literal>s6Networking</literal>,
+          <literal>s6LinuxUtils</literal> and
+          <literal>s6PortableUtils</literal> renamed to
+          <literal>s6-dns</literal>, <literal>s6-networking</literal>,
+          <literal>s6-linux-utils</literal> and
+          <literal>s6-portable-utils</literal> respectively.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          The module option <literal>nix.useSandbox</literal> is now
+          defaulted to <literal>true</literal>.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          The config activation script of
+          <literal>nixos-rebuild</literal> now
+          <link xlink:href="https://www.freedesktop.org/software/systemd/man/systemctl.html#Manager%20Lifecycle%20Commands">reloads</link>
+          all user units for each authenticated user.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          The default display manager is now LightDM. To use SLiM set
+          <literal>services.xserver.displayManager.slim.enable</literal>
+          to <literal>true</literal>.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          NixOS option descriptions are now automatically broken up into
+          individual paragraphs if the text contains two consecutive
+          newlines, so it's no longer necessary to use
+          <literal>&lt;/para&gt;&lt;para&gt;</literal> to start a new
+          paragraph.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          Top-level <literal>buildPlatform</literal>,
+          <literal>hostPlatform</literal>, and
+          <literal>targetPlatform</literal> in Nixpkgs are deprecated.
+          Please use their equivalents in <literal>stdenv</literal>
+          instead: <literal>stdenv.buildPlatform</literal>,
+          <literal>stdenv.hostPlatform</literal>, and
+          <literal>stdenv.targetPlatform</literal>.
+        </para>
+      </listitem>
+    </itemizedlist>
+  </section>
 </section>
-<itemizedlist>
-  <listitem>
-    <para>
-      <literal>networking.networkmanager.useDnsmasq</literal> has been
-      deprecated. Use <literal>networking.networkmanager.dns</literal>
-      instead.
-    </para>
-  </listitem>
-  <listitem>
-    <para>
-      The Kubernetes package has been bumped to major version 1.11.
-      Please consult the
-      <link xlink:href="https://github.com/kubernetes/kubernetes/blob/release-1.11/CHANGELOG-1.11.md">release
-      notes</link> for details on new features and api changes.
-    </para>
-  </listitem>
-  <listitem>
-    <para>
-      The option
-      <literal>services.kubernetes.apiserver.admissionControl</literal>
-      was renamed to
-      <literal>services.kubernetes.apiserver.enableAdmissionPlugins</literal>.
-    </para>
-  </listitem>
-  <listitem>
-    <para>
-      Recommended way to access the Kubernetes Dashboard is via HTTPS
-      (TLS) Therefore; public service port for the dashboard has changed
-      to 443 (container port 8443) and scheme to https.
-    </para>
-  </listitem>
-  <listitem>
-    <para>
-      The option
-      <literal>services.kubernetes.apiserver.address</literal> was
-      renamed to
-      <literal>services.kubernetes.apiserver.bindAddress</literal>. Note
-      that the default value has changed from 127.0.0.1 to 0.0.0.0.
-    </para>
-  </listitem>
-  <listitem>
-    <para>
-      The option
-      <literal>services.kubernetes.apiserver.publicAddress</literal> was
-      not used and thus has been removed.
-    </para>
-  </listitem>
-  <listitem>
-    <para>
-      The option
-      <literal>services.kubernetes.addons.dashboard.enableRBAC</literal>
-      was renamed to
-      <literal>services.kubernetes.addons.dashboard.rbac.enable</literal>.
-    </para>
-  </listitem>
-  <listitem>
-    <para>
-      The Kubernetes Dashboard now has only minimal RBAC permissions by
-      default. If dashboard cluster-admin rights are desired, set
-      <literal>services.kubernetes.addons.dashboard.rbac.clusterAdmin</literal>
-      to true. On existing clusters, in order for the revocation of
-      privileges to take effect, the current ClusterRoleBinding for
-      kubernetes-dashboard must be manually removed:
-      <literal>kubectl delete clusterrolebinding kubernetes-dashboard</literal>
-    </para>
-  </listitem>
-  <listitem>
-    <para>
-      The <literal>programs.screen</literal> module provides allows to
-      configure <literal>/etc/screenrc</literal>, however the module
-      behaved fairly counterintuitive as the config exists, but the
-      package wasn't available. Since 18.09
-      <literal>pkgs.screen</literal> will be added to
-      <literal>environment.systemPackages</literal>.
-    </para>
-  </listitem>
-  <listitem>
-    <para>
-      The module <literal>services.networking.hostapd</literal> now uses
-      WPA2 by default.
-    </para>
-  </listitem>
-  <listitem>
-    <para>
-      <literal>s6Dns</literal>, <literal>s6Networking</literal>,
-      <literal>s6LinuxUtils</literal> and
-      <literal>s6PortableUtils</literal> renamed to
-      <literal>s6-dns</literal>, <literal>s6-networking</literal>,
-      <literal>s6-linux-utils</literal> and
-      <literal>s6-portable-utils</literal> respectively.
-    </para>
-  </listitem>
-  <listitem>
-    <para>
-      The module option <literal>nix.useSandbox</literal> is now
-      defaulted to <literal>true</literal>.
-    </para>
-  </listitem>
-  <listitem>
-    <para>
-      The config activation script of <literal>nixos-rebuild</literal>
-      now
-      <link xlink:href="https://www.freedesktop.org/software/systemd/man/systemctl.html#Manager%20Lifecycle%20Commands">reloads</link>
-      all user units for each authenticated user.
-    </para>
-  </listitem>
-  <listitem>
-    <para>
-      The default display manager is now LightDM. To use SLiM set
-      <literal>services.xserver.displayManager.slim.enable</literal> to
-      <literal>true</literal>.
-    </para>
-  </listitem>
-  <listitem>
-    <para>
-      NixOS option descriptions are now automatically broken up into
-      individual paragraphs if the text contains two consecutive
-      newlines, so it's no longer necessary to use
-      <literal>&lt;/para&gt;&lt;para&gt;</literal> to start a new
-      paragraph.
-    </para>
-  </listitem>
-  <listitem>
-    <para>
-      Top-level <literal>buildPlatform</literal>,
-      <literal>hostPlatform</literal>, and
-      <literal>targetPlatform</literal> in Nixpkgs are deprecated.
-      Please use their equivalents in <literal>stdenv</literal> instead:
-      <literal>stdenv.buildPlatform</literal>,
-      <literal>stdenv.hostPlatform</literal>, and
-      <literal>stdenv.targetPlatform</literal>.
-    </para>
-  </listitem>
-</itemizedlist>
