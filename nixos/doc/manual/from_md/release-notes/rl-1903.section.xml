@@ -219,8 +219,8 @@
           The <literal>light</literal> module no longer uses setuid
           binaries, but udev rules. As a consequence users of that
           module have to belong to the <literal>video</literal> group in
-          order to use the executable
-          (i.e. <literal>users.users.yourusername.extraGroups = [&quot;video&quot;];</literal>).
+          order to use the executable (i.e.
+          <literal>users.users.yourusername.extraGroups = [&quot;video&quot;];</literal>).
         </para>
       </listitem>
       <listitem>
@@ -555,14 +555,14 @@
           <literal>matomo-archive-processing.service</literal> and a
           timer that automatically triggers archive processing every
           hour. This means that you can safely
-          <link xlink:href="https://matomo.org/docs/setup-auto-archiving/#disable-browser-triggers-for-matomo-archiving-and-limit-matomo-reports-to-updating-every-hour">disable
-          browser triggers for Matomo archiving</link> at
+          <link xlink:href="https://matomo.org/docs/setup-auto-archiving/#disable-browser-triggers-for-matomo-archiving-and-limit-matomo-reports-to-updating-every-hour">
+          disable browser triggers for Matomo archiving </link> at
           <literal>Administration &gt; System &gt; General Settings</literal>.
         </para>
         <para>
           Additionally, you can enable to
-          <link xlink:href="https://matomo.org/docs/privacy/#step-2-delete-old-visitors-logs">delete
-          old visitor logs</link> at
+          <link xlink:href="https://matomo.org/docs/privacy/#step-2-delete-old-visitors-logs">
+          delete old visitor logs </link> at
           <literal>Administration &gt; System &gt; Privacy</literal>,
           but make sure that you run
           <literal>systemctl start matomo-archive-processing.service</literal>
@@ -609,10 +609,10 @@
       </listitem>
       <listitem>
         <para>
-          The manual gained a <link linkend="module-services-matrix">new
-          chapter on self-hosting <literal>matrix-synapse</literal> and
-          <literal>riot-web</literal></link>, the most prevalent server
-          and client implementations for the
+          The manual gained a <link linkend="module-services-matrix">
+          new chapter on self-hosting <literal>matrix-synapse</literal>
+          and <literal>riot-web</literal> </link>, the most prevalent
+          server and client implementations for the
           <link xlink:href="https://matrix.org/">Matrix</link> federated
           communication network.
         </para>

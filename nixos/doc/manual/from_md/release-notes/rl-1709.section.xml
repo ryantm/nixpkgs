@@ -458,8 +458,8 @@
       <listitem>
         <para>
           <emphasis role="strong">In an Qemu-based virtualization
-          environment, the network interface names changed from
-          i.e. <literal>enp0s3</literal> to
+          environment, the network interface names changed from i.e.
+          <literal>enp0s3</literal> to
           <literal>ens3</literal>.</emphasis>
         </para>
         <para>
@@ -545,9 +545,9 @@
             <para>
               Radicale's default package has changed from 1.x to 2.x.
               Instructions to migrate can be found
-              <link xlink:href="http://radicale.org/1to2/">here</link>.
-              It is also possible to use the newer version by setting
-              the <literal>package</literal> to
+              <link xlink:href="http://radicale.org/1to2/"> here
+              </link>. It is also possible to use the newer version by
+              setting the <literal>package</literal> to
               <literal>radicale2</literal>, which is done automatically
               when <literal>stateVersion</literal> is 17.09 or higher.
               The <literal>extraArgs</literal> option has been added to
@@ -561,9 +561,8 @@
       <listitem>
         <para>
           The <literal>aiccu</literal> package was removed. This is due
-          to SixXS
-          <link xlink:href="https://www.sixxs.net/main/">sunsetting</link>
-          its IPv6 tunnel.
+          to SixXS <link xlink:href="https://www.sixxs.net/main/">
+          sunsetting</link> its IPv6 tunnel.
         </para>
       </listitem>
       <listitem>
@@ -654,7 +653,7 @@ rmdir /var/lib/ipfs/.ipfs
         <para>
           <literal>cc-wrapper</literal>'s setup-hook now exports a
           number of environment variables corresponding to binutils
-          binaries, (e.g. <literal>LD</literal>,
+          binaries, (e.g. <literal>LD</literal>,
           <literal>STRIP</literal>, <literal>RANLIB</literal>, etc).
           This is done to prevent packages' build systems guessing,
           which is harder to predict, especially when cross-compiling.
@@ -691,9 +690,10 @@ rmdir /var/lib/ipfs/.ipfs
         <para>
           grsecurity/PaX support has been dropped, following upstream's
           decision to cease free support. See
-          <link xlink:href="https://grsecurity.net/passing_the_baton.php">upstream's
-          announcement</link> for more information. No complete
-          replacement for grsecurity/PaX is available presently.
+          <link xlink:href="https://grsecurity.net/passing_the_baton.php">
+          upstream's announcement</link> for more information. No
+          complete replacement for grsecurity/PaX is available
+          presently.
         </para>
       </listitem>
       <listitem>
@@ -709,9 +709,9 @@ rmdir /var/lib/ipfs/.ipfs
         </para>
         <para>
           The MySQL users will be identified using
-          <link xlink:href="https://mariadb.com/kb/en/library/authentication-plugin-unix-socket/">Unix
-          socket authentication</link>. This authenticates the Unix user
-          with the same name only, and that without the need for a
+          <link xlink:href="https://mariadb.com/kb/en/library/authentication-plugin-unix-socket/">
+          Unix socket authentication</link>. This authenticates the Unix
+          user with the same name only, and that without the need for a
           password.
         </para>
         <para>
@@ -721,7 +721,7 @@ rmdir /var/lib/ipfs/.ipfs
           authentication before using the new options. This can be done
           by running the following SQL script:
         </para>
-        <programlisting language="sql">
+        <programlisting language="SQL">
 CREATE USER 'root'@'%' IDENTIFIED BY '';
 GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION;
 FLUSH PRIVILEGES;
@@ -793,10 +793,11 @@ FLUSH PRIVILEGES;
       <listitem>
         <para>
           Modules can now be disabled by using
-          <link xlink:href="https://nixos.org/nixpkgs/manual/#sec-replace-modules">disabledModules</link>,
-          allowing another to take it's place. This can be used to
-          import a set of modules from another channel while keeping the
-          rest of the system on a stable release.
+          <link xlink:href="https://nixos.org/nixpkgs/manual/#sec-replace-modules">
+          disabledModules</link>, allowing another to take it's place.
+          This can be used to import a set of modules from another
+          channel while keeping the rest of the system on a stable
+          release.
         </para>
       </listitem>
       <listitem>
@@ -855,8 +856,8 @@ FLUSH PRIVILEGES;
           Two new options have been added to the installer loader, in
           addition to the default having changed. The kernel log
           verbosity has been lowered to the upstream default for the
-          default options, in order to not spam the console when
-          e.g. joining a network.
+          default options, in order to not spam the console when e.g.
+          joining a network.
         </para>
         <para>
           This therefore leads to adding a new <literal>debug</literal>

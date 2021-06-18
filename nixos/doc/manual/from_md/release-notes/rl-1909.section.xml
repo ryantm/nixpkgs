@@ -348,8 +348,8 @@
           <literal>services.prometheus.alertmanager.group</literal> have
           been removed because the alertmanager service is now using
           systemd's
-          <link xlink:href="http://0pointer.net/blog/dynamic-users-with-systemd.html">DynamicUser
-          mechanism</link> which obviates these options.
+          <link xlink:href="http://0pointer.net/blog/dynamic-users-with-systemd.html">
+          DynamicUser mechanism</link> which obviates these options.
         </para>
       </listitem>
       <listitem>
@@ -387,8 +387,8 @@
           removed, see <literal>services.jellyfin.enable</literal>
           instead for a free software fork of Emby. See the Jellyfin
           documentation:
-          <link xlink:href="https://jellyfin.readthedocs.io/en/latest/administrator-docs/migrate-from-emby/">Migrating
-          from Emby to Jellyfin</link>
+          <link xlink:href="https://jellyfin.readthedocs.io/en/latest/administrator-docs/migrate-from-emby/">
+          Migrating from Emby to Jellyfin </link>
         </para>
       </listitem>
       <listitem>
@@ -449,8 +449,8 @@
           was renamed to
           <literal>systemd.network.networks.&lt;name&gt;.routes.*.routeConfig.GatewayOnLink</literal>
           (capital <literal>L</literal>). This follows
-          <link xlink:href="https://github.com/systemd/systemd/commit/9cb8c5593443d24c19e40bfd4fc06d672f8c554c">upstreams
-          renaming</link> of the setting.
+          <link xlink:href="https://github.com/systemd/systemd/commit/9cb8c5593443d24c19e40bfd4fc06d672f8c554c">
+          upstreams renaming </link> of the setting.
         </para>
       </listitem>
       <listitem>
@@ -498,7 +498,7 @@
       <listitem>
         <para>
           The <literal>prometheus-nginx-exporter</literal> package now
-          uses the offical exporter provided by NGINX Inc. Its metrics
+          uses the offical exporter provided by NGINX Inc. Its metrics
           are differently structured and are incompatible to the old
           ones. For information about the metrics, have a look at the
           <link xlink:href="https://github.com/nginxinc/nginx-prometheus-exporter">official
@@ -748,8 +748,8 @@
           store, but means that for each option you'll have to create a
           file with the same exact string, add &quot;File&quot; to the
           end of the option name, and change the definition to a string
-          pointing to the corresponding file;
-          e.g. <literal>services.gitlab.databasePassword = &quot;supersecurepassword&quot;</literal>
+          pointing to the corresponding file; e.g.
+          <literal>services.gitlab.databasePassword = &quot;supersecurepassword&quot;</literal>
           becomes
           <literal>services.gitlab.databasePasswordFile = &quot;/path/to/secret_file&quot;</literal>
           where the file <literal>secret_file</literal> contains the
@@ -760,7 +760,7 @@
           now has the following restriction: no parent directory can be
           owned by any other user than <literal>root</literal> or the
           user specified in <literal>services.gitlab.user</literal>;
-          i.e. if <literal>services.gitlab.statePath</literal> is set to
+          i.e. if <literal>services.gitlab.statePath</literal> is set to
           <literal>/var/lib/gitlab/state</literal>,
           <literal>gitlab</literal> and all parent directories must be
           owned by either <literal>root</literal> or the user specified
@@ -825,10 +825,10 @@
         <para>
           Because of the systemd upgrade, some network interfaces might
           change their name. For details see
-          <link xlink:href="https://www.freedesktop.org/software/systemd/man/systemd.net-naming-scheme.html#History">upstream
-          docs</link> or
-          <link xlink:href="https://github.com/NixOS/nixpkgs/issues/71086">our
-          ticket</link>.
+          <link xlink:href="https://www.freedesktop.org/software/systemd/man/systemd.net-naming-scheme.html#History">
+          upstream docs</link> or
+          <link xlink:href="https://github.com/NixOS/nixpkgs/issues/71086">
+          our ticket</link>.
         </para>
       </listitem>
     </itemizedlist>
@@ -858,8 +858,9 @@
           be open for it to work, so something like
           <literal>networking.firewall.allowedTCPPorts = [ 8010 ];</literal>
           may be required in your configuration. Also consider enabling
-          <link xlink:href="https://nixos.wiki/wiki/Accelerated_Video_Playback">Accelerated
-          Video Playback</link> for better transcoding performance.
+          <link xlink:href="https://nixos.wiki/wiki/Accelerated_Video_Playback">
+          Accelerated Video Playback</link> for better transcoding
+          performance.
         </para>
       </listitem>
       <listitem>
@@ -1132,7 +1133,7 @@
           state directory. Note that the NixOS module for Redis now
           disables kernel support for Transparent Huge Pages (THP),
           because this features causes major performance problems for
-          Redis, e.g. (https://redis.io/topics/latency).
+          Redis, e.g. (https://redis.io/topics/latency).
         </para>
       </listitem>
       <listitem>

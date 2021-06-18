@@ -92,16 +92,16 @@
           If you enable the Pantheon Desktop Manager via
           <link xlink:href="options.html#opt-services.xserver.desktopManager.pantheon.enable">services.xserver.desktopManager.pantheon.enable</link>,
           we now default to also use
-          <link xlink:href="https://blog.elementary.io/say-hello-to-the-new-greeter/">Pantheon's
-          newly designed greeter</link>. Contrary to NixOS's usual
-          update policy, Pantheon will receive updates during the cycle
-          of NixOS 20.03 when backwards compatible.
+          <link xlink:href="https://blog.elementary.io/say-hello-to-the-new-greeter/">
+          Pantheon's newly designed greeter </link>. Contrary to NixOS's
+          usual update policy, Pantheon will receive updates during the
+          cycle of NixOS 20.03 when backwards compatible.
         </para>
       </listitem>
       <listitem>
         <para>
           By default zfs pools will now be trimmed on a weekly basis.
-          Trimming is only done on supported devices (i.e. NVME or SSDs)
+          Trimming is only done on supported devices (i.e. NVME or SSDs)
           and should improve throughput and lifetime of these devices.
           It is controlled by the
           <literal>services.zfs.trim.enable</literal> varname. The zfs
@@ -457,8 +457,8 @@ See https://github.com/NixOS/nixpkgs/pull/71684 for details.
       <listitem>
         <para>
           The dhcpcd package
-          <link xlink:href="https://roy.marples.name/archives/dhcpcd-discuss/0002621.html">does
-          not request IPv4 addresses for tap and bridge interfaces
+          <link xlink:href="https://roy.marples.name/archives/dhcpcd-discuss/0002621.html">
+          does not request IPv4 addresses for tap and bridge interfaces
           anymore by default</link>. In order to still get an address on
           a bridge interface, one has to disable
           <literal>networking.useDHCP</literal> and explicitly enable
@@ -615,8 +615,8 @@ See https://github.com/NixOS/nixpkgs/pull/71684 for details.
           font loading. This means that type1 and bitmap fonts are no
           longer supported in applications relying on Pango for font
           rendering (notably, GTK application). See
-          <link xlink:href="https://gitlab.gnome.org/GNOME/pango/issues/386">upstream
-          issue</link> for more information.
+          <link xlink:href="https://gitlab.gnome.org/GNOME/pango/issues/386">
+          upstream issue</link> for more information.
         </para>
       </listitem>
       <listitem>
@@ -1042,8 +1042,8 @@ auth required pam_succeed_if.so quiet
       <listitem>
         <para>
           Rspamd was updated to version 2.2. Read
-          <link xlink:href="https://rspamd.com/doc/migration.html#migration-to-rspamd-20">the
-          upstream migration notes</link> carefully. Please be
+          <link xlink:href="https://rspamd.com/doc/migration.html#migration-to-rspamd-20">
+          the upstream migration notes</link> carefully. Please be
           especially aware that some modules were removed and the
           default Bayes backend is now Redis.
         </para>
@@ -1115,7 +1115,7 @@ auth required pam_succeed_if.so quiet
         </para>
         <para>
           This means that if you incorrectly categorize a dependency,
-          e.g. non-Haskell library dependency as a
+          e.g. non-Haskell library dependency as a
           <literal>buildDepends</literal> or run-time Haskell dependency
           as a <literal>setupDepends</literal>, whereas things would
           have worked before they may not work now.
@@ -1189,7 +1189,7 @@ auth required pam_succeed_if.so quiet
           </listitem>
           <listitem>
             <para>
-              Users with an overlay (e.g. to use nextcloud at version
+              Users with an overlay (e.g. to use nextcloud at version
               <literal>v18</literal> on <literal>19.09</literal>) will
               get an evaluation error by default. This is done to ensure
               that our
@@ -1223,11 +1223,11 @@ auth required pam_succeed_if.so quiet
             <para>
               At first, an older version of Hydra needs to be deployed
               which adds those (nullable) columns. When having set
-              <link xlink:href="options.html#opt-system.stateVersion">stateVersion</link>
-              to a value older than <literal>20.03</literal>, this
-              package will be selected by default from the module when
-              upgrading. Otherwise, the package can be deployed using
-              the following config:
+              <link xlink:href="options.html#opt-system.stateVersion">stateVersion
+              </link> to a value older than <literal>20.03</literal>,
+              this package will be selected by default from the module
+              when upgrading. Otherwise, the package can be deployed
+              using the following config:
             </para>
             <programlisting language="bash">
 { pkgs, ... }: {
@@ -1277,7 +1277,7 @@ $ hydra-backfill-ids
           <para>
             pkgs.hydra has been removed to ensure a graceful
             database-migration using the dedicated package-attributes.
-            If you still have pkgs.hydra defined in e.g. an overlay, an
+            If you still have pkgs.hydra defined in e.g. an overlay, an
             assertion error will be thrown. To circumvent this, you need
             to set
             <link xlink:href="options.html#opt-services.hydra.package">services.hydra.package</link>
@@ -1331,8 +1331,8 @@ $ hydra-backfill-ids
           OpenSSH has been upgraded from 7.9 to 8.1, improving security
           and adding features but with potential incompatibilities.
           Consult the
-          <link xlink:href="https://www.openssh.com/txt/release-8.1">release
-          announcement</link> for more information.
+          <link xlink:href="https://www.openssh.com/txt/release-8.1">
+          release announcement</link> for more information.
         </para>
       </listitem>
       <listitem>
@@ -1378,7 +1378,7 @@ $ hydra-backfill-ids
         <para>
           Predictably named network interfaces get renamed in stage-1.
           This means that it is possible to use the proper interface
-          name for e.g. Dropbear setups.
+          name for e.g. Dropbear setups.
         </para>
         <para>
           For further reference, please read
@@ -1447,7 +1447,7 @@ $ hydra-backfill-ids
       <listitem>
         <para>
           If you deploy a fresh matrix-synapse, you need to configure
-          the database yourself (e.g. by using the
+          the database yourself (e.g. by using the
           <link xlink:href="options.html#opt-services.postgresql.initialScript">services.postgresql.initialScript</link>
           option). An example for this can be found in the
           <link linkend="module-services-matrix">documentation of the
@@ -1485,7 +1485,7 @@ $ hydra-backfill-ids
         <warning>
           <para>
             Please note that mongodb has been relicensed under their own
-            <link xlink:href="https://www.mongodb.com/licensing/server-side-public-license/faq"><literal>sspl</literal></link>-license.
+            <link xlink:href="https://www.mongodb.com/licensing/server-side-public-license/faq"><literal> sspl</literal></link>-license.
             Since it's not entirely free and not OSI-approved, it's
             listed as non-free. This means that Hydra doesn't provide
             prebuilt mongodb-packages and needs to be built locally.

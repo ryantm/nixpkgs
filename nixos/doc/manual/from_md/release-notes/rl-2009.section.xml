@@ -3,8 +3,8 @@
   <para>
     Support is planned until the end of June 2021, handing over to
     21.05. (Plans
-    <link xlink:href="https://github.com/NixOS/rfcs/blob/master/rfcs/0080-nixos-release-schedule.md#core-changes">have
-    shifted</link> by two months since release of 20.09.)
+    <link xlink:href="https://github.com/NixOS/rfcs/blob/master/rfcs/0080-nixos-release-schedule.md#core-changes">
+    have shifted</link> by two months since release of 20.09.)
   </para>
   <section xml:id="sec-release-20.09-highlights">
     <title>Highlights</title>
@@ -780,7 +780,7 @@ services.mysql.initialScript = pkgs.writeText &quot;mariadb-init.sql&quot; ''
           database server are required to run the following SQL
           statements as a super admin user before upgrading:
         </para>
-        <programlisting language="sql">
+        <programlisting language="SQL">
 CREATE USER IF NOT EXISTS 'mysql'@'localhost' identified with unix_socket;
 GRANT ALL PRIVILEGES ON *.* TO 'mysql'@'localhost' WITH GRANT OPTION;
 </programlisting>
@@ -817,7 +817,7 @@ GRANT ALL PRIVILEGES ON *.* TO 'mysql'@'localhost' WITH GRANT OPTION;
           character set and collation used by your database and ensure
           they are correct:
         </para>
-        <programlisting language="sql">
+        <programlisting language="SQL">
 SELECT
   default_character_set_name,
   default_collation_name
@@ -833,7 +833,7 @@ WHERE
           <link xlink:href="https://www.zabbix.com/forum/zabbix-help/396573-reinstall-after-upgrade?p=396891#post396891">example</link>
           of how to do so, taken from the Zabbix forums:
         </para>
-        <programlisting language="sql">
+        <programlisting language="SQL">
 ALTER DATABASE `zabbix` DEFAULT CHARACTER SET utf8 COLLATE utf8_bin;
 
 -- the following will produce a list of SQL commands you should subsequently execute
@@ -1173,7 +1173,7 @@ $ sudo /run/current-system/fine-tune/child-1/bin/switch-to-configuration test
           The <literal>systemd-networkd</literal> option
           <literal>systemd.network.networks._name_.dhcpConfig</literal>
           has been renamed to
-          <link xlink:href="options.html#opt-systemd.network.networks._name_.dhcpV4Config">systemd.network.networks._name_.dhcpV4Config</link>
+          <link xlink:href="options.html#opt-systemd.network.networks._name_.dhcpV4Config">systemd.network.networks.<emphasis>name</emphasis>.dhcpV4Config</link>
           following upstream systemd's documentation change. See
           systemd.network 5 for details.
         </para>
@@ -1244,7 +1244,7 @@ $ sudo /run/current-system/fine-tune/child-1/bin/switch-to-configuration test
           the hostname is now resolved to <literal>127.0.0.2</literal>
           instead of <literal>127.0.1.1</literal> to be consistent with
           what <literal>nss-myhostname</literal> (from systemd) returns.
-          The old behaviour can e.g. be restored by using
+          The old behaviour can e.g. be restored by using
           <literal>networking.hosts = lib.mkForce { &quot;127.0.1.1&quot; = [ config.networking.hostName ]; };</literal>.
         </para>
       </listitem>
@@ -1256,7 +1256,7 @@ $ sudo /run/current-system/fine-tune/child-1/bin/switch-to-configuration test
           start with a letter or digit, end with a letter or digit, and
           have as interior characters only letters, digits, and hyphen.
           The maximum length is 63 characters. Additionally it is
-          recommended to only use lower-case characters. If (e.g. for
+          recommended to only use lower-case characters. If (e.g. for
           legacy reasons) a FQDN is required as the Linux kernel network
           node hostname (<literal>uname --nodename</literal>) the option
           <literal>boot.kernel.sysctl.&quot;kernel.hostname&quot;</literal>
@@ -1508,7 +1508,7 @@ $ sudo /run/current-system/fine-tune/child-1/bin/switch-to-configuration test
           SQL statements as a database super admin user before
           upgrading:
         </para>
-        <programlisting language="sql">
+        <programlisting language="SQL">
 CREATE ROLE postgres LOGIN SUPERUSER;
 </programlisting>
       </listitem>
@@ -1605,8 +1605,8 @@ CREATE ROLE postgres LOGIN SUPERUSER;
         <para>
           The package nextcloud17 has been removed and nextcloud18 was
           marked as insecure since both of them will
-          <link xlink:href="https://docs.nextcloud.com/server/19/admin_manual/release_schedule.html">will
-          be EOL (end of life) within the lifetime of 20.09</link>.
+          <link xlink:href="https://docs.nextcloud.com/server/19/admin_manual/release_schedule.html">
+          will be EOL (end of life) within the lifetime of 20.09</link>.
         </para>
         <para>
           It's necessary to upgrade to nextcloud19:
@@ -1723,7 +1723,7 @@ CREATE ROLE postgres LOGIN SUPERUSER;
         </para>
         <para>
           Please note that Rust packages utilizing a custom
-          build/install procedure (e.g. by using a
+          build/install procedure (e.g. by using a
           <literal>Makefile</literal>) or test suites that rely on the
           structure of the <literal>target/</literal> directory may
           break due to those assumptions. For further information,
@@ -1863,8 +1863,8 @@ CREATE ROLE postgres LOGIN SUPERUSER;
           By having <literal>systemd-networkd</literal> start with a
           netlink socket created by <literal>systemd</literal> we can
           configure the <literal>ReceiveBufferSize=</literal> parameter
-          in the socket options
-          (i.e. <literal>systemd.sockets.systemd-networkd.socketOptions.ReceiveBufferSize</literal>)
+          in the socket options (i.e.
+          <literal>systemd.sockets.systemd-networkd.socketOptions.ReceiveBufferSize</literal>)
           without recompiling <literal>systemd-networkd</literal>.
         </para>
         <para>
@@ -2063,8 +2063,8 @@ CREATE ROLE postgres LOGIN SUPERUSER;
           the golang version to build it has been bumped to 1.15. This
           may have consequences for your existing clusters and their
           certificates. Please consider
-          <link xlink:href="https://relnotes.k8s.io/?markdown=93264">the
-          release notes for Kubernetes 1.19 carefully</link> before
+          <link xlink:href="https://relnotes.k8s.io/?markdown=93264">
+          the release notes for Kubernetes 1.19 carefully </link> before
           upgrading.
         </para>
       </listitem>

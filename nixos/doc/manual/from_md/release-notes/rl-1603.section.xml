@@ -604,7 +604,7 @@ $TTL 1800
         rate limit for their machines using the Kernel interface at
         <literal>/proc/sys/net/ipv4/icmp_ratelimit</literal> and
         <literal>/proc/sys/net/ipv6/icmp/ratelimit</literal> or using
-        the firewall itself, i.e. by setting the NixOS option
+        the firewall itself, i.e. by setting the NixOS option
         <literal>networking.firewall.pingLimit</literal>.
       </para>
     </listitem>
@@ -623,8 +623,8 @@ error: path ‘/nix/store/*-broadcom-sta-*’ does not exist and cannot be creat
         by <literal>config.boot.kernelPackages.broadcom_sta</literal> in
         your <literal>/etc/nixos/hardware-configuration.nix</literal>.
         More discussion is on
-        <link xlink:href="https://github.com/NixOS/nixpkgs/pull/12595">the
-        github issue</link>.
+        <link xlink:href="https://github.com/NixOS/nixpkgs/pull/12595">
+        the github issue</link>.
       </para>
     </listitem>
     <listitem>
@@ -644,8 +644,8 @@ export GPG_TTY
 </programlisting>
       <para>
         If you want to use gpg-agent for SSH, too, add the following to
-        your session initialization
-        (e.g. <literal>displayManager.sessionCommands</literal>)
+        your session initialization (e.g.
+        <literal>displayManager.sessionCommands</literal>)
       </para>
       <programlisting>
     gpg-connect-agent /bye
@@ -670,7 +670,7 @@ export GPG_TTY
 </programlisting>
       <para>
         The <literal>gpg-agent(1)</literal> man page has more details
-        about this subject, i.e. in the &quot;EXAMPLES&quot; section.
+        about this subject, i.e. in the &quot;EXAMPLES&quot; section.
       </para>
     </listitem>
   </itemizedlist>

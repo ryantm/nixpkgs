@@ -560,7 +560,8 @@
               <literal>matrix-synapse</literal> uses postgresql by
               default instead of sqlite. Migration instructions can be
               found
-              <link xlink:href="https://github.com/matrix-org/synapse/blob/master/docs/postgres.rst#porting-from-sqlite">here</link>.
+              <link xlink:href="https://github.com/matrix-org/synapse/blob/master/docs/postgres.rst#porting-from-sqlite">
+              here </link>.
             </para>
           </listitem>
         </itemizedlist>
@@ -800,7 +801,7 @@
         <para>
           <literal>displayManager.lightdm.greeters.gtk.clock-format.</literal>
           has been added, the clock format string (as expected by
-          strftime, e.g. <literal>%H:%M</literal>) to use with the
+          strftime, e.g. <literal>%H:%M</literal>) to use with the
           lightdm gtk greeter panel.
         </para>
         <para>
@@ -818,9 +819,9 @@
           <literal>~language</literal>, <literal>~session</literal>,
           <literal>~power</literal>, <literal>~clock</literal>,
           <literal>~host</literal>, <literal>~spacer</literal>. Unity
-          indicators can be represented by short name
-          (e.g. <literal>sound</literal>, <literal>power</literal>),
-          service file name, or absolute path.
+          indicators can be represented by short name (e.g.
+          <literal>sound</literal>, <literal>power</literal>), service
+          file name, or absolute path.
         </para>
         <para>
           If set to <literal>null</literal> the default indicators are

@@ -81,9 +81,9 @@
         package sets still exist in name to aviod breaking user code,
         but these package sets don't actually contain the versions
         mandated by the corresponding LTS release. Instead, our package
-        set it loosely based on the latest available LTS release,
-        i.e. LTS 7.x at the time of this writing. New releases of NixOS
-        and Nixpkgs will drop those old names entirely.
+        set it loosely based on the latest available LTS release, i.e.
+        LTS 7.x at the time of this writing. New releases of NixOS and
+        Nixpkgs will drop those old names entirely.
         <link xlink:href="https://nixos.org/nix-dev/2016-June/020585.html">The
         motivation for this change</link> has been discussed at length
         on the <literal>nix-dev</literal> mailing list and in
@@ -114,8 +114,8 @@
         <literal>/var/empty</literal> is now immutable. Activation
         script runs <literal>chattr +i</literal> to forbid any
         modifications inside the folder. See
-        <link xlink:href="https://github.com/NixOS/nixpkgs/pull/18365">the
-        pull request</link> for what bugs this caused.
+        <link xlink:href="https://github.com/NixOS/nixpkgs/pull/18365">
+        the pull request</link> for what bugs this caused.
       </para>
     </listitem>
     <listitem>
@@ -132,8 +132,8 @@
         <literal>services.xserver.libinput.accelProfile</literal>
         default changed from <literal>flat</literal> to
         <literal>adaptive</literal>, as per
-        <link xlink:href="https://wayland.freedesktop.org/libinput/doc/latest/group__config.html#gad63796972347f318b180e322e35cee79">official
-        documentation</link>.
+        <link xlink:href="https://wayland.freedesktop.org/libinput/doc/latest/group__config.html#gad63796972347f318b180e322e35cee79">
+        official documentation</link>.
       </para>
     </listitem>
     <listitem>
@@ -247,17 +247,17 @@
       <para>
         <literal>services.xserver.startGnuPGAgent</literal> has been
         removed due to GnuPG 2.1.x bump. See
-        <link xlink:href="https://github.com/NixOS/nixpkgs/commit/5391882ebd781149e213e8817fba6ac3c503740c">how
-        to achieve similar behavior</link>. You might need to
+        <link xlink:href="https://github.com/NixOS/nixpkgs/commit/5391882ebd781149e213e8817fba6ac3c503740c">
+        how to achieve similar behavior</link>. You might need to
         <literal>pkill gpg-agent</literal> after the upgrade to prevent
         a stale agent being in the way.
       </para>
     </listitem>
     <listitem>
       <para>
-        <link xlink:href="https://github.com/NixOS/nixpkgs/commit/e561edc322d275c3687fec431935095cfc717147">Declarative
-        users could share the uid due to the bug in the script handling
-        conflict resolution.</link>
+        <link xlink:href="https://github.com/NixOS/nixpkgs/commit/e561edc322d275c3687fec431935095cfc717147">
+        Declarative users could share the uid due to the bug in the
+        script handling conflict resolution. </link>
       </para>
     </listitem>
     <listitem>

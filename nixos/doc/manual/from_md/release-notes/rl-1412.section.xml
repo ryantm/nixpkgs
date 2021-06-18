@@ -447,7 +447,7 @@
         <literal>time.timeZone</literal> in
         <literal>configuration.nix</literal>. A fairly complete list of
         possible values for that setting is available at
-        <link xlink:href="https://en.wikipedia.org/wiki/List_of_tz_database_time_zones" role="uri">https://en.wikipedia.org/wiki/List_of_tz_database_time_zones</link>.
+        <link xlink:href="https://en.wikipedia.org/wiki/List_of_tz_database_time_zones">https://en.wikipedia.org/wiki/List_of_tz_database_time_zones</link>.
       </para>
     </listitem>
     <listitem>
