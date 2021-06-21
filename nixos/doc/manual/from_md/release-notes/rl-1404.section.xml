@@ -9,7 +9,7 @@
     <listitem>
       <para>
         Installation on UEFI systems is now supported. See
-        <link linkend="sec-installation">???</link> for details.
+        <xref linkend="sec-installation" /> for details.
       </para>
     </listitem>
     <listitem>
@@ -70,8 +70,7 @@
         run a NixOS instance as a container in a NixOS host system.
         These containers are suitable for testing and experimentation
         but not production use, since they’re not fully isolated from
-        the host. See <link linkend="ch-containers">???</link> for
-        details.
+        the host. See <xref linkend="ch-containers" /> for details.
       </para>
     </listitem>
     <listitem>

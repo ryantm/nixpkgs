@@ -27,8 +27,7 @@
     <listitem>
       <para>
         Support for PXE netboot. See
-        <link linkend="sec-booting-from-pxe">???</link> for
-        documentation.
+        <xref linkend="sec-booting-from-pxe" /> for documentation.
       </para>
     </listitem>
     <listitem>

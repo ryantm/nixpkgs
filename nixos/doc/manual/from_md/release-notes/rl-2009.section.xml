@@ -248,8 +248,8 @@
               <literal>types.submodule</literal>. These allow you to
               explicitly declare a subset of options while still
               permitting definitions without an associated option. See
-              <link linkend="sec-freeform-modules">???</link> for how to
-              use them.
+              <xref linkend="sec-freeform-modules" /> for how to use
+              them.
             </para>
           </listitem>
           <listitem>
