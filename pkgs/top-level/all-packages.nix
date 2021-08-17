@@ -31826,6 +31826,8 @@ with pkgs;
 
   nixpkgs-fmt = callPackage ../tools/nix/nixpkgs-fmt { };
 
+  nixpkgs-update = callPackage ../tools/nix/nixpkgs-update { };
+
   rnix-hashes = callPackage ../tools/nix/rnix-hashes { };
 
   nixos-artwork = callPackage ../data/misc/nixos-artwork { };
