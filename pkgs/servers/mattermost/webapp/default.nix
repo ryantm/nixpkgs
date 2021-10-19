@@ -16,18 +16,16 @@ let
   webappNodePackages = import ./node {
     inherit pkgs nodejs;
     inherit (stdenv.hostPlatform) system;
-  } // {
-    pngquant-bin = webappNodePackages.pngquant-bin.override {
-      buildPhase = ''
-        cp ${pngquant}/bin/* $out/bin
-      '';
-    };
   };
 
 in
 
 webappNodePackages.package.override {
   inherit pname version src;
+
+  preRebuild = ''
+    rm -rf $out/node_modules/pngquant-bin #testing if this does anything.
+  '';
 
   nativeBuildInputs = [
     autoconf
