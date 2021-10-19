@@ -1,22 +1,46 @@
-{ lib, stdenv, fetchurl }:
+{ pkgs, lib, stdenv, nodejs, fetchFromGitHub, git, nodePackages, autoconf, libpng, pngquant, callPackage }:
 
-stdenv.mkDerivation rec {
+let
+
+  fetchNodeModules = callPackage ./fetchNodeModules.nix { };
+
   pname = "mattermost-webapp";
+
   version = "5.37.2";
 
-  src = fetchurl {
-    url = "https://releases.mattermost.com/${version}/mattermost-${version}-linux-amd64.tar.gz";
-    sha256 = "sha256-BzQVkOPo/f6O2ncQ0taS3cZkglOL+D+zBcfNYrpMgTM=";
+  src = fetchFromGitHub {
+    owner = "mattermost";
+    repo = pname;
+    rev = "v${version}";
+    sha256 = "sha256-kHvO6apDf3uKhjjiWGP2LITZPBuBpgIWHNdNAE7GR88=";
   };
 
-  installPhase = ''
-    mkdir -p $out
-    tar --strip 1 --directory $out -xf $src \
-    mattermost/client \
-    mattermost/i18n \
-    mattermost/fonts \
-    mattermost/templates \
-    mattermost/config
+  node_modules = fetchNodeModules {
+    inherit src;
+    nodejs = nodejs;
+    hash = "sha256-a6pwAMQ42QTdQodKxFz2a/7qVuwh6/GmJYHHyDJR1sU=";
+    makeTarball = false;
+    production = false;
+  };
+
+in
+
+stdenv.mkDerivation {
+  inherit pname version src;
+
+  nativeBuildInputs = [
+    nodejs
+  ];
+
+  buildPhase = ''
+    rm -rf node_modules
+    cp -r ${node_modules}/lib/node_modules node_modules
+    ls -la node_modules
+    npm run build
+  '';
+
+  postInstall = ''
+    mv dist $out
   '';
 
   meta = with lib; {
@@ -26,5 +50,4 @@ stdenv.mkDerivation rec {
     maintainers = with maintainers; [ fpletz ryantm ];
     platforms = platforms.unix;
   };
-
 }
