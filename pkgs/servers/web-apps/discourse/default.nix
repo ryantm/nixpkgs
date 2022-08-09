@@ -11,13 +11,13 @@
 }@args:
 
 let
-  version = "2.9.0.beta4";
+  version = "2.9.0.beta8";
 
   src = fetchFromGitHub {
     owner = "discourse";
     repo = "discourse";
     rev = "v${version}";
-    sha256 = "sha256-DpUEBGLgjcroVzdDG8/nGvC+ym19ZkGa7qvHKZZ1mH4=";
+    sha256 = "sha256-/VfZoaFntyGY5fp6Y/IOjfaIX3Rlt5PAPk7nGs047c0=";
   };
 
   runtimeDeps = [
@@ -161,7 +161,7 @@ let
 
   yarnOfflineCache = fetchYarnDeps {
     yarnLock = src + "/app/assets/javascripts/yarn.lock";
-    sha256 = "1l4nfc14cm42lkilsawfhdcnv1ln7m7bpan9a804abv4hwrs3f52";
+    sha256 = "00mk2ycyfw3y1qy0dkn353fk5blf5s4sqzcn815krhk0dfzbr6j1";
   };
 
   assets = stdenv.mkDerivation {
@@ -176,6 +176,8 @@ let
       yarn
       nodejs-14_x
     ];
+
+    outputs = [ "out" "node_modules" ];
 
     patches = [
       # Use the Ruby API version in the plugin gem path, to match the
@@ -252,6 +254,7 @@ let
       runHook preInstall
 
       mv public/assets $out
+      mv app/assets/javascripts/node_modules $node_modules
 
       runHook postInstall
     '';
@@ -301,7 +304,10 @@ let
       # path, not their relative state directory path. This gets rid of
       # warnings and means we don't have to link back to lib from the
       # state directory.
-      find config -type f -execdir sed -Ei "s,(\.\./)+(lib|app)/,$out/share/discourse/\2/," {} \;
+      find config -type f -name "*.rb" -execdir \
+        sed -Ei "s,(\.\./)+(lib|app)/,$out/share/discourse/\2/," {} \;
+      find config -maxdepth 1 -type f -name "*.rb" -execdir \
+        sed -Ei "s,require_relative (\"|')([[:alnum:]].*)(\"|'),require_relative '$out/share/discourse/config/\2'," {} \;
     '';
 
     buildPhase = ''
@@ -325,6 +331,7 @@ let
       ln -sf /run/discourse/assets/javascripts/plugins $out/share/discourse/app/assets/javascripts/plugins
       ln -sf /run/discourse/public $out/share/discourse/public
       ln -sf ${assets} $out/share/discourse/public.dist/assets
+      ln -sf ${assets.node_modules} $out/share/discourse/app/assets/javascripts/node_modules
       ${lib.concatMapStringsSep "\n" (p: "ln -sf ${p} $out/share/discourse/plugins/${p.pluginName or ""}") plugins}
 
       runHook postInstall
