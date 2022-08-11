@@ -177,7 +177,7 @@ let
       nodejs-14_x
     ];
 
-    outputs = [ "out" "node_modules" ];
+    outputs = [ "out" "javascripts" ];
 
     patches = [
       # Use the Ruby API version in the plugin gem path, to match the
@@ -254,7 +254,10 @@ let
       runHook preInstall
 
       mv public/assets $out
-      mv app/assets/javascripts/node_modules $node_modules
+
+      rm -r app/assets/javascripts/plugins
+      mv app/assets/javascripts $javascripts
+      ln -sf /run/discourse/assets/javascripts/plugins $javascripts/plugins
 
       runHook postInstall
     '';
@@ -328,10 +331,10 @@ let
       ln -sf /var/log/discourse $out/share/discourse/log
       ln -sf /var/lib/discourse/tmp $out/share/discourse/tmp
       ln -sf /run/discourse/config $out/share/discourse/config
-      ln -sf /run/discourse/assets/javascripts/plugins $out/share/discourse/app/assets/javascripts/plugins
       ln -sf /run/discourse/public $out/share/discourse/public
       ln -sf ${assets} $out/share/discourse/public.dist/assets
-      ln -sf ${assets.node_modules} $out/share/discourse/app/assets/javascripts/node_modules
+      rm -r $out/share/discourse/app/assets/javascripts
+      ln -sf ${assets.javascripts} $out/share/discourse/app/assets/javascripts
       ${lib.concatMapStringsSep "\n" (p: "ln -sf ${p} $out/share/discourse/plugins/${p.pluginName or ""}") plugins}
 
       runHook postInstall
