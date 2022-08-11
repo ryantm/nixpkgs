@@ -61,6 +61,7 @@ let
     , meta ? null
     , bundlerEnvArgs ? {}
     , preserveGemsDir ? false
+    , yarnOfflineCache ? null
     , src
     , ...
     }@args:
@@ -70,9 +71,26 @@ let
       });
     in
       stdenv.mkDerivation (builtins.removeAttrs args [ "bundlerEnvArgs" ] // {
+        nativeBuildInputs = lib.optionals (yarnOfflineCache != null) [
+          yarn
+        ];
         pluginName = if name != null then name else "${pname}-${version}";
         dontConfigure = true;
-        dontBuild = true;
+        preBuild = lib.optional (yarnOfflineCache != null) ''
+          # Yarn wants a real home directory to write cache, config, etc to
+          export HOME=$NIX_BUILD_TOP/fake_home
+
+          # Make yarn install packages from our offline cache, not the registry
+          yarn config --offline set yarn-offline-mirror ${yarnOfflineCache}
+
+          # Fixup "resolved"-entries in yarn.lock to match our offline cache
+          ${fixup_yarn_lock}/bin/fixup_yarn_lock yarn.lock
+
+          export SSL_CERT_FILE=${cacert}/etc/ssl/certs/ca-bundle.crt
+
+          yarn install --offline
+        '';
+        dontBuild = yarnOfflineCache == null;
         installPhase = ''
           runHook preInstall
           mkdir -p $out
