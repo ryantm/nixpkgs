@@ -10828,6 +10828,10 @@ with pkgs;
       // attrs
     );
 
+  nixos-doc-src = ../../nixos/doc/manual;
+  nixpkgs-doc-src = ../../doc;
+  nixpkgs-doc-lib-function-docs = ../../doc/doc-support/lib-function-docs.nix;
+
   nix-eval-jobs = callPackage ../tools/package-management/nix-eval-jobs {
     nixComponents = nixVersions.nixComponents_2_34;
   };
