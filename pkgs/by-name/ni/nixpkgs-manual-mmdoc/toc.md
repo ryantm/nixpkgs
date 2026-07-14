@@ -3,15 +3,18 @@
 Version 26.11pre
 
 * [](#preface)
+  * [Overview of Nixpkgs](#overview-of-nixpkgs)
 
 ## Using Nixpkgs
 
+* [](#chap-platform-support)
 * [](#chap-packageconfig)
 * [](#chap-overlays)
 * [](#chap-overrides)
 
 ## Nixpkgs Lib
 
+* [](#chap-functions)
 * Library Functions
   * [](#sec-functions-library-asserts)
   * [](#sec-functions-library-attrsets)
@@ -28,6 +31,11 @@ Version 26.11pre
   * [](#sec-functions-library-sources)
   * [](#sec-functions-library-cli)
   * [](#sec-functions-library-gvariant)
+  * [](#sec-functions-library-fetchers)
+  * [](#sec-functions-library-generators)
+  * [](#sec-functions-library-customisation)
+  * [](#sec-functions-library-meta)
+  * [](#sec-functions-library-derivations)
   * [](#sec-generators)
   * [](#sec-debug)
   * [](#sec-prefer-remote-fetch)
@@ -38,14 +46,22 @@ Version 26.11pre
 
 * [](#chap-stdenv)
 * [](#chap-meta)
+* [](#chap-passthru)
 * [](#chap-multiple-output)
 * [](#chap-cross)
 * [](#chap-platform-notes)
+
+## Toolchains
+
+* [](#part-toolchains)
+  * [](#chap-toolchains)
 
 ## Builders
 
 * [](#chap-pkgs-fetchers)
 * [](#chap-trivial-builders)
+* [](#chap-build-helpers-finalAttrs)
+* [](#chap-devShellTools)
 * [](#chap-testers)
 * [](#chap-special)
   * [](#sec-fhs-environments)
@@ -60,7 +76,7 @@ Version 26.11pre
   * [](#sec-pkgs-portableService)
   * [](#sec-make-disk-image)
   * [](#sec-pkgs-binary-cache)
-* Hooks
+* [](#chap-hooks)
   * [](#setup-hook-autoconf)
   * [](#setup-hook-automake)
   * [](#setup-hook-autopatchelfhook)
@@ -89,39 +105,56 @@ Version 26.11pre
 * [](#chap-language-support)
   * [](#agda)
   * [](#android)
+  * [](#astal)
   * [](#sec-beam)
   * [](#sec-chicken)
+  * [](#sec-language-cosmic)
   * [](#crystal)
   * [](#cuda)
   * [](#cuelang)
+  * [](#dlang)
   * [](#sec-language-dart)
   * [](#sec-language-dhall)
   * [](#dotnet)
   * [](#emscripten)
+  * [](#sec-language-factor)
   * [](#sec-language-gnome)
   * [](#sec-language-go)
+  * [](#gradle)
+  * [](#sec-language-hare)
   * [](#haskell)
   * [](#sec-language-hy)
   * [](#idris)
+  * [](#sec-idris2)
   * [](#ios)
   * [](#sec-language-java)
   * [](#language-javascript)
+  * [](#language-julia)
+  * [](#sec-language-lean4)
+  * [](#lisp)
   * [](#lua)
   * [](#maven)
+  * [](#neovim)
   * [](#sec-language-nim)
   * [](#sec-language-ocaml)
   * [](#sec-octave)
   * [](#sec-language-perl)
   * [](#sec-php)
+  * [](#sec-pkg-config)
   * [](#python)
   * [](#sec-language-qt)
   * [](#r)
+  * [](#sec-language-rocq)
   * [](#sec-language-ruby)
   * [](#rust)
+  * [](#sec-scheme)
   * [](#swift)
+  * [](#sec-language-tcl)
   * [](#sec-language-texlive)
+  * [](#typst)
   * [](#vim)
-* Packages
+* [](#chap-packages)
+  * [](#sec-build-support)
   * [](#cataclysm-dark-days-ahead)
   * [](#sec-citrix)
   * [](#dlib)
@@ -130,27 +163,50 @@ Version 26.11pre
   * [](#sec-emacs)
   * [](#sec-firefox)
   * [](#sec-fish)
+  * [](#friction-graphics)
   * [](#sec-fuse)
+  * [](#geant4)
   * [](#sec-ibus-typing-booster)
+  * [](#sec-inkscape)
   * [](#sec-kakoune)
+  * [](#sec-krita)
+  * [](#lhapdf)
   * [](#sec-linux-kernel)
   * [](#locales)
   * [](#etc)
   * [](#sec-nginx)
+  * [](#sec-nrfutil)
   * [](#sec-opengl)
+  * [](#python-tree-sitter)
   * [](#sec-shell-helpers)
   * [](#sec-steam)
+  * [](#treefmt)
   * [](#sec-urxvt)
+  * [](#sec-uv)
+  * [](#sec-vcpkg)
   * [](#sec-weechat)
+
+## Modules
+
+* [](#modules)
+  * [](#modules-generic)
+    * [meta-maintainers.nix](#modules-generic-meta-maintainers)
 
 ## Development of Nixpkgs
   * [](#sec-opening-issues)
 
-## Contributing to Nixpkgs
+## Interoperability Standards
 
-* [](#chap-quick-start)
-* [](#chap-conventions)
-* [](#chap-submitting-changes)
-* [](#chap-vulnerability-roundup)
-* [](#chap-reviewing-contributions)
-* [](#chap-contributing)
+* [](#part-interoperability)
+  * [](#chap-interop-cyclonedx)
+    * [`nix` namespace](#sec-interop.cylonedx-nix)
+    * [`nix:narinfo`](#sec-interop.cylonedx-narinfo)
+    * [`nix:fod`](#sec-interop.cylonedx-fod)
+
+## Release Notes
+
+* [](#chap-release-notes)
+  * [](#sec-nixpkgs-release-26.11)
+  * [](#sec-nixpkgs-release-26.05)
+  * [](#sec-nixpkgs-release-25.11)
+  * [](#sec-nixpkgs-release-25.05)
