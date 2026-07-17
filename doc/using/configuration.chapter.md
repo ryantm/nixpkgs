@@ -254,13 +254,6 @@ You can define a function called `packageOverrides` in your local `~/.config/nix
 
 The following attributes can be passed in [`config`](#chap-packageconfig).
 
-```{=include=} options
-id-prefix: opt-
-list-id: configuration-variable-list
-source: ../config-options.json
-```
-
-
 ## Declarative Package Management {#sec-declarative-package-management}
 
 ### Build an environment {#sec-building-environment}
