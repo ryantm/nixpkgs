@@ -15,31 +15,31 @@ Version 26.11pre
 ## Nixpkgs Lib
 
 * [](#chap-functions)
-* Library Functions
-  * [](#sec-functions-library-asserts)
-  * [](#sec-functions-library-attrsets)
-  * [](#sec-functions-library-strings)
-  * [](#sec-functions-library-versions)
-  * [](#sec-functions-library-trivial)
-  * [](#sec-functions-library-fixedPoints)
-  * [](#sec-functions-library-lists)
-  * [](#sec-functions-library-debug)
-  * [](#sec-functions-library-options)
-  * [](#sec-functions-library-path)
-  * [](#sec-functions-library-filesystem)
-  * [](#sec-functions-library-fileset)
-  * [](#sec-functions-library-sources)
-  * [](#sec-functions-library-cli)
-  * [](#sec-functions-library-gvariant)
-  * [](#sec-functions-library-fetchers)
-  * [](#sec-functions-library-generators)
-  * [](#sec-functions-library-customisation)
-  * [](#sec-functions-library-meta)
-  * [](#sec-functions-library-derivations)
-  * [](#sec-generators)
-  * [](#sec-debug)
-  * [](#sec-prefer-remote-fetch)
-  * [](#sec-pkgs-nix-gitignore)
+  * Library Functions
+    * [](#sec-functions-library-asserts)
+    * [](#sec-functions-library-attrsets)
+    * [](#sec-functions-library-strings)
+    * [](#sec-functions-library-versions)
+    * [](#sec-functions-library-trivial)
+    * [](#sec-functions-library-fixedPoints)
+    * [](#sec-functions-library-lists)
+    * [](#sec-functions-library-debug)
+    * [](#sec-functions-library-options)
+    * [](#sec-functions-library-path)
+    * [](#sec-functions-library-filesystem)
+    * [](#sec-functions-library-fileset)
+    * [](#sec-functions-library-sources)
+    * [](#sec-functions-library-cli)
+    * [](#sec-functions-library-gvariant)
+    * [](#sec-functions-library-fetchers)
+    * [](#sec-functions-library-generators)
+    * [](#sec-functions-library-customisation)
+    * [](#sec-functions-library-meta)
+    * [](#sec-functions-library-derivations)
+    * [](#sec-generators)
+    * [](#sec-debug)
+    * [](#sec-prefer-remote-fetch)
+    * [](#sec-pkgs-nix-gitignore)
 * [](#module-system)
 
 ## Standard Environment
@@ -53,8 +53,7 @@ Version 26.11pre
 
 ## Toolchains
 
-* [](#part-toolchains)
-  * [](#chap-toolchains)
+* [](#chap-toolchains)
 
 ## Builders
 
@@ -63,13 +62,13 @@ Version 26.11pre
 * [](#chap-build-helpers-finalAttrs)
 * [](#chap-devShellTools)
 * [](#chap-testers)
-* [](#chap-special)
+* Special build helpers
   * [](#sec-fhs-environments)
   * [](#sec-pkgs.makeSetupHook)
   * [](#sec-pkgs-mkShell)
   * [](#sec-darwin-builder)
   * [](#sec-vm-tools)
-* [](#chap-images)
+* Images
   * [](#sec-pkgs-appimageTools)
   * [](#sec-pkgs-dockerTools)
   * [](#sec-pkgs-ociTools)
