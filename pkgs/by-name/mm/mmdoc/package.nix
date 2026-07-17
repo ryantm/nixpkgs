@@ -22,7 +22,10 @@ stdenv.mkDerivation (finalAttrs: {
     hash = "sha256-/YtMocAJuh5Oo29QqIeXsB3VBLcGhsMjxgOCH3YXzU4=";
   };
 
-  patches = [ ./fix-duplicate-output-paths.patch ];
+  patches = [
+    ./fix-duplicate-output-paths.patch
+    ./indent-sidebar-sections.patch
+  ];
 
   nativeBuildInputs = [
     ninja
