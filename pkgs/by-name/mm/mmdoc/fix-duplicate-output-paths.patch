@@ -1,0 +1,32 @@
+diff --git a/src/multi.c b/src/multi.c
+index 1fa4f44..c12b3f3 100644
+--- a/src/multi.c
++++ b/src/multi.c
+@@ -357,7 +357,18 @@ int mmdoc_multi(Inputs inputs, AnchorLocationArray toc_anchor_locations,
+   free(final_search_index_path);
+   free(search_index_path);
+ 
+-  for (int i = 0; i < toc_anchor_locations.used; i++)
++  for (size_t i = toc_anchor_locations.used; i-- > 0;) {
++    int output_rendered_later = 0;
++    for (size_t j = i + 1; j < toc_anchor_locations.used; j++)
++      if (strcmp(toc_anchor_locations.array[i].multipage_output_file_path,
++                 toc_anchor_locations.array[j].multipage_output_file_path) ==
++          0) {
++        output_rendered_later = 1;
++        break;
++      }
++    if (output_rendered_later)
++      continue;
++
+     if (replace_file_name(
+             toc_anchor_locations.array[i].multipage_output_file_path,
+             search_index_name_offsets[i], search_index_placeholder,
+@@ -365,6 +376,7 @@ int mmdoc_multi(Inputs inputs, AnchorLocationArray toc_anchor_locations,
+       free(search_index_name_offsets);
+       return -1;
+     }
++  }
+   free(search_index_name_offsets);
+ 
+   if (has_code_blocks && asset_write_to_dir_highlight_pack_js(
