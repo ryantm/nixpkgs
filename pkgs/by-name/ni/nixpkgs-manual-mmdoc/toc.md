@@ -196,11 +196,10 @@ Version 26.11pre
 
 ## Interoperability Standards
 
-* [](#part-interoperability)
-  * [](#chap-interop-cyclonedx)
-    * [`nix` namespace](#sec-interop.cylonedx-nix)
-    * [`nix:narinfo`](#sec-interop.cylonedx-narinfo)
-    * [`nix:fod`](#sec-interop.cylonedx-fod)
+* [](#chap-interop-cyclonedx)
+  * [`nix` namespace](#sec-interop.cylonedx-nix)
+  * [`nix:narinfo`](#sec-interop.cylonedx-narinfo)
+  * [`nix:fod`](#sec-interop.cylonedx-fod)
 
 ## Release Notes
 
