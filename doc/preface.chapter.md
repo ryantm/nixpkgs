@@ -28,8 +28,8 @@ Packages, including the Nix packages collection, are distributed through
 [channels](https://nixos.org/nix/manual/#sec-channels). The collection is
 distributed for users of Nix on non-NixOS distributions through the channel
 `nixpkgs-unstable`. Users of NixOS generally use one of the `nixos-*` channels,
-e.g., `nixos-22.11`, which includes all packages and modules for the stable NixOS
-22.11. Stable NixOS releases are generally only given
+e.g., `nixos-26.05`, which includes all packages and modules for the stable NixOS
+26.05. Stable NixOS releases are generally only given
 security updates. More up-to-date packages and modules are available via the
 `nixos-unstable` channel.
 
@@ -42,9 +42,9 @@ shows the status of tests for the `nixpkgs-unstable` channel.
 
 The tests are conducted by a cluster called [Hydra](https://nixos.org/hydra/),
 which also builds binary packages from the Nix expressions in Nixpkgs for
-`x86_64-linux`, `aarch64-linux`, and `aarch64-darwin`.
+`x86_64-linux`, `aarch64-linux`, `x86_64-darwin`, and `aarch64-darwin`.
 The binaries are made available via a [binary cache](https://cache.nixos.org).
 
 The current Nix expressions of the channels are available in the
 [Nixpkgs repository](https://github.com/NixOS/nixpkgs) in branches
-that correspond to the channel names (e.g., `nixos-22.11-small`).
+that correspond to the channel names (e.g., `nixos-26.05-small`).

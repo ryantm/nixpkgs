@@ -4,6 +4,7 @@ Version 26.11pre
 
 * [](#preface)
   * [Overview of Nixpkgs](#overview-of-nixpkgs)
+* [](#chap-first-package)
 
 ## Using Nixpkgs
 
@@ -44,6 +45,7 @@ Version 26.11pre
 
 ## Standard Environment
 
+* [](#part-stdenv)
 * [](#chap-stdenv)
 * [](#chap-meta)
 * [](#chap-passthru)
@@ -57,6 +59,7 @@ Version 26.11pre
 
 ## Builders
 
+* [](#part-builders)
 * [](#chap-pkgs-fetchers)
 * [](#chap-trivial-builders)
 * [](#chap-build-helpers-finalAttrs)
@@ -64,6 +67,7 @@ Version 26.11pre
 * [](#chap-testers)
 * Special build helpers
   * [](#sec-fhs-environments)
+  * [](#sec-fakeNss)
   * [](#sec-pkgs.makeSetupHook)
   * [](#sec-pkgs-mkShell)
   * [](#sec-darwin-builder)
@@ -85,6 +89,7 @@ Version 26.11pre
   * [](#ghc)
   * [](#gnome-platform)
   * [](#installshellfiles)
+  * [](#libglycin-hooks)
   * [](#libiconv-libintl)
   * [](#setup-hook-libxml2)
   * [](#meson)
@@ -93,12 +98,14 @@ Version 26.11pre
   * [](#sec-patchRcPathHooks)
   * [](#setup-hook-perl)
   * [](#setup-hook-pkg-config)
+  * [](#pnpm-build-hook)
   * [](#sec-postgresqlTestHook)
   * [](#setup-hook-python)
   * [](#scons)
   * [](#tetex-tex-live)
   * [](#unzip)
   * [](#validatepkgconfig)
+  * [](#versioncheckhook)
   * [](#waf-hook)
   * [](#xcbuildhook)
 * [](#chap-language-support)
@@ -193,6 +200,7 @@ Version 26.11pre
 
 ## Development of Nixpkgs
   * [](#sec-opening-issues)
+  * [](#chap-conventions)
 
 ## Interoperability Standards
 

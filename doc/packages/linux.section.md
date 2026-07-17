@@ -153,4 +153,4 @@ The change gets submitted like this:
 
 No new downstream kernels are accepted into nixpkgs. That includes kernels that use the mainline
 sourcetree, but a different configuration. Kernels for extended hardware support should go
-to [nixos-hardware](github.com/NixOS/nixos-hardware) instead.
+to [nixos-hardware](https://github.com/NixOS/nixos-hardware) instead.

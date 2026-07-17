@@ -1,10 +1,17 @@
 {
   stdenvNoCC,
   lib,
+  callPackage,
   mmdoc,
   nixpkgs-manual-lib-docs,
   nixpkgs-doc-src,
 }:
+
+let
+  pythonInterpreterTable = callPackage (
+    nixpkgs-doc-src + "/doc-support/python-interpreter-table.nix"
+  ) { };
+in
 
 stdenvNoCC.mkDerivation rec {
   name = "nixpkgs-minimal-manual";
@@ -20,6 +27,9 @@ stdenvNoCC.mkDerivation rec {
     cp -r $src doc
     chmod -R u+w doc
     cp ${./toc.md} doc/toc.md
+    cp ${./favicon.svg} doc/favicon.svg
+    substituteInPlace doc/languages-frameworks/python.section.md \
+      --subst-var-by python-interpreter-table "$(<${pythonInterpreterTable})"
     mkdir -p doc/functions/library/
     cp ${nixpkgs-manual-lib-docs}/*.md doc/functions/library/
     ${mmdoc}/bin/mmdoc nixpkgs doc $out

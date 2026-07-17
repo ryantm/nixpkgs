@@ -53,9 +53,9 @@ runCommandWith :: {
 `buildCommand` (String)
 :   Shell commands to run in the derivation builder.
 
-    ::: {.note}
-    You have to create a file or directory `$out` for Nix to be able to run the builder successfully.
-    :::
+   ::: {.note}
+   You have to create a file or directory `$out` for Nix to be able to run the builder successfully.
+   :::
 
 [allowSubstitutes]: https://nix.dev/manual/nix/latest/language/advanced-attributes.html#adv-attr-allowSubstitutes
 [preferLocalBuild]: https://nix.dev/manual/nix/latest/language/advanced-attributes.html#adv-attr-preferLocalBuild
