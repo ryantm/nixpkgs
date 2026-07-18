@@ -1,0 +1,460 @@
+<!doctype html>
+<html lang='en'>
+  <head>
+    <base href='../../'>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <script>
+      (() => {
+        let theme = null
+        try { theme = localStorage.getItem('theme') } catch (error) {}
+        if (theme !== 'light' && theme !== 'dark')
+          theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+        document.documentElement.classList.add(theme + '-theme')
+      })()
+    </script>
+    <meta name='description' content='Overlays'>
+    <link rel='icon' href='favicon.svg'>
+    <link rel='stylesheet' href='a11y-dark.1fcafc9d9a306955.css'>
+    <link rel='stylesheet' href='a11y-light.b466309a7fa86b1f.css'>
+    <link rel='stylesheet' href='mmdoc.e4286053b6471af4.css'>
+    <title>Overlays | nixpkgs</title>
+  </head>
+  <body>
+  <a class='skip-link' href='using/overlays/#main-content'>Skip to main content</a>
+  <input type='checkbox' id='sidebar-checkbox' aria-hidden='true' tabindex='-1' style='display: none;'>
+  <div class='body'>
+    <div class='nav-top-container'>
+    <nav class='nav-top' aria-label='Documentation controls'>
+      <button type='button' class='sidebar-toggle' aria-label='Toggle table of contents' aria-controls='sidebar' aria-expanded='true'></button>    <button type='button' class='search-toggle' aria-label='Open search' aria-controls='search-panel' aria-expanded='false'></button>    <button type='button' class='theme-toggle' aria-label='Switch to dark theme' aria-pressed='false'></button>    <a id='chapter-previous-button' class='chapter-previous' href='using/configuration/#chap-packageconfig' title='Global configuration' aria-label='Previous: Global configuration'>&lt;</a>
+    <a id='chapter-next-button' class='chapter-next' href='using/overrides/#chap-overrides' title='Overriding' aria-label='Next: Overriding'>&gt;</a>
+    </nav>
+    </div>
+    <nav id='sidebar' class='sidebar' aria-label='Table of contents'>
+<h1>Nixpkgs Manual</h1>
+<p>Version 26.11pre</p>
+<ul>
+<li><a href="./#preface">Preface</a>
+<ul>
+<li><a href="preface/#overview-of-nixpkgs">Overview of Nixpkgs</a></li>
+</ul>
+</li>
+<li><a href="first-package/#chap-first-package">Package your first application</a></li>
+</ul>
+<h2>Using Nixpkgs</h2>
+<ul>
+<li><a href="using/platform-support/#chap-platform-support">Platform Support</a></li>
+<li><a href="using/configuration/#chap-packageconfig">Global configuration</a></li>
+<li><a href="using/overlays/#chap-overlays">Overlays</a></li>
+<li><a href="using/overrides/#chap-overrides">Overriding</a></li>
+</ul>
+<h2>Nixpkgs Lib</h2>
+<ul>
+<li><a href="functions/#chap-functions">Functions reference</a>
+<ul>
+<li>Library Functions
+<ul>
+<li><a href="functions/library/asserts/#sec-functions-library-asserts">lib.asserts: assertion functions</a></li>
+<li><a href="functions/library/attrsets/#sec-functions-library-attrsets">lib.attrsets: attribute set functions</a></li>
+<li><a href="functions/library/strings/#sec-functions-library-strings">lib.strings: string manipulation functions</a></li>
+<li><a href="functions/library/versions/#sec-functions-library-versions">lib.versions: version string functions</a></li>
+<li><a href="functions/library/trivial/#sec-functions-library-trivial">lib.trivial: miscellaneous functions</a></li>
+<li><a href="functions/library/fixedPoints/#sec-functions-library-fixedPoints">lib.fixedPoints: explicit recursion functions</a></li>
+<li><a href="functions/library/lists/#sec-functions-library-lists">lib.lists: list manipulation functions</a></li>
+<li><a href="functions/library/debug/#sec-functions-library-debug">lib.debug: debugging functions</a></li>
+<li><a href="functions/library/options/#sec-functions-library-options">lib.options: NixOS / nixpkgs option handling</a></li>
+<li><a href="functions/library/path/#sec-functions-library-path">lib.path: path functions</a></li>
+<li><a href="functions/library/filesystem/#sec-functions-library-filesystem">lib.filesystem: filesystem functions</a></li>
+<li><a href="functions/library/fileset/#sec-functions-library-fileset">lib.fileset: file set functions</a></li>
+<li><a href="functions/library/sources/#sec-functions-library-sources">lib.sources: source filtering functions</a></li>
+<li><a href="functions/library/cli/#sec-functions-library-cli">lib.cli: command-line serialization functions</a></li>
+<li><a href="functions/library/gvariant/#sec-functions-library-gvariant">lib.gvariant: GVariant formatted string serialization functions</a></li>
+<li><a href="functions/library/fetchers/#sec-functions-library-fetchers">lib.fetchers: functions which can be reused across fetchers</a></li>
+<li><a href="functions/library/generators/#sec-functions-library-generators">lib.generators: functions that create file formats from nix data structures</a></li>
+<li><a href="functions/library/customisation/#sec-functions-library-customisation">lib.customisation: Functions to customise (derivation-related) functions, derivations, or attribute sets</a></li>
+<li><a href="functions/library/meta/#sec-functions-library-meta">lib.meta: functions for derivation metadata</a></li>
+<li><a href="functions/library/derivations/#sec-functions-library-derivations">lib.derivations: miscellaneous derivation-specific functions</a></li>
+<li><a href="functions/generators/#sec-generators">Generators</a></li>
+<li><a href="functions/debug/#sec-debug">Debugging Nix Expressions</a></li>
+<li><a href="functions/prefer-remote-fetch/#sec-prefer-remote-fetch">prefer-remote-fetch overlay</a></li>
+<li><a href="functions/nix-gitignore/#sec-pkgs-nix-gitignore">pkgs.nix-gitignore</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="module-system/module-system/#module-system">Module System</a></li>
+</ul>
+<h2>Standard Environment</h2>
+<ul>
+<li><a href="stdenv/#part-stdenv">Standard environment</a></li>
+<li><a href="stdenv/stdenv/#chap-stdenv">The Standard Environment</a></li>
+<li><a href="stdenv/meta/#chap-meta">Meta-attributes</a></li>
+<li><a href="stdenv/passthru/#chap-passthru">Passthru-attributes</a></li>
+<li><a href="stdenv/multiple-output/#chap-multiple-output">Multiple-output packages</a></li>
+<li><a href="stdenv/cross-compilation/#chap-cross">Cross-compilation</a></li>
+<li><a href="stdenv/platform-notes/#chap-platform-notes">Platform Notes</a></li>
+</ul>
+<h2>Toolchains</h2>
+<ul>
+<li><a href="toolchains/llvm/#chap-toolchains">The LLVM Toolchain</a></li>
+</ul>
+<h2>Builders</h2>
+<ul>
+<li><a href="build-helpers/#part-builders">Build helpers</a></li>
+<li><a href="build-helpers/fetchers/#chap-pkgs-fetchers">Fetchers</a></li>
+<li><a href="build-helpers/trivial-build-helpers/#chap-trivial-builders">Trivial build helpers</a></li>
+<li><a href="build-helpers/fixed-point-arguments/#chap-build-helpers-finalAttrs">Fixed-point arguments of build helpers</a></li>
+<li><a href="build-helpers/dev-shell-tools/#chap-devShellTools">Development Shell helpers</a></li>
+<li><a href="build-helpers/testers/#chap-testers">Testers</a></li>
+<li>Special build helpers
+<ul>
+<li><a href="build-helpers/special/fhs-environments/#sec-fhs-environments">buildFHSEnv</a></li>
+<li><a href="build-helpers/special/fakenss/#sec-fakeNss">fakeNss</a></li>
+<li><a href="build-helpers/special/makesetuphook/#sec-pkgs.makeSetupHook">pkgs.makeSetupHook</a></li>
+<li><a href="build-helpers/special/mkshell/#sec-pkgs-mkShell">pkgs.mkShell</a></li>
+<li><a href="packages/darwin-builder/#sec-darwin-builder">darwin.linux-builder</a></li>
+<li><a href="build-helpers/special/vm-tools/#sec-vm-tools">vmTools</a></li>
+</ul>
+</li>
+<li>Images
+<ul>
+<li><a href="build-helpers/images/appimagetools/#sec-pkgs-appimageTools">pkgs.appimageTools</a></li>
+<li><a href="build-helpers/images/dockertools/#sec-pkgs-dockerTools">pkgs.dockerTools</a></li>
+<li><a href="build-helpers/images/ocitools/#sec-pkgs-ociTools">pkgs.ociTools</a></li>
+<li><a href="build-helpers/images/portableservice/#sec-pkgs-portableService">pkgs.portableService</a></li>
+<li><a href="build-helpers/images/makediskimage/#sec-make-disk-image">&lt;nixpkgs/nixos/lib/make-disk-image.nix&gt;</a></li>
+<li><a href="build-helpers/images/binarycache/#sec-pkgs-binary-cache">pkgs.mkBinaryCache</a></li>
+</ul>
+</li>
+<li><a href="hooks/index/#chap-hooks">Hooks reference</a>
+<ul>
+<li><a href="hooks/autoconf/#setup-hook-autoconf">Autoconf</a></li>
+<li><a href="hooks/automake/#setup-hook-automake">Automake</a></li>
+<li><a href="hooks/autopatchelf/#setup-hook-autopatchelfhook">autoPatchelfHook</a></li>
+<li><a href="hooks/breakpoint/#breakpointhook">breakpointHook</a></li>
+<li><a href="hooks/cmake/#cmake">cmake</a></li>
+<li><a href="hooks/gdk-pixbuf/#setup-hook-gdk-pixbuf">gdk-pixbuf</a></li>
+<li><a href="hooks/ghc/#ghc">GHC</a></li>
+<li><a href="hooks/gnome/#gnome-platform">GNOME platform</a></li>
+<li><a href="hooks/installShellFiles/#installshellfiles">installShellFiles</a></li>
+<li><a href="hooks/libglycin/#libglycin-hooks">libglycin</a></li>
+<li><a href="hooks/libiconv/#libiconv-libintl">libiconv, libintl</a></li>
+<li><a href="hooks/libxml2/#setup-hook-libxml2">libxml2</a></li>
+<li><a href="hooks/meson/#meson">Meson</a></li>
+<li><a href="hooks/mpi-check-hook/#setup-hook-mpi-check">mpiCheckPhaseHook</a></li>
+<li><a href="hooks/ninja/#ninja">ninja</a></li>
+<li><a href="hooks/patch-rc-path-hooks/#sec-patchRcPathHooks">patchRcPath hooks</a></li>
+<li><a href="hooks/perl/#setup-hook-perl">Perl</a></li>
+<li><a href="hooks/pkg-config/#setup-hook-pkg-config">pkg-config</a></li>
+<li><a href="hooks/pnpm/#pnpm-build-hook">pnpmBuildHook</a></li>
+<li><a href="hooks/postgresql-test-hook/#sec-postgresqlTestHook">postgresqlTestHook</a></li>
+<li><a href="hooks/python/#setup-hook-python">Python</a></li>
+<li><a href="hooks/scons/#scons">scons</a></li>
+<li><a href="hooks/tetex-tex-live/#tetex-tex-live">teTeX / TeX Live</a></li>
+<li><a href="hooks/unzip/#unzip">unzip</a></li>
+<li><a href="hooks/validatePkgConfig/#validatepkgconfig">validatePkgConfig</a></li>
+<li><a href="hooks/versionCheckHook/#versioncheckhook">versionCheckHook</a></li>
+<li><a href="hooks/waf/#waf-hook">wafHook</a></li>
+<li><a href="hooks/xcbuild/#xcbuildhook">xcbuildHook</a></li>
+</ul>
+</li>
+<li><a href="languages-frameworks/index/#chap-language-support">Languages and frameworks</a>
+<ul>
+<li><a href="languages-frameworks/agda/#agda">Agda</a></li>
+<li><a href="languages-frameworks/android/#android">Android</a></li>
+<li><a href="languages-frameworks/astal/#astal">Astal</a></li>
+<li><a href="languages-frameworks/beam/#sec-beam">BEAM Languages (Erlang, Elixir &amp; LFE)</a></li>
+<li><a href="languages-frameworks/chicken/#sec-chicken">CHICKEN</a></li>
+<li><a href="languages-frameworks/cosmic/#sec-language-cosmic">COSMIC</a></li>
+<li><a href="languages-frameworks/crystal/#crystal">Crystal</a></li>
+<li><a href="languages-frameworks/cuda/#cuda">CUDA</a></li>
+<li><a href="languages-frameworks/cuelang/#cuelang">Cue (Cuelang)</a></li>
+<li><a href="languages-frameworks/dlang/#dlang">D (Dlang)</a></li>
+<li><a href="languages-frameworks/dart/#sec-language-dart">Dart</a></li>
+<li><a href="languages-frameworks/dhall/#sec-language-dhall">Dhall</a></li>
+<li><a href="languages-frameworks/dotnet/#dotnet">Dotnet</a></li>
+<li><a href="languages-frameworks/emscripten/#emscripten">Emscripten</a></li>
+<li><a href="languages-frameworks/factor/#sec-language-factor">Factor</a></li>
+<li><a href="languages-frameworks/gnome/#sec-language-gnome">GNOME</a></li>
+<li><a href="languages-frameworks/go/#sec-language-go">Go</a></li>
+<li><a href="languages-frameworks/gradle/#gradle">Gradle</a></li>
+<li><a href="languages-frameworks/hare/#sec-language-hare">Hare</a></li>
+<li><a href="languages-frameworks/haskell/#haskell">Haskell</a></li>
+<li><a href="languages-frameworks/hy/#sec-language-hy">Hy</a></li>
+<li><a href="languages-frameworks/idris/#idris">Idris</a></li>
+<li><a href="languages-frameworks/idris2/#sec-idris2">Idris2</a></li>
+<li><a href="languages-frameworks/ios/#ios">iOS</a></li>
+<li><a href="languages-frameworks/java/#sec-language-java">Java</a></li>
+<li><a href="languages-frameworks/javascript/#language-javascript">Javascript</a></li>
+<li><a href="languages-frameworks/julia/#language-julia">Julia</a></li>
+<li><a href="languages-frameworks/lean4/#sec-language-lean4">Lean 4</a></li>
+<li><a href="languages-frameworks/lisp/#lisp">lisp-modules</a></li>
+<li><a href="languages-frameworks/lua/#lua">Lua</a></li>
+<li><a href="languages-frameworks/maven/#maven">Maven</a></li>
+<li><a href="languages-frameworks/neovim/#neovim">Neovim</a></li>
+<li><a href="languages-frameworks/nim/#sec-language-nim">Nim</a></li>
+<li><a href="languages-frameworks/ocaml/#sec-language-ocaml">OCaml</a></li>
+<li><a href="languages-frameworks/octave/#sec-octave">Octave</a></li>
+<li><a href="languages-frameworks/perl/#sec-language-perl">Perl</a></li>
+<li><a href="languages-frameworks/php/#sec-php">PHP</a></li>
+<li><a href="languages-frameworks/pkg-config/#sec-pkg-config">pkg-config</a></li>
+<li><a href="languages-frameworks/python/#python">Python</a></li>
+<li><a href="languages-frameworks/qt/#sec-language-qt">Qt</a></li>
+<li><a href="languages-frameworks/r/#r">R</a></li>
+<li><a href="languages-frameworks/rocq/#sec-language-rocq">Rocq and rocq packages</a></li>
+<li><a href="languages-frameworks/ruby/#sec-language-ruby">Ruby</a></li>
+<li><a href="languages-frameworks/rust/#rust">Rust</a></li>
+<li><a href="languages-frameworks/scheme/#sec-scheme">Scheme</a></li>
+<li><a href="languages-frameworks/swift/#swift">Swift</a></li>
+<li><a href="languages-frameworks/tcl/#sec-language-tcl">Tcl</a></li>
+<li><a href="languages-frameworks/texlive/#sec-language-texlive">TeX Live</a></li>
+<li><a href="languages-frameworks/typst/#typst">Typst</a></li>
+<li><a href="languages-frameworks/vim/#vim">Vim</a></li>
+</ul>
+</li>
+<li><a href="packages/index/#chap-packages">Packages</a>
+<ul>
+<li><a href="packages/build-support/#sec-build-support">Build Support</a></li>
+<li><a href="packages/cataclysm-dda/#cataclysm-dark-days-ahead">Cataclysm: Dark Days Ahead</a></li>
+<li><a href="packages/citrix/#sec-citrix">Citrix Workspace</a></li>
+<li><a href="packages/dlib/#dlib">DLib</a></li>
+<li><a href="packages/eclipse/#sec-eclipse">Eclipse</a></li>
+<li><a href="packages/elm/#sec-elm">Elm</a></li>
+<li><a href="packages/emacs/#sec-emacs">Emacs</a></li>
+<li><a href="packages/firefox/#sec-firefox">Firefox</a></li>
+<li><a href="packages/fish/#sec-fish">Fish</a></li>
+<li><a href="packages/friction-graphics/#friction-graphics">Friction</a></li>
+<li><a href="packages/fuse/#sec-fuse">FUSE</a></li>
+<li><a href="packages/geant4/#geant4">Geant4</a></li>
+<li><a href="packages/ibus/#sec-ibus-typing-booster">ibus-engines.typing-booster</a></li>
+<li><a href="packages/inkscape/#sec-inkscape">Inkscape</a></li>
+<li><a href="packages/kakoune/#sec-kakoune">Kakoune</a></li>
+<li><a href="packages/krita/#sec-krita">Krita</a></li>
+<li><a href="packages/lhapdf/#lhapdf">LHAPDF</a></li>
+<li><a href="packages/linux/#sec-linux-kernel">Linux kernel</a></li>
+<li><a href="packages/locales/#locales">Locales</a></li>
+<li><a href="packages/etc-files/#etc">/etc files</a></li>
+<li><a href="packages/nginx/#sec-nginx">Nginx</a></li>
+<li><a href="packages/nrfutil/#sec-nrfutil">nrfutil</a></li>
+<li><a href="packages/opengl/#sec-opengl">OpenGL</a></li>
+<li><a href="packages/python-tree-sitter/#python-tree-sitter">Python Tree Sitter</a></li>
+<li><a href="packages/shell-helpers/#sec-shell-helpers">Interactive shell helpers</a></li>
+<li><a href="packages/steam/#sec-steam">Steam</a></li>
+<li><a href="packages/treefmt/#treefmt">treefmt</a></li>
+<li><a href="packages/urxvt/#sec-urxvt">Urxvt</a></li>
+<li><a href="packages/uv/#sec-uv">uv</a></li>
+<li><a href="packages/vcpkg/#sec-vcpkg">VCPKG</a></li>
+<li><a href="packages/weechat/#sec-weechat">WeeChat</a></li>
+</ul>
+</li>
+</ul>
+<h2>Modules</h2>
+<ul>
+<li><a href="modules/index/#modules">Modules</a>
+<ul>
+<li><a href="modules/generic/#modules-generic">Generic</a>
+<ul>
+<li><a href="modules/generic/#modules-generic-meta-maintainers">meta-maintainers.nix</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2>Development of Nixpkgs</h2>
+<ul>
+<li><a href="development/opening-issues/#sec-opening-issues">Opening issues</a></li>
+<li><a href="contributing/coding-conventions/#chap-conventions">Coding conventions</a></li>
+</ul>
+<h2>Interoperability Standards</h2>
+<ul>
+<li><a href="interoperability/cyclonedx/#chap-interop-cyclonedx">CycloneDX</a>
+<ul>
+<li><a href="interoperability/cyclonedx/#sec-interop.cylonedx-nix"><code>nix</code> namespace</a></li>
+<li><a href="interoperability/cyclonedx/#sec-interop.cylonedx-narinfo"><code>nix:narinfo</code></a></li>
+<li><a href="interoperability/cyclonedx/#sec-interop.cylonedx-fod"><code>nix:fod</code></a></li>
+</ul>
+</li>
+</ul>
+<h2>Release Notes</h2>
+<ul>
+<li><a href="release-notes/release-notes/#chap-release-notes">Release Notes</a>
+<ul>
+<li><a href="release-notes/rl-2611/#sec-nixpkgs-release-26.11">Nixpkgs 26.11 (&quot;Zokor&quot;, 2026.11/??)</a></li>
+<li><a href="release-notes/rl-2605/#sec-nixpkgs-release-26.05">Nixpkgs 26.05 (&quot;Yarara&quot;, 2026.05/30)</a></li>
+<li><a href="release-notes/rl-2511/#sec-nixpkgs-release-25.11">Nixpkgs 25.11 (&quot;Xantusia&quot;, 2025.11/30)</a></li>
+<li><a href="release-notes/rl-2505/#sec-nixpkgs-release-25.05">Nixpkgs 25.05 (2025.05/23)</a></li>
+</ul>
+</li>
+</ul>
+    </nav>
+    <section id='main'>
+      <div id='search-panel' class='nav-search' role='search' hidden>
+        <label class='visually-hidden' for='search'>Search documentation</label>
+        <input type='search' id='search' placeholder='Search' autocomplete='off' aria-controls='search-results'>
+        <p id='search-status' class='visually-hidden' role='status' aria-live='polite'></p>
+        <div id='search-results'></div>
+      </div>
+      <div class='main-scroll'>
+        <main id='main-content' tabindex='-1'>
+<h1 id='chap-overlays'><a href='using/overlays/#chap-overlays'>
+Overlays
+</a></h1>
+<p>This chapter describes how to extend and change Nixpkgs using overlays.  Overlays are used to add layers in the fixed-point used by Nixpkgs to compose the set of all packages.</p>
+<p>Nixpkgs can be configured with a list of overlays, which are applied in order. This means that the order of the overlays can be significant if multiple layers override the same package.</p>
+<h2 id='sec-overlays-install'><a href='using/overlays/#sec-overlays-install'>
+Installing overlays
+</a></h2>
+<p>The list of overlays can be set either explicitly in a Nix expression, or through <code>&lt;nixpkgs-overlays&gt;</code> or user configuration files.</p>
+<h3 id='sec-overlays-argument'><a href='using/overlays/#sec-overlays-argument'>
+Set overlays in NixOS or Nix expressions
+</a></h3>
+<p>On a NixOS system the value of the <code>nixpkgs.overlays</code> option, if present, is passed to the system Nixpkgs directly as an argument. Note that this does not affect the overlays for non-NixOS operations (e.g.  <code>nix-env</code>), which are <a href="using/overlays/#sec-overlays-lookup">looked up</a> independently.</p>
+<p>The list of overlays can be passed explicitly when importing nixpkgs, for example <code>import &lt;nixpkgs&gt; { overlays = [ overlay1 overlay2 ]; }</code>.</p>
+<p>NOTE: DO NOT USE THIS in nixpkgs. Further overlays can be added by calling the <code>pkgs.extend</code> or <code>pkgs.appendOverlays</code>, although it is often preferable to avoid these functions, because they recompute the Nixpkgs fixpoint, which is somewhat expensive to do.</p>
+<h3 id='sec-overlays-lookup'><a href='using/overlays/#sec-overlays-lookup'>
+Install overlays via configuration lookup
+</a></h3>
+<p>The list of overlays is determined as follows.</p>
+<ol>
+<li>
+<p>First, if an <a href="using/overlays/#sec-overlays-argument"><code>overlays</code> argument</a> to the Nixpkgs function itself is given, then that is used and no path lookup will be performed.</p>
+</li>
+<li>
+<p>Otherwise, if the Nix path entry <code>&lt;nixpkgs-overlays&gt;</code> exists, we look for overlays at that path, as described below.</p>
+<p>See the <a href="https://nixos.org/manual/nix/stable/command-ref/env-common.html#env-NIX_PATH">section on <code>NIX_PATH</code></a> in the Nix manual for more details on how to set a value for <code>&lt;nixpkgs-overlays&gt;.</code></p>
+</li>
+<li>
+<p>If one of <code>~/.config/nixpkgs/overlays.nix</code> and <code>~/.config/nixpkgs/overlays/</code> exists, then we look for overlays at that path, as described below. It is an error if both exist.</p>
+</li>
+</ol>
+<p>If we are looking for overlays at a path, then there are two cases:</p>
+<ul>
+<li>
+<p>If the path is a file, then the file is imported as a Nix expression and used as the list of overlays.</p>
+</li>
+<li>
+<p>If the path is a directory, then we take the content of the directory, order it lexicographically, and attempt to interpret each as an overlay by:</p>
+<ul>
+<li>
+<p>Importing the file, if it is a <code>.nix</code> file.</p>
+</li>
+<li>
+<p>Importing a top-level <code>default.nix</code> file, if it is a directory.</p>
+</li>
+</ul>
+</li>
+</ul>
+<p>Because overlays that are set in NixOS configuration do not affect non-NixOS operations such as <code>nix-env</code>, the <code>overlays.nix</code> option provides a convenient way to use the same overlays for a NixOS system configuration and user configuration: the same file can be used as <code>overlays.nix</code> and imported as the value of <code>nixpkgs.overlays</code>.</p>
+<h2 id='sec-overlays-definition'><a href='using/overlays/#sec-overlays-definition'>
+Defining overlays
+</a></h2>
+<p>Overlays are Nix functions which accept two arguments, conventionally called either <code>final</code> and <code>prev</code> in newer code or <code>self</code> and <code>super</code> in older code, and return a set of packages. For example, the following is a valid overlay.</p>
+<pre><code class="language-nix">final: prev:
+
+{
+  boost = prev.boost.override { python = final.python3; };
+  rr = prev.callPackage ./pkgs/rr { stdenv = final.stdenv_32bit; };
+}
+</code></pre>
+<p>The first argument (<code>final</code>, <code>self</code>) corresponds to the final package set. You should use this set for the dependencies of all packages specified in your overlay. For example, all the dependencies of <code>rr</code> in the example above come from <code>final</code>, as well as the overridden dependencies used in the <code>boost</code> override.</p>
+<p>The second argument (<code>prev</code>, <code>super</code>) corresponds to the result of the evaluation of the previous stages of Nixpkgs. It does not contain any of the packages added by the current overlay, nor any of the following overlays. This set should be used either to refer to packages you wish to override, or to access functions defined in Nixpkgs. For example, the original recipe of <code>boost</code> in the above example, comes from <code>prev</code>, as well as the <code>callPackage</code> function.</p>
+<p>The value returned by this function should be a set similar to <code>pkgs/top-level/all-packages.nix</code>, containing overridden and/or new packages.</p>
+<p>Overlays are similar to other methods for customizing Nixpkgs, in particular the <code>packageOverrides</code> attribute described in <a href="using/configuration/#sec-modify-via-packageOverrides">Global configuration</a>. Indeed, <code>packageOverrides</code> acts as an overlay with only the <code>prev</code> argument. It is therefore appropriate for basic use, but overlays are more powerful and easier to distribute.</p>
+<h2 id='sec-overlays-alternatives'><a href='using/overlays/#sec-overlays-alternatives'>
+Using overlays to configure alternatives
+</a></h2>
+<p>Certain software packages have different implementations of the same interface. Other distributions have functionality to switch between these. For example, Debian provides <a href="https://wiki.debian.org/DebianAlternatives">DebianAlternatives</a>.  Nixpkgs has what we call <code>alternatives</code>, which are configured through overlays.</p>
+<h3 id='sec-overlays-alternatives-blas-lapack'><a href='using/overlays/#sec-overlays-alternatives-blas-lapack'>
+BLAS/LAPACK
+</a></h3>
+<p>In Nixpkgs, we have multiple implementations of the BLAS/LAPACK numerical linear algebra interfaces. They are:</p>
+<ul>
+<li>
+<p><a href="https://www.openblas.net/">OpenBLAS</a></p>
+<p>The Nixpkgs attribute is <code>openblas</code> for ILP64 (integer width = 64 bits) and <code>openblasCompat</code> for LP64 (integer width = 32 bits).  <code>openblasCompat</code> is the default.</p>
+</li>
+<li>
+<p><a href="https://www.netlib.org/lapack/">LAPACK reference</a> (also provides BLAS and CBLAS)</p>
+<p>The Nixpkgs attribute is <code>lapack-reference</code>.</p>
+</li>
+<li>
+<p><a href="https://software.intel.com/en-us/mkl">Intel MKL</a> (only works on the x86_64 architecture, unfree)</p>
+<p>The Nixpkgs attribute is <code>mkl</code>.</p>
+</li>
+<li>
+<p><a href="https://github.com/flame/blis">BLIS</a></p>
+<p>BLIS, available through the attribute <code>blis</code>, is a framework for linear algebra kernels. In addition, it implements the BLAS interface.</p>
+</li>
+<li>
+<p><a href="https://developer.amd.com/amd-aocl/blas-library/">AMD BLIS/LIBFLAME</a> (optimized for modern AMD x86_64 CPUs)</p>
+<p>The AMD fork of the BLIS library, with attribute <code>amd-blis</code>, extends BLIS with optimizations for modern AMD CPUs. The changes are usually submitted to the upstream BLIS project after some time. However, AMD BLIS typically provides some performance improvements on AMD Zen CPUs. The complementary AMD LIBFLAME library, with attribute <code>amd-libflame</code>, provides a LAPACK implementation.</p>
+</li>
+</ul>
+<p>Introduced in <a href="https://github.com/NixOS/nixpkgs/pull/83888">PR #83888</a>, we are able to override the <code>blas</code> and <code>lapack</code> packages to use different implementations, through the <code>blasProvider</code> and <code>lapackProvider</code> argument. This can be used to select a different provider. BLAS providers will have symlinks in <code>$out/lib/libblas.so.3</code> and <code>$out/lib/libcblas.so.3</code> to their respective BLAS libraries.  Likewise, LAPACK providers will have symlinks in <code>$out/lib/liblapack.so.3</code> and <code>$out/lib/liblapacke.so.3</code> to their respective LAPACK libraries. For example, Intel MKL is both a BLAS and LAPACK provider. An overlay can be created to use Intel MKL that looks like:</p>
+<pre><code class="language-nix">final: prev:
+
+{
+  blas = prev.blas.override { blasProvider = final.mkl; };
+
+  lapack = prev.lapack.override { lapackProvider = final.mkl; };
+}
+</code></pre>
+<p>This overlay uses Intel's MKL library for both BLAS and LAPACK interfaces. Note that the same can be accomplished at runtime using <code>LD_LIBRARY_PATH</code> of <code>libblas.so.3</code> and <code>liblapack.so.3</code>. For instance:</p>
+<pre><code class="language-ShellSession">$ LD_LIBRARY_PATH=$(nix-build -A mkl)/lib${LD_LIBRARY_PATH:+:}$LD_LIBRARY_PATH nix-shell -p octave --run octave
+</code></pre>
+<p>Intel MKL requires an <code>openmp</code> implementation when running with multiple processors. By default, <code>mkl</code> will use Intel's <code>iomp</code> implementation if no other is specified, but this is a runtime-only dependency and binary compatible with the LLVM implementation. To use that one instead, Intel recommends users set it with <code>LD_PRELOAD</code>. Note that <code>mkl</code> is only available on <code>x86_64-linux</code> and <code>x86_64-darwin</code>. Moreover, Hydra is not building and distributing pre-compiled binaries using it.</p>
+<p>To override <code>blas</code> and <code>lapack</code> with its reference implementations (i.e. for development purposes), one can use the following overlay:</p>
+<pre><code class="language-nix">final: prev:
+
+{
+  blas = prev.blas.override { blasProvider = final.lapack-reference; };
+
+  lapack = prev.lapack.override { lapackProvider = final.lapack-reference; };
+}
+</code></pre>
+<p>For BLAS/LAPACK switching to work correctly, all packages must depend on <code>blas</code> or <code>lapack</code>. This ensures that only one BLAS/LAPACK library is used at one time. There are two versions of BLAS/LAPACK currently in the wild, <code>LP64</code> (integer size = 32 bits) and <code>ILP64</code> (integer size = 64 bits). The attributes <code>blas</code> and <code>lapack</code> are <code>LP64</code> by default. Their <code>ILP64</code> version are provided through the attributes <code>blas-ilp64</code> and <code>lapack-ilp64</code>. Some software needs special flags or patches to work with <code>ILP64</code>. You can check if <code>ILP64</code> is used in Nixpkgs with <code>blas.isILP64</code> and <code>lapack.isILP64</code>. Some software does NOT work with <code>ILP64</code>, and derivations need to specify an assertion to prevent this. You can prevent <code>ILP64</code> from being used with the following:</p>
+<pre><code class="language-nix">{
+  stdenv,
+  blas,
+  lapack,
+  ...
+}:
+
+assert (!blas.isILP64) &amp;&amp; (!lapack.isILP64);
+
+stdenv.mkDerivation {
+  # ...
+}
+</code></pre>
+<h3 id='sec-overlays-alternatives-mpi'><a href='using/overlays/#sec-overlays-alternatives-mpi'>
+Switching the MPI implementation
+</a></h3>
+<p>All programs that are built with <a href="https://en.wikipedia.org/wiki/Message_Passing_Interface">MPI</a> support use the generic attribute <code>mpi</code> as an input. At the moment Nixpkgs natively provides the following MPI implementations:</p>
+<ul>
+<li>
+<p><a href="https://www.open-mpi.org/">Open MPI</a> (default), attribute name
+<code>openmpi</code></p>
+</li>
+<li>
+<p><a href="https://www.mpich.org/">MPICH</a>, attribute name <code>mpich</code></p>
+</li>
+<li>
+<p><a href="https://mvapich.cse.ohio-state.edu/">MVAPICH</a>, attribute name <code>mvapich</code></p>
+</li>
+</ul>
+<p>To provide MPI enabled applications that use <code>MPICH</code>, instead of the default <code>Open MPI</code>, use the following overlay:</p>
+<pre><code class="language-nix">final: prev:
+
+{
+  mpi = final.mpich;
+}
+</code></pre>
+        </main>
+      </div>
+    </section>
+<script defer src='highlight.pack.cf986678470772f7.js'></script>
+<script defer src='mmdoc.367f3e8986e40416.js'></script>
+<script defer src='mmdoc_search.a5b6fc7d7512cdc1.js' data-search-index='search_index.b3afff10081eb0bd.js' data-fuse='fuse.basic.min.bb997c989fa0a28e.js'></script>
+  </div>
+  </body>
+</html>

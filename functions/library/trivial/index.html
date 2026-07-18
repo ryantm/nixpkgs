@@ -1,0 +1,1455 @@
+<!doctype html>
+<html lang='en'>
+  <head>
+    <base href='../../../'>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <script>
+      (() => {
+        let theme = null
+        try { theme = localStorage.getItem('theme') } catch (error) {}
+        if (theme !== 'light' && theme !== 'dark')
+          theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+        document.documentElement.classList.add(theme + '-theme')
+      })()
+    </script>
+    <meta name='description' content='lib.trivial: miscellaneous functions'>
+    <link rel='icon' href='favicon.svg'>
+    <link rel='stylesheet' href='a11y-dark.1fcafc9d9a306955.css'>
+    <link rel='stylesheet' href='a11y-light.b466309a7fa86b1f.css'>
+    <link rel='stylesheet' href='mmdoc.e4286053b6471af4.css'>
+    <title>lib.trivial: miscellaneous functions | nixpkgs</title>
+  </head>
+  <body>
+  <a class='skip-link' href='functions/library/trivial/#main-content'>Skip to main content</a>
+  <input type='checkbox' id='sidebar-checkbox' aria-hidden='true' tabindex='-1' style='display: none;'>
+  <div class='body'>
+    <div class='nav-top-container'>
+    <nav class='nav-top' aria-label='Documentation controls'>
+      <button type='button' class='sidebar-toggle' aria-label='Toggle table of contents' aria-controls='sidebar' aria-expanded='true'></button>    <button type='button' class='search-toggle' aria-label='Open search' aria-controls='search-panel' aria-expanded='false'></button>    <button type='button' class='theme-toggle' aria-label='Switch to dark theme' aria-pressed='false'></button>    <a id='chapter-previous-button' class='chapter-previous' href='functions/library/versions/#sec-functions-library-versions' title='lib.versions: version string functions' aria-label='Previous: lib.versions: version string functions'>&lt;</a>
+    <a id='chapter-next-button' class='chapter-next' href='functions/library/fixedPoints/#sec-functions-library-fixedPoints' title='lib.fixedPoints: explicit recursion functions' aria-label='Next: lib.fixedPoints: explicit recursion functions'>&gt;</a>
+    </nav>
+    </div>
+    <nav id='sidebar' class='sidebar' aria-label='Table of contents'>
+<h1>Nixpkgs Manual</h1>
+<p>Version 26.11pre</p>
+<ul>
+<li><a href="./#preface">Preface</a>
+<ul>
+<li><a href="preface/#overview-of-nixpkgs">Overview of Nixpkgs</a></li>
+</ul>
+</li>
+<li><a href="first-package/#chap-first-package">Package your first application</a></li>
+</ul>
+<h2>Using Nixpkgs</h2>
+<ul>
+<li><a href="using/platform-support/#chap-platform-support">Platform Support</a></li>
+<li><a href="using/configuration/#chap-packageconfig">Global configuration</a></li>
+<li><a href="using/overlays/#chap-overlays">Overlays</a></li>
+<li><a href="using/overrides/#chap-overrides">Overriding</a></li>
+</ul>
+<h2>Nixpkgs Lib</h2>
+<ul>
+<li><a href="functions/#chap-functions">Functions reference</a>
+<ul>
+<li>Library Functions
+<ul>
+<li><a href="functions/library/asserts/#sec-functions-library-asserts">lib.asserts: assertion functions</a></li>
+<li><a href="functions/library/attrsets/#sec-functions-library-attrsets">lib.attrsets: attribute set functions</a></li>
+<li><a href="functions/library/strings/#sec-functions-library-strings">lib.strings: string manipulation functions</a></li>
+<li><a href="functions/library/versions/#sec-functions-library-versions">lib.versions: version string functions</a></li>
+<li><a href="functions/library/trivial/#sec-functions-library-trivial">lib.trivial: miscellaneous functions</a></li>
+<li><a href="functions/library/fixedPoints/#sec-functions-library-fixedPoints">lib.fixedPoints: explicit recursion functions</a></li>
+<li><a href="functions/library/lists/#sec-functions-library-lists">lib.lists: list manipulation functions</a></li>
+<li><a href="functions/library/debug/#sec-functions-library-debug">lib.debug: debugging functions</a></li>
+<li><a href="functions/library/options/#sec-functions-library-options">lib.options: NixOS / nixpkgs option handling</a></li>
+<li><a href="functions/library/path/#sec-functions-library-path">lib.path: path functions</a></li>
+<li><a href="functions/library/filesystem/#sec-functions-library-filesystem">lib.filesystem: filesystem functions</a></li>
+<li><a href="functions/library/fileset/#sec-functions-library-fileset">lib.fileset: file set functions</a></li>
+<li><a href="functions/library/sources/#sec-functions-library-sources">lib.sources: source filtering functions</a></li>
+<li><a href="functions/library/cli/#sec-functions-library-cli">lib.cli: command-line serialization functions</a></li>
+<li><a href="functions/library/gvariant/#sec-functions-library-gvariant">lib.gvariant: GVariant formatted string serialization functions</a></li>
+<li><a href="functions/library/fetchers/#sec-functions-library-fetchers">lib.fetchers: functions which can be reused across fetchers</a></li>
+<li><a href="functions/library/generators/#sec-functions-library-generators">lib.generators: functions that create file formats from nix data structures</a></li>
+<li><a href="functions/library/customisation/#sec-functions-library-customisation">lib.customisation: Functions to customise (derivation-related) functions, derivations, or attribute sets</a></li>
+<li><a href="functions/library/meta/#sec-functions-library-meta">lib.meta: functions for derivation metadata</a></li>
+<li><a href="functions/library/derivations/#sec-functions-library-derivations">lib.derivations: miscellaneous derivation-specific functions</a></li>
+<li><a href="functions/generators/#sec-generators">Generators</a></li>
+<li><a href="functions/debug/#sec-debug">Debugging Nix Expressions</a></li>
+<li><a href="functions/prefer-remote-fetch/#sec-prefer-remote-fetch">prefer-remote-fetch overlay</a></li>
+<li><a href="functions/nix-gitignore/#sec-pkgs-nix-gitignore">pkgs.nix-gitignore</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="module-system/module-system/#module-system">Module System</a></li>
+</ul>
+<h2>Standard Environment</h2>
+<ul>
+<li><a href="stdenv/#part-stdenv">Standard environment</a></li>
+<li><a href="stdenv/stdenv/#chap-stdenv">The Standard Environment</a></li>
+<li><a href="stdenv/meta/#chap-meta">Meta-attributes</a></li>
+<li><a href="stdenv/passthru/#chap-passthru">Passthru-attributes</a></li>
+<li><a href="stdenv/multiple-output/#chap-multiple-output">Multiple-output packages</a></li>
+<li><a href="stdenv/cross-compilation/#chap-cross">Cross-compilation</a></li>
+<li><a href="stdenv/platform-notes/#chap-platform-notes">Platform Notes</a></li>
+</ul>
+<h2>Toolchains</h2>
+<ul>
+<li><a href="toolchains/llvm/#chap-toolchains">The LLVM Toolchain</a></li>
+</ul>
+<h2>Builders</h2>
+<ul>
+<li><a href="build-helpers/#part-builders">Build helpers</a></li>
+<li><a href="build-helpers/fetchers/#chap-pkgs-fetchers">Fetchers</a></li>
+<li><a href="build-helpers/trivial-build-helpers/#chap-trivial-builders">Trivial build helpers</a></li>
+<li><a href="build-helpers/fixed-point-arguments/#chap-build-helpers-finalAttrs">Fixed-point arguments of build helpers</a></li>
+<li><a href="build-helpers/dev-shell-tools/#chap-devShellTools">Development Shell helpers</a></li>
+<li><a href="build-helpers/testers/#chap-testers">Testers</a></li>
+<li>Special build helpers
+<ul>
+<li><a href="build-helpers/special/fhs-environments/#sec-fhs-environments">buildFHSEnv</a></li>
+<li><a href="build-helpers/special/fakenss/#sec-fakeNss">fakeNss</a></li>
+<li><a href="build-helpers/special/makesetuphook/#sec-pkgs.makeSetupHook">pkgs.makeSetupHook</a></li>
+<li><a href="build-helpers/special/mkshell/#sec-pkgs-mkShell">pkgs.mkShell</a></li>
+<li><a href="packages/darwin-builder/#sec-darwin-builder">darwin.linux-builder</a></li>
+<li><a href="build-helpers/special/vm-tools/#sec-vm-tools">vmTools</a></li>
+</ul>
+</li>
+<li>Images
+<ul>
+<li><a href="build-helpers/images/appimagetools/#sec-pkgs-appimageTools">pkgs.appimageTools</a></li>
+<li><a href="build-helpers/images/dockertools/#sec-pkgs-dockerTools">pkgs.dockerTools</a></li>
+<li><a href="build-helpers/images/ocitools/#sec-pkgs-ociTools">pkgs.ociTools</a></li>
+<li><a href="build-helpers/images/portableservice/#sec-pkgs-portableService">pkgs.portableService</a></li>
+<li><a href="build-helpers/images/makediskimage/#sec-make-disk-image">&lt;nixpkgs/nixos/lib/make-disk-image.nix&gt;</a></li>
+<li><a href="build-helpers/images/binarycache/#sec-pkgs-binary-cache">pkgs.mkBinaryCache</a></li>
+</ul>
+</li>
+<li><a href="hooks/index/#chap-hooks">Hooks reference</a>
+<ul>
+<li><a href="hooks/autoconf/#setup-hook-autoconf">Autoconf</a></li>
+<li><a href="hooks/automake/#setup-hook-automake">Automake</a></li>
+<li><a href="hooks/autopatchelf/#setup-hook-autopatchelfhook">autoPatchelfHook</a></li>
+<li><a href="hooks/breakpoint/#breakpointhook">breakpointHook</a></li>
+<li><a href="hooks/cmake/#cmake">cmake</a></li>
+<li><a href="hooks/gdk-pixbuf/#setup-hook-gdk-pixbuf">gdk-pixbuf</a></li>
+<li><a href="hooks/ghc/#ghc">GHC</a></li>
+<li><a href="hooks/gnome/#gnome-platform">GNOME platform</a></li>
+<li><a href="hooks/installShellFiles/#installshellfiles">installShellFiles</a></li>
+<li><a href="hooks/libglycin/#libglycin-hooks">libglycin</a></li>
+<li><a href="hooks/libiconv/#libiconv-libintl">libiconv, libintl</a></li>
+<li><a href="hooks/libxml2/#setup-hook-libxml2">libxml2</a></li>
+<li><a href="hooks/meson/#meson">Meson</a></li>
+<li><a href="hooks/mpi-check-hook/#setup-hook-mpi-check">mpiCheckPhaseHook</a></li>
+<li><a href="hooks/ninja/#ninja">ninja</a></li>
+<li><a href="hooks/patch-rc-path-hooks/#sec-patchRcPathHooks">patchRcPath hooks</a></li>
+<li><a href="hooks/perl/#setup-hook-perl">Perl</a></li>
+<li><a href="hooks/pkg-config/#setup-hook-pkg-config">pkg-config</a></li>
+<li><a href="hooks/pnpm/#pnpm-build-hook">pnpmBuildHook</a></li>
+<li><a href="hooks/postgresql-test-hook/#sec-postgresqlTestHook">postgresqlTestHook</a></li>
+<li><a href="hooks/python/#setup-hook-python">Python</a></li>
+<li><a href="hooks/scons/#scons">scons</a></li>
+<li><a href="hooks/tetex-tex-live/#tetex-tex-live">teTeX / TeX Live</a></li>
+<li><a href="hooks/unzip/#unzip">unzip</a></li>
+<li><a href="hooks/validatePkgConfig/#validatepkgconfig">validatePkgConfig</a></li>
+<li><a href="hooks/versionCheckHook/#versioncheckhook">versionCheckHook</a></li>
+<li><a href="hooks/waf/#waf-hook">wafHook</a></li>
+<li><a href="hooks/xcbuild/#xcbuildhook">xcbuildHook</a></li>
+</ul>
+</li>
+<li><a href="languages-frameworks/index/#chap-language-support">Languages and frameworks</a>
+<ul>
+<li><a href="languages-frameworks/agda/#agda">Agda</a></li>
+<li><a href="languages-frameworks/android/#android">Android</a></li>
+<li><a href="languages-frameworks/astal/#astal">Astal</a></li>
+<li><a href="languages-frameworks/beam/#sec-beam">BEAM Languages (Erlang, Elixir &amp; LFE)</a></li>
+<li><a href="languages-frameworks/chicken/#sec-chicken">CHICKEN</a></li>
+<li><a href="languages-frameworks/cosmic/#sec-language-cosmic">COSMIC</a></li>
+<li><a href="languages-frameworks/crystal/#crystal">Crystal</a></li>
+<li><a href="languages-frameworks/cuda/#cuda">CUDA</a></li>
+<li><a href="languages-frameworks/cuelang/#cuelang">Cue (Cuelang)</a></li>
+<li><a href="languages-frameworks/dlang/#dlang">D (Dlang)</a></li>
+<li><a href="languages-frameworks/dart/#sec-language-dart">Dart</a></li>
+<li><a href="languages-frameworks/dhall/#sec-language-dhall">Dhall</a></li>
+<li><a href="languages-frameworks/dotnet/#dotnet">Dotnet</a></li>
+<li><a href="languages-frameworks/emscripten/#emscripten">Emscripten</a></li>
+<li><a href="languages-frameworks/factor/#sec-language-factor">Factor</a></li>
+<li><a href="languages-frameworks/gnome/#sec-language-gnome">GNOME</a></li>
+<li><a href="languages-frameworks/go/#sec-language-go">Go</a></li>
+<li><a href="languages-frameworks/gradle/#gradle">Gradle</a></li>
+<li><a href="languages-frameworks/hare/#sec-language-hare">Hare</a></li>
+<li><a href="languages-frameworks/haskell/#haskell">Haskell</a></li>
+<li><a href="languages-frameworks/hy/#sec-language-hy">Hy</a></li>
+<li><a href="languages-frameworks/idris/#idris">Idris</a></li>
+<li><a href="languages-frameworks/idris2/#sec-idris2">Idris2</a></li>
+<li><a href="languages-frameworks/ios/#ios">iOS</a></li>
+<li><a href="languages-frameworks/java/#sec-language-java">Java</a></li>
+<li><a href="languages-frameworks/javascript/#language-javascript">Javascript</a></li>
+<li><a href="languages-frameworks/julia/#language-julia">Julia</a></li>
+<li><a href="languages-frameworks/lean4/#sec-language-lean4">Lean 4</a></li>
+<li><a href="languages-frameworks/lisp/#lisp">lisp-modules</a></li>
+<li><a href="languages-frameworks/lua/#lua">Lua</a></li>
+<li><a href="languages-frameworks/maven/#maven">Maven</a></li>
+<li><a href="languages-frameworks/neovim/#neovim">Neovim</a></li>
+<li><a href="languages-frameworks/nim/#sec-language-nim">Nim</a></li>
+<li><a href="languages-frameworks/ocaml/#sec-language-ocaml">OCaml</a></li>
+<li><a href="languages-frameworks/octave/#sec-octave">Octave</a></li>
+<li><a href="languages-frameworks/perl/#sec-language-perl">Perl</a></li>
+<li><a href="languages-frameworks/php/#sec-php">PHP</a></li>
+<li><a href="languages-frameworks/pkg-config/#sec-pkg-config">pkg-config</a></li>
+<li><a href="languages-frameworks/python/#python">Python</a></li>
+<li><a href="languages-frameworks/qt/#sec-language-qt">Qt</a></li>
+<li><a href="languages-frameworks/r/#r">R</a></li>
+<li><a href="languages-frameworks/rocq/#sec-language-rocq">Rocq and rocq packages</a></li>
+<li><a href="languages-frameworks/ruby/#sec-language-ruby">Ruby</a></li>
+<li><a href="languages-frameworks/rust/#rust">Rust</a></li>
+<li><a href="languages-frameworks/scheme/#sec-scheme">Scheme</a></li>
+<li><a href="languages-frameworks/swift/#swift">Swift</a></li>
+<li><a href="languages-frameworks/tcl/#sec-language-tcl">Tcl</a></li>
+<li><a href="languages-frameworks/texlive/#sec-language-texlive">TeX Live</a></li>
+<li><a href="languages-frameworks/typst/#typst">Typst</a></li>
+<li><a href="languages-frameworks/vim/#vim">Vim</a></li>
+</ul>
+</li>
+<li><a href="packages/index/#chap-packages">Packages</a>
+<ul>
+<li><a href="packages/build-support/#sec-build-support">Build Support</a></li>
+<li><a href="packages/cataclysm-dda/#cataclysm-dark-days-ahead">Cataclysm: Dark Days Ahead</a></li>
+<li><a href="packages/citrix/#sec-citrix">Citrix Workspace</a></li>
+<li><a href="packages/dlib/#dlib">DLib</a></li>
+<li><a href="packages/eclipse/#sec-eclipse">Eclipse</a></li>
+<li><a href="packages/elm/#sec-elm">Elm</a></li>
+<li><a href="packages/emacs/#sec-emacs">Emacs</a></li>
+<li><a href="packages/firefox/#sec-firefox">Firefox</a></li>
+<li><a href="packages/fish/#sec-fish">Fish</a></li>
+<li><a href="packages/friction-graphics/#friction-graphics">Friction</a></li>
+<li><a href="packages/fuse/#sec-fuse">FUSE</a></li>
+<li><a href="packages/geant4/#geant4">Geant4</a></li>
+<li><a href="packages/ibus/#sec-ibus-typing-booster">ibus-engines.typing-booster</a></li>
+<li><a href="packages/inkscape/#sec-inkscape">Inkscape</a></li>
+<li><a href="packages/kakoune/#sec-kakoune">Kakoune</a></li>
+<li><a href="packages/krita/#sec-krita">Krita</a></li>
+<li><a href="packages/lhapdf/#lhapdf">LHAPDF</a></li>
+<li><a href="packages/linux/#sec-linux-kernel">Linux kernel</a></li>
+<li><a href="packages/locales/#locales">Locales</a></li>
+<li><a href="packages/etc-files/#etc">/etc files</a></li>
+<li><a href="packages/nginx/#sec-nginx">Nginx</a></li>
+<li><a href="packages/nrfutil/#sec-nrfutil">nrfutil</a></li>
+<li><a href="packages/opengl/#sec-opengl">OpenGL</a></li>
+<li><a href="packages/python-tree-sitter/#python-tree-sitter">Python Tree Sitter</a></li>
+<li><a href="packages/shell-helpers/#sec-shell-helpers">Interactive shell helpers</a></li>
+<li><a href="packages/steam/#sec-steam">Steam</a></li>
+<li><a href="packages/treefmt/#treefmt">treefmt</a></li>
+<li><a href="packages/urxvt/#sec-urxvt">Urxvt</a></li>
+<li><a href="packages/uv/#sec-uv">uv</a></li>
+<li><a href="packages/vcpkg/#sec-vcpkg">VCPKG</a></li>
+<li><a href="packages/weechat/#sec-weechat">WeeChat</a></li>
+</ul>
+</li>
+</ul>
+<h2>Modules</h2>
+<ul>
+<li><a href="modules/index/#modules">Modules</a>
+<ul>
+<li><a href="modules/generic/#modules-generic">Generic</a>
+<ul>
+<li><a href="modules/generic/#modules-generic-meta-maintainers">meta-maintainers.nix</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2>Development of Nixpkgs</h2>
+<ul>
+<li><a href="development/opening-issues/#sec-opening-issues">Opening issues</a></li>
+<li><a href="contributing/coding-conventions/#chap-conventions">Coding conventions</a></li>
+</ul>
+<h2>Interoperability Standards</h2>
+<ul>
+<li><a href="interoperability/cyclonedx/#chap-interop-cyclonedx">CycloneDX</a>
+<ul>
+<li><a href="interoperability/cyclonedx/#sec-interop.cylonedx-nix"><code>nix</code> namespace</a></li>
+<li><a href="interoperability/cyclonedx/#sec-interop.cylonedx-narinfo"><code>nix:narinfo</code></a></li>
+<li><a href="interoperability/cyclonedx/#sec-interop.cylonedx-fod"><code>nix:fod</code></a></li>
+</ul>
+</li>
+</ul>
+<h2>Release Notes</h2>
+<ul>
+<li><a href="release-notes/release-notes/#chap-release-notes">Release Notes</a>
+<ul>
+<li><a href="release-notes/rl-2611/#sec-nixpkgs-release-26.11">Nixpkgs 26.11 (&quot;Zokor&quot;, 2026.11/??)</a></li>
+<li><a href="release-notes/rl-2605/#sec-nixpkgs-release-26.05">Nixpkgs 26.05 (&quot;Yarara&quot;, 2026.05/30)</a></li>
+<li><a href="release-notes/rl-2511/#sec-nixpkgs-release-25.11">Nixpkgs 25.11 (&quot;Xantusia&quot;, 2025.11/30)</a></li>
+<li><a href="release-notes/rl-2505/#sec-nixpkgs-release-25.05">Nixpkgs 25.05 (2025.05/23)</a></li>
+</ul>
+</li>
+</ul>
+    </nav>
+    <section id='main'>
+      <div id='search-panel' class='nav-search' role='search' hidden>
+        <label class='visually-hidden' for='search'>Search documentation</label>
+        <input type='search' id='search' placeholder='Search' autocomplete='off' aria-controls='search-results'>
+        <p id='search-status' class='visually-hidden' role='status' aria-live='polite'></p>
+        <div id='search-results'></div>
+      </div>
+      <div class='main-scroll'>
+        <main id='main-content' tabindex='-1'>
+<h1 id='sec-functions-library-trivial'><a href='functions/library/trivial/#sec-functions-library-trivial'>
+lib.trivial: miscellaneous functions
+</a></h1>
+<h2 id='function-library-lib.trivial.id'><a href='functions/library/trivial/#function-library-lib.trivial.id'>
+<code>lib.trivial.id</code>
+</a></h2>
+<p>The identity function
+For when you need a function that does “nothing”.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>x</code></p>
+</dt>
+<dd>
+<p>The value to return</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>id :: a -&gt; a
+</code></pre>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/trivial.nix#L63">lib/trivial.nix:63</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.trivial.const'><a href='functions/library/trivial/#function-library-lib.trivial.const'>
+<code>lib.trivial.const</code>
+</a></h2>
+<p>The constant function</p>
+<p>Ignores the second argument. If called with only one argument,
+constructs a function that always returns a static value.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>x</code></p>
+</dt>
+<dd>
+<p>Value to return</p>
+</dd>
+<dt>
+<p><code>y</code></p>
+</dt>
+<dd>
+<p>Value to ignore</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>const :: a -&gt; b -&gt; a
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.trivial.const</code> usage example</h4>
+<pre><code class="language-nix">let f = const 5; in f 10
+=&gt; 5
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/trivial.nix#L98">lib/trivial.nix:98</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.trivial.pipe'><a href='functions/library/trivial/#function-library-lib.trivial.pipe'>
+<code>lib.trivial.pipe</code>
+</a></h2>
+<p>Pipes a value through a list of functions, left to right.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>value</code></p>
+</dt>
+<dd>
+<p>Value to start piping.</p>
+</dd>
+<dt>
+<p><code>fns</code></p>
+</dt>
+<dd>
+<p>List of functions to apply sequentially.</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>pipe :: a -&gt; [(a -&gt; b) (b -&gt; c) ... (x -&gt; y) (y -&gt; z)] -&gt; z
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.trivial.pipe</code> usage example</h4>
+<pre><code class="language-nix">pipe 2 [
+    (x: x + 2)  # 2 + 2 = 4
+    (x: x * 2)  # 4 * 2 = 8
+  ]
+=&gt; 8
+
+# ideal to do text transformations
+pipe [ &quot;a/b&quot; &quot;a/c&quot; ] [
+
+  # create the cp command
+  (map (file: ''cp &quot;${src}/${file}&quot; $out\n''))
+
+  # concatenate all commands into one string
+  lib.concatStrings
+
+  # make that string into a nix derivation
+  (pkgs.runCommand &quot;copy-to-out&quot; {})
+
+]
+=&gt; &lt;drv which copies all files to $out&gt;
+
+The output type of each function has to be the input type
+of the next function, and the last function returns the
+final value.
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/trivial.nix#L152">lib/trivial.nix:152</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.trivial.concat'><a href='functions/library/trivial/#function-library-lib.trivial.concat'>
+<code>lib.trivial.concat</code>
+</a></h2>
+<p>Concatenate two lists</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>x</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+<dt>
+<p><code>y</code></p>
+</dt>
+<dd>
+<p>2. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>concat :: [a] -&gt; [a] -&gt; [a]
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.trivial.concat</code> usage example</h4>
+<pre><code class="language-nix">concat [ 1 2 ] [ 3 4 ]
+=&gt; [ 1 2 3 4 ]
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/trivial.nix#L191">lib/trivial.nix:191</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.trivial."or"'><a href='functions/library/trivial/#function-library-lib.trivial."or"'>
+<code>lib.trivial.&quot;or&quot;</code>
+</a></h2>
+<p>boolean “or”</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>x</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+<dt>
+<p><code>y</code></p>
+</dt>
+<dd>
+<p>2. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>or :: Bool -&gt; Bool -&gt; Bool
+</code></pre>
+<h2 id='function-library-lib.trivial.and'><a href='functions/library/trivial/#function-library-lib.trivial.and'>
+<code>lib.trivial.and</code>
+</a></h2>
+<p>boolean “and”</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>x</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+<dt>
+<p><code>y</code></p>
+</dt>
+<dd>
+<p>2. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>and :: Bool -&gt; Bool -&gt; Bool
+</code></pre>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/trivial.nix#L233">lib/trivial.nix:233</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.trivial.xor'><a href='functions/library/trivial/#function-library-lib.trivial.xor'>
+<code>lib.trivial.xor</code>
+</a></h2>
+<p>boolean “exclusive or”</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>x</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+<dt>
+<p><code>y</code></p>
+</dt>
+<dd>
+<p>2. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>xor :: bool -&gt; bool -&gt; bool
+</code></pre>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/trivial.nix#L256">lib/trivial.nix:256</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.trivial.bitNot'><a href='functions/library/trivial/#function-library-lib.trivial.bitNot'>
+<code>lib.trivial.bitNot</code>
+</a></h2>
+<p>bitwise “not”</p>
+<h3>Type</h3>
+<pre><code>bitNot :: Number -&gt; Number
+</code></pre>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/trivial.nix#L267">lib/trivial.nix:267</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.trivial.boolToString'><a href='functions/library/trivial/#function-library-lib.trivial.boolToString'>
+<code>lib.trivial.boolToString</code>
+</a></h2>
+<p>Convert a boolean to a string.</p>
+<p>This function uses the strings &quot;true&quot; and &quot;false&quot; to represent
+boolean values. Calling <code>toString</code> on a bool instead returns &quot;1&quot;
+and &quot;&quot; (sic!).</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>b</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>boolToString :: Bool -&gt; String
+</code></pre>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/trivial.nix#L288">lib/trivial.nix:288</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.trivial.boolToYesNo'><a href='functions/library/trivial/#function-library-lib.trivial.boolToYesNo'>
+<code>lib.trivial.boolToYesNo</code>
+</a></h2>
+<p>Converts a boolean to a string.</p>
+<p>This function uses the strings &quot;yes&quot; and &quot;no&quot; to represent
+boolean values.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>b</code></p>
+</dt>
+<dd>
+<p>The boolean to convert</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>boolToYesNo :: Bool -&gt; String
+</code></pre>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/trivial.nix#L308">lib/trivial.nix:308</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.trivial.mergeAttrs'><a href='functions/library/trivial/#function-library-lib.trivial.mergeAttrs'>
+<code>lib.trivial.mergeAttrs</code>
+</a></h2>
+<p>Merge two attribute sets shallowly, right side trumps left</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>x</code></p>
+</dt>
+<dd>
+<p>Left attribute set</p>
+</dd>
+<dt>
+<p><code>y</code></p>
+</dt>
+<dd>
+<p>Right attribute set (higher precedence for equal keys)</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>mergeAttrs :: AttrSet -&gt; AttrSet -&gt; AttrSet
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.trivial.mergeAttrs</code> usage example</h4>
+<pre><code class="language-nix">mergeAttrs { a = 1; b = 2; } { b = 3; c = 4; }
+=&gt; { a = 1; b = 3; c = 4; }
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/trivial.nix#L340">lib/trivial.nix:340</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.trivial.flip'><a href='functions/library/trivial/#function-library-lib.trivial.flip'>
+<code>lib.trivial.flip</code>
+</a></h2>
+<p>Flip the order of the arguments of a binary function.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>f</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+<dt>
+<p><code>a</code></p>
+</dt>
+<dd>
+<p>2. Function argument</p>
+</dd>
+<dt>
+<p><code>b</code></p>
+</dt>
+<dd>
+<p>3. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>flip :: (a -&gt; b -&gt; c) -&gt; (b -&gt; a -&gt; c)
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.trivial.flip</code> usage example</h4>
+<pre><code class="language-nix">flip concat [1] [2]
+=&gt; [ 2 1 ]
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/trivial.nix#L376">lib/trivial.nix:376</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.trivial.defaultTo'><a href='functions/library/trivial/#function-library-lib.trivial.defaultTo'>
+<code>lib.trivial.defaultTo</code>
+</a></h2>
+<p>Returns <code>maybeValue</code> if not null, otherwise return <code>default</code>.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>default</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+<dt>
+<p><code>maybeValue</code></p>
+</dt>
+<dd>
+<p>2. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>defaultTo :: a -&gt; (b | Null) -&gt; (b | a)
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.trivial.defaultTo</code> usage example</h4>
+<pre><code class="language-nix">defaultTo &quot;default&quot; null
+=&gt; &quot;default&quot;
+defaultTo &quot;default&quot; &quot;foo&quot;
+=&gt; &quot;foo&quot;
+defaultTo &quot;default&quot; false
+=&gt; false
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/trivial.nix#L414">lib/trivial.nix:414</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.trivial.mapNullable'><a href='functions/library/trivial/#function-library-lib.trivial.mapNullable'>
+<code>lib.trivial.mapNullable</code>
+</a></h2>
+<p>Apply function if the supplied argument is non-null.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>f</code></p>
+</dt>
+<dd>
+<p>Function to call</p>
+</dd>
+<dt>
+<p><code>a</code></p>
+</dt>
+<dd>
+<p>Argument to check for null before passing it to <code>f</code></p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>mapNullable :: (a -&gt; b) -&gt; (a | Null) -&gt; (b | Null)
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.trivial.mapNullable</code> usage example</h4>
+<pre><code class="language-nix">mapNullable (x: x+1) null
+=&gt; null
+mapNullable (x: x+1) 22
+=&gt; 23
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/trivial.nix#L448">lib/trivial.nix:448</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.trivial.version'><a href='functions/library/trivial/#function-library-lib.trivial.version'>
+<code>lib.trivial.version</code>
+</a></h2>
+<p>Returns the current full nixpkgs version number.</p>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/trivial.nix#L455">lib/trivial.nix:455</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.trivial.release'><a href='functions/library/trivial/#function-library-lib.trivial.release'>
+<code>lib.trivial.release</code>
+</a></h2>
+<p>Returns the current nixpkgs release number as string.</p>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/trivial.nix#L460">lib/trivial.nix:460</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.trivial.oldestSupportedRelease'><a href='functions/library/trivial/#function-library-lib.trivial.oldestSupportedRelease'>
+<code>lib.trivial.oldestSupportedRelease</code>
+</a></h2>
+<p>The latest release that is supported, at the time of release branch-off,
+if applicable.</p>
+<p>Ideally, out-of-tree modules should be able to evaluate cleanly with all
+supported Nixpkgs versions (master, release and old release until EOL).
+So if possible, deprecation warnings should take effect only when all
+out-of-tree expressions/libs/modules can upgrade to the new way without
+losing support for supported Nixpkgs versions.</p>
+<p>This release number allows deprecation warnings to be implemented such that
+they take effect as soon as the oldest release reaches end of life.</p>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/trivial.nix#L475">lib/trivial.nix:475</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.trivial.isInOldestRelease'><a href='functions/library/trivial/#function-library-lib.trivial.isInOldestRelease'>
+<code>lib.trivial.isInOldestRelease</code>
+</a></h2>
+<p>Whether a feature is supported in all supported releases (at the time of
+release branch-off, if applicable). See <code>oldestSupportedRelease</code>.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>release</code></p>
+</dt>
+<dd>
+<p>Release number of feature introduction as an integer, e.g. 2111 for 21.11.
+Set it to the upcoming release, matching the nixpkgs/.version file.</p>
+</dd>
+</dl>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/trivial.nix#L490">lib/trivial.nix:490</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.trivial.oldestSupportedReleaseIsAtLeast'><a href='functions/library/trivial/#function-library-lib.trivial.oldestSupportedReleaseIsAtLeast'>
+<code>lib.trivial.oldestSupportedReleaseIsAtLeast</code>
+</a></h2>
+<p>Alias for <code>isInOldestRelease</code> introduced in 24.11.
+Use <code>isInOldestRelease</code> in expressions outside of Nixpkgs for greater compatibility.</p>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/trivial.nix#L499">lib/trivial.nix:499</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.trivial.codeName'><a href='functions/library/trivial/#function-library-lib.trivial.codeName'>
+<code>lib.trivial.codeName</code>
+</a></h2>
+<p>Returns the current nixpkgs release code name.</p>
+<p>On each release the first letter is bumped and a new animal is chosen
+starting with that new letter.</p>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/trivial.nix#L507">lib/trivial.nix:507</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.trivial.versionSuffix'><a href='functions/library/trivial/#function-library-lib.trivial.versionSuffix'>
+<code>lib.trivial.versionSuffix</code>
+</a></h2>
+<p>Returns the current nixpkgs version suffix as string.</p>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/trivial.nix#L512">lib/trivial.nix:512</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.trivial.revisionWithDefault'><a href='functions/library/trivial/#function-library-lib.trivial.revisionWithDefault'>
+<code>lib.trivial.revisionWithDefault</code>
+</a></h2>
+<p>Attempts to return the the current revision of nixpkgs and
+returns the supplied default value otherwise.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>default</code></p>
+</dt>
+<dd>
+<p>Default value to return if revision can not be determined</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>revisionWithDefault :: String -&gt; String
+</code></pre>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/trivial.nix#L534">lib/trivial.nix:534</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.trivial.inNixShell'><a href='functions/library/trivial/#function-library-lib.trivial.inNixShell'>
+<code>lib.trivial.inNixShell</code>
+</a></h2>
+<p>Determine whether the function is being called from inside a Nix
+shell.</p>
+<h3>Type</h3>
+<pre><code>inNixShell :: Bool
+</code></pre>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/trivial.nix#L559">lib/trivial.nix:559</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.trivial.inPureEvalMode'><a href='functions/library/trivial/#function-library-lib.trivial.inPureEvalMode'>
+<code>lib.trivial.inPureEvalMode</code>
+</a></h2>
+<p>Determine whether the function is being called from inside pure-eval mode
+by seeing whether <code>builtins</code> contains <code>currentSystem</code>. If not, we must be in
+pure-eval mode.</p>
+<h3>Type</h3>
+<pre><code>inPureEvalMode :: Bool
+</code></pre>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/trivial.nix#L572">lib/trivial.nix:572</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.trivial.min'><a href='functions/library/trivial/#function-library-lib.trivial.min'>
+<code>lib.trivial.min</code>
+</a></h2>
+<p>Returns minimum of two numbers.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>x</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+<dt>
+<p><code>y</code></p>
+</dt>
+<dd>
+<p>2. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>min :: Number -&gt; Number -&gt; Number
+</code></pre>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/trivial.nix#L595">lib/trivial.nix:595</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.trivial.max'><a href='functions/library/trivial/#function-library-lib.trivial.max'>
+<code>lib.trivial.max</code>
+</a></h2>
+<p>Returns maximum of two numbers.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>x</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+<dt>
+<p><code>y</code></p>
+</dt>
+<dd>
+<p>2. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>max :: Number -&gt; Number -&gt; Number
+</code></pre>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/trivial.nix#L616">lib/trivial.nix:616</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.trivial.mod'><a href='functions/library/trivial/#function-library-lib.trivial.mod'>
+<code>lib.trivial.mod</code>
+</a></h2>
+<p>Integer modulus</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>base</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+<dt>
+<p><code>int</code></p>
+</dt>
+<dd>
+<p>2. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>mod :: Int -&gt; Int -&gt; Int
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.trivial.mod</code> usage example</h4>
+<pre><code class="language-nix">mod 11 10
+=&gt; 1
+mod 1 10
+=&gt; 1
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/trivial.nix#L650">lib/trivial.nix:650</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.trivial.compare'><a href='functions/library/trivial/#function-library-lib.trivial.compare'>
+<code>lib.trivial.compare</code>
+</a></h2>
+<p>C-style comparisons</p>
+<p>a &lt; b,  compare a b =&gt; -1
+a == b, compare a b =&gt; 0
+a &gt; b,  compare a b =&gt; 1</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>a</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+<dt>
+<p><code>b</code></p>
+</dt>
+<dd>
+<p>2. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>compare :: a -&gt; a -&gt; Int
+</code></pre>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/trivial.nix#L677">lib/trivial.nix:677</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.trivial.splitByAndCompare'><a href='functions/library/trivial/#function-library-lib.trivial.splitByAndCompare'>
+<code>lib.trivial.splitByAndCompare</code>
+</a></h2>
+<p>Split type into two subtypes by predicate <code>p</code>, take all elements
+of the first subtype to be less than all the elements of the
+second subtype, compare elements of a single subtype with <code>yes</code>
+and <code>no</code> respectively.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>p</code></p>
+</dt>
+<dd>
+<p>Predicate</p>
+</dd>
+<dt>
+<p><code>yes</code></p>
+</dt>
+<dd>
+<p>Comparison function if predicate holds for both values</p>
+</dd>
+<dt>
+<p><code>no</code></p>
+</dt>
+<dd>
+<p>Comparison function if predicate holds for neither value</p>
+</dd>
+<dt>
+<p><code>a</code></p>
+</dt>
+<dd>
+<p>First value to compare</p>
+</dd>
+<dt>
+<p><code>b</code></p>
+</dt>
+<dd>
+<p>Second value to compare</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>splitByAndCompare :: (a -&gt; Bool) -&gt; (a -&gt; a -&gt; Int) -&gt; (a -&gt; a -&gt; Int) -&gt; (a -&gt; a -&gt; Int)
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.trivial.splitByAndCompare</code> usage example</h4>
+<pre><code class="language-nix">let cmp = splitByAndCompare (hasPrefix &quot;foo&quot;) compare compare; in
+
+cmp &quot;a&quot; &quot;z&quot; =&gt; -1
+cmp &quot;fooa&quot; &quot;fooz&quot; =&gt; -1
+
+cmp &quot;f&quot; &quot;a&quot; =&gt; 1
+cmp &quot;fooa&quot; &quot;a&quot; =&gt; -1
+# while
+compare &quot;fooa&quot; &quot;a&quot; =&gt; 1
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/trivial.nix#L738">lib/trivial.nix:738</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.trivial.importJSON'><a href='functions/library/trivial/#function-library-lib.trivial.importJSON'>
+<code>lib.trivial.importJSON</code>
+</a></h2>
+<p>Reads a JSON file.</p>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.trivial.importJSON</code> usage example</h4>
+<p>example.json</p>
+<pre><code class="language-json">{
+  &quot;title&quot;: &quot;Example JSON&quot;,
+  &quot;hello&quot;: {
+    &quot;world&quot;: &quot;foo&quot;,
+    &quot;bar&quot;: {
+      &quot;foobar&quot;: true
+    }
+  }
+}
+</code></pre>
+<pre><code class="language-nix">importJSON ./example.json
+=&gt; {
+  title = &quot;Example JSON&quot;;
+  hello = {
+    world = &quot;foo&quot;;
+    bar = {
+      foobar = true;
+    };
+  };
+}
+</code></pre>
+<p></p>
+</div>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>path</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>importJSON :: Path -&gt; Any
+</code></pre>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/trivial.nix#L794">lib/trivial.nix:794</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.trivial.importTOML'><a href='functions/library/trivial/#function-library-lib.trivial.importTOML'>
+<code>lib.trivial.importTOML</code>
+</a></h2>
+<p>Reads a TOML file.</p>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.trivial.importTOML</code> usage example</h4>
+<p>example.toml</p>
+<pre><code class="language-toml">title = &quot;TOML Example&quot;
+
+[hello]
+world = &quot;foo&quot;
+
+[hello.bar]
+foobar = true
+</code></pre>
+<pre><code class="language-nix">importTOML ./example.toml
+=&gt; {
+  title = &quot;TOML Example&quot;;
+  hello = {
+    world = &quot;foo&quot;;
+    bar = {
+      foobar = true;
+    };
+  };
+}
+</code></pre>
+<p></p>
+</div>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>path</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>importTOML :: Path -&gt; Any
+</code></pre>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/trivial.nix#L841">lib/trivial.nix:841</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.trivial.warn'><a href='functions/library/trivial/#function-library-lib.trivial.warn'>
+<code>lib.trivial.warn</code>
+</a></h2>
+<p><code>warn</code> <em><code>message</code></em> <em><code>value</code></em></p>
+<p>Print a warning before returning the second argument.</p>
+<p>See <a href="https://nix.dev/manual/nix/latest/language/builtins.html#builtins-warn"><code>builtins.warn</code></a> (Nix &gt;= 2.23).
+On older versions, the Nix 2.23 behavior is emulated with <a href="https://nix.dev/manual/nix/latest/language/builtins.html#builtins-warn"><code>builtins.trace</code></a>, including the <a href="https://nix.dev/manual/nix/latest/command-ref/conf-file#conf-abort-on-warn"><code>NIX_ABORT_ON_WARN</code></a> behavior, but not the <code>nix.conf</code> setting or command line option.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><em><code>message</code></em> (String)</p>
+</dt>
+<dd>
+<p>Warning message to print before evaluating <em><code>value</code></em>.</p>
+</dd>
+<dt>
+<p><em><code>value</code></em> (any value)</p>
+</dt>
+<dd>
+<p>Value to return as-is.</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>warn :: String -&gt; a -&gt; a
+</code></pre>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/trivial.nix#L867">lib/trivial.nix:867</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.trivial.warnIf'><a href='functions/library/trivial/#function-library-lib.trivial.warnIf'>
+<code>lib.trivial.warnIf</code>
+</a></h2>
+<p><code>warnIf</code> <em><code>condition</code></em> <em><code>message</code></em> <em><code>value</code></em></p>
+<p>Like <code>warn</code>, but only warn when the first argument is <code>true</code>.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><em><code>condition</code></em> (Boolean)</p>
+</dt>
+<dd>
+<p><code>true</code> to trigger the warning before continuing with <em><code>value</code></em>.</p>
+</dd>
+<dt>
+<p><em><code>message</code></em> (String)</p>
+</dt>
+<dd>
+<p>Warning message to print before evaluating</p>
+</dd>
+<dt>
+<p><em><code>value</code></em> (any value)</p>
+</dt>
+<dd>
+<p>Value to return as-is.</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>warnIf :: Bool -&gt; String -&gt; a -&gt; a
+</code></pre>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/trivial.nix#L914">lib/trivial.nix:914</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.trivial.warnIfNot'><a href='functions/library/trivial/#function-library-lib.trivial.warnIfNot'>
+<code>lib.trivial.warnIfNot</code>
+</a></h2>
+<p><code>warnIfNot</code> <em><code>condition</code></em> <em><code>message</code></em> <em><code>value</code></em></p>
+<p>Like <code>warnIf</code>, but negated: warn if the first argument is <code>false</code>.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><em><code>condition</code></em></p>
+</dt>
+<dd>
+<p><code>false</code> to trigger the warning before continuing with <code>val</code>.</p>
+</dd>
+<dt>
+<p><em><code>message</code></em></p>
+</dt>
+<dd>
+<p>Warning message to print before evaluating <em><code>value</code></em>.</p>
+</dd>
+<dt>
+<p><em><code>value</code></em></p>
+</dt>
+<dd>
+<p>Value to return as-is.</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>warnIfNot :: Bool -&gt; String -&gt; a -&gt; a
+</code></pre>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/trivial.nix#L941">lib/trivial.nix:941</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.trivial.throwIfNot'><a href='functions/library/trivial/#function-library-lib.trivial.throwIfNot'>
+<code>lib.trivial.throwIfNot</code>
+</a></h2>
+<p>Like the <code>assert b; e</code> expression, but with a custom error message and
+without the semicolon.</p>
+<p>If true, return the identity function, <code>r: r</code>.</p>
+<p>If false, throw the error message.</p>
+<p>Calls can be juxtaposed using function application, as <code>(r: r) a = a</code>, so
+<code>(r: r) (r: r) a = a</code>, and so forth.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>cond</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+<dt>
+<p><code>msg</code></p>
+</dt>
+<dd>
+<p>2. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>throwIfNot :: Bool -&gt; String -&gt; a -&gt; (a | Never)
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.trivial.throwIfNot</code> usage example</h4>
+<pre><code class="language-nix">throwIfNot (lib.isList overlays) &quot;The overlays argument to nixpkgs must be a list.&quot;
+lib.foldr (x: throwIfNot (lib.isFunction x) &quot;All overlays passed to nixpkgs must be functions.&quot;) (r: r) overlays
+pkgs
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/trivial.nix#L982">lib/trivial.nix:982</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.trivial.throwIf'><a href='functions/library/trivial/#function-library-lib.trivial.throwIf'>
+<code>lib.trivial.throwIf</code>
+</a></h2>
+<p>Like <code>throwIfNot</code>, but negated (throw if the first argument is <code>true</code>).</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>cond</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+<dt>
+<p><code>msg</code></p>
+</dt>
+<dd>
+<p>2. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>throwIf :: Bool -&gt; String -&gt; a -&gt; (a | Never)
+</code></pre>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/trivial.nix#L1003">lib/trivial.nix:1003</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.trivial.checkListOfEnum'><a href='functions/library/trivial/#function-library-lib.trivial.checkListOfEnum'>
+<code>lib.trivial.checkListOfEnum</code>
+</a></h2>
+<p>Check if the elements in a list are valid values from a enum, returning the identity function, or throwing an error message otherwise.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>msg</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+<dt>
+<p><code>valid</code></p>
+</dt>
+<dd>
+<p>2. Function argument</p>
+</dd>
+<dt>
+<p><code>given</code></p>
+</dt>
+<dd>
+<p>3. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>checkListOfEnum :: String -&gt; [a] -&gt; [a] -&gt; ((b -&gt; b) | Never)
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.trivial.checkListOfEnum</code> usage example</h4>
+<pre><code class="language-nix">let colorVariants = [&quot;bright&quot; &quot;dark&quot; &quot;black&quot;]
+in checkListOfEnum &quot;color variants&quot; [ &quot;standard&quot; &quot;light&quot; &quot;dark&quot; ] colorVariants;
+=&gt;
+error: color variants: bright, black unexpected; valid ones: standard, light, dark
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/trivial.nix#L1041">lib/trivial.nix:1041</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.trivial.setFunctionArgs'><a href='functions/library/trivial/#function-library-lib.trivial.setFunctionArgs'>
+<code>lib.trivial.setFunctionArgs</code>
+</a></h2>
+<p>Add metadata about expected function arguments to a function.
+The metadata should match the format given by
+builtins.functionArgs, i.e. a set from expected argument to a bool
+representing whether that argument has a default or not.</p>
+<p>This function is necessary because you can't dynamically create a
+function of the <code>{ a, b ? foo, ... }:</code> format, but some facilities
+like <code>callPackage</code> expect to be able to query expected arguments.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>f</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+<dt>
+<p><code>args</code></p>
+</dt>
+<dd>
+<p>2. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>setFunctionArgs : (a -&gt; b) -&gt; { [String] :: Bool } -&gt; (a -&gt; b)
+</code></pre>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/trivial.nix#L1081">lib/trivial.nix:1081</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.trivial.functionArgs'><a href='functions/library/trivial/#function-library-lib.trivial.functionArgs'>
+<code>lib.trivial.functionArgs</code>
+</a></h2>
+<p>Extract the expected function arguments from a function.
+This works both with nix-native <code>{ a, b ? foo, ... }:</code> style
+functions and functions with args set with <code>setFunctionArgs</code>. It
+has the same return type and semantics as <code>builtins.functionArgs</code>.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>f</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>functionArgs : (a -&gt; b) -&gt; { [String] :: Bool }
+</code></pre>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/trivial.nix#L1105">lib/trivial.nix:1105</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.trivial.isFunction'><a href='functions/library/trivial/#function-library-lib.trivial.isFunction'>
+<code>lib.trivial.isFunction</code>
+</a></h2>
+<p>Check whether something is a function or something
+annotated with function args.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>f</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>isFunction : Any -&gt; Bool
+</code></pre>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/trivial.nix#L1127">lib/trivial.nix:1127</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.trivial.mirrorFunctionArgs'><a href='functions/library/trivial/#function-library-lib.trivial.mirrorFunctionArgs'>
+<code>lib.trivial.mirrorFunctionArgs</code>
+</a></h2>
+<p><code>mirrorFunctionArgs f g</code> creates a new function <code>g'</code> with the same behavior as <code>g</code> (<code>g' x == g x</code>)
+but its function arguments mirroring <code>f</code> (<code>lib.functionArgs g' == lib.functionArgs f</code>).</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>f</code></p>
+</dt>
+<dd>
+<p>Function to provide the argument metadata</p>
+</dd>
+<dt>
+<p><code>g</code></p>
+</dt>
+<dd>
+<p>Function to set the argument metadata to</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>mirrorFunctionArgs :: (a -&gt; b) -&gt; (a -&gt; c) -&gt; (a -&gt; c)
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.trivial.mirrorFunctionArgs</code> usage example</h4>
+<pre><code class="language-nix">addab = {a, b}: a + b
+addab { a = 2; b = 4; }
+=&gt; 6
+lib.functionArgs addab
+=&gt; { a = false; b = false; }
+addab1 = attrs: addab attrs + 1
+addab1 { a = 2; b = 4; }
+=&gt; 7
+lib.functionArgs addab1
+=&gt; { }
+addab1' = lib.mirrorFunctionArgs addab addab1
+addab1' { a = 2; b = 4; }
+=&gt; 7
+lib.functionArgs addab1'
+=&gt; { a = false; b = false; }
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/trivial.nix#L1177">lib/trivial.nix:1177</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.trivial.toFunction'><a href='functions/library/trivial/#function-library-lib.trivial.toFunction'>
+<code>lib.trivial.toFunction</code>
+</a></h2>
+<p>Turns any non-callable values into constant functions.
+Returns callable values as is.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>v</code></p>
+</dt>
+<dd>
+<p>Any value</p>
+</dd>
+</dl>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.trivial.toFunction</code> usage example</h4>
+<pre><code class="language-nix">nix-repl&gt; lib.toFunction 1 2
+1
+
+nix-repl&gt; lib.toFunction (x: x + 1) 2
+3
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/trivial.nix#L1211">lib/trivial.nix:1211</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.trivial.fromHexString'><a href='functions/library/trivial/#function-library-lib.trivial.fromHexString'>
+<code>lib.trivial.fromHexString</code>
+</a></h2>
+<p>Convert a hexadecimal string to it's integer representation.</p>
+<h3>Type</h3>
+<pre><code>fromHexString :: String -&gt; Int
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.trivial.fromHexString</code> usage examples</h4>
+<pre><code class="language-nix">fromHexString &quot;FF&quot;
+=&gt; 255
+
+fromHexString &quot;0x7fffffffffffffff&quot;
+=&gt; 9223372036854775807
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/trivial.nix#L1234">lib/trivial.nix:1234</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.trivial.toHexString'><a href='functions/library/trivial/#function-library-lib.trivial.toHexString'>
+<code>lib.trivial.toHexString</code>
+</a></h2>
+<p>Convert the given positive integer to a string of its hexadecimal
+representation.</p>
+<h3>Type</h3>
+<pre><code>toHexString :: Int -&gt; String
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.trivial.toHexString</code> usage example</h4>
+<pre><code class="language-nix">toHexString 0 =&gt; &quot;0&quot;
+
+toHexString 16 =&gt; &quot;10&quot;
+
+toHexString 250 =&gt; &quot;FA&quot;
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/trivial.nix#L1274">lib/trivial.nix:1274</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.trivial.toBaseDigits'><a href='functions/library/trivial/#function-library-lib.trivial.toBaseDigits'>
+<code>lib.trivial.toBaseDigits</code>
+</a></h2>
+<p><code>toBaseDigits base i</code> converts the positive integer <code>i</code> to a list of its
+digits in the given base.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>base</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+<dt>
+<p><code>i</code></p>
+</dt>
+<dd>
+<p>2. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>toBaseDigits :: Int -&gt; Int -&gt; [Int]
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.trivial.toBaseDigits</code></h4>
+<pre><code class="language-nix">toBaseDigits 10 123 =&gt; [ 1 2 3 ]
+
+toBaseDigits 2 6 =&gt; [ 1 1 0 ]
+
+toBaseDigits 16 250 =&gt; [ 15 10 ]
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/trivial.nix#L1321">lib/trivial.nix:1321</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+        </main>
+      </div>
+    </section>
+<script defer src='highlight.pack.cf986678470772f7.js'></script>
+<script defer src='mmdoc.367f3e8986e40416.js'></script>
+<script defer src='mmdoc_search.a5b6fc7d7512cdc1.js' data-search-index='search_index.b3afff10081eb0bd.js' data-fuse='fuse.basic.min.bb997c989fa0a28e.js'></script>
+  </div>
+  </body>
+</html>

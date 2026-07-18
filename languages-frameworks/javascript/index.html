@@ -1,0 +1,1006 @@
+<!doctype html>
+<html lang='en'>
+  <head>
+    <base href='../../'>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <script>
+      (() => {
+        let theme = null
+        try { theme = localStorage.getItem('theme') } catch (error) {}
+        if (theme !== 'light' && theme !== 'dark')
+          theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+        document.documentElement.classList.add(theme + '-theme')
+      })()
+    </script>
+    <meta name='description' content='Javascript'>
+    <link rel='icon' href='favicon.svg'>
+    <link rel='stylesheet' href='a11y-dark.1fcafc9d9a306955.css'>
+    <link rel='stylesheet' href='a11y-light.b466309a7fa86b1f.css'>
+    <link rel='stylesheet' href='mmdoc.e4286053b6471af4.css'>
+    <title>Javascript | nixpkgs</title>
+  </head>
+  <body>
+  <a class='skip-link' href='languages-frameworks/javascript/#main-content'>Skip to main content</a>
+  <input type='checkbox' id='sidebar-checkbox' aria-hidden='true' tabindex='-1' style='display: none;'>
+  <div class='body'>
+    <div class='nav-top-container'>
+    <nav class='nav-top' aria-label='Documentation controls'>
+      <button type='button' class='sidebar-toggle' aria-label='Toggle table of contents' aria-controls='sidebar' aria-expanded='true'></button>    <button type='button' class='search-toggle' aria-label='Open search' aria-controls='search-panel' aria-expanded='false'></button>    <button type='button' class='theme-toggle' aria-label='Switch to dark theme' aria-pressed='false'></button>    <a id='chapter-previous-button' class='chapter-previous' href='languages-frameworks/java/#sec-language-java' title='Java' aria-label='Previous: Java'>&lt;</a>
+    <a id='chapter-next-button' class='chapter-next' href='languages-frameworks/julia/#language-julia' title='Julia' aria-label='Next: Julia'>&gt;</a>
+    </nav>
+    </div>
+    <nav id='sidebar' class='sidebar' aria-label='Table of contents'>
+<h1>Nixpkgs Manual</h1>
+<p>Version 26.11pre</p>
+<ul>
+<li><a href="./#preface">Preface</a>
+<ul>
+<li><a href="preface/#overview-of-nixpkgs">Overview of Nixpkgs</a></li>
+</ul>
+</li>
+<li><a href="first-package/#chap-first-package">Package your first application</a></li>
+</ul>
+<h2>Using Nixpkgs</h2>
+<ul>
+<li><a href="using/platform-support/#chap-platform-support">Platform Support</a></li>
+<li><a href="using/configuration/#chap-packageconfig">Global configuration</a></li>
+<li><a href="using/overlays/#chap-overlays">Overlays</a></li>
+<li><a href="using/overrides/#chap-overrides">Overriding</a></li>
+</ul>
+<h2>Nixpkgs Lib</h2>
+<ul>
+<li><a href="functions/#chap-functions">Functions reference</a>
+<ul>
+<li>Library Functions
+<ul>
+<li><a href="functions/library/asserts/#sec-functions-library-asserts">lib.asserts: assertion functions</a></li>
+<li><a href="functions/library/attrsets/#sec-functions-library-attrsets">lib.attrsets: attribute set functions</a></li>
+<li><a href="functions/library/strings/#sec-functions-library-strings">lib.strings: string manipulation functions</a></li>
+<li><a href="functions/library/versions/#sec-functions-library-versions">lib.versions: version string functions</a></li>
+<li><a href="functions/library/trivial/#sec-functions-library-trivial">lib.trivial: miscellaneous functions</a></li>
+<li><a href="functions/library/fixedPoints/#sec-functions-library-fixedPoints">lib.fixedPoints: explicit recursion functions</a></li>
+<li><a href="functions/library/lists/#sec-functions-library-lists">lib.lists: list manipulation functions</a></li>
+<li><a href="functions/library/debug/#sec-functions-library-debug">lib.debug: debugging functions</a></li>
+<li><a href="functions/library/options/#sec-functions-library-options">lib.options: NixOS / nixpkgs option handling</a></li>
+<li><a href="functions/library/path/#sec-functions-library-path">lib.path: path functions</a></li>
+<li><a href="functions/library/filesystem/#sec-functions-library-filesystem">lib.filesystem: filesystem functions</a></li>
+<li><a href="functions/library/fileset/#sec-functions-library-fileset">lib.fileset: file set functions</a></li>
+<li><a href="functions/library/sources/#sec-functions-library-sources">lib.sources: source filtering functions</a></li>
+<li><a href="functions/library/cli/#sec-functions-library-cli">lib.cli: command-line serialization functions</a></li>
+<li><a href="functions/library/gvariant/#sec-functions-library-gvariant">lib.gvariant: GVariant formatted string serialization functions</a></li>
+<li><a href="functions/library/fetchers/#sec-functions-library-fetchers">lib.fetchers: functions which can be reused across fetchers</a></li>
+<li><a href="functions/library/generators/#sec-functions-library-generators">lib.generators: functions that create file formats from nix data structures</a></li>
+<li><a href="functions/library/customisation/#sec-functions-library-customisation">lib.customisation: Functions to customise (derivation-related) functions, derivations, or attribute sets</a></li>
+<li><a href="functions/library/meta/#sec-functions-library-meta">lib.meta: functions for derivation metadata</a></li>
+<li><a href="functions/library/derivations/#sec-functions-library-derivations">lib.derivations: miscellaneous derivation-specific functions</a></li>
+<li><a href="functions/generators/#sec-generators">Generators</a></li>
+<li><a href="functions/debug/#sec-debug">Debugging Nix Expressions</a></li>
+<li><a href="functions/prefer-remote-fetch/#sec-prefer-remote-fetch">prefer-remote-fetch overlay</a></li>
+<li><a href="functions/nix-gitignore/#sec-pkgs-nix-gitignore">pkgs.nix-gitignore</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="module-system/module-system/#module-system">Module System</a></li>
+</ul>
+<h2>Standard Environment</h2>
+<ul>
+<li><a href="stdenv/#part-stdenv">Standard environment</a></li>
+<li><a href="stdenv/stdenv/#chap-stdenv">The Standard Environment</a></li>
+<li><a href="stdenv/meta/#chap-meta">Meta-attributes</a></li>
+<li><a href="stdenv/passthru/#chap-passthru">Passthru-attributes</a></li>
+<li><a href="stdenv/multiple-output/#chap-multiple-output">Multiple-output packages</a></li>
+<li><a href="stdenv/cross-compilation/#chap-cross">Cross-compilation</a></li>
+<li><a href="stdenv/platform-notes/#chap-platform-notes">Platform Notes</a></li>
+</ul>
+<h2>Toolchains</h2>
+<ul>
+<li><a href="toolchains/llvm/#chap-toolchains">The LLVM Toolchain</a></li>
+</ul>
+<h2>Builders</h2>
+<ul>
+<li><a href="build-helpers/#part-builders">Build helpers</a></li>
+<li><a href="build-helpers/fetchers/#chap-pkgs-fetchers">Fetchers</a></li>
+<li><a href="build-helpers/trivial-build-helpers/#chap-trivial-builders">Trivial build helpers</a></li>
+<li><a href="build-helpers/fixed-point-arguments/#chap-build-helpers-finalAttrs">Fixed-point arguments of build helpers</a></li>
+<li><a href="build-helpers/dev-shell-tools/#chap-devShellTools">Development Shell helpers</a></li>
+<li><a href="build-helpers/testers/#chap-testers">Testers</a></li>
+<li>Special build helpers
+<ul>
+<li><a href="build-helpers/special/fhs-environments/#sec-fhs-environments">buildFHSEnv</a></li>
+<li><a href="build-helpers/special/fakenss/#sec-fakeNss">fakeNss</a></li>
+<li><a href="build-helpers/special/makesetuphook/#sec-pkgs.makeSetupHook">pkgs.makeSetupHook</a></li>
+<li><a href="build-helpers/special/mkshell/#sec-pkgs-mkShell">pkgs.mkShell</a></li>
+<li><a href="packages/darwin-builder/#sec-darwin-builder">darwin.linux-builder</a></li>
+<li><a href="build-helpers/special/vm-tools/#sec-vm-tools">vmTools</a></li>
+</ul>
+</li>
+<li>Images
+<ul>
+<li><a href="build-helpers/images/appimagetools/#sec-pkgs-appimageTools">pkgs.appimageTools</a></li>
+<li><a href="build-helpers/images/dockertools/#sec-pkgs-dockerTools">pkgs.dockerTools</a></li>
+<li><a href="build-helpers/images/ocitools/#sec-pkgs-ociTools">pkgs.ociTools</a></li>
+<li><a href="build-helpers/images/portableservice/#sec-pkgs-portableService">pkgs.portableService</a></li>
+<li><a href="build-helpers/images/makediskimage/#sec-make-disk-image">&lt;nixpkgs/nixos/lib/make-disk-image.nix&gt;</a></li>
+<li><a href="build-helpers/images/binarycache/#sec-pkgs-binary-cache">pkgs.mkBinaryCache</a></li>
+</ul>
+</li>
+<li><a href="hooks/index/#chap-hooks">Hooks reference</a>
+<ul>
+<li><a href="hooks/autoconf/#setup-hook-autoconf">Autoconf</a></li>
+<li><a href="hooks/automake/#setup-hook-automake">Automake</a></li>
+<li><a href="hooks/autopatchelf/#setup-hook-autopatchelfhook">autoPatchelfHook</a></li>
+<li><a href="hooks/breakpoint/#breakpointhook">breakpointHook</a></li>
+<li><a href="hooks/cmake/#cmake">cmake</a></li>
+<li><a href="hooks/gdk-pixbuf/#setup-hook-gdk-pixbuf">gdk-pixbuf</a></li>
+<li><a href="hooks/ghc/#ghc">GHC</a></li>
+<li><a href="hooks/gnome/#gnome-platform">GNOME platform</a></li>
+<li><a href="hooks/installShellFiles/#installshellfiles">installShellFiles</a></li>
+<li><a href="hooks/libglycin/#libglycin-hooks">libglycin</a></li>
+<li><a href="hooks/libiconv/#libiconv-libintl">libiconv, libintl</a></li>
+<li><a href="hooks/libxml2/#setup-hook-libxml2">libxml2</a></li>
+<li><a href="hooks/meson/#meson">Meson</a></li>
+<li><a href="hooks/mpi-check-hook/#setup-hook-mpi-check">mpiCheckPhaseHook</a></li>
+<li><a href="hooks/ninja/#ninja">ninja</a></li>
+<li><a href="hooks/patch-rc-path-hooks/#sec-patchRcPathHooks">patchRcPath hooks</a></li>
+<li><a href="hooks/perl/#setup-hook-perl">Perl</a></li>
+<li><a href="hooks/pkg-config/#setup-hook-pkg-config">pkg-config</a></li>
+<li><a href="hooks/pnpm/#pnpm-build-hook">pnpmBuildHook</a></li>
+<li><a href="hooks/postgresql-test-hook/#sec-postgresqlTestHook">postgresqlTestHook</a></li>
+<li><a href="hooks/python/#setup-hook-python">Python</a></li>
+<li><a href="hooks/scons/#scons">scons</a></li>
+<li><a href="hooks/tetex-tex-live/#tetex-tex-live">teTeX / TeX Live</a></li>
+<li><a href="hooks/unzip/#unzip">unzip</a></li>
+<li><a href="hooks/validatePkgConfig/#validatepkgconfig">validatePkgConfig</a></li>
+<li><a href="hooks/versionCheckHook/#versioncheckhook">versionCheckHook</a></li>
+<li><a href="hooks/waf/#waf-hook">wafHook</a></li>
+<li><a href="hooks/xcbuild/#xcbuildhook">xcbuildHook</a></li>
+</ul>
+</li>
+<li><a href="languages-frameworks/index/#chap-language-support">Languages and frameworks</a>
+<ul>
+<li><a href="languages-frameworks/agda/#agda">Agda</a></li>
+<li><a href="languages-frameworks/android/#android">Android</a></li>
+<li><a href="languages-frameworks/astal/#astal">Astal</a></li>
+<li><a href="languages-frameworks/beam/#sec-beam">BEAM Languages (Erlang, Elixir &amp; LFE)</a></li>
+<li><a href="languages-frameworks/chicken/#sec-chicken">CHICKEN</a></li>
+<li><a href="languages-frameworks/cosmic/#sec-language-cosmic">COSMIC</a></li>
+<li><a href="languages-frameworks/crystal/#crystal">Crystal</a></li>
+<li><a href="languages-frameworks/cuda/#cuda">CUDA</a></li>
+<li><a href="languages-frameworks/cuelang/#cuelang">Cue (Cuelang)</a></li>
+<li><a href="languages-frameworks/dlang/#dlang">D (Dlang)</a></li>
+<li><a href="languages-frameworks/dart/#sec-language-dart">Dart</a></li>
+<li><a href="languages-frameworks/dhall/#sec-language-dhall">Dhall</a></li>
+<li><a href="languages-frameworks/dotnet/#dotnet">Dotnet</a></li>
+<li><a href="languages-frameworks/emscripten/#emscripten">Emscripten</a></li>
+<li><a href="languages-frameworks/factor/#sec-language-factor">Factor</a></li>
+<li><a href="languages-frameworks/gnome/#sec-language-gnome">GNOME</a></li>
+<li><a href="languages-frameworks/go/#sec-language-go">Go</a></li>
+<li><a href="languages-frameworks/gradle/#gradle">Gradle</a></li>
+<li><a href="languages-frameworks/hare/#sec-language-hare">Hare</a></li>
+<li><a href="languages-frameworks/haskell/#haskell">Haskell</a></li>
+<li><a href="languages-frameworks/hy/#sec-language-hy">Hy</a></li>
+<li><a href="languages-frameworks/idris/#idris">Idris</a></li>
+<li><a href="languages-frameworks/idris2/#sec-idris2">Idris2</a></li>
+<li><a href="languages-frameworks/ios/#ios">iOS</a></li>
+<li><a href="languages-frameworks/java/#sec-language-java">Java</a></li>
+<li><a href="languages-frameworks/javascript/#language-javascript">Javascript</a></li>
+<li><a href="languages-frameworks/julia/#language-julia">Julia</a></li>
+<li><a href="languages-frameworks/lean4/#sec-language-lean4">Lean 4</a></li>
+<li><a href="languages-frameworks/lisp/#lisp">lisp-modules</a></li>
+<li><a href="languages-frameworks/lua/#lua">Lua</a></li>
+<li><a href="languages-frameworks/maven/#maven">Maven</a></li>
+<li><a href="languages-frameworks/neovim/#neovim">Neovim</a></li>
+<li><a href="languages-frameworks/nim/#sec-language-nim">Nim</a></li>
+<li><a href="languages-frameworks/ocaml/#sec-language-ocaml">OCaml</a></li>
+<li><a href="languages-frameworks/octave/#sec-octave">Octave</a></li>
+<li><a href="languages-frameworks/perl/#sec-language-perl">Perl</a></li>
+<li><a href="languages-frameworks/php/#sec-php">PHP</a></li>
+<li><a href="languages-frameworks/pkg-config/#sec-pkg-config">pkg-config</a></li>
+<li><a href="languages-frameworks/python/#python">Python</a></li>
+<li><a href="languages-frameworks/qt/#sec-language-qt">Qt</a></li>
+<li><a href="languages-frameworks/r/#r">R</a></li>
+<li><a href="languages-frameworks/rocq/#sec-language-rocq">Rocq and rocq packages</a></li>
+<li><a href="languages-frameworks/ruby/#sec-language-ruby">Ruby</a></li>
+<li><a href="languages-frameworks/rust/#rust">Rust</a></li>
+<li><a href="languages-frameworks/scheme/#sec-scheme">Scheme</a></li>
+<li><a href="languages-frameworks/swift/#swift">Swift</a></li>
+<li><a href="languages-frameworks/tcl/#sec-language-tcl">Tcl</a></li>
+<li><a href="languages-frameworks/texlive/#sec-language-texlive">TeX Live</a></li>
+<li><a href="languages-frameworks/typst/#typst">Typst</a></li>
+<li><a href="languages-frameworks/vim/#vim">Vim</a></li>
+</ul>
+</li>
+<li><a href="packages/index/#chap-packages">Packages</a>
+<ul>
+<li><a href="packages/build-support/#sec-build-support">Build Support</a></li>
+<li><a href="packages/cataclysm-dda/#cataclysm-dark-days-ahead">Cataclysm: Dark Days Ahead</a></li>
+<li><a href="packages/citrix/#sec-citrix">Citrix Workspace</a></li>
+<li><a href="packages/dlib/#dlib">DLib</a></li>
+<li><a href="packages/eclipse/#sec-eclipse">Eclipse</a></li>
+<li><a href="packages/elm/#sec-elm">Elm</a></li>
+<li><a href="packages/emacs/#sec-emacs">Emacs</a></li>
+<li><a href="packages/firefox/#sec-firefox">Firefox</a></li>
+<li><a href="packages/fish/#sec-fish">Fish</a></li>
+<li><a href="packages/friction-graphics/#friction-graphics">Friction</a></li>
+<li><a href="packages/fuse/#sec-fuse">FUSE</a></li>
+<li><a href="packages/geant4/#geant4">Geant4</a></li>
+<li><a href="packages/ibus/#sec-ibus-typing-booster">ibus-engines.typing-booster</a></li>
+<li><a href="packages/inkscape/#sec-inkscape">Inkscape</a></li>
+<li><a href="packages/kakoune/#sec-kakoune">Kakoune</a></li>
+<li><a href="packages/krita/#sec-krita">Krita</a></li>
+<li><a href="packages/lhapdf/#lhapdf">LHAPDF</a></li>
+<li><a href="packages/linux/#sec-linux-kernel">Linux kernel</a></li>
+<li><a href="packages/locales/#locales">Locales</a></li>
+<li><a href="packages/etc-files/#etc">/etc files</a></li>
+<li><a href="packages/nginx/#sec-nginx">Nginx</a></li>
+<li><a href="packages/nrfutil/#sec-nrfutil">nrfutil</a></li>
+<li><a href="packages/opengl/#sec-opengl">OpenGL</a></li>
+<li><a href="packages/python-tree-sitter/#python-tree-sitter">Python Tree Sitter</a></li>
+<li><a href="packages/shell-helpers/#sec-shell-helpers">Interactive shell helpers</a></li>
+<li><a href="packages/steam/#sec-steam">Steam</a></li>
+<li><a href="packages/treefmt/#treefmt">treefmt</a></li>
+<li><a href="packages/urxvt/#sec-urxvt">Urxvt</a></li>
+<li><a href="packages/uv/#sec-uv">uv</a></li>
+<li><a href="packages/vcpkg/#sec-vcpkg">VCPKG</a></li>
+<li><a href="packages/weechat/#sec-weechat">WeeChat</a></li>
+</ul>
+</li>
+</ul>
+<h2>Modules</h2>
+<ul>
+<li><a href="modules/index/#modules">Modules</a>
+<ul>
+<li><a href="modules/generic/#modules-generic">Generic</a>
+<ul>
+<li><a href="modules/generic/#modules-generic-meta-maintainers">meta-maintainers.nix</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2>Development of Nixpkgs</h2>
+<ul>
+<li><a href="development/opening-issues/#sec-opening-issues">Opening issues</a></li>
+<li><a href="contributing/coding-conventions/#chap-conventions">Coding conventions</a></li>
+</ul>
+<h2>Interoperability Standards</h2>
+<ul>
+<li><a href="interoperability/cyclonedx/#chap-interop-cyclonedx">CycloneDX</a>
+<ul>
+<li><a href="interoperability/cyclonedx/#sec-interop.cylonedx-nix"><code>nix</code> namespace</a></li>
+<li><a href="interoperability/cyclonedx/#sec-interop.cylonedx-narinfo"><code>nix:narinfo</code></a></li>
+<li><a href="interoperability/cyclonedx/#sec-interop.cylonedx-fod"><code>nix:fod</code></a></li>
+</ul>
+</li>
+</ul>
+<h2>Release Notes</h2>
+<ul>
+<li><a href="release-notes/release-notes/#chap-release-notes">Release Notes</a>
+<ul>
+<li><a href="release-notes/rl-2611/#sec-nixpkgs-release-26.11">Nixpkgs 26.11 (&quot;Zokor&quot;, 2026.11/??)</a></li>
+<li><a href="release-notes/rl-2605/#sec-nixpkgs-release-26.05">Nixpkgs 26.05 (&quot;Yarara&quot;, 2026.05/30)</a></li>
+<li><a href="release-notes/rl-2511/#sec-nixpkgs-release-25.11">Nixpkgs 25.11 (&quot;Xantusia&quot;, 2025.11/30)</a></li>
+<li><a href="release-notes/rl-2505/#sec-nixpkgs-release-25.05">Nixpkgs 25.05 (2025.05/23)</a></li>
+</ul>
+</li>
+</ul>
+    </nav>
+    <section id='main'>
+      <div id='search-panel' class='nav-search' role='search' hidden>
+        <label class='visually-hidden' for='search'>Search documentation</label>
+        <input type='search' id='search' placeholder='Search' autocomplete='off' aria-controls='search-results'>
+        <p id='search-status' class='visually-hidden' role='status' aria-live='polite'></p>
+        <div id='search-results'></div>
+      </div>
+      <div class='main-scroll'>
+        <main id='main-content' tabindex='-1'>
+<h1 id='language-javascript'><a href='languages-frameworks/javascript/#language-javascript'>
+Javascript
+</a></h1>
+<h2 id='javascript-introduction'><a href='languages-frameworks/javascript/#javascript-introduction'>
+Introduction
+</a></h2>
+<p>This contains instructions on how to package JavaScript applications.</p>
+<p>The various tools available will be listed in the <a href="languages-frameworks/javascript/#javascript-tools-overview">tools-overview</a>.
+Some general principles for packaging will follow.
+Finally, some tool-specific instructions will be given.</p>
+<h2 id='javascript-finding-examples'><a href='languages-frameworks/javascript/#javascript-finding-examples'>
+Getting unstuck / finding code examples
+</a></h2>
+<p>If you find you are lacking inspiration for packaging JavaScript applications, the links below might prove useful.
+Searching online for prior art can be helpful if you are running into solved problems.</p>
+<h3 id='javascript-finding-examples-github'><a href='languages-frameworks/javascript/#javascript-finding-examples-github'>
+Github
+</a></h3>
+<ul>
+<li>Searching Nix files for <code>yarnConfigHook</code>: <a href="https://github.com/search?q=yarnConfigHook+language%3ANix&amp;type=code">https://github.com/search?q=yarnConfigHook+language%3ANix&amp;type=code</a></li>
+<li>Searching just <code>flake.nix</code> files for <code>yarnConfigHook</code>: <a href="https://github.com/search?q=yarnConfigHook+path%3A**%2Fflake.nix&amp;type=code">https://github.com/search?q=yarnConfigHook+path%3A**%2Fflake.nix&amp;type=code</a></li>
+</ul>
+<h3 id='javascript-finding-examples-gitlab'><a href='languages-frameworks/javascript/#javascript-finding-examples-gitlab'>
+Gitlab
+</a></h3>
+<ul>
+<li>Searching Nix files for <code>yarnConfigHook</code>: <a href="https://gitlab.com/search?scope=blobs&amp;search=yarnConfigHook+extension%3Anix">https://gitlab.com/search?scope=blobs&amp;search=yarnConfigHook+extension%3Anix</a></li>
+<li>Searching just <code>flake.nix</code> files for <code>yarnConfigHook</code>: <a href="https://gitlab.com/search?scope=blobs&amp;search=yarnConfigHook+filename%3Aflake.nix">https://gitlab.com/search?scope=blobs&amp;search=yarnConfigHook+filename%3Aflake.nix</a></li>
+</ul>
+<h2 id='javascript-tools-overview'><a href='languages-frameworks/javascript/#javascript-tools-overview'>
+Tools overview
+</a></h2>
+<h2 id='javascript-general-principles'><a href='languages-frameworks/javascript/#javascript-general-principles'>
+General principles
+</a></h2>
+<p>The following principles are given in order of importance with potential exceptions.</p>
+<h3 id='javascript-upstream-node-version'><a href='languages-frameworks/javascript/#javascript-upstream-node-version'>
+Try to use the same node version used upstream
+</a></h3>
+<p>It is often not documented which node version is used upstream, but if it is, try to use the same version when packaging.</p>
+<p>This can be a problem if upstream is using the latest and greatest and you are trying to use an earlier version of node.
+Some cryptic errors regarding V8 may appear.</p>
+<h3 id='javascript-upstream-package-manager'><a href='languages-frameworks/javascript/#javascript-upstream-package-manager'>
+Try to respect the package manager originally used by upstream (and use the upstream lock file)
+</a></h3>
+<p>A lock file (package-lock.json, yarn.lock...) is supposed to make reproducible installations of <code>node_modules</code> for each tool.</p>
+<p>Guidelines of package managers, recommend to commit those lock files to the repos.
+If a particular lock file is present, it is a strong indication of which package manager is used upstream.</p>
+<p>It's better to try to use a Nix tool that understands the lock file.
+Using a different tool might give you a hard-to-understand error because different packages have been installed.</p>
+<p>Using a different tool forces you to commit a lock file to the repository.
+These files are fairly large, so when packaging for nixpkgs, this approach does not scale well.</p>
+<p>Exceptions to this rule are:</p>
+<ul>
+<li>When you encounter one of the bugs from a Nix tool. In each of the tool-specific instructions, known problems will be detailed. If you have a problem with a particular tool, then it's best to try another tool, even if this means you will have to re-create a lock file and commit it to Nixpkgs.</li>
+<li>Some lock files contain particular version of a package that has been pulled off npm for some reason. In that case, you can recreate upstream lock (by removing the original and <code>npm install</code>, <code>yarn</code>, ...) and commit this to nixpkgs.</li>
+</ul>
+<h3 id='javascript-upstream-package-json'><a href='languages-frameworks/javascript/#javascript-upstream-package-json'>
+Try to use upstream package.json
+</a></h3>
+<p>Exceptions to this rule are:</p>
+<ul>
+<li>
+<p>Sometimes the upstream repo assumes some dependencies should be installed globally. In that case, you can add them manually to the upstream <code>package.json</code> (<code>yarn add xxx</code> or <code>npm install xxx</code>, ...). Dependencies that are installed locally can be executed with <code>npx</code> for CLI tools (e.g. <code>npx postcss ...</code>, this is how you can call those dependencies in the phases).</p>
+</li>
+<li>
+<p>Sometimes there is a version conflict between some dependency requirements. In that case you can fix a version by removing the <code>^</code>.</p>
+</li>
+<li>
+<p>Sometimes the script defined in the package.json does not work as is. Some scripts for example use CLI tools that might not be available, or cd in directory with a different package.json (for workspaces notably). In that case, it's perfectly fine to look at what the particular script is doing and break this down in the phases. In the build script you can see <code>build:*</code> calling in turns several other build scripts like <code>build:ui</code> or <code>build:server</code>. If one of those fails, you can try to separate those into,</p>
+<pre><code class="language-sh">yarn build:ui
+yarn build:server
+# OR
+npm run build:ui
+npm run build:server
+</code></pre>
+<p>when you need to override a package.json. It's nice to use the one from the upstream source and do some explicit override. Here is an example:</p>
+<pre><code class="language-nix">{
+  patchedPackageJSON = final.runCommand &quot;package.json&quot; { } ''
+    ${jq}/bin/jq '.version = &quot;0.4.0&quot; |
+      .devDependencies.&quot;@jsdoc/cli&quot; = &quot;^0.2.5&quot;
+      ${sonar-src}/package.json &gt; $out
+  '';
+}
+</code></pre>
+<p>You will still need to commit the modified version of the lock files, but at least the overrides are explicit for everyone to see.</p>
+</li>
+</ul>
+<h3 id='javascript-using-node_modules'><a href='languages-frameworks/javascript/#javascript-using-node_modules'>
+Using node_modules directly
+</a></h3>
+<p>Each tool has an abstraction to just build the node_modules (dependencies) directory.
+You can always use the <code>stdenv.mkDerivation</code> with the node_modules to build the package (symlink the node_modules directory and then use the package build command).
+The node_modules abstraction can be also used to build some web framework frontends.
+For an example of this see how <a href="https://github.com/NixOS/nixpkgs/blob/master/pkgs/by-name/pl/plausible/package.nix">plausible</a> is built.
+Then when building the frontend you can just symlink the node_modules directory.</p>
+<h2 id='javascript-tool-specific'><a href='languages-frameworks/javascript/#javascript-tool-specific'>
+Tool-specific instructions
+</a></h2>
+<h3 id='javascript-buildNpmPackage'><a href='languages-frameworks/javascript/#javascript-buildNpmPackage'>
+buildNpmPackage
+</a></h3>
+<p><code>buildNpmPackage</code> allows you to package npm-based projects in Nixpkgs without the use of an auto-generated dependencies file.
+It works by utilizing npm's cache functionality -- creating a reproducible cache that contains the dependencies of a project, and pointing npm to it.</p>
+<p>Here's an example:</p>
+<pre><code class="language-nix">{
+  lib,
+  buildNpmPackage,
+  fetchFromGitHub,
+}:
+
+buildNpmPackage (finalAttrs: {
+  pname = &quot;flood&quot;;
+  version = &quot;4.7.0&quot;;
+
+  src = fetchFromGitHub {
+    owner = &quot;jesec&quot;;
+    repo = &quot;flood&quot;;
+    tag = &quot;v${finalAttrs.version}&quot;;
+    hash = &quot;sha256-BR+ZGkBBfd0dSQqAvujsbgsEPFYw/ThrylxUbOksYxM=&quot;;
+  };
+
+  npmDepsHash = &quot;sha256-tuEfyePwlOy2/mOPdXbqJskO6IowvAP4DWg8xSZwbJw=&quot;;
+
+  # The prepack script runs the build script, which we'd rather do in the build phase.
+  npmPackFlags = [ &quot;--ignore-scripts&quot; ];
+
+  NODE_OPTIONS = &quot;--openssl-legacy-provider&quot;;
+
+  meta = {
+    description = &quot;Modern web UI for various torrent clients with a Node.js backend and React frontend&quot;;
+    homepage = &quot;https://flood.js.org&quot;;
+    license = lib.licenses.gpl3Only;
+    maintainers = with lib.maintainers; [ winter ];
+  };
+})
+</code></pre>
+<p>In the default <code>installPhase</code> set by <code>buildNpmPackage</code>, it uses <code>npm pack --json --dry-run</code> to decide what files to install in <code>$out/lib/node_modules/$name/</code>, where <code>$name</code> is the <code>name</code> string defined in the package's <code>package.json</code>.
+Additionally, the <code>bin</code> and <code>man</code> keys in the source's <code>package.json</code> are used to decide what binaries and manpages are supposed to be installed.
+If these are not defined, <code>npm pack</code> may miss some files, and no binaries will be produced.</p>
+<h4 id='javascript-buildNpmPackage-arguments'><a href='languages-frameworks/javascript/#javascript-buildNpmPackage-arguments'>
+Arguments
+</a></h4>
+<ul>
+<li><code>npmDepsHash</code>: The output hash of the dependencies for this project. Can be calculated in advance with <a href="languages-frameworks/javascript/#javascript-buildNpmPackage-prefetch-npm-deps"><code>prefetch-npm-deps</code></a>.</li>
+<li><code>makeCacheWritable</code>: Whether to make the cache writable prior to installing dependencies. Don't set this unless npm tries to write to the cache directory, as it can slow down the build.</li>
+<li><code>npmBuildScript</code>: The script to run to build the project. Defaults to <code>&quot;build&quot;</code>.</li>
+<li><span id='javascript-buildNpmPackage-npmWorkspace'></span> <code>npmWorkspace</code>: The workspace directory within the project to build and install.</li>
+<li><code>dontNpmBuild</code>: Option to disable running the build script. Set to <code>true</code> if the package does not have a build script. Defaults to <code>false</code>. Alternatively, setting <code>buildPhase</code> explicitly also disables this.</li>
+<li><code>dontNpmInstall</code>: Option to disable running <code>npm install</code>. Defaults to <code>false</code>. Alternatively, setting <code>installPhase</code> explicitly also disables this.</li>
+<li><span id='javascript-buildNpmPackage-npmFlags'></span> <code>npmFlags</code>: Flags to pass to all npm commands.</li>
+<li><code>npmInstallFlags</code>: Flags to pass to <code>npm ci</code>.</li>
+<li><code>npmBuildFlags</code>: Flags to pass to <code>npm run ${npmBuildScript}</code>.</li>
+<li><code>npmPackFlags</code>: Flags to pass to <code>npm pack</code>.</li>
+<li><code>npmPruneFlags</code>: Flags to pass to <code>npm prune</code>. Defaults to the value of <code>npmInstallFlags</code>.</li>
+<li><code>makeWrapperArgs</code>: Flags to pass to <code>makeWrapper</code>, added to executable calling the generated <code>.js</code> with <code>node</code> as an interpreter. These scripts are defined in <code>package.json</code>.</li>
+<li><code>nodejs</code>: The <code>nodejs</code> package to build against, using the corresponding <code>npm</code> shipped with that version of <code>node</code>. Defaults to <code>pkgs.nodejs</code>.</li>
+<li><code>npmDeps</code>: The dependencies used to build the npm package. Especially useful to not have to recompute workspace dependencies.</li>
+</ul>
+<h4 id='javascript-buildNpmPackage-prefetch-npm-deps'><a href='languages-frameworks/javascript/#javascript-buildNpmPackage-prefetch-npm-deps'>
+prefetch-npm-deps
+</a></h4>
+<p><code>prefetch-npm-deps</code> is a Nixpkgs package that calculates the hash of the dependencies of an npm project ahead of time.</p>
+<pre><code class="language-console">$ ls
+package.json package-lock.json index.js
+$ prefetch-npm-deps package-lock.json
+...
+sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
+</code></pre>
+<h4 id='javascript-buildNpmPackage-fetchNpmDeps'><a href='languages-frameworks/javascript/#javascript-buildNpmPackage-fetchNpmDeps'>
+fetchNpmDeps
+</a></h4>
+<p><code>fetchNpmDeps</code> is a Nix function that requires the following mandatory arguments:</p>
+<ul>
+<li><code>src</code>: A directory / tarball with <code>package-lock.json</code> file</li>
+<li><code>hash</code>: The output hash of the node dependencies defined in <code>package-lock.json</code>.</li>
+</ul>
+<p>It returns a derivation with all <code>package-lock.json</code> dependencies downloaded into <code>$out/</code>, usable as an npm cache.</p>
+<h4 id='javascript-buildNpmPackage-importNpmLock'><a href='languages-frameworks/javascript/#javascript-buildNpmPackage-importNpmLock'>
+importNpmLock
+</a></h4>
+<p>This function replaces the npm dependency references in <code>package.json</code> and <code>package-lock.json</code> with paths to the Nix store.
+How each dependency is fetched can be customized with the <code>fetcherOpts</code> argument.</p>
+<p>This is a simpler and more convenient alternative to <a href="languages-frameworks/javascript/#javascript-buildNpmPackage-fetchNpmDeps"><code>fetchNpmDeps</code></a> for managing npm dependencies in Nixpkgs.
+There is no need to specify a <code>hash</code>, since it relies entirely on the integrity hashes already present in the <code>package-lock.json</code> file.</p>
+<h5 id='javascript-buildNpmPackage-inputs'><a href='languages-frameworks/javascript/#javascript-buildNpmPackage-inputs'>
+Inputs
+</a></h5>
+<ul>
+<li><code>npmRoot</code>: Path to package directory containing the source tree.
+If this is omitted, the <code>package</code> and <code>packageLock</code> arguments must be specified instead.</li>
+<li><code>package</code>: Parsed contents of <code>package.json</code></li>
+<li><code>packageLock</code>: Parsed contents of <code>package-lock.json</code></li>
+<li><code>pname</code>: Package name</li>
+<li><code>version</code>: Package version</li>
+<li><code>fetcherOpts</code>: An attribute set of arguments forwarded to the underlying fetcher.</li>
+</ul>
+<p>It returns a derivation with a patched <code>package.json</code> &amp; <code>package-lock.json</code> with all dependencies resolved to Nix store paths.</p>
+<div class='admonition note'><h3 class='title'>Note</h3>
+<p>
+<code>npmHooks.npmConfigHook</code> cannot be used with <code>importNpmLock</code>.
+Use <code>importNpmLock.npmConfigHook</code> instead.
+</p>
+</div>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h5 id='javascript-buildNpmPackage-example'><a href='languages-frameworks/javascript/#javascript-buildNpmPackage-example'>
+<code>pkgs.importNpmLock</code> usage example
+</a></h5>
+<pre><code class="language-nix">{ buildNpmPackage, importNpmLock }:
+
+buildNpmPackage {
+  pname = &quot;hello&quot;;
+  version = &quot;0.1.0&quot;;
+  src = ./.;
+
+  npmDeps = importNpmLock { npmRoot = ./.; };
+
+  npmConfigHook = importNpmLock.npmConfigHook;
+}
+</code></pre>
+<p></p>
+</div>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h5 id='javascript-buildNpmPackage-example-fetcherOpts'><a href='languages-frameworks/javascript/#javascript-buildNpmPackage-example-fetcherOpts'>
+<code>pkgs.importNpmLock</code> usage example with <code>fetcherOpts</code>
+</a></h5>
+<p><code>importNpmLock</code> uses the following fetchers:</p>
+<ul>
+<li><code>pkgs.fetchurl</code> for <code>http(s)</code> dependencies</li>
+<li><code>fetchGit</code> for <code>git</code> dependencies</li>
+</ul>
+<p>It is possible to provide additional arguments to individual fetchers as needed:</p>
+<pre><code class="language-nix">{ buildNpmPackage, importNpmLock }:
+
+buildNpmPackage {
+  pname = &quot;hello&quot;;
+  version = &quot;0.1.0&quot;;
+  src = ./.;
+
+  npmDeps = importNpmLock {
+    npmRoot = ./.;
+    fetcherOpts = {
+      # Pass 'curlOptsList' to 'pkgs.fetchurl' while fetching 'axios'
+      &quot;node_modules/axios&quot; = {
+        curlOptsList = [ &quot;--verbose&quot; ];
+      };
+    };
+  };
+
+  npmConfigHook = importNpmLock.npmConfigHook;
+}
+</code></pre>
+<p></p>
+</div>
+<h4 id='javascript-buildNpmPackage-importNpmLock.buildNodeModules'><a href='languages-frameworks/javascript/#javascript-buildNpmPackage-importNpmLock.buildNodeModules'>
+importNpmLock.buildNodeModules
+</a></h4>
+<p><code>importNpmLock.buildNodeModules</code> returns a derivation with a pre-built <code>node_modules</code> directory, as imported by <code>importNpmLock</code>.</p>
+<p>This is to be used together with <code>importNpmLock.hooks.linkNodeModulesHook</code> to facilitate <code>nix-shell</code>/<code>nix develop</code> based development workflows.</p>
+<p>It accepts an argument with the following attributes:</p>
+<dl>
+<dt>
+<p><code>npmRoot</code> (Path; optional)</p>
+</dt>
+<dd>
+<p>Path to package directory containing the source tree. If not specified, the <code>package</code> and <code>packageLock</code> arguments must both be specified.</p>
+</dd>
+<dt>
+<p><code>package</code> (Attrset; optional)</p>
+</dt>
+<dd>
+<p>Parsed contents of <code>package.json</code>, as returned by <code>lib.importJSON ./my-package.json</code>. If not specified, the <code>package.json</code> in <code>npmRoot</code> is used.</p>
+</dd>
+<dt>
+<p><code>packageLock</code> (Attrset; optional)</p>
+</dt>
+<dd>
+<p>Parsed contents of <code>package-lock.json</code>, as returned <code>lib.importJSON ./my-package-lock.json</code>. If not specified, the <code>package-lock.json</code> in <code>npmRoot</code> is used.</p>
+</dd>
+<dt>
+<p><code>derivationArgs</code> (<code>mkDerivation</code> attrset; optional)</p>
+</dt>
+<dd>
+<p>Arguments passed to <code>stdenv.mkDerivation</code></p>
+</dd>
+</dl>
+<p>For example:</p>
+<pre><code class="language-nix">pkgs.mkShell {
+  packages = [
+    importNpmLock.hooks.linkNodeModulesHook
+    nodejs
+  ];
+
+  npmDeps = importNpmLock.buildNodeModules {
+    npmRoot = ./.;
+    inherit nodejs;
+  };
+}
+</code></pre>
+<p>will create a development shell where a <code>node_modules</code> directory is created &amp; packages symlinked to the Nix store when activated.</p>
+<div class='admonition note'><h3 class='title'>Note</h3>
+<p>
+Commands like <code>npm install</code> &amp; <code>npm add</code> that write packages &amp; executables need to be used with <code>--package-lock-only</code>.</p>
+<p>This means <code>npm</code> installs dependencies by writing into <code>package-lock.json</code> without modifying the <code>node_modules</code> folder. Installation happens through reloading the devShell.
+This might be best practice since it gives the <code>nix shell</code> virtually exclusive ownership over your <code>node_modules</code> folder.</p>
+<p>It's recommended to set <code>package-lock-only = true</code> in your project-local <a href="https://docs.npmjs.com/cli/v11/configuring-npm/npmrc"><code>.npmrc</code></a>.
+</p>
+</div>
+<h3 id='javascript-corepack'><a href='languages-frameworks/javascript/#javascript-corepack'>
+corepack
+</a></h3>
+<p>This package puts the corepack wrappers for pnpm and yarn in your PATH, and they will honor the <code>packageManager</code> setting in the <code>package.json</code>.</p>
+<h3 id='javascript-pnpm'><a href='languages-frameworks/javascript/#javascript-pnpm'>
+pnpm
+</a></h3>
+<p>pnpm is available as the top-level package <code>pnpm</code>. Additionally, there are variants pinned to certain major versions, like <code>pnpm_9</code>, <code>pnpm_10</code>, <code>pnpm_10_29_2</code> and <code>pnpm_11</code>, which support different sets of lock file versions.</p>
+<p>When packaging an application that includes a <code>pnpm-lock.yaml</code>, you need to fetch the pnpm store for that project using a fixed-output-derivation. The function <code>fetchPnpmDeps</code> can create this pnpm store derivation. In conjunction, the setup hook <code>pnpmConfigHook</code> will prepare the build environment to install the pre-fetched dependencies store. Here is an example for a package that contains <code>package.json</code> and a <code>pnpm-lock.yaml</code> files using the fetcher and setup hook above:</p>
+<p>There is also the <a href="hooks/pnpm/#pnpm-build-hook"><code>pnpmBuildHook</code></a> for building packages with <code>pnpm</code>, as seen in <a href="hooks/pnpm/#ex-pnpm-build-hook">pnpmBuildHook</a>.</p>
+<pre><code class="language-nix">{
+  fetchPnpmDeps,
+  nodejs,
+  pnpm_11,
+  pnpmConfigHook,
+  stdenv,
+}:
+let
+  # It is recommended to pin pnpm to a major version, due to regular breaking changes in the store format
+  # The latest major version is always available under `pkgs.pnpm`
+  # Optionally override pnpm to use a custom nodejs version
+  # Make sure that the same nodejs version is referenced in nativeBuildInputs
+  # pnpm = pnpm_11.override { nodejs = nodejs_24; };
+  pnpm = pnpm_11;
+in
+stdenv.mkDerivation (finalAttrs: {
+  pname = &quot;foo&quot;;
+  version = &quot;0-unstable-1980-01-01&quot;;
+
+  src = {
+    #...
+  };
+
+  nativeBuildInputs = [
+    nodejs # in case scripts are run outside of a pnpm call
+    pnpmConfigHook
+    pnpm # At least required by pnpmConfigHook, if not other (custom) phases
+  ];
+
+  pnpmDeps = fetchPnpmDeps {
+    inherit (finalAttrs) pname version src;
+    inherit pnpm;
+    fetcherVersion = 4;
+    hash = &quot;...&quot;;
+  };
+})
+</code></pre>
+<p>It is highly recommended to use a pinned version of pnpm (i.e., <code>pnpm_9</code> or <code>pnpm_10</code>), to increase future reproducibility. It might also be required to use an older version if the package needs support for a certain lock file version. To do so, you can pass the <code>pnpm</code> argument to <code>fetchPnpmDeps</code> and override the <code>pnpm</code> arg in <code>pnpmConfigHook</code>. Here are the changes in the example above to use a pinned pnpm version:</p>
+<!-- TODO: Does splicing still work when overriding in nativeBuildInputs here? -->
+<pre><code class="language-diff"> {
+   fetchPnpmDeps,
+   nodejs,
+-  pnpm,
++  pnpm_10,
+   pnpmConfigHook,
+   stdenv,
+ }:
++let
++  # Optionally override pnpm to use a custom nodejs version
++  # Make sure that the same nodejs version is referenced in nativeBuildInputs
++  # pnpm = pnpm_10.override { nodejs-slim = nodejs-slim_22; };
++in
+ stdenv.mkDerivation (finalAttrs: {
+   pname = &quot;foo&quot;;
+   version = &quot;0-unstable-1980-01-01&quot;;
+
+   src = {
+     #...
+   };
+
+   nativeBuildInputs = [
+     nodejs # in case scripts are run outside of a pnpm call
+     pnpmConfigHook
+-    pnpm # At least required by pnpmConfigHook, if not other (custom) phases
++    pnpm_10 # At least required by pnpmConfigHook, if not other (custom) phases
+   ];
+
+   pnpmDeps = fetchPnpmDeps {
+     inherit (finalAttrs) pname version src;
++    pnpm = pnpm_10;
+     fetcherVersion = 4;
+     hash = &quot;...&quot;;
+   };
+ })
+</code></pre>
+<p>In case you are patching <code>package.json</code> or <code>pnpm-lock.yaml</code>, make sure to pass <code>finalAttrs.patches</code> to the function as well (i.e., <code>inherit (finalAttrs) patches</code>.</p>
+<p><code>pnpmConfigHook</code> supports adding additional <code>pnpm install</code> flags via <code>pnpmInstallFlags</code> which can be set to a Nix string array:</p>
+<pre><code class="language-nix">{
+  # ...
+  pnpmDeps = fetchPnpmDeps {
+    # ...
+    inherit (finalAttrs) pnpmInstallFlags;
+  };
+
+  pnpmInstallFlags = [ &quot;--shamefully-hoist&quot; ];
+}
+</code></pre>
+<p>If needed, <code>dontPnpmConfigure = true;</code> can be used to fully disable <code>pnpmConfigHook</code> without manually removing it from inputs.</p>
+<h4 id='javascript-pnpm-sourceRoot'><a href='languages-frameworks/javascript/#javascript-pnpm-sourceRoot'>
+Dealing with <code>sourceRoot</code>
+</a></h4>
+<p>If the pnpm project is in a subdirectory, you can just define <code>sourceRoot</code> or <code>setSourceRoot</code> for <code>fetchPnpmDeps</code>.
+If <code>sourceRoot</code> is different between the parent derivation and <code>fetchPnpmDeps</code>, you will have to set <code>pnpmRoot</code> to effectively be the same location as it is in <code>fetchPnpmDeps</code>.</p>
+<p>Assuming the following directory structure, we can define <code>sourceRoot</code> and <code>pnpmRoot</code> as follows:</p>
+<pre><code>.
+├── frontend
+│   ├── ...
+│   ├── package.json
+│   └── pnpm-lock.yaml
+└── ...
+</code></pre>
+<pre><code class="language-nix">{
+  # ...
+  pnpmDeps = fetchPnpmDeps {
+    # ...
+    sourceRoot = &quot;${finalAttrs.src.name}/frontend&quot;;
+  };
+
+  # by default the working directory is the extracted source
+  pnpmRoot = &quot;frontend&quot;;
+}
+</code></pre>
+<h4 id='javascript-pnpm-workspaces'><a href='languages-frameworks/javascript/#javascript-pnpm-workspaces'>
+PNPM Workspaces
+</a></h4>
+<p>If you need to use a PNPM workspace for your project, then set <code>pnpmWorkspaces = [ &quot;&lt;workspace project name 1&gt;&quot; &quot;&lt;workspace project name 2&gt;&quot; ]</code>, etc, in your <code>fetchPnpmDeps</code> call,
+which will make PNPM only install dependencies for those workspace packages.</p>
+<p>For example:</p>
+<pre><code class="language-nix">{
+  # ...
+  pnpmWorkspaces = [ &quot;@astrojs/language-server&quot; ];
+  pnpmDeps = fetchPnpmDeps {
+    #...
+    inherit (finalAttrs) pnpmWorkspaces;
+  };
+}
+</code></pre>
+<p>The above would make <code>fetchPnpmDeps</code> call only install dependencies for the <code>@astrojs/language-server</code> workspace package.
+Note that you do not need to set <code>sourceRoot</code> to make this work.</p>
+<p>Usually, in such cases, you'd want to use <code>pnpm --filter=&lt;pnpm workspace name&gt; build</code> to build your project, as <code>npmHooks.npmBuildHook</code> probably won't work. A <code>buildPhase</code> based on the following example will probably fit most workspace projects:</p>
+<pre><code class="language-nix">{
+  buildPhase = ''
+    runHook preBuild
+
+    pnpm --filter=@astrojs/language-server build
+
+    runHook postBuild
+  '';
+}
+</code></pre>
+<h4 id='javascript-pnpm-extraCommands'><a href='languages-frameworks/javascript/#javascript-pnpm-extraCommands'>
+Additional PNPM Commands and settings
+</a></h4>
+<p>If you require setting an additional PNPM configuration setting (such as <code>dedupe-peer-dependents</code> or similar),
+set <code>prePnpmInstall</code> to the right commands to run. For example:</p>
+<pre><code class="language-nix">{
+  prePnpmInstall = ''
+    pnpm config set dedupe-peer-dependents false
+  '';
+  pnpmDeps = fetchPnpmDeps {
+    inherit (finalAttrs) prePnpmInstall;
+    # ...
+  };
+}
+</code></pre>
+<p>In this example, <code>prePnpmInstall</code> will be run by both <code>pnpmConfigHook</code> and by the <code>fetchPnpmDeps</code> builder.</p>
+<h4 id='javascript-pnpm-fetcherVersion'><a href='languages-frameworks/javascript/#javascript-pnpm-fetcherVersion'>
+pnpm <code>fetcherVersion</code>
+</a></h4>
+<p>This is the version of the output of <code>fetchPnpmDeps</code>. New packages should use <code>4</code>:</p>
+<pre><code class="language-nix">{
+  # ...
+  pnpmDeps = fetchPnpmDeps {
+    # ...
+    fetcherVersion = 4;
+    hash = &quot;...&quot;; # clear this hash and generate a new one
+  };
+}
+</code></pre>
+<p>When upgrading to a newer <code>fetcherVersion</code>, you need to regenerate the hash.</p>
+<p>This variable ensures that we can make changes to the output of <code>fetchPnpmDeps</code> without breaking existing hashes.
+Changes can include workarounds or bug fixes to existing PNPM issues.</p>
+<h5 id='javascript-pnpm-fetcherVersion-versionHistory'><a href='languages-frameworks/javascript/#javascript-pnpm-fetcherVersion-versionHistory'>
+Version history
+</a></h5>
+<p>Version 3 is the minimum supported value. Versions 1 and 2 were removed in the 26.11 release; packages that still use them fail to evaluate and must migrate to <code>fetcherVersion = 3</code> (or later) and regenerate their hashes.</p>
+<ul>
+<li>1: Initial version, nothing special. (removed in 26.11)</li>
+<li>2: <a href="https://github.com/NixOS/nixpkgs/pull/422975">Ensure consistent permissions</a> (removed in 26.11)</li>
+<li>3: <a href="https://github.com/NixOS/nixpkgs/pull/469950">Build a reproducible tarball</a></li>
+<li>4: <a href="https://github.com/NixOS/nixpkgs/pull/522703">Dump SQLite database to an SQL file</a></li>
+</ul>
+<h3 id='javascript-yarn'><a href='languages-frameworks/javascript/#javascript-yarn'>
+Yarn
+</a></h3>
+<p>Yarn based projects use a <code>yarn.lock</code> file instead of a <code>package-lock.json</code> to pin dependencies.</p>
+<p>To package yarn-based applications, you need to distinguish by the version pointers in the <code>yarn.lock</code> file. See the following sections.</p>
+<h4 id='javascript-yarn-v1'><a href='languages-frameworks/javascript/#javascript-yarn-v1'>
+Yarn v1
+</a></h4>
+<p>Yarn v1 lockfiles contain a comment <code># yarn lockfile v1</code> at the beginning of the file.</p>
+<p>Nixpkgs provides the Nix function <code>fetchYarnDeps</code> which fetches an offline cache suitable for running <code>yarn install</code> before building the project. In addition, Nixpkgs provides the hooks:</p>
+<ul>
+<li><code>yarnConfigHook</code>: Fetches the dependencies from the offline cache and installs them into <code>node_modules</code>.</li>
+<li><code>yarnBuildHook</code>: Runs <code>yarn build</code> or a specified <code>yarn</code> command that builds the project.</li>
+<li><code>yarnInstallHook</code>: Runs <code>yarn install --production</code> to prune dependencies and installs the project into <code>$out</code>.</li>
+</ul>
+<p>An example usage of the above attributes is:</p>
+<pre><code class="language-nix">{
+  lib,
+  stdenv,
+  fetchFromGitHub,
+  fetchYarnDeps,
+  yarnConfigHook,
+  yarnBuildHook,
+  yarnInstallHook,
+  nodejs,
+}:
+
+stdenv.mkDerivation (finalAttrs: {
+  pname = &quot;...&quot;;
+  version = &quot;...&quot;;
+
+  src = fetchFromGitHub {
+    owner = &quot;...&quot;;
+    repo = &quot;...&quot;;
+    tag = &quot;v${finalAttrs.version}&quot;;
+    hash = &quot;sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=&quot;;
+  };
+
+  yarnOfflineCache = fetchYarnDeps {
+    yarnLock = finalAttrs.src + &quot;/yarn.lock&quot;;
+    hash = &quot;sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=&quot;;
+  };
+
+  nativeBuildInputs = [
+    yarnConfigHook
+    yarnBuildHook
+    yarnInstallHook
+    # Needed for executing package.json scripts
+    nodejs
+  ];
+
+  meta = {
+    # ...
+  };
+})
+</code></pre>
+<h5 id='javascript-yarnconfighook'><a href='languages-frameworks/javascript/#javascript-yarnconfighook'>
+<code>yarnConfigHook</code> arguments
+</a></h5>
+<p>By default, <code>yarnConfigHook</code> relies upon the attribute <code>${yarnOfflineCache}</code> (or <code>${offlineCache}</code> if the former is not set) to find the location of the offline cache produced by <code>fetchYarnDeps</code>. To disable this phase, you can set <code>dontYarnInstallDeps = true</code> or override the <code>configurePhase</code>.</p>
+<h5 id='javascript-yarnbuildhook'><a href='languages-frameworks/javascript/#javascript-yarnbuildhook'>
+<code>yarnBuildHook</code> arguments
+</a></h5>
+<p>This script by default runs <code>yarn --offline build</code>, and it relies upon the project's dependencies installed at <code>node_modules</code>. Below is a list of additional <code>mkDerivation</code> arguments read by this hook:</p>
+<ul>
+<li><code>yarnBuildScript</code>: Sets a different <code>yarn --offline</code> subcommand (defaults to <code>build</code>).</li>
+<li><code>yarnBuildFlags</code>: Single string list of additional flags to pass the above command, or a Nix list of such additional flags.</li>
+</ul>
+<h5 id='javascript-yarninstallhook'><a href='languages-frameworks/javascript/#javascript-yarninstallhook'>
+<code>yarnInstallHook</code> arguments
+</a></h5>
+<p>To install the package <code>yarnInstallHook</code> uses both <code>npm</code> and <code>yarn</code> to cleanup project files and dependencies. To disable this phase, you can set <code>dontYarnInstall = true</code> or override the <code>installPhase</code>. Below is a list of additional <code>mkDerivation</code> arguments read by this hook:</p>
+<ul>
+<li><code>yarnKeepDevDeps</code>: Disables the removal of devDependencies from <code>node_modules</code> before installation.</li>
+</ul>
+<h4 id='javascript-yarn-v3-v4'><a href='languages-frameworks/javascript/#javascript-yarn-v3-v4'>
+Yarn Berry v3/v4
+</a></h4>
+<p>Yarn Berry (v3 / v4) have similar formats, they start with blocks like these:</p>
+<pre><code class="language-yaml">__metadata:
+  version: 6
+  cacheKey: 8[cX]
+</code></pre>
+<pre><code class="language-yaml">__metadata:
+  version: 8
+  cacheKey: 10[cX]
+</code></pre>
+<p>For these packages, we have some helpers exposed under the respective <code>yarn-berry_3</code> and <code>yarn-berry_4</code> packages:</p>
+<ul>
+<li><code>yarn-berry-fetcher</code></li>
+<li><code>fetchYarnBerryDeps</code></li>
+<li><code>yarnBerryConfigHook</code></li>
+</ul>
+<p>It's recommended to ensure you're explicitly pinning the major version used, for example by capturing the <code>yarn-berry_Xn</code> argument and then re-defining it as a <code>yarn-berry</code> <code>let</code> binding.</p>
+<pre><code class="language-nix">{
+  stdenv,
+  nodejs,
+  yarn-berry_4,
+}:
+
+let
+  yarn-berry = yarn-berry_4;
+
+in
+stdenv.mkDerivation (finalAttrs: {
+  pname = &quot;foo&quot;;
+  version = &quot;0-unstable-1980-01-01&quot;;
+
+  src = {
+    #...
+  };
+
+  nativeBuildInputs = [
+    nodejs
+    yarn-berry.yarnBerryConfigHook
+  ];
+
+  offlineCache = yarn-berry.fetchYarnBerryDeps {
+    inherit (finalAttrs) src;
+    hash = &quot;...&quot;;
+  };
+})
+</code></pre>
+<h5 id='javascript-fetchYarnBerryDeps'><a href='languages-frameworks/javascript/#javascript-fetchYarnBerryDeps'>
+<code>yarn-berry_X.fetchYarnBerryDeps</code>
+</a></h5>
+<p><code>fetchYarnBerryDeps</code> runs <code>yarn-berry-fetcher fetch</code> in a fixed-output-derivation. It is a custom fetcher designed to reproducibly download all files in the <code>yarn.lock</code> file, validating their hashes in the process. For git dependencies, it creates a checkout at <code>${offlineCache}/checkouts/&lt;40-character-commit-hash&gt;</code> (relying on the git commit hash to describe the contents of the checkout).</p>
+<p>To produce the <code>hash</code> argument for <code>fetchYarnBerryDeps</code> function call, the <code>yarn-berry-fetcher prefetch</code> command can be used:</p>
+<pre><code class="language-console">$ yarn-berry-fetcher prefetch &lt;/path/to/yarn.lock&gt; [/path/to/missing-hashes.json]
+</code></pre>
+<p>This prints the hash to stdout and can be used in update scripts to recalculate the hash for a new version of <code>yarn.lock</code>.</p>
+<h5 id='javascript-yarnBerryConfigHook'><a href='languages-frameworks/javascript/#javascript-yarnBerryConfigHook'>
+<code>yarn-berry_X.yarnBerryConfigHook</code>
+</a></h5>
+<p><code>yarnBerryConfigHook</code> uses the store path <code>offlineCache</code> points to, to run a <code>yarn install</code> during the build, producing a usable <code>node_modules</code> directory from the downloaded dependencies.</p>
+<p>Internally, this uses a patched version of Yarn to ensure git dependencies are re-packed and any attempted downloads fail immediately.</p>
+<h5 id='javascript-yarnBerry-patching'><a href='languages-frameworks/javascript/#javascript-yarnBerry-patching'>
+Patching upstream <code>package.json</code> or <code>yarn.lock</code> files
+</a></h5>
+<p>In case patching the upstream <code>package.json</code> or <code>yarn.lock</code> is needed, it's important to pass <code>finalAttrs.patches</code> to <code>fetchYarnBerryDeps</code> as well, so the patched variants are picked up (i.e., <code>inherit (finalAttrs) patches</code>.</p>
+<h5 id='javascript-yarnBerry-missing-hashes'><a href='languages-frameworks/javascript/#javascript-yarnBerry-missing-hashes'>
+Missing hashes in the <code>yarn.lock</code> file
+</a></h5>
+<p>Unfortunately, <code>yarn.lock</code> files do not include hashes for optional/platform-specific dependencies. This is <a href="https://github.com/yarnpkg/berry/issues/6759">by design</a>.</p>
+<p>To compensate for this, the <code>yarn-berry-fetcher missing-hashes</code> subcommand can be used to produce all missing hashes. These are usually stored in a <code>missing-hashes.json</code> file, which needs to be passed to both the build itself, as well as the <code>fetchYarnBerryDeps</code> helper:</p>
+<pre><code class="language-nix">{
+  stdenv,
+  nodejs,
+  yarn-berry_4,
+}:
+
+let
+  yarn-berry = yarn-berry_4;
+
+in
+stdenv.mkDerivation (finalAttrs: {
+  pname = &quot;foo&quot;;
+  version = &quot;0-unstable-1980-01-01&quot;;
+
+  src = {
+    #...
+  };
+
+  nativeBuildInputs = [
+    nodejs
+    yarn-berry.yarnBerryConfigHook
+  ];
+
+  missingHashes = ./missing-hashes.json;
+  offlineCache = yarn-berry.fetchYarnBerryDeps {
+    inherit (finalAttrs) src missingHashes;
+    hash = &quot;...&quot;;
+  };
+})
+</code></pre>
+<h2 id='javascript-outside-nixpkgs'><a href='languages-frameworks/javascript/#javascript-outside-nixpkgs'>
+Outside Nixpkgs
+</a></h2>
+<p>There are some other tools available, which are written in the Nix language.
+These can't be used inside Nixpkgs because they require <a href="contributing/coding-conventions/#ssec-import-from-derivation">Import From Derivation</a>, which is not allowed in Nixpkgs.</p>
+<p>If you are packaging something outside Nixpkgs, consider the following:</p>
+<h3 id='javascript-npmlock2nix'><a href='languages-frameworks/javascript/#javascript-npmlock2nix'>
+npmlock2nix
+</a></h3>
+<p><a href="https://github.com/nix-community/npmlock2nix">npmlock2nix</a> aims at building <code>node_modules</code> without code generation. It hasn't reached v1 yet, the API might be subject to change.</p>
+<h4 id='javascript-npmlock2nix-pitfalls'><a href='languages-frameworks/javascript/#javascript-npmlock2nix-pitfalls'>
+Pitfalls
+</a></h4>
+<p>There are some <a href="https://github.com/tweag/npmlock2nix/issues/45">problems with npm v7</a>.</p>
+<h3 id='javascript-nix-npm-buildpackage'><a href='languages-frameworks/javascript/#javascript-nix-npm-buildpackage'>
+nix-npm-buildpackage
+</a></h3>
+<p><a href="https://github.com/serokell/nix-npm-buildpackage">nix-npm-buildpackage</a> aims at building <code>node_modules</code> without code generation. It hasn't reached v1 yet, the API might change. It supports both <code>package-lock.json</code> and yarn.lock.</p>
+<h4 id='javascript-nix-npm-buildpackage-pitfalls'><a href='languages-frameworks/javascript/#javascript-nix-npm-buildpackage-pitfalls'>
+Pitfalls
+</a></h4>
+<p>There are some <a href="https://github.com/serokell/nix-npm-buildpackage/issues/33">problems with npm v7</a>.</p>
+        </main>
+      </div>
+    </section>
+<script defer src='highlight.pack.cf986678470772f7.js'></script>
+<script defer src='mmdoc.367f3e8986e40416.js'></script>
+<script defer src='mmdoc_search.a5b6fc7d7512cdc1.js' data-search-index='search_index.b3afff10081eb0bd.js' data-fuse='fuse.basic.min.bb997c989fa0a28e.js'></script>
+  </div>
+  </body>
+</html>

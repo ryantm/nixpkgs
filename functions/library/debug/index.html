@@ -1,0 +1,860 @@
+<!doctype html>
+<html lang='en'>
+  <head>
+    <base href='../../../'>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <script>
+      (() => {
+        let theme = null
+        try { theme = localStorage.getItem('theme') } catch (error) {}
+        if (theme !== 'light' && theme !== 'dark')
+          theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+        document.documentElement.classList.add(theme + '-theme')
+      })()
+    </script>
+    <meta name='description' content='lib.debug: debugging functions'>
+    <link rel='icon' href='favicon.svg'>
+    <link rel='stylesheet' href='a11y-dark.1fcafc9d9a306955.css'>
+    <link rel='stylesheet' href='a11y-light.b466309a7fa86b1f.css'>
+    <link rel='stylesheet' href='mmdoc.e4286053b6471af4.css'>
+    <title>lib.debug: debugging functions | nixpkgs</title>
+  </head>
+  <body>
+  <a class='skip-link' href='functions/library/debug/#main-content'>Skip to main content</a>
+  <input type='checkbox' id='sidebar-checkbox' aria-hidden='true' tabindex='-1' style='display: none;'>
+  <div class='body'>
+    <div class='nav-top-container'>
+    <nav class='nav-top' aria-label='Documentation controls'>
+      <button type='button' class='sidebar-toggle' aria-label='Toggle table of contents' aria-controls='sidebar' aria-expanded='true'></button>    <button type='button' class='search-toggle' aria-label='Open search' aria-controls='search-panel' aria-expanded='false'></button>    <button type='button' class='theme-toggle' aria-label='Switch to dark theme' aria-pressed='false'></button>    <a id='chapter-previous-button' class='chapter-previous' href='functions/library/lists/#sec-functions-library-lists' title='lib.lists: list manipulation functions' aria-label='Previous: lib.lists: list manipulation functions'>&lt;</a>
+    <a id='chapter-next-button' class='chapter-next' href='functions/library/options/#sec-functions-library-options' title='lib.options: NixOS / nixpkgs option handling' aria-label='Next: lib.options: NixOS / nixpkgs option handling'>&gt;</a>
+    </nav>
+    </div>
+    <nav id='sidebar' class='sidebar' aria-label='Table of contents'>
+<h1>Nixpkgs Manual</h1>
+<p>Version 26.11pre</p>
+<ul>
+<li><a href="./#preface">Preface</a>
+<ul>
+<li><a href="preface/#overview-of-nixpkgs">Overview of Nixpkgs</a></li>
+</ul>
+</li>
+<li><a href="first-package/#chap-first-package">Package your first application</a></li>
+</ul>
+<h2>Using Nixpkgs</h2>
+<ul>
+<li><a href="using/platform-support/#chap-platform-support">Platform Support</a></li>
+<li><a href="using/configuration/#chap-packageconfig">Global configuration</a></li>
+<li><a href="using/overlays/#chap-overlays">Overlays</a></li>
+<li><a href="using/overrides/#chap-overrides">Overriding</a></li>
+</ul>
+<h2>Nixpkgs Lib</h2>
+<ul>
+<li><a href="functions/#chap-functions">Functions reference</a>
+<ul>
+<li>Library Functions
+<ul>
+<li><a href="functions/library/asserts/#sec-functions-library-asserts">lib.asserts: assertion functions</a></li>
+<li><a href="functions/library/attrsets/#sec-functions-library-attrsets">lib.attrsets: attribute set functions</a></li>
+<li><a href="functions/library/strings/#sec-functions-library-strings">lib.strings: string manipulation functions</a></li>
+<li><a href="functions/library/versions/#sec-functions-library-versions">lib.versions: version string functions</a></li>
+<li><a href="functions/library/trivial/#sec-functions-library-trivial">lib.trivial: miscellaneous functions</a></li>
+<li><a href="functions/library/fixedPoints/#sec-functions-library-fixedPoints">lib.fixedPoints: explicit recursion functions</a></li>
+<li><a href="functions/library/lists/#sec-functions-library-lists">lib.lists: list manipulation functions</a></li>
+<li><a href="functions/library/debug/#sec-functions-library-debug">lib.debug: debugging functions</a></li>
+<li><a href="functions/library/options/#sec-functions-library-options">lib.options: NixOS / nixpkgs option handling</a></li>
+<li><a href="functions/library/path/#sec-functions-library-path">lib.path: path functions</a></li>
+<li><a href="functions/library/filesystem/#sec-functions-library-filesystem">lib.filesystem: filesystem functions</a></li>
+<li><a href="functions/library/fileset/#sec-functions-library-fileset">lib.fileset: file set functions</a></li>
+<li><a href="functions/library/sources/#sec-functions-library-sources">lib.sources: source filtering functions</a></li>
+<li><a href="functions/library/cli/#sec-functions-library-cli">lib.cli: command-line serialization functions</a></li>
+<li><a href="functions/library/gvariant/#sec-functions-library-gvariant">lib.gvariant: GVariant formatted string serialization functions</a></li>
+<li><a href="functions/library/fetchers/#sec-functions-library-fetchers">lib.fetchers: functions which can be reused across fetchers</a></li>
+<li><a href="functions/library/generators/#sec-functions-library-generators">lib.generators: functions that create file formats from nix data structures</a></li>
+<li><a href="functions/library/customisation/#sec-functions-library-customisation">lib.customisation: Functions to customise (derivation-related) functions, derivations, or attribute sets</a></li>
+<li><a href="functions/library/meta/#sec-functions-library-meta">lib.meta: functions for derivation metadata</a></li>
+<li><a href="functions/library/derivations/#sec-functions-library-derivations">lib.derivations: miscellaneous derivation-specific functions</a></li>
+<li><a href="functions/generators/#sec-generators">Generators</a></li>
+<li><a href="functions/debug/#sec-debug">Debugging Nix Expressions</a></li>
+<li><a href="functions/prefer-remote-fetch/#sec-prefer-remote-fetch">prefer-remote-fetch overlay</a></li>
+<li><a href="functions/nix-gitignore/#sec-pkgs-nix-gitignore">pkgs.nix-gitignore</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="module-system/module-system/#module-system">Module System</a></li>
+</ul>
+<h2>Standard Environment</h2>
+<ul>
+<li><a href="stdenv/#part-stdenv">Standard environment</a></li>
+<li><a href="stdenv/stdenv/#chap-stdenv">The Standard Environment</a></li>
+<li><a href="stdenv/meta/#chap-meta">Meta-attributes</a></li>
+<li><a href="stdenv/passthru/#chap-passthru">Passthru-attributes</a></li>
+<li><a href="stdenv/multiple-output/#chap-multiple-output">Multiple-output packages</a></li>
+<li><a href="stdenv/cross-compilation/#chap-cross">Cross-compilation</a></li>
+<li><a href="stdenv/platform-notes/#chap-platform-notes">Platform Notes</a></li>
+</ul>
+<h2>Toolchains</h2>
+<ul>
+<li><a href="toolchains/llvm/#chap-toolchains">The LLVM Toolchain</a></li>
+</ul>
+<h2>Builders</h2>
+<ul>
+<li><a href="build-helpers/#part-builders">Build helpers</a></li>
+<li><a href="build-helpers/fetchers/#chap-pkgs-fetchers">Fetchers</a></li>
+<li><a href="build-helpers/trivial-build-helpers/#chap-trivial-builders">Trivial build helpers</a></li>
+<li><a href="build-helpers/fixed-point-arguments/#chap-build-helpers-finalAttrs">Fixed-point arguments of build helpers</a></li>
+<li><a href="build-helpers/dev-shell-tools/#chap-devShellTools">Development Shell helpers</a></li>
+<li><a href="build-helpers/testers/#chap-testers">Testers</a></li>
+<li>Special build helpers
+<ul>
+<li><a href="build-helpers/special/fhs-environments/#sec-fhs-environments">buildFHSEnv</a></li>
+<li><a href="build-helpers/special/fakenss/#sec-fakeNss">fakeNss</a></li>
+<li><a href="build-helpers/special/makesetuphook/#sec-pkgs.makeSetupHook">pkgs.makeSetupHook</a></li>
+<li><a href="build-helpers/special/mkshell/#sec-pkgs-mkShell">pkgs.mkShell</a></li>
+<li><a href="packages/darwin-builder/#sec-darwin-builder">darwin.linux-builder</a></li>
+<li><a href="build-helpers/special/vm-tools/#sec-vm-tools">vmTools</a></li>
+</ul>
+</li>
+<li>Images
+<ul>
+<li><a href="build-helpers/images/appimagetools/#sec-pkgs-appimageTools">pkgs.appimageTools</a></li>
+<li><a href="build-helpers/images/dockertools/#sec-pkgs-dockerTools">pkgs.dockerTools</a></li>
+<li><a href="build-helpers/images/ocitools/#sec-pkgs-ociTools">pkgs.ociTools</a></li>
+<li><a href="build-helpers/images/portableservice/#sec-pkgs-portableService">pkgs.portableService</a></li>
+<li><a href="build-helpers/images/makediskimage/#sec-make-disk-image">&lt;nixpkgs/nixos/lib/make-disk-image.nix&gt;</a></li>
+<li><a href="build-helpers/images/binarycache/#sec-pkgs-binary-cache">pkgs.mkBinaryCache</a></li>
+</ul>
+</li>
+<li><a href="hooks/index/#chap-hooks">Hooks reference</a>
+<ul>
+<li><a href="hooks/autoconf/#setup-hook-autoconf">Autoconf</a></li>
+<li><a href="hooks/automake/#setup-hook-automake">Automake</a></li>
+<li><a href="hooks/autopatchelf/#setup-hook-autopatchelfhook">autoPatchelfHook</a></li>
+<li><a href="hooks/breakpoint/#breakpointhook">breakpointHook</a></li>
+<li><a href="hooks/cmake/#cmake">cmake</a></li>
+<li><a href="hooks/gdk-pixbuf/#setup-hook-gdk-pixbuf">gdk-pixbuf</a></li>
+<li><a href="hooks/ghc/#ghc">GHC</a></li>
+<li><a href="hooks/gnome/#gnome-platform">GNOME platform</a></li>
+<li><a href="hooks/installShellFiles/#installshellfiles">installShellFiles</a></li>
+<li><a href="hooks/libglycin/#libglycin-hooks">libglycin</a></li>
+<li><a href="hooks/libiconv/#libiconv-libintl">libiconv, libintl</a></li>
+<li><a href="hooks/libxml2/#setup-hook-libxml2">libxml2</a></li>
+<li><a href="hooks/meson/#meson">Meson</a></li>
+<li><a href="hooks/mpi-check-hook/#setup-hook-mpi-check">mpiCheckPhaseHook</a></li>
+<li><a href="hooks/ninja/#ninja">ninja</a></li>
+<li><a href="hooks/patch-rc-path-hooks/#sec-patchRcPathHooks">patchRcPath hooks</a></li>
+<li><a href="hooks/perl/#setup-hook-perl">Perl</a></li>
+<li><a href="hooks/pkg-config/#setup-hook-pkg-config">pkg-config</a></li>
+<li><a href="hooks/pnpm/#pnpm-build-hook">pnpmBuildHook</a></li>
+<li><a href="hooks/postgresql-test-hook/#sec-postgresqlTestHook">postgresqlTestHook</a></li>
+<li><a href="hooks/python/#setup-hook-python">Python</a></li>
+<li><a href="hooks/scons/#scons">scons</a></li>
+<li><a href="hooks/tetex-tex-live/#tetex-tex-live">teTeX / TeX Live</a></li>
+<li><a href="hooks/unzip/#unzip">unzip</a></li>
+<li><a href="hooks/validatePkgConfig/#validatepkgconfig">validatePkgConfig</a></li>
+<li><a href="hooks/versionCheckHook/#versioncheckhook">versionCheckHook</a></li>
+<li><a href="hooks/waf/#waf-hook">wafHook</a></li>
+<li><a href="hooks/xcbuild/#xcbuildhook">xcbuildHook</a></li>
+</ul>
+</li>
+<li><a href="languages-frameworks/index/#chap-language-support">Languages and frameworks</a>
+<ul>
+<li><a href="languages-frameworks/agda/#agda">Agda</a></li>
+<li><a href="languages-frameworks/android/#android">Android</a></li>
+<li><a href="languages-frameworks/astal/#astal">Astal</a></li>
+<li><a href="languages-frameworks/beam/#sec-beam">BEAM Languages (Erlang, Elixir &amp; LFE)</a></li>
+<li><a href="languages-frameworks/chicken/#sec-chicken">CHICKEN</a></li>
+<li><a href="languages-frameworks/cosmic/#sec-language-cosmic">COSMIC</a></li>
+<li><a href="languages-frameworks/crystal/#crystal">Crystal</a></li>
+<li><a href="languages-frameworks/cuda/#cuda">CUDA</a></li>
+<li><a href="languages-frameworks/cuelang/#cuelang">Cue (Cuelang)</a></li>
+<li><a href="languages-frameworks/dlang/#dlang">D (Dlang)</a></li>
+<li><a href="languages-frameworks/dart/#sec-language-dart">Dart</a></li>
+<li><a href="languages-frameworks/dhall/#sec-language-dhall">Dhall</a></li>
+<li><a href="languages-frameworks/dotnet/#dotnet">Dotnet</a></li>
+<li><a href="languages-frameworks/emscripten/#emscripten">Emscripten</a></li>
+<li><a href="languages-frameworks/factor/#sec-language-factor">Factor</a></li>
+<li><a href="languages-frameworks/gnome/#sec-language-gnome">GNOME</a></li>
+<li><a href="languages-frameworks/go/#sec-language-go">Go</a></li>
+<li><a href="languages-frameworks/gradle/#gradle">Gradle</a></li>
+<li><a href="languages-frameworks/hare/#sec-language-hare">Hare</a></li>
+<li><a href="languages-frameworks/haskell/#haskell">Haskell</a></li>
+<li><a href="languages-frameworks/hy/#sec-language-hy">Hy</a></li>
+<li><a href="languages-frameworks/idris/#idris">Idris</a></li>
+<li><a href="languages-frameworks/idris2/#sec-idris2">Idris2</a></li>
+<li><a href="languages-frameworks/ios/#ios">iOS</a></li>
+<li><a href="languages-frameworks/java/#sec-language-java">Java</a></li>
+<li><a href="languages-frameworks/javascript/#language-javascript">Javascript</a></li>
+<li><a href="languages-frameworks/julia/#language-julia">Julia</a></li>
+<li><a href="languages-frameworks/lean4/#sec-language-lean4">Lean 4</a></li>
+<li><a href="languages-frameworks/lisp/#lisp">lisp-modules</a></li>
+<li><a href="languages-frameworks/lua/#lua">Lua</a></li>
+<li><a href="languages-frameworks/maven/#maven">Maven</a></li>
+<li><a href="languages-frameworks/neovim/#neovim">Neovim</a></li>
+<li><a href="languages-frameworks/nim/#sec-language-nim">Nim</a></li>
+<li><a href="languages-frameworks/ocaml/#sec-language-ocaml">OCaml</a></li>
+<li><a href="languages-frameworks/octave/#sec-octave">Octave</a></li>
+<li><a href="languages-frameworks/perl/#sec-language-perl">Perl</a></li>
+<li><a href="languages-frameworks/php/#sec-php">PHP</a></li>
+<li><a href="languages-frameworks/pkg-config/#sec-pkg-config">pkg-config</a></li>
+<li><a href="languages-frameworks/python/#python">Python</a></li>
+<li><a href="languages-frameworks/qt/#sec-language-qt">Qt</a></li>
+<li><a href="languages-frameworks/r/#r">R</a></li>
+<li><a href="languages-frameworks/rocq/#sec-language-rocq">Rocq and rocq packages</a></li>
+<li><a href="languages-frameworks/ruby/#sec-language-ruby">Ruby</a></li>
+<li><a href="languages-frameworks/rust/#rust">Rust</a></li>
+<li><a href="languages-frameworks/scheme/#sec-scheme">Scheme</a></li>
+<li><a href="languages-frameworks/swift/#swift">Swift</a></li>
+<li><a href="languages-frameworks/tcl/#sec-language-tcl">Tcl</a></li>
+<li><a href="languages-frameworks/texlive/#sec-language-texlive">TeX Live</a></li>
+<li><a href="languages-frameworks/typst/#typst">Typst</a></li>
+<li><a href="languages-frameworks/vim/#vim">Vim</a></li>
+</ul>
+</li>
+<li><a href="packages/index/#chap-packages">Packages</a>
+<ul>
+<li><a href="packages/build-support/#sec-build-support">Build Support</a></li>
+<li><a href="packages/cataclysm-dda/#cataclysm-dark-days-ahead">Cataclysm: Dark Days Ahead</a></li>
+<li><a href="packages/citrix/#sec-citrix">Citrix Workspace</a></li>
+<li><a href="packages/dlib/#dlib">DLib</a></li>
+<li><a href="packages/eclipse/#sec-eclipse">Eclipse</a></li>
+<li><a href="packages/elm/#sec-elm">Elm</a></li>
+<li><a href="packages/emacs/#sec-emacs">Emacs</a></li>
+<li><a href="packages/firefox/#sec-firefox">Firefox</a></li>
+<li><a href="packages/fish/#sec-fish">Fish</a></li>
+<li><a href="packages/friction-graphics/#friction-graphics">Friction</a></li>
+<li><a href="packages/fuse/#sec-fuse">FUSE</a></li>
+<li><a href="packages/geant4/#geant4">Geant4</a></li>
+<li><a href="packages/ibus/#sec-ibus-typing-booster">ibus-engines.typing-booster</a></li>
+<li><a href="packages/inkscape/#sec-inkscape">Inkscape</a></li>
+<li><a href="packages/kakoune/#sec-kakoune">Kakoune</a></li>
+<li><a href="packages/krita/#sec-krita">Krita</a></li>
+<li><a href="packages/lhapdf/#lhapdf">LHAPDF</a></li>
+<li><a href="packages/linux/#sec-linux-kernel">Linux kernel</a></li>
+<li><a href="packages/locales/#locales">Locales</a></li>
+<li><a href="packages/etc-files/#etc">/etc files</a></li>
+<li><a href="packages/nginx/#sec-nginx">Nginx</a></li>
+<li><a href="packages/nrfutil/#sec-nrfutil">nrfutil</a></li>
+<li><a href="packages/opengl/#sec-opengl">OpenGL</a></li>
+<li><a href="packages/python-tree-sitter/#python-tree-sitter">Python Tree Sitter</a></li>
+<li><a href="packages/shell-helpers/#sec-shell-helpers">Interactive shell helpers</a></li>
+<li><a href="packages/steam/#sec-steam">Steam</a></li>
+<li><a href="packages/treefmt/#treefmt">treefmt</a></li>
+<li><a href="packages/urxvt/#sec-urxvt">Urxvt</a></li>
+<li><a href="packages/uv/#sec-uv">uv</a></li>
+<li><a href="packages/vcpkg/#sec-vcpkg">VCPKG</a></li>
+<li><a href="packages/weechat/#sec-weechat">WeeChat</a></li>
+</ul>
+</li>
+</ul>
+<h2>Modules</h2>
+<ul>
+<li><a href="modules/index/#modules">Modules</a>
+<ul>
+<li><a href="modules/generic/#modules-generic">Generic</a>
+<ul>
+<li><a href="modules/generic/#modules-generic-meta-maintainers">meta-maintainers.nix</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2>Development of Nixpkgs</h2>
+<ul>
+<li><a href="development/opening-issues/#sec-opening-issues">Opening issues</a></li>
+<li><a href="contributing/coding-conventions/#chap-conventions">Coding conventions</a></li>
+</ul>
+<h2>Interoperability Standards</h2>
+<ul>
+<li><a href="interoperability/cyclonedx/#chap-interop-cyclonedx">CycloneDX</a>
+<ul>
+<li><a href="interoperability/cyclonedx/#sec-interop.cylonedx-nix"><code>nix</code> namespace</a></li>
+<li><a href="interoperability/cyclonedx/#sec-interop.cylonedx-narinfo"><code>nix:narinfo</code></a></li>
+<li><a href="interoperability/cyclonedx/#sec-interop.cylonedx-fod"><code>nix:fod</code></a></li>
+</ul>
+</li>
+</ul>
+<h2>Release Notes</h2>
+<ul>
+<li><a href="release-notes/release-notes/#chap-release-notes">Release Notes</a>
+<ul>
+<li><a href="release-notes/rl-2611/#sec-nixpkgs-release-26.11">Nixpkgs 26.11 (&quot;Zokor&quot;, 2026.11/??)</a></li>
+<li><a href="release-notes/rl-2605/#sec-nixpkgs-release-26.05">Nixpkgs 26.05 (&quot;Yarara&quot;, 2026.05/30)</a></li>
+<li><a href="release-notes/rl-2511/#sec-nixpkgs-release-25.11">Nixpkgs 25.11 (&quot;Xantusia&quot;, 2025.11/30)</a></li>
+<li><a href="release-notes/rl-2505/#sec-nixpkgs-release-25.05">Nixpkgs 25.05 (2025.05/23)</a></li>
+</ul>
+</li>
+</ul>
+    </nav>
+    <section id='main'>
+      <div id='search-panel' class='nav-search' role='search' hidden>
+        <label class='visually-hidden' for='search'>Search documentation</label>
+        <input type='search' id='search' placeholder='Search' autocomplete='off' aria-controls='search-results'>
+        <p id='search-status' class='visually-hidden' role='status' aria-live='polite'></p>
+        <div id='search-results'></div>
+      </div>
+      <div class='main-scroll'>
+        <main id='main-content' tabindex='-1'>
+<h1 id='sec-functions-library-debug'><a href='functions/library/debug/#sec-functions-library-debug'>
+lib.debug: debugging functions
+</a></h1>
+<p>Collection of functions useful for debugging
+broken nix expressions.</p>
+<ul>
+<li><code>trace</code>-like functions take two values, print
+the first to stderr and return the second.</li>
+<li><code>traceVal</code>-like functions take one argument
+which both printed and returned.</li>
+<li><code>traceSeq</code>-like functions fully evaluate their
+traced value before printing (not just to “weak
+head normal form” like trace does by default).</li>
+<li>Functions that end in <code>-Fn</code> take an additional
+function as their first argument, which is applied
+to the traced value before it is printed.</li>
+</ul>
+<h2 id='function-library-lib.debug.traceIf'><a href='functions/library/debug/#function-library-lib.debug.traceIf'>
+<code>lib.debug.traceIf</code>
+</a></h2>
+<p>Conditionally trace the supplied message, based on a predicate.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>pred</code></p>
+</dt>
+<dd>
+<p>Predicate to check</p>
+</dd>
+<dt>
+<p><code>msg</code></p>
+</dt>
+<dd>
+<p>Message that should be traced</p>
+</dd>
+<dt>
+<p><code>x</code></p>
+</dt>
+<dd>
+<p>Value to return</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>traceIf :: Bool -&gt; String -&gt; a -&gt; a
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.debug.traceIf</code> usage example</h4>
+<pre><code class="language-nix">traceIf true &quot;hello&quot; 3
+trace: hello
+=&gt; 3
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/debug.nix#L78">lib/debug.nix:78</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.debug.traceValFn'><a href='functions/library/debug/#function-library-lib.debug.traceValFn'>
+<code>lib.debug.traceValFn</code>
+</a></h2>
+<p>Trace the supplied value after applying a function to it, and
+return the original value.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>f</code></p>
+</dt>
+<dd>
+<p>Function to apply</p>
+</dd>
+<dt>
+<p><code>x</code></p>
+</dt>
+<dd>
+<p>Value to trace and return</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>traceValFn :: (a -&gt; b) -&gt; a -&gt; a
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.debug.traceValFn</code> usage example</h4>
+<pre><code class="language-nix">traceValFn (v: &quot;mystring ${v}&quot;) &quot;foo&quot;
+trace: mystring foo
+=&gt; &quot;foo&quot;
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/debug.nix#L114">lib/debug.nix:114</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.debug.traceVal'><a href='functions/library/debug/#function-library-lib.debug.traceVal'>
+<code>lib.debug.traceVal</code>
+</a></h2>
+<p>Trace the supplied value and return it.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>x</code></p>
+</dt>
+<dd>
+<p>Value to trace and return</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>traceVal :: a -&gt; a
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.debug.traceVal</code> usage example</h4>
+<pre><code class="language-nix">traceVal 42
+# trace: 42
+=&gt; 42
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/debug.nix#L143">lib/debug.nix:143</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.debug.traceSeq'><a href='functions/library/debug/#function-library-lib.debug.traceSeq'>
+<code>lib.debug.traceSeq</code>
+</a></h2>
+<p><code>builtins.trace</code>, but the value is <code>builtins.deepSeq</code>ed first.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>x</code></p>
+</dt>
+<dd>
+<p>The value to trace</p>
+</dd>
+<dt>
+<p><code>y</code></p>
+</dt>
+<dd>
+<p>The value to return</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>traceSeq :: a -&gt; b -&gt; b
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.debug.traceSeq</code> usage example</h4>
+<pre><code class="language-nix">trace { a.b.c = 3; } null
+trace: { a = &lt;thunk&gt;; }
+=&gt; null
+traceSeq { a.b.c = 3; } null
+trace: { a = { b = { c = 3; }; }; }
+=&gt; null
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/debug.nix#L179">lib/debug.nix:179</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.debug.traceSeqN'><a href='functions/library/debug/#function-library-lib.debug.traceSeqN'>
+<code>lib.debug.traceSeqN</code>
+</a></h2>
+<p>Like <code>traceSeq</code>, but only evaluate down to depth n.
+This is very useful because lots of <code>traceSeq</code> usages
+lead to an infinite recursion.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>depth</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+<dt>
+<p><code>x</code></p>
+</dt>
+<dd>
+<p>2. Function argument</p>
+</dd>
+<dt>
+<p><code>y</code></p>
+</dt>
+<dd>
+<p>3. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>traceSeqN :: Int -&gt; a -&gt; b -&gt; b
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.debug.traceSeqN</code> usage example</h4>
+<pre><code class="language-nix">traceSeqN 2 { a.b.c = 3; } null
+trace: { a = { b = {…}; }; }
+=&gt; null
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/debug.nix#L218">lib/debug.nix:218</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.debug.traceValSeqFn'><a href='functions/library/debug/#function-library-lib.debug.traceValSeqFn'>
+<code>lib.debug.traceValSeqFn</code>
+</a></h2>
+<p>A combination of <code>traceVal</code> and <code>traceSeq</code> that applies a
+provided function to the value to be traced after <code>deepSeq</code>ing
+it.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>f</code></p>
+</dt>
+<dd>
+<p>Function to apply</p>
+</dd>
+<dt>
+<p><code>v</code></p>
+</dt>
+<dd>
+<p>Value to trace</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>traceValSeqFn :: (a -&gt; b) -&gt; a -&gt; a
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.debug.traceValSeqFn</code> usage example</h4>
+<pre><code class="language-nix">traceValSeqFn (v: v // { d = &quot;foo&quot;;}) { a.b.c = 3; }
+trace: { a = { b = { c = 3; }; }; d = &quot;foo&quot;; }
+=&gt; { a = { ... }; }
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/debug.nix#L279">lib/debug.nix:279</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.debug.traceValSeq'><a href='functions/library/debug/#function-library-lib.debug.traceValSeq'>
+<code>lib.debug.traceValSeq</code>
+</a></h2>
+<p>A combination of <code>traceVal</code> and <code>traceSeq</code>.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>v</code></p>
+</dt>
+<dd>
+<p>Value to trace</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>traceValSeq :: a -&gt; a
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.debug.traceValSeq</code> usage example</h4>
+<pre><code class="language-nix">traceValSeq { a.b.c = 3; }
+trace: { a = { b = { c = 3; }; }; }
+=&gt; { a = { ... }; }
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/debug.nix#L308">lib/debug.nix:308</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.debug.traceValSeqNFn'><a href='functions/library/debug/#function-library-lib.debug.traceValSeqNFn'>
+<code>lib.debug.traceValSeqNFn</code>
+</a></h2>
+<p>A combination of <code>traceVal</code> and <code>traceSeqN</code> that applies a
+provided function to the value to be traced.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>f</code></p>
+</dt>
+<dd>
+<p>Function to apply</p>
+</dd>
+<dt>
+<p><code>depth</code></p>
+</dt>
+<dd>
+<p>2. Function argument</p>
+</dd>
+<dt>
+<p><code>v</code></p>
+</dt>
+<dd>
+<p>Value to trace</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>traceValSeqNFn :: (a -&gt; b) -&gt; Int -&gt; a -&gt; a
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.debug.traceValSeqNFn</code> usage example</h4>
+<pre><code class="language-nix">traceValSeqNFn (v: v // { d = &quot;foo&quot;;}) 2 { a.b.c = 3; }
+trace: { a = { b = {…}; }; d = &quot;foo&quot;; }
+=&gt; { a = { ... }; }
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/debug.nix#L346">lib/debug.nix:346</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.debug.traceValSeqN'><a href='functions/library/debug/#function-library-lib.debug.traceValSeqN'>
+<code>lib.debug.traceValSeqN</code>
+</a></h2>
+<p>A combination of <code>traceVal</code> and <code>traceSeqN</code>.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>depth</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+<dt>
+<p><code>v</code></p>
+</dt>
+<dd>
+<p>Value to trace</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>traceValSeqN :: Int -&gt; a -&gt; a
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.debug.traceValSeqN</code> usage example</h4>
+<pre><code class="language-nix">traceValSeqN 2 { a.b.c = 3; }
+trace: { a = { b = {…}; }; }
+=&gt; { a = { ... }; }
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/debug.nix#L381">lib/debug.nix:381</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.debug.traceFnSeqN'><a href='functions/library/debug/#function-library-lib.debug.traceFnSeqN'>
+<code>lib.debug.traceFnSeqN</code>
+</a></h2>
+<p>Trace the input and output of a function <code>f</code> named <code>name</code>,
+both down to <code>depth</code>.</p>
+<p>This is useful for adding around a function call,
+to see the before/after of values as they are transformed.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>depth</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+<dt>
+<p><code>name</code></p>
+</dt>
+<dd>
+<p>2. Function argument</p>
+</dd>
+<dt>
+<p><code>f</code></p>
+</dt>
+<dd>
+<p>3. Function argument</p>
+</dd>
+<dt>
+<p><code>v</code></p>
+</dt>
+<dd>
+<p>4. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>traceFnSeqN :: Int -&gt; String -&gt; (a -&gt; b) -&gt; a -&gt; b
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.debug.traceFnSeqN</code> usage example</h4>
+<pre><code class="language-nix">traceFnSeqN 2 &quot;id&quot; (x: x) { a.b.c = 3; }
+trace: { fn = &quot;id&quot;; from = { a.b = {…}; }; to = { a.b = {…}; }; }
+=&gt; { a = { ... }; }
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/debug.nix#L426">lib/debug.nix:426</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.debug.runTests'><a href='functions/library/debug/#function-library-lib.debug.runTests'>
+<code>lib.debug.runTests</code>
+</a></h2>
+<p>Evaluates a set of tests.</p>
+<p>A test is an attribute set <code>{expr, expected}</code>,
+denoting an expression and its expected result.</p>
+<p>The result is a <code>list</code> of <strong>failed tests</strong>, each represented as
+<code>{name, expected, result}</code>,</p>
+<ul>
+<li>expected
+<ul>
+<li>What was passed as <code>expected</code></li>
+</ul>
+</li>
+<li>result
+<ul>
+<li>The actual <code>result</code> of the test</li>
+</ul>
+</li>
+</ul>
+<p>Used for regression testing of the functions in lib; see
+tests.nix for more examples.</p>
+<p>Important: Only attributes that start with <code>test</code> are executed.</p>
+<ul>
+<li>If you want to run only a subset of the tests add the attribute <code>tests = [&quot;testName&quot;];</code></li>
+</ul>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>tests</code></p>
+</dt>
+<dd>
+<p>Tests to run</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>runTests :: {
+  tests :: [String];
+  ${testName} :: {
+    expr :: a;
+    expected :: a;
+  };
+}
+-&gt;
+[
+  {
+    name :: String;
+    expected :: a;
+    result :: a;
+  }
+]
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.debug.runTests</code> usage example</h4>
+<pre><code class="language-nix">runTests {
+  testAndOk = {
+    expr = lib.and true false;
+    expected = false;
+  };
+  testAndFail = {
+    expr = lib.and true false;
+    expected = true;
+  };
+}
+-&gt;
+[
+  {
+    name = &quot;testAndFail&quot;;
+    expected = true;
+    result = false;
+  }
+]
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/debug.nix#L513">lib/debug.nix:513</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.debug.throwTestFailures'><a href='functions/library/debug/#function-library-lib.debug.throwTestFailures'>
+<code>lib.debug.throwTestFailures</code>
+</a></h2>
+<p>Pretty-print a list of test failures.</p>
+<p>This takes an attribute set containing <code>failures</code> (a list of test failures
+produced by <code>runTests</code>) and pretty-prints each failing test, before
+throwing an error containing the raw test data as JSON.</p>
+<p>If the input list is empty, <code>null</code> is returned.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>failures</code></p>
+</dt>
+<dd>
+<p>A list of test failures (produced <code>runTests</code>), each containing <code>name</code>,
+<code>expected</code>, and <code>result</code> attributes.</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>throwTestFailures :: {
+  failures = [
+    {
+      name :: String;
+      expected :: a;
+      result :: a;
+    }
+  ];
+}
+-&gt;
+Null
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.debug.throwTestFailures</code> usage example</h4>
+<pre><code class="language-nix">throwTestFailures {
+  failures = [
+    {
+      name = &quot;testDerivation&quot;;
+      expected = derivation {
+        name = &quot;a&quot;;
+        builder = &quot;bash&quot;;
+        system = &quot;x86_64-linux&quot;;
+      };
+      result = derivation {
+        name = &quot;b&quot;;
+        builder = &quot;bash&quot;;
+        system = &quot;x86_64-linux&quot;;
+      };
+    }
+  ];
+}
+-&gt;
+trace: FAIL testDerivation:
+  Expected: &lt;derivation a&gt;
+    Result: &lt;derivation b&gt;
+
+error:
+       … while evaluating the file '...':
+
+       … caused by explicit throw
+         at /nix/store/.../lib/debug.nix:528:7:
+          527|       in
+          528|       throw (
+             |       ^
+          529|         builtins.seq traceFailures (
+
+       error: 1 tests failed:
+       - testDerivation
+
+       [{&quot;expected&quot;:&quot;/nix/store/xh7kyqp69mxkwspmi81a94m9xx74r8dr-a&quot;,&quot;name&quot;:&quot;testDerivation&quot;,&quot;result&quot;:&quot;/nix/store/503l84nir4zw57d1shfhai25bxxn16c6-b&quot;}]
+null
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/debug.nix#L620">lib/debug.nix:620</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.debug.testAllTrue'><a href='functions/library/debug/#function-library-lib.debug.testAllTrue'>
+<code>lib.debug.testAllTrue</code>
+</a></h2>
+<p>Create a test assuming that list elements are <code>true</code>.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>expr</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+</dl>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.debug.testAllTrue</code> usage example</h4>
+<pre><code class="language-nix">{ testX = allTrue [ true ]; }
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/debug.nix#L683">lib/debug.nix:683</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+        </main>
+      </div>
+    </section>
+<script defer src='highlight.pack.cf986678470772f7.js'></script>
+<script defer src='mmdoc.367f3e8986e40416.js'></script>
+<script defer src='mmdoc_search.a5b6fc7d7512cdc1.js' data-search-index='search_index.b3afff10081eb0bd.js' data-fuse='fuse.basic.min.bb997c989fa0a28e.js'></script>
+  </div>
+  </body>
+</html>

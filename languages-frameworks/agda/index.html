@@ -1,0 +1,536 @@
+<!doctype html>
+<html lang='en'>
+  <head>
+    <base href='../../'>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <script>
+      (() => {
+        let theme = null
+        try { theme = localStorage.getItem('theme') } catch (error) {}
+        if (theme !== 'light' && theme !== 'dark')
+          theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+        document.documentElement.classList.add(theme + '-theme')
+      })()
+    </script>
+    <meta name='description' content='Agda'>
+    <link rel='icon' href='favicon.svg'>
+    <link rel='stylesheet' href='a11y-dark.1fcafc9d9a306955.css'>
+    <link rel='stylesheet' href='a11y-light.b466309a7fa86b1f.css'>
+    <link rel='stylesheet' href='mmdoc.e4286053b6471af4.css'>
+    <title>Agda | nixpkgs</title>
+  </head>
+  <body>
+  <a class='skip-link' href='languages-frameworks/agda/#main-content'>Skip to main content</a>
+  <input type='checkbox' id='sidebar-checkbox' aria-hidden='true' tabindex='-1' style='display: none;'>
+  <div class='body'>
+    <div class='nav-top-container'>
+    <nav class='nav-top' aria-label='Documentation controls'>
+      <button type='button' class='sidebar-toggle' aria-label='Toggle table of contents' aria-controls='sidebar' aria-expanded='true'></button>    <button type='button' class='search-toggle' aria-label='Open search' aria-controls='search-panel' aria-expanded='false'></button>    <button type='button' class='theme-toggle' aria-label='Switch to dark theme' aria-pressed='false'></button>    <a id='chapter-previous-button' class='chapter-previous' href='languages-frameworks/index/#chap-language-support' title='Languages and frameworks' aria-label='Previous: Languages and frameworks'>&lt;</a>
+    <a id='chapter-next-button' class='chapter-next' href='languages-frameworks/android/#android' title='Android' aria-label='Next: Android'>&gt;</a>
+    </nav>
+    </div>
+    <nav id='sidebar' class='sidebar' aria-label='Table of contents'>
+<h1>Nixpkgs Manual</h1>
+<p>Version 26.11pre</p>
+<ul>
+<li><a href="./#preface">Preface</a>
+<ul>
+<li><a href="preface/#overview-of-nixpkgs">Overview of Nixpkgs</a></li>
+</ul>
+</li>
+<li><a href="first-package/#chap-first-package">Package your first application</a></li>
+</ul>
+<h2>Using Nixpkgs</h2>
+<ul>
+<li><a href="using/platform-support/#chap-platform-support">Platform Support</a></li>
+<li><a href="using/configuration/#chap-packageconfig">Global configuration</a></li>
+<li><a href="using/overlays/#chap-overlays">Overlays</a></li>
+<li><a href="using/overrides/#chap-overrides">Overriding</a></li>
+</ul>
+<h2>Nixpkgs Lib</h2>
+<ul>
+<li><a href="functions/#chap-functions">Functions reference</a>
+<ul>
+<li>Library Functions
+<ul>
+<li><a href="functions/library/asserts/#sec-functions-library-asserts">lib.asserts: assertion functions</a></li>
+<li><a href="functions/library/attrsets/#sec-functions-library-attrsets">lib.attrsets: attribute set functions</a></li>
+<li><a href="functions/library/strings/#sec-functions-library-strings">lib.strings: string manipulation functions</a></li>
+<li><a href="functions/library/versions/#sec-functions-library-versions">lib.versions: version string functions</a></li>
+<li><a href="functions/library/trivial/#sec-functions-library-trivial">lib.trivial: miscellaneous functions</a></li>
+<li><a href="functions/library/fixedPoints/#sec-functions-library-fixedPoints">lib.fixedPoints: explicit recursion functions</a></li>
+<li><a href="functions/library/lists/#sec-functions-library-lists">lib.lists: list manipulation functions</a></li>
+<li><a href="functions/library/debug/#sec-functions-library-debug">lib.debug: debugging functions</a></li>
+<li><a href="functions/library/options/#sec-functions-library-options">lib.options: NixOS / nixpkgs option handling</a></li>
+<li><a href="functions/library/path/#sec-functions-library-path">lib.path: path functions</a></li>
+<li><a href="functions/library/filesystem/#sec-functions-library-filesystem">lib.filesystem: filesystem functions</a></li>
+<li><a href="functions/library/fileset/#sec-functions-library-fileset">lib.fileset: file set functions</a></li>
+<li><a href="functions/library/sources/#sec-functions-library-sources">lib.sources: source filtering functions</a></li>
+<li><a href="functions/library/cli/#sec-functions-library-cli">lib.cli: command-line serialization functions</a></li>
+<li><a href="functions/library/gvariant/#sec-functions-library-gvariant">lib.gvariant: GVariant formatted string serialization functions</a></li>
+<li><a href="functions/library/fetchers/#sec-functions-library-fetchers">lib.fetchers: functions which can be reused across fetchers</a></li>
+<li><a href="functions/library/generators/#sec-functions-library-generators">lib.generators: functions that create file formats from nix data structures</a></li>
+<li><a href="functions/library/customisation/#sec-functions-library-customisation">lib.customisation: Functions to customise (derivation-related) functions, derivations, or attribute sets</a></li>
+<li><a href="functions/library/meta/#sec-functions-library-meta">lib.meta: functions for derivation metadata</a></li>
+<li><a href="functions/library/derivations/#sec-functions-library-derivations">lib.derivations: miscellaneous derivation-specific functions</a></li>
+<li><a href="functions/generators/#sec-generators">Generators</a></li>
+<li><a href="functions/debug/#sec-debug">Debugging Nix Expressions</a></li>
+<li><a href="functions/prefer-remote-fetch/#sec-prefer-remote-fetch">prefer-remote-fetch overlay</a></li>
+<li><a href="functions/nix-gitignore/#sec-pkgs-nix-gitignore">pkgs.nix-gitignore</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="module-system/module-system/#module-system">Module System</a></li>
+</ul>
+<h2>Standard Environment</h2>
+<ul>
+<li><a href="stdenv/#part-stdenv">Standard environment</a></li>
+<li><a href="stdenv/stdenv/#chap-stdenv">The Standard Environment</a></li>
+<li><a href="stdenv/meta/#chap-meta">Meta-attributes</a></li>
+<li><a href="stdenv/passthru/#chap-passthru">Passthru-attributes</a></li>
+<li><a href="stdenv/multiple-output/#chap-multiple-output">Multiple-output packages</a></li>
+<li><a href="stdenv/cross-compilation/#chap-cross">Cross-compilation</a></li>
+<li><a href="stdenv/platform-notes/#chap-platform-notes">Platform Notes</a></li>
+</ul>
+<h2>Toolchains</h2>
+<ul>
+<li><a href="toolchains/llvm/#chap-toolchains">The LLVM Toolchain</a></li>
+</ul>
+<h2>Builders</h2>
+<ul>
+<li><a href="build-helpers/#part-builders">Build helpers</a></li>
+<li><a href="build-helpers/fetchers/#chap-pkgs-fetchers">Fetchers</a></li>
+<li><a href="build-helpers/trivial-build-helpers/#chap-trivial-builders">Trivial build helpers</a></li>
+<li><a href="build-helpers/fixed-point-arguments/#chap-build-helpers-finalAttrs">Fixed-point arguments of build helpers</a></li>
+<li><a href="build-helpers/dev-shell-tools/#chap-devShellTools">Development Shell helpers</a></li>
+<li><a href="build-helpers/testers/#chap-testers">Testers</a></li>
+<li>Special build helpers
+<ul>
+<li><a href="build-helpers/special/fhs-environments/#sec-fhs-environments">buildFHSEnv</a></li>
+<li><a href="build-helpers/special/fakenss/#sec-fakeNss">fakeNss</a></li>
+<li><a href="build-helpers/special/makesetuphook/#sec-pkgs.makeSetupHook">pkgs.makeSetupHook</a></li>
+<li><a href="build-helpers/special/mkshell/#sec-pkgs-mkShell">pkgs.mkShell</a></li>
+<li><a href="packages/darwin-builder/#sec-darwin-builder">darwin.linux-builder</a></li>
+<li><a href="build-helpers/special/vm-tools/#sec-vm-tools">vmTools</a></li>
+</ul>
+</li>
+<li>Images
+<ul>
+<li><a href="build-helpers/images/appimagetools/#sec-pkgs-appimageTools">pkgs.appimageTools</a></li>
+<li><a href="build-helpers/images/dockertools/#sec-pkgs-dockerTools">pkgs.dockerTools</a></li>
+<li><a href="build-helpers/images/ocitools/#sec-pkgs-ociTools">pkgs.ociTools</a></li>
+<li><a href="build-helpers/images/portableservice/#sec-pkgs-portableService">pkgs.portableService</a></li>
+<li><a href="build-helpers/images/makediskimage/#sec-make-disk-image">&lt;nixpkgs/nixos/lib/make-disk-image.nix&gt;</a></li>
+<li><a href="build-helpers/images/binarycache/#sec-pkgs-binary-cache">pkgs.mkBinaryCache</a></li>
+</ul>
+</li>
+<li><a href="hooks/index/#chap-hooks">Hooks reference</a>
+<ul>
+<li><a href="hooks/autoconf/#setup-hook-autoconf">Autoconf</a></li>
+<li><a href="hooks/automake/#setup-hook-automake">Automake</a></li>
+<li><a href="hooks/autopatchelf/#setup-hook-autopatchelfhook">autoPatchelfHook</a></li>
+<li><a href="hooks/breakpoint/#breakpointhook">breakpointHook</a></li>
+<li><a href="hooks/cmake/#cmake">cmake</a></li>
+<li><a href="hooks/gdk-pixbuf/#setup-hook-gdk-pixbuf">gdk-pixbuf</a></li>
+<li><a href="hooks/ghc/#ghc">GHC</a></li>
+<li><a href="hooks/gnome/#gnome-platform">GNOME platform</a></li>
+<li><a href="hooks/installShellFiles/#installshellfiles">installShellFiles</a></li>
+<li><a href="hooks/libglycin/#libglycin-hooks">libglycin</a></li>
+<li><a href="hooks/libiconv/#libiconv-libintl">libiconv, libintl</a></li>
+<li><a href="hooks/libxml2/#setup-hook-libxml2">libxml2</a></li>
+<li><a href="hooks/meson/#meson">Meson</a></li>
+<li><a href="hooks/mpi-check-hook/#setup-hook-mpi-check">mpiCheckPhaseHook</a></li>
+<li><a href="hooks/ninja/#ninja">ninja</a></li>
+<li><a href="hooks/patch-rc-path-hooks/#sec-patchRcPathHooks">patchRcPath hooks</a></li>
+<li><a href="hooks/perl/#setup-hook-perl">Perl</a></li>
+<li><a href="hooks/pkg-config/#setup-hook-pkg-config">pkg-config</a></li>
+<li><a href="hooks/pnpm/#pnpm-build-hook">pnpmBuildHook</a></li>
+<li><a href="hooks/postgresql-test-hook/#sec-postgresqlTestHook">postgresqlTestHook</a></li>
+<li><a href="hooks/python/#setup-hook-python">Python</a></li>
+<li><a href="hooks/scons/#scons">scons</a></li>
+<li><a href="hooks/tetex-tex-live/#tetex-tex-live">teTeX / TeX Live</a></li>
+<li><a href="hooks/unzip/#unzip">unzip</a></li>
+<li><a href="hooks/validatePkgConfig/#validatepkgconfig">validatePkgConfig</a></li>
+<li><a href="hooks/versionCheckHook/#versioncheckhook">versionCheckHook</a></li>
+<li><a href="hooks/waf/#waf-hook">wafHook</a></li>
+<li><a href="hooks/xcbuild/#xcbuildhook">xcbuildHook</a></li>
+</ul>
+</li>
+<li><a href="languages-frameworks/index/#chap-language-support">Languages and frameworks</a>
+<ul>
+<li><a href="languages-frameworks/agda/#agda">Agda</a></li>
+<li><a href="languages-frameworks/android/#android">Android</a></li>
+<li><a href="languages-frameworks/astal/#astal">Astal</a></li>
+<li><a href="languages-frameworks/beam/#sec-beam">BEAM Languages (Erlang, Elixir &amp; LFE)</a></li>
+<li><a href="languages-frameworks/chicken/#sec-chicken">CHICKEN</a></li>
+<li><a href="languages-frameworks/cosmic/#sec-language-cosmic">COSMIC</a></li>
+<li><a href="languages-frameworks/crystal/#crystal">Crystal</a></li>
+<li><a href="languages-frameworks/cuda/#cuda">CUDA</a></li>
+<li><a href="languages-frameworks/cuelang/#cuelang">Cue (Cuelang)</a></li>
+<li><a href="languages-frameworks/dlang/#dlang">D (Dlang)</a></li>
+<li><a href="languages-frameworks/dart/#sec-language-dart">Dart</a></li>
+<li><a href="languages-frameworks/dhall/#sec-language-dhall">Dhall</a></li>
+<li><a href="languages-frameworks/dotnet/#dotnet">Dotnet</a></li>
+<li><a href="languages-frameworks/emscripten/#emscripten">Emscripten</a></li>
+<li><a href="languages-frameworks/factor/#sec-language-factor">Factor</a></li>
+<li><a href="languages-frameworks/gnome/#sec-language-gnome">GNOME</a></li>
+<li><a href="languages-frameworks/go/#sec-language-go">Go</a></li>
+<li><a href="languages-frameworks/gradle/#gradle">Gradle</a></li>
+<li><a href="languages-frameworks/hare/#sec-language-hare">Hare</a></li>
+<li><a href="languages-frameworks/haskell/#haskell">Haskell</a></li>
+<li><a href="languages-frameworks/hy/#sec-language-hy">Hy</a></li>
+<li><a href="languages-frameworks/idris/#idris">Idris</a></li>
+<li><a href="languages-frameworks/idris2/#sec-idris2">Idris2</a></li>
+<li><a href="languages-frameworks/ios/#ios">iOS</a></li>
+<li><a href="languages-frameworks/java/#sec-language-java">Java</a></li>
+<li><a href="languages-frameworks/javascript/#language-javascript">Javascript</a></li>
+<li><a href="languages-frameworks/julia/#language-julia">Julia</a></li>
+<li><a href="languages-frameworks/lean4/#sec-language-lean4">Lean 4</a></li>
+<li><a href="languages-frameworks/lisp/#lisp">lisp-modules</a></li>
+<li><a href="languages-frameworks/lua/#lua">Lua</a></li>
+<li><a href="languages-frameworks/maven/#maven">Maven</a></li>
+<li><a href="languages-frameworks/neovim/#neovim">Neovim</a></li>
+<li><a href="languages-frameworks/nim/#sec-language-nim">Nim</a></li>
+<li><a href="languages-frameworks/ocaml/#sec-language-ocaml">OCaml</a></li>
+<li><a href="languages-frameworks/octave/#sec-octave">Octave</a></li>
+<li><a href="languages-frameworks/perl/#sec-language-perl">Perl</a></li>
+<li><a href="languages-frameworks/php/#sec-php">PHP</a></li>
+<li><a href="languages-frameworks/pkg-config/#sec-pkg-config">pkg-config</a></li>
+<li><a href="languages-frameworks/python/#python">Python</a></li>
+<li><a href="languages-frameworks/qt/#sec-language-qt">Qt</a></li>
+<li><a href="languages-frameworks/r/#r">R</a></li>
+<li><a href="languages-frameworks/rocq/#sec-language-rocq">Rocq and rocq packages</a></li>
+<li><a href="languages-frameworks/ruby/#sec-language-ruby">Ruby</a></li>
+<li><a href="languages-frameworks/rust/#rust">Rust</a></li>
+<li><a href="languages-frameworks/scheme/#sec-scheme">Scheme</a></li>
+<li><a href="languages-frameworks/swift/#swift">Swift</a></li>
+<li><a href="languages-frameworks/tcl/#sec-language-tcl">Tcl</a></li>
+<li><a href="languages-frameworks/texlive/#sec-language-texlive">TeX Live</a></li>
+<li><a href="languages-frameworks/typst/#typst">Typst</a></li>
+<li><a href="languages-frameworks/vim/#vim">Vim</a></li>
+</ul>
+</li>
+<li><a href="packages/index/#chap-packages">Packages</a>
+<ul>
+<li><a href="packages/build-support/#sec-build-support">Build Support</a></li>
+<li><a href="packages/cataclysm-dda/#cataclysm-dark-days-ahead">Cataclysm: Dark Days Ahead</a></li>
+<li><a href="packages/citrix/#sec-citrix">Citrix Workspace</a></li>
+<li><a href="packages/dlib/#dlib">DLib</a></li>
+<li><a href="packages/eclipse/#sec-eclipse">Eclipse</a></li>
+<li><a href="packages/elm/#sec-elm">Elm</a></li>
+<li><a href="packages/emacs/#sec-emacs">Emacs</a></li>
+<li><a href="packages/firefox/#sec-firefox">Firefox</a></li>
+<li><a href="packages/fish/#sec-fish">Fish</a></li>
+<li><a href="packages/friction-graphics/#friction-graphics">Friction</a></li>
+<li><a href="packages/fuse/#sec-fuse">FUSE</a></li>
+<li><a href="packages/geant4/#geant4">Geant4</a></li>
+<li><a href="packages/ibus/#sec-ibus-typing-booster">ibus-engines.typing-booster</a></li>
+<li><a href="packages/inkscape/#sec-inkscape">Inkscape</a></li>
+<li><a href="packages/kakoune/#sec-kakoune">Kakoune</a></li>
+<li><a href="packages/krita/#sec-krita">Krita</a></li>
+<li><a href="packages/lhapdf/#lhapdf">LHAPDF</a></li>
+<li><a href="packages/linux/#sec-linux-kernel">Linux kernel</a></li>
+<li><a href="packages/locales/#locales">Locales</a></li>
+<li><a href="packages/etc-files/#etc">/etc files</a></li>
+<li><a href="packages/nginx/#sec-nginx">Nginx</a></li>
+<li><a href="packages/nrfutil/#sec-nrfutil">nrfutil</a></li>
+<li><a href="packages/opengl/#sec-opengl">OpenGL</a></li>
+<li><a href="packages/python-tree-sitter/#python-tree-sitter">Python Tree Sitter</a></li>
+<li><a href="packages/shell-helpers/#sec-shell-helpers">Interactive shell helpers</a></li>
+<li><a href="packages/steam/#sec-steam">Steam</a></li>
+<li><a href="packages/treefmt/#treefmt">treefmt</a></li>
+<li><a href="packages/urxvt/#sec-urxvt">Urxvt</a></li>
+<li><a href="packages/uv/#sec-uv">uv</a></li>
+<li><a href="packages/vcpkg/#sec-vcpkg">VCPKG</a></li>
+<li><a href="packages/weechat/#sec-weechat">WeeChat</a></li>
+</ul>
+</li>
+</ul>
+<h2>Modules</h2>
+<ul>
+<li><a href="modules/index/#modules">Modules</a>
+<ul>
+<li><a href="modules/generic/#modules-generic">Generic</a>
+<ul>
+<li><a href="modules/generic/#modules-generic-meta-maintainers">meta-maintainers.nix</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2>Development of Nixpkgs</h2>
+<ul>
+<li><a href="development/opening-issues/#sec-opening-issues">Opening issues</a></li>
+<li><a href="contributing/coding-conventions/#chap-conventions">Coding conventions</a></li>
+</ul>
+<h2>Interoperability Standards</h2>
+<ul>
+<li><a href="interoperability/cyclonedx/#chap-interop-cyclonedx">CycloneDX</a>
+<ul>
+<li><a href="interoperability/cyclonedx/#sec-interop.cylonedx-nix"><code>nix</code> namespace</a></li>
+<li><a href="interoperability/cyclonedx/#sec-interop.cylonedx-narinfo"><code>nix:narinfo</code></a></li>
+<li><a href="interoperability/cyclonedx/#sec-interop.cylonedx-fod"><code>nix:fod</code></a></li>
+</ul>
+</li>
+</ul>
+<h2>Release Notes</h2>
+<ul>
+<li><a href="release-notes/release-notes/#chap-release-notes">Release Notes</a>
+<ul>
+<li><a href="release-notes/rl-2611/#sec-nixpkgs-release-26.11">Nixpkgs 26.11 (&quot;Zokor&quot;, 2026.11/??)</a></li>
+<li><a href="release-notes/rl-2605/#sec-nixpkgs-release-26.05">Nixpkgs 26.05 (&quot;Yarara&quot;, 2026.05/30)</a></li>
+<li><a href="release-notes/rl-2511/#sec-nixpkgs-release-25.11">Nixpkgs 25.11 (&quot;Xantusia&quot;, 2025.11/30)</a></li>
+<li><a href="release-notes/rl-2505/#sec-nixpkgs-release-25.05">Nixpkgs 25.05 (2025.05/23)</a></li>
+</ul>
+</li>
+</ul>
+    </nav>
+    <section id='main'>
+      <div id='search-panel' class='nav-search' role='search' hidden>
+        <label class='visually-hidden' for='search'>Search documentation</label>
+        <input type='search' id='search' placeholder='Search' autocomplete='off' aria-controls='search-results'>
+        <p id='search-status' class='visually-hidden' role='status' aria-live='polite'></p>
+        <div id='search-results'></div>
+      </div>
+      <div class='main-scroll'>
+        <main id='main-content' tabindex='-1'>
+<h1 id='agda'><a href='languages-frameworks/agda/#agda'>
+Agda
+</a></h1>
+<h2 id='how-to-use-agda'><a href='languages-frameworks/agda/#how-to-use-agda'>
+How to use Agda
+</a></h2>
+<p>Agda is available as the <a href="https://search.nixos.org/packages?channel=unstable&amp;show=agda&amp;from=0&amp;size=30&amp;sort=relevance&amp;query=agda">agda</a>
+package.</p>
+<p>The <code>agda</code> package installs an Agda-wrapper, which calls <code>agda</code> with <code>--library-file</code>
+set to a generated library-file within the nix store, this means your library-file in
+<code>$HOME/.agda/libraries</code> will be ignored. By default the agda package installs Agda
+with no libraries, i.e. the generated library-file is empty. To use Agda with libraries,
+the <code>agda.withPackages</code> function can be used. This function either takes:</p>
+<ul>
+<li>A list of packages,</li>
+<li>or a function which returns a list of packages when given the <code>agdaPackages</code> attribute set,</li>
+<li>or an attribute set containing a list of packages and a GHC derivation for compilation (see below).</li>
+<li>or an attribute set containing a function which returns a list of packages when given the <code>agdaPackages</code> attribute set and a GHC derivation for compilation (see below).</li>
+</ul>
+<p>For example, suppose we wanted a version of Agda which has access to the standard library. This can be obtained with the expressions:</p>
+<pre><code class="language-nix">agda.withPackages [ agdaPackages.standard-library ]
+</code></pre>
+<p>or</p>
+<pre><code class="language-nix">agda.withPackages (p: [ p.standard-library ])
+</code></pre>
+<p>or can be called as in the <a href="languages-frameworks/agda/#compiling-agda">Compiling Agda</a> section.</p>
+<p>If you want to use a different version of a library (for instance a development version)
+override the <code>src</code> attribute of the package to point to your local repository</p>
+<pre><code class="language-nix">agda.withPackages (p: [
+  (p.standard-library.overrideAttrs (oldAttrs: {
+    version = &quot;local version&quot;;
+    src = /path/to/local/repo/agda-stdlib;
+  }))
+])
+</code></pre>
+<p>You can also reference a GitHub repository</p>
+<pre><code class="language-nix">agda.withPackages (p: [
+  (p.standard-library.overrideAttrs (oldAttrs: {
+    version = &quot;1.5&quot;;
+    src = fetchFromGitHub {
+      repo = &quot;agda-stdlib&quot;;
+      owner = &quot;agda&quot;;
+      rev = &quot;v1.5&quot;;
+      hash = &quot;sha256-nEyxYGSWIDNJqBfGpRDLiOAnlHJKEKAOMnIaqfVZzJk=&quot;;
+    };
+  }))
+])
+</code></pre>
+<p>If you want to use a library not added to Nixpkgs, you can add a
+dependency to a local library by calling <code>agdaPackages.mkDerivation</code>.</p>
+<pre><code class="language-nix">agda.withPackages (p: [
+  (p.mkDerivation {
+    pname = &quot;your-agda-lib&quot;;
+    version = &quot;1.0.0&quot;;
+    src = /path/to/your-agda-lib;
+  })
+])
+</code></pre>
+<p>Again you can reference GitHub</p>
+<pre><code class="language-nix">agda.withPackages (p: [
+  (p.mkDerivation {
+    pname = &quot;your-agda-lib&quot;;
+    version = &quot;1.0.0&quot;;
+    src = fetchFromGitHub {
+      repo = &quot;repo&quot;;
+      owner = &quot;owner&quot;;
+      version = &quot;...&quot;;
+      rev = &quot;...&quot;;
+      hash = &quot;...&quot;;
+    };
+  })
+])
+</code></pre>
+<p>See <a href="languages-frameworks/agda/#building-agda-packages">Building Agda Packages</a> for more information on <code>mkDerivation</code>.</p>
+<p>Agda will not by default use these libraries. To tell Agda to use a library we have some options:</p>
+<ul>
+<li>Call <code>agda</code> with the library flag:
+<pre><code class="language-ShellSession">$ agda -l standard-library -i . MyFile.agda
+</code></pre>
+</li>
+<li>Write a <code>my-library.agda-lib</code> file for the project you are working on which may look like:
+<pre><code>name: my-library
+include: .
+depend: standard-library
+</code></pre>
+</li>
+<li>Create the file <code>~/.agda/defaults</code> and add any libraries you want to use by default.</li>
+</ul>
+<p>More information can be found in the <a href="https://agda.readthedocs.io/en/v2.6.1/tools/package-system.html">official Agda documentation on library management</a>.</p>
+<h2 id='compiling-agda'><a href='languages-frameworks/agda/#compiling-agda'>
+Compiling Agda
+</a></h2>
+<p>Agda modules can be compiled using the GHC backend with the <code>--compile</code> flag. A version of <code>ghc</code> with <code>ieee754</code> is made available to the Agda program via the <code>--with-compiler</code> flag.
+This can be overridden by a different version of <code>ghc</code> as follows:</p>
+<pre><code class="language-nix">agda.withPackages {
+  pkgs = [
+    # ...
+  ];
+  ghc = haskell.compiler.ghcHEAD;
+}
+</code></pre>
+<p>To install Agda without GHC, use <code>ghc = null;</code>.</p>
+<h2 id='writing-agda-packages'><a href='languages-frameworks/agda/#writing-agda-packages'>
+Writing Agda packages
+</a></h2>
+<p>To write a nix derivation for an Agda library, first check that the library has a (single) <code>*.agda-lib</code> file.</p>
+<p>A derivation can then be written using <code>agdaPackages.mkDerivation</code>. This has similar arguments to <code>stdenv.mkDerivation</code> with the following additions:</p>
+<ul>
+<li><code>libraryName</code> should be the name that appears in the <code>*.agda-lib</code> file, defaulting to <code>pname</code>.</li>
+<li><code>libraryFile</code> should be the file name of the <code>*.agda-lib</code> file, defaulting to <code>${libraryName}.agda-lib</code>.</li>
+</ul>
+<p>Here is an example <code>default.nix</code></p>
+<pre><code class="language-nix">{
+  nixpkgs ? &lt;nixpkgs&gt;,
+}:
+with (import nixpkgs { });
+agdaPackages.mkDerivation {
+  version = &quot;1.0&quot;;
+  pname = &quot;my-agda-lib&quot;;
+  src = ./.;
+  buildInputs = [ agdaPackages.standard-library ];
+}
+</code></pre>
+<h3 id='building-agda-packages'><a href='languages-frameworks/agda/#building-agda-packages'>
+Building Agda packages
+</a></h3>
+<p>The default build phase for <code>agdaPackages.mkDerivation</code> runs <code>agda --build-library</code>.
+If something else is needed to build the package (e.g. <code>make</code>) then the <code>buildPhase</code> should be overridden.
+Additionally, a <code>preBuild</code> or <code>configurePhase</code> can be used if there are steps that need to be done prior to checking the library.
+<code>agda</code> and the Agda libraries contained in <code>buildInputs</code> are made available during the build phase.</p>
+<h3 id='installing-agda-packages'><a href='languages-frameworks/agda/#installing-agda-packages'>
+Installing Agda packages
+</a></h3>
+<p>The default install phase copies Agda source files, Agda interface files (<code>*.agdai</code>) and <code>*.agda-lib</code> files to the output directory.
+This can be overridden.</p>
+<p>By default, Agda sources are files ending on <code>.agda</code>, or literate Agda files ending on <code>.lagda</code>, <code>.lagda.tex</code>, <code>.lagda.org</code>, <code>.lagda.md</code>, <code>.lagda.rst</code>. The list of recognised Agda source extensions can be extended by setting the <code>extraExtensions</code> config variable.</p>
+<h2 id='maintaining-the-agda-package-set-on-nixpkgs'><a href='languages-frameworks/agda/#maintaining-the-agda-package-set-on-nixpkgs'>
+Maintaining the Agda package set on Nixpkgs
+</a></h2>
+<p>We are aiming at providing all common Agda libraries as packages on <code>nixpkgs</code>,
+and keeping them up to date.
+Contributions and maintenance help is always appreciated,
+but the maintenance effort is typically low since the Agda ecosystem is quite small.</p>
+<p>The <code>nixpkgs</code> Agda package set tries to take up a role similar to that of <a href="https://www.stackage.org/">Stackage</a> in the Haskell world.
+It is a curated set of libraries that:</p>
+<ol>
+<li>Always work together.</li>
+<li>Are as up-to-date as possible.</li>
+</ol>
+<p>While the Haskell ecosystem is huge, and Stackage is highly automated,
+the Agda package set is small and can (still) be maintained by hand.</p>
+<h3 id='adding-agda-packages-to-nixpkgs'><a href='languages-frameworks/agda/#adding-agda-packages-to-nixpkgs'>
+Adding Agda packages to Nixpkgs
+</a></h3>
+<p>To add an Agda package to <code>nixpkgs</code>, the derivation should be written to <code>pkgs/development/libraries/agda/${library-name}/default.nix</code> and an entry should be added to <code>pkgs/top-level/agda-packages.nix</code>. Here it is called in a scope with access to all other Agda libraries, so the derivation could look like:</p>
+<pre><code class="language-nix">{
+  mkDerivation,
+  standard-library,
+  fetchFromGitHub,
+}:
+
+mkDerivation {
+  pname = &quot;my-library&quot;;
+  version = &quot;1.0&quot;;
+  src = &lt;...&gt;;
+  buildInputs = [ standard-library ];
+  meta = &lt;...&gt;;
+}
+</code></pre>
+<p>You can look at other files under <code>pkgs/development/libraries/agda/</code> for more inspiration.</p>
+<p>Note that the derivation function is called with <code>mkDerivation</code> set to <code>agdaPackages.mkDerivation</code>, therefore you
+could use a similar set as in your <code>default.nix</code> from <a href="languages-frameworks/agda/#writing-agda-packages">Writing Agda Packages</a> with
+<code>agdaPackages.mkDerivation</code> replaced with <code>mkDerivation</code>.</p>
+<p>Here is an example skeleton derivation for iowa-stdlib:</p>
+<pre><code class="language-nix">mkDerivation {
+  version = &quot;1.5.0&quot;;
+  pname = &quot;iowa-stdlib&quot;;
+
+  src = &lt;...&gt;;
+
+  libraryFile = &quot;&quot;;
+  libraryName = &quot;IAL-1.3&quot;;
+
+  buildPhase = ''
+    runHook preBuild
+
+    patchShebangs find-deps.sh
+    make
+
+    runHook postBuild
+  '';
+}
+</code></pre>
+<p>This library has a file called <code>.agda-lib</code>, and so we give an empty string to <code>libraryFile</code> as nothing precedes <code>.agda-lib</code> in the filename. This file contains <code>name: IAL-1.3</code>, and so we let <code>libraryName =  &quot;IAL-1.3&quot;</code>. This library does not use an <code>Everything.agda</code> file and instead has a Makefile, so there is no need to set <code>everythingFile</code> and we set a custom <code>buildPhase</code>.</p>
+<p>When writing an Agda package, it is essential to make sure that no <code>.agda-lib</code> file gets added to the store as a single file (for example by using <code>writeText</code>). This causes Agda to think that the nix store is a Agda library and it will attempt to write to it whenever it typechecks something. See <a href="https://githcub.com/agda/agda/issues/4613">https://github.com/agda/agda/issues/4613</a>.</p>
+<p>In the pull request adding this library,
+you can test whether it builds correctly by writing in a comment:</p>
+<pre><code>@ofborg build agdaPackages.my-library
+</code></pre>
+<h3 id='agda-maintaining-packages'><a href='languages-frameworks/agda/#agda-maintaining-packages'>
+Maintaining Agda packages
+</a></h3>
+<p>As mentioned before, the aim is to have a compatible, and up-to-date package set.
+These two conditions sometimes exclude each other:
+For example, if we update <code>agdaPackages.standard-library</code> because there was an upstream release,
+this will typically break many reverse dependencies,
+i.e. downstream Agda libraries that depend on the standard library.
+In <code>nixpkgs</code> we are typically among the first to notice this,
+since we have build tests in place to check this.</p>
+<p>In a pull request updating e.g. the standard library, you should write the following comment:</p>
+<pre><code>@ofborg build agdaPackages.standard-library.passthru.tests
+</code></pre>
+<p>This will build all reverse dependencies of the standard library,
+for example <code>agdaPackages.agda-categories</code>.</p>
+<p>In some cases it is useful to build <em>all</em> Agda packages.
+This can be done with the following Github comment:</p>
+<pre><code>@ofborg build agda.passthru.tests.allPackages
+</code></pre>
+<p>Sometimes, the builds of the reverse dependencies fail because they have not yet been updated and released.
+You should drop the maintainers a quick issue notifying them of the breakage,
+citing the build error (which you can get from the ofborg logs).
+If you are motivated, you might even send a pull request that fixes it.
+Usually, the maintainers will answer within a week or two with a new release.
+Bumping the version of that reverse dependency should be a further commit on your PR.</p>
+<p>In the rare case that a new release is not to be expected within an acceptable time,
+mark the broken package as broken by setting <code>meta.broken = true;</code>.
+This will exclude it from the build test.
+It can be added later when it is fixed,
+and does not hinder the advancement of the whole package set in the meantime.</p>
+        </main>
+      </div>
+    </section>
+<script defer src='highlight.pack.cf986678470772f7.js'></script>
+<script defer src='mmdoc.367f3e8986e40416.js'></script>
+<script defer src='mmdoc_search.a5b6fc7d7512cdc1.js' data-search-index='search_index.b3afff10081eb0bd.js' data-fuse='fuse.basic.min.bb997c989fa0a28e.js'></script>
+  </div>
+  </body>
+</html>

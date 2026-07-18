@@ -1,0 +1,743 @@
+<!doctype html>
+<html lang='en'>
+  <head>
+    <base href='../../'>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <script>
+      (() => {
+        let theme = null
+        try { theme = localStorage.getItem('theme') } catch (error) {}
+        if (theme !== 'light' && theme !== 'dark')
+          theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+        document.documentElement.classList.add(theme + '-theme')
+      })()
+    </script>
+    <meta name='description' content='Dhall'>
+    <link rel='icon' href='favicon.svg'>
+    <link rel='stylesheet' href='a11y-dark.1fcafc9d9a306955.css'>
+    <link rel='stylesheet' href='a11y-light.b466309a7fa86b1f.css'>
+    <link rel='stylesheet' href='mmdoc.e4286053b6471af4.css'>
+    <title>Dhall | nixpkgs</title>
+  </head>
+  <body>
+  <a class='skip-link' href='languages-frameworks/dhall/#main-content'>Skip to main content</a>
+  <input type='checkbox' id='sidebar-checkbox' aria-hidden='true' tabindex='-1' style='display: none;'>
+  <div class='body'>
+    <div class='nav-top-container'>
+    <nav class='nav-top' aria-label='Documentation controls'>
+      <button type='button' class='sidebar-toggle' aria-label='Toggle table of contents' aria-controls='sidebar' aria-expanded='true'></button>    <button type='button' class='search-toggle' aria-label='Open search' aria-controls='search-panel' aria-expanded='false'></button>    <button type='button' class='theme-toggle' aria-label='Switch to dark theme' aria-pressed='false'></button>    <a id='chapter-previous-button' class='chapter-previous' href='languages-frameworks/dart/#sec-language-dart' title='Dart' aria-label='Previous: Dart'>&lt;</a>
+    <a id='chapter-next-button' class='chapter-next' href='languages-frameworks/dotnet/#dotnet' title='Dotnet' aria-label='Next: Dotnet'>&gt;</a>
+    </nav>
+    </div>
+    <nav id='sidebar' class='sidebar' aria-label='Table of contents'>
+<h1>Nixpkgs Manual</h1>
+<p>Version 26.11pre</p>
+<ul>
+<li><a href="./#preface">Preface</a>
+<ul>
+<li><a href="preface/#overview-of-nixpkgs">Overview of Nixpkgs</a></li>
+</ul>
+</li>
+<li><a href="first-package/#chap-first-package">Package your first application</a></li>
+</ul>
+<h2>Using Nixpkgs</h2>
+<ul>
+<li><a href="using/platform-support/#chap-platform-support">Platform Support</a></li>
+<li><a href="using/configuration/#chap-packageconfig">Global configuration</a></li>
+<li><a href="using/overlays/#chap-overlays">Overlays</a></li>
+<li><a href="using/overrides/#chap-overrides">Overriding</a></li>
+</ul>
+<h2>Nixpkgs Lib</h2>
+<ul>
+<li><a href="functions/#chap-functions">Functions reference</a>
+<ul>
+<li>Library Functions
+<ul>
+<li><a href="functions/library/asserts/#sec-functions-library-asserts">lib.asserts: assertion functions</a></li>
+<li><a href="functions/library/attrsets/#sec-functions-library-attrsets">lib.attrsets: attribute set functions</a></li>
+<li><a href="functions/library/strings/#sec-functions-library-strings">lib.strings: string manipulation functions</a></li>
+<li><a href="functions/library/versions/#sec-functions-library-versions">lib.versions: version string functions</a></li>
+<li><a href="functions/library/trivial/#sec-functions-library-trivial">lib.trivial: miscellaneous functions</a></li>
+<li><a href="functions/library/fixedPoints/#sec-functions-library-fixedPoints">lib.fixedPoints: explicit recursion functions</a></li>
+<li><a href="functions/library/lists/#sec-functions-library-lists">lib.lists: list manipulation functions</a></li>
+<li><a href="functions/library/debug/#sec-functions-library-debug">lib.debug: debugging functions</a></li>
+<li><a href="functions/library/options/#sec-functions-library-options">lib.options: NixOS / nixpkgs option handling</a></li>
+<li><a href="functions/library/path/#sec-functions-library-path">lib.path: path functions</a></li>
+<li><a href="functions/library/filesystem/#sec-functions-library-filesystem">lib.filesystem: filesystem functions</a></li>
+<li><a href="functions/library/fileset/#sec-functions-library-fileset">lib.fileset: file set functions</a></li>
+<li><a href="functions/library/sources/#sec-functions-library-sources">lib.sources: source filtering functions</a></li>
+<li><a href="functions/library/cli/#sec-functions-library-cli">lib.cli: command-line serialization functions</a></li>
+<li><a href="functions/library/gvariant/#sec-functions-library-gvariant">lib.gvariant: GVariant formatted string serialization functions</a></li>
+<li><a href="functions/library/fetchers/#sec-functions-library-fetchers">lib.fetchers: functions which can be reused across fetchers</a></li>
+<li><a href="functions/library/generators/#sec-functions-library-generators">lib.generators: functions that create file formats from nix data structures</a></li>
+<li><a href="functions/library/customisation/#sec-functions-library-customisation">lib.customisation: Functions to customise (derivation-related) functions, derivations, or attribute sets</a></li>
+<li><a href="functions/library/meta/#sec-functions-library-meta">lib.meta: functions for derivation metadata</a></li>
+<li><a href="functions/library/derivations/#sec-functions-library-derivations">lib.derivations: miscellaneous derivation-specific functions</a></li>
+<li><a href="functions/generators/#sec-generators">Generators</a></li>
+<li><a href="functions/debug/#sec-debug">Debugging Nix Expressions</a></li>
+<li><a href="functions/prefer-remote-fetch/#sec-prefer-remote-fetch">prefer-remote-fetch overlay</a></li>
+<li><a href="functions/nix-gitignore/#sec-pkgs-nix-gitignore">pkgs.nix-gitignore</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="module-system/module-system/#module-system">Module System</a></li>
+</ul>
+<h2>Standard Environment</h2>
+<ul>
+<li><a href="stdenv/#part-stdenv">Standard environment</a></li>
+<li><a href="stdenv/stdenv/#chap-stdenv">The Standard Environment</a></li>
+<li><a href="stdenv/meta/#chap-meta">Meta-attributes</a></li>
+<li><a href="stdenv/passthru/#chap-passthru">Passthru-attributes</a></li>
+<li><a href="stdenv/multiple-output/#chap-multiple-output">Multiple-output packages</a></li>
+<li><a href="stdenv/cross-compilation/#chap-cross">Cross-compilation</a></li>
+<li><a href="stdenv/platform-notes/#chap-platform-notes">Platform Notes</a></li>
+</ul>
+<h2>Toolchains</h2>
+<ul>
+<li><a href="toolchains/llvm/#chap-toolchains">The LLVM Toolchain</a></li>
+</ul>
+<h2>Builders</h2>
+<ul>
+<li><a href="build-helpers/#part-builders">Build helpers</a></li>
+<li><a href="build-helpers/fetchers/#chap-pkgs-fetchers">Fetchers</a></li>
+<li><a href="build-helpers/trivial-build-helpers/#chap-trivial-builders">Trivial build helpers</a></li>
+<li><a href="build-helpers/fixed-point-arguments/#chap-build-helpers-finalAttrs">Fixed-point arguments of build helpers</a></li>
+<li><a href="build-helpers/dev-shell-tools/#chap-devShellTools">Development Shell helpers</a></li>
+<li><a href="build-helpers/testers/#chap-testers">Testers</a></li>
+<li>Special build helpers
+<ul>
+<li><a href="build-helpers/special/fhs-environments/#sec-fhs-environments">buildFHSEnv</a></li>
+<li><a href="build-helpers/special/fakenss/#sec-fakeNss">fakeNss</a></li>
+<li><a href="build-helpers/special/makesetuphook/#sec-pkgs.makeSetupHook">pkgs.makeSetupHook</a></li>
+<li><a href="build-helpers/special/mkshell/#sec-pkgs-mkShell">pkgs.mkShell</a></li>
+<li><a href="packages/darwin-builder/#sec-darwin-builder">darwin.linux-builder</a></li>
+<li><a href="build-helpers/special/vm-tools/#sec-vm-tools">vmTools</a></li>
+</ul>
+</li>
+<li>Images
+<ul>
+<li><a href="build-helpers/images/appimagetools/#sec-pkgs-appimageTools">pkgs.appimageTools</a></li>
+<li><a href="build-helpers/images/dockertools/#sec-pkgs-dockerTools">pkgs.dockerTools</a></li>
+<li><a href="build-helpers/images/ocitools/#sec-pkgs-ociTools">pkgs.ociTools</a></li>
+<li><a href="build-helpers/images/portableservice/#sec-pkgs-portableService">pkgs.portableService</a></li>
+<li><a href="build-helpers/images/makediskimage/#sec-make-disk-image">&lt;nixpkgs/nixos/lib/make-disk-image.nix&gt;</a></li>
+<li><a href="build-helpers/images/binarycache/#sec-pkgs-binary-cache">pkgs.mkBinaryCache</a></li>
+</ul>
+</li>
+<li><a href="hooks/index/#chap-hooks">Hooks reference</a>
+<ul>
+<li><a href="hooks/autoconf/#setup-hook-autoconf">Autoconf</a></li>
+<li><a href="hooks/automake/#setup-hook-automake">Automake</a></li>
+<li><a href="hooks/autopatchelf/#setup-hook-autopatchelfhook">autoPatchelfHook</a></li>
+<li><a href="hooks/breakpoint/#breakpointhook">breakpointHook</a></li>
+<li><a href="hooks/cmake/#cmake">cmake</a></li>
+<li><a href="hooks/gdk-pixbuf/#setup-hook-gdk-pixbuf">gdk-pixbuf</a></li>
+<li><a href="hooks/ghc/#ghc">GHC</a></li>
+<li><a href="hooks/gnome/#gnome-platform">GNOME platform</a></li>
+<li><a href="hooks/installShellFiles/#installshellfiles">installShellFiles</a></li>
+<li><a href="hooks/libglycin/#libglycin-hooks">libglycin</a></li>
+<li><a href="hooks/libiconv/#libiconv-libintl">libiconv, libintl</a></li>
+<li><a href="hooks/libxml2/#setup-hook-libxml2">libxml2</a></li>
+<li><a href="hooks/meson/#meson">Meson</a></li>
+<li><a href="hooks/mpi-check-hook/#setup-hook-mpi-check">mpiCheckPhaseHook</a></li>
+<li><a href="hooks/ninja/#ninja">ninja</a></li>
+<li><a href="hooks/patch-rc-path-hooks/#sec-patchRcPathHooks">patchRcPath hooks</a></li>
+<li><a href="hooks/perl/#setup-hook-perl">Perl</a></li>
+<li><a href="hooks/pkg-config/#setup-hook-pkg-config">pkg-config</a></li>
+<li><a href="hooks/pnpm/#pnpm-build-hook">pnpmBuildHook</a></li>
+<li><a href="hooks/postgresql-test-hook/#sec-postgresqlTestHook">postgresqlTestHook</a></li>
+<li><a href="hooks/python/#setup-hook-python">Python</a></li>
+<li><a href="hooks/scons/#scons">scons</a></li>
+<li><a href="hooks/tetex-tex-live/#tetex-tex-live">teTeX / TeX Live</a></li>
+<li><a href="hooks/unzip/#unzip">unzip</a></li>
+<li><a href="hooks/validatePkgConfig/#validatepkgconfig">validatePkgConfig</a></li>
+<li><a href="hooks/versionCheckHook/#versioncheckhook">versionCheckHook</a></li>
+<li><a href="hooks/waf/#waf-hook">wafHook</a></li>
+<li><a href="hooks/xcbuild/#xcbuildhook">xcbuildHook</a></li>
+</ul>
+</li>
+<li><a href="languages-frameworks/index/#chap-language-support">Languages and frameworks</a>
+<ul>
+<li><a href="languages-frameworks/agda/#agda">Agda</a></li>
+<li><a href="languages-frameworks/android/#android">Android</a></li>
+<li><a href="languages-frameworks/astal/#astal">Astal</a></li>
+<li><a href="languages-frameworks/beam/#sec-beam">BEAM Languages (Erlang, Elixir &amp; LFE)</a></li>
+<li><a href="languages-frameworks/chicken/#sec-chicken">CHICKEN</a></li>
+<li><a href="languages-frameworks/cosmic/#sec-language-cosmic">COSMIC</a></li>
+<li><a href="languages-frameworks/crystal/#crystal">Crystal</a></li>
+<li><a href="languages-frameworks/cuda/#cuda">CUDA</a></li>
+<li><a href="languages-frameworks/cuelang/#cuelang">Cue (Cuelang)</a></li>
+<li><a href="languages-frameworks/dlang/#dlang">D (Dlang)</a></li>
+<li><a href="languages-frameworks/dart/#sec-language-dart">Dart</a></li>
+<li><a href="languages-frameworks/dhall/#sec-language-dhall">Dhall</a></li>
+<li><a href="languages-frameworks/dotnet/#dotnet">Dotnet</a></li>
+<li><a href="languages-frameworks/emscripten/#emscripten">Emscripten</a></li>
+<li><a href="languages-frameworks/factor/#sec-language-factor">Factor</a></li>
+<li><a href="languages-frameworks/gnome/#sec-language-gnome">GNOME</a></li>
+<li><a href="languages-frameworks/go/#sec-language-go">Go</a></li>
+<li><a href="languages-frameworks/gradle/#gradle">Gradle</a></li>
+<li><a href="languages-frameworks/hare/#sec-language-hare">Hare</a></li>
+<li><a href="languages-frameworks/haskell/#haskell">Haskell</a></li>
+<li><a href="languages-frameworks/hy/#sec-language-hy">Hy</a></li>
+<li><a href="languages-frameworks/idris/#idris">Idris</a></li>
+<li><a href="languages-frameworks/idris2/#sec-idris2">Idris2</a></li>
+<li><a href="languages-frameworks/ios/#ios">iOS</a></li>
+<li><a href="languages-frameworks/java/#sec-language-java">Java</a></li>
+<li><a href="languages-frameworks/javascript/#language-javascript">Javascript</a></li>
+<li><a href="languages-frameworks/julia/#language-julia">Julia</a></li>
+<li><a href="languages-frameworks/lean4/#sec-language-lean4">Lean 4</a></li>
+<li><a href="languages-frameworks/lisp/#lisp">lisp-modules</a></li>
+<li><a href="languages-frameworks/lua/#lua">Lua</a></li>
+<li><a href="languages-frameworks/maven/#maven">Maven</a></li>
+<li><a href="languages-frameworks/neovim/#neovim">Neovim</a></li>
+<li><a href="languages-frameworks/nim/#sec-language-nim">Nim</a></li>
+<li><a href="languages-frameworks/ocaml/#sec-language-ocaml">OCaml</a></li>
+<li><a href="languages-frameworks/octave/#sec-octave">Octave</a></li>
+<li><a href="languages-frameworks/perl/#sec-language-perl">Perl</a></li>
+<li><a href="languages-frameworks/php/#sec-php">PHP</a></li>
+<li><a href="languages-frameworks/pkg-config/#sec-pkg-config">pkg-config</a></li>
+<li><a href="languages-frameworks/python/#python">Python</a></li>
+<li><a href="languages-frameworks/qt/#sec-language-qt">Qt</a></li>
+<li><a href="languages-frameworks/r/#r">R</a></li>
+<li><a href="languages-frameworks/rocq/#sec-language-rocq">Rocq and rocq packages</a></li>
+<li><a href="languages-frameworks/ruby/#sec-language-ruby">Ruby</a></li>
+<li><a href="languages-frameworks/rust/#rust">Rust</a></li>
+<li><a href="languages-frameworks/scheme/#sec-scheme">Scheme</a></li>
+<li><a href="languages-frameworks/swift/#swift">Swift</a></li>
+<li><a href="languages-frameworks/tcl/#sec-language-tcl">Tcl</a></li>
+<li><a href="languages-frameworks/texlive/#sec-language-texlive">TeX Live</a></li>
+<li><a href="languages-frameworks/typst/#typst">Typst</a></li>
+<li><a href="languages-frameworks/vim/#vim">Vim</a></li>
+</ul>
+</li>
+<li><a href="packages/index/#chap-packages">Packages</a>
+<ul>
+<li><a href="packages/build-support/#sec-build-support">Build Support</a></li>
+<li><a href="packages/cataclysm-dda/#cataclysm-dark-days-ahead">Cataclysm: Dark Days Ahead</a></li>
+<li><a href="packages/citrix/#sec-citrix">Citrix Workspace</a></li>
+<li><a href="packages/dlib/#dlib">DLib</a></li>
+<li><a href="packages/eclipse/#sec-eclipse">Eclipse</a></li>
+<li><a href="packages/elm/#sec-elm">Elm</a></li>
+<li><a href="packages/emacs/#sec-emacs">Emacs</a></li>
+<li><a href="packages/firefox/#sec-firefox">Firefox</a></li>
+<li><a href="packages/fish/#sec-fish">Fish</a></li>
+<li><a href="packages/friction-graphics/#friction-graphics">Friction</a></li>
+<li><a href="packages/fuse/#sec-fuse">FUSE</a></li>
+<li><a href="packages/geant4/#geant4">Geant4</a></li>
+<li><a href="packages/ibus/#sec-ibus-typing-booster">ibus-engines.typing-booster</a></li>
+<li><a href="packages/inkscape/#sec-inkscape">Inkscape</a></li>
+<li><a href="packages/kakoune/#sec-kakoune">Kakoune</a></li>
+<li><a href="packages/krita/#sec-krita">Krita</a></li>
+<li><a href="packages/lhapdf/#lhapdf">LHAPDF</a></li>
+<li><a href="packages/linux/#sec-linux-kernel">Linux kernel</a></li>
+<li><a href="packages/locales/#locales">Locales</a></li>
+<li><a href="packages/etc-files/#etc">/etc files</a></li>
+<li><a href="packages/nginx/#sec-nginx">Nginx</a></li>
+<li><a href="packages/nrfutil/#sec-nrfutil">nrfutil</a></li>
+<li><a href="packages/opengl/#sec-opengl">OpenGL</a></li>
+<li><a href="packages/python-tree-sitter/#python-tree-sitter">Python Tree Sitter</a></li>
+<li><a href="packages/shell-helpers/#sec-shell-helpers">Interactive shell helpers</a></li>
+<li><a href="packages/steam/#sec-steam">Steam</a></li>
+<li><a href="packages/treefmt/#treefmt">treefmt</a></li>
+<li><a href="packages/urxvt/#sec-urxvt">Urxvt</a></li>
+<li><a href="packages/uv/#sec-uv">uv</a></li>
+<li><a href="packages/vcpkg/#sec-vcpkg">VCPKG</a></li>
+<li><a href="packages/weechat/#sec-weechat">WeeChat</a></li>
+</ul>
+</li>
+</ul>
+<h2>Modules</h2>
+<ul>
+<li><a href="modules/index/#modules">Modules</a>
+<ul>
+<li><a href="modules/generic/#modules-generic">Generic</a>
+<ul>
+<li><a href="modules/generic/#modules-generic-meta-maintainers">meta-maintainers.nix</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2>Development of Nixpkgs</h2>
+<ul>
+<li><a href="development/opening-issues/#sec-opening-issues">Opening issues</a></li>
+<li><a href="contributing/coding-conventions/#chap-conventions">Coding conventions</a></li>
+</ul>
+<h2>Interoperability Standards</h2>
+<ul>
+<li><a href="interoperability/cyclonedx/#chap-interop-cyclonedx">CycloneDX</a>
+<ul>
+<li><a href="interoperability/cyclonedx/#sec-interop.cylonedx-nix"><code>nix</code> namespace</a></li>
+<li><a href="interoperability/cyclonedx/#sec-interop.cylonedx-narinfo"><code>nix:narinfo</code></a></li>
+<li><a href="interoperability/cyclonedx/#sec-interop.cylonedx-fod"><code>nix:fod</code></a></li>
+</ul>
+</li>
+</ul>
+<h2>Release Notes</h2>
+<ul>
+<li><a href="release-notes/release-notes/#chap-release-notes">Release Notes</a>
+<ul>
+<li><a href="release-notes/rl-2611/#sec-nixpkgs-release-26.11">Nixpkgs 26.11 (&quot;Zokor&quot;, 2026.11/??)</a></li>
+<li><a href="release-notes/rl-2605/#sec-nixpkgs-release-26.05">Nixpkgs 26.05 (&quot;Yarara&quot;, 2026.05/30)</a></li>
+<li><a href="release-notes/rl-2511/#sec-nixpkgs-release-25.11">Nixpkgs 25.11 (&quot;Xantusia&quot;, 2025.11/30)</a></li>
+<li><a href="release-notes/rl-2505/#sec-nixpkgs-release-25.05">Nixpkgs 25.05 (2025.05/23)</a></li>
+</ul>
+</li>
+</ul>
+    </nav>
+    <section id='main'>
+      <div id='search-panel' class='nav-search' role='search' hidden>
+        <label class='visually-hidden' for='search'>Search documentation</label>
+        <input type='search' id='search' placeholder='Search' autocomplete='off' aria-controls='search-results'>
+        <p id='search-status' class='visually-hidden' role='status' aria-live='polite'></p>
+        <div id='search-results'></div>
+      </div>
+      <div class='main-scroll'>
+        <main id='main-content' tabindex='-1'>
+<h1 id='sec-language-dhall'><a href='languages-frameworks/dhall/#sec-language-dhall'>
+Dhall
+</a></h1>
+<p>The Nixpkgs support for Dhall assumes some familiarity with Dhall's language
+support for importing Dhall expressions, which is documented here:</p>
+<ul>
+<li><a href="https://docs.dhall-lang.org/tutorials/Language-Tour.html#installing-packages"><code>dhall-lang.org</code> - Installing packages</a></li>
+</ul>
+<h2 id='ssec-dhall-remote-imports'><a href='languages-frameworks/dhall/#ssec-dhall-remote-imports'>
+Remote imports
+</a></h2>
+<p>Nixpkgs bypasses Dhall's support for remote imports using Dhall's
+semantic integrity checks.  Specifically, any Dhall import can be protected by
+an integrity check like:</p>
+<pre><code class="language-dhall">https://prelude.dhall-lang.org/v20.1.0/package.dhall
+  sha256:26b0ef498663d269e4dc6a82b0ee289ec565d683ef4c00d0ebdd25333a5a3c98
+</code></pre>
+<p>… and if the import is cached, then the interpreter will load the import from
+the cache instead of fetching the URL.</p>
+<p>Nixpkgs uses this trick to add all of a Dhall expression's dependencies into the
+cache so that the Dhall interpreter never needs to resolve any remote URLs.  In
+fact, Nixpkgs uses a Dhall interpreter with remote imports disabled when
+packaging Dhall expressions to enforce that the interpreter never resolves a
+remote import.  This means that Nixpkgs only supports building Dhall expressions
+if all of their remote imports are protected by semantic integrity checks.</p>
+<p>Instead of remote imports, Nixpkgs uses Nix to fetch remote Dhall code.  For
+example, the Prelude Dhall package uses <code>pkgs.fetchFromGitHub</code> to fetch the
+<code>dhall-lang</code> repository containing the Prelude.  Relying exclusively on Nix
+to fetch Dhall code ensures that Dhall packages built using Nix remain pure and
+also behave well when built within a sandbox.</p>
+<h2 id='ssec-dhall-packaging-expression'><a href='languages-frameworks/dhall/#ssec-dhall-packaging-expression'>
+Packaging a Dhall expression from scratch
+</a></h2>
+<p>We can illustrate how Nixpkgs integrates Dhall by beginning from the following
+trivial Dhall expression with one dependency (the Prelude):</p>
+<pre><code class="language-dhall">-- ./true.dhall
+
+let Prelude = https://prelude.dhall-lang.org/v20.1.0/package.dhall
+
+in  Prelude.Bool.not False
+</code></pre>
+<p>As written, this expression cannot be built using Nixpkgs because the
+expression does not protect the Prelude import with a semantic integrity
+check, so the first step is to freeze the expression using <code>dhall freeze</code>,
+like this:</p>
+<pre><code class="language-ShellSession">$ dhall freeze --inplace ./true.dhall
+</code></pre>
+<p>… which gives us:</p>
+<pre><code class="language-dhall">-- ./true.dhall
+
+let Prelude =
+      https://prelude.dhall-lang.org/v20.1.0/package.dhall
+        sha256:26b0ef498663d269e4dc6a82b0ee289ec565d683ef4c00d0ebdd25333a5a3c98
+
+in  Prelude.Bool.not False
+</code></pre>
+<p>To package that expression, we create a <code>./true.nix</code> file containing the
+following specification for the Dhall package:</p>
+<pre><code class="language-nix"># ./true.nix
+
+{ buildDhallPackage, Prelude }:
+
+buildDhallPackage {
+  name = &quot;true&quot;;
+  code = ./true.dhall;
+  dependencies = [ Prelude ];
+  source = true;
+}
+</code></pre>
+<p>… and we complete the build by incorporating that Dhall package into the
+<code>pkgs.dhallPackages</code> hierarchy using an overlay, like this:</p>
+<pre><code class="language-nix"># ./example.nix
+
+let
+  nixpkgs = fetchTarball {
+    url = &quot;https://github.com/NixOS/nixpkgs/archive/94b2848559b12a8ed1fe433084686b2a81123c99.tar.gz&quot;;
+    hash = &quot;sha256-B4Q3c6IvTLg3Q92qYa8y+i4uTaphtFdjp+Ir3QQjdN0=&quot;;
+  };
+
+  dhallOverlay = self: super: { true = self.callPackage ./true.nix { }; };
+
+  overlay = self: super: {
+    dhallPackages = super.dhallPackages.override (old: {
+      overrides = self.lib.composeExtensions (old.overrides or (_: _: { })) dhallOverlay;
+    });
+  };
+
+  pkgs = import nixpkgs {
+    config = { };
+    overlays = [ overlay ];
+  };
+
+in
+pkgs
+</code></pre>
+<p>… which we can then build using this command:</p>
+<pre><code class="language-ShellSession">$ nix build --file ./example.nix dhallPackages.true
+</code></pre>
+<h2 id='ssec-dhall-package-contents'><a href='languages-frameworks/dhall/#ssec-dhall-package-contents'>
+Contents of a Dhall package
+</a></h2>
+<p>The above package produces the following directory tree:</p>
+<pre><code class="language-ShellSession">$ tree -a ./result
+result
+├── .cache
+│   └── dhall
+│       └── 122027abdeddfe8503496adeb623466caa47da5f63abd2bc6fa19f6cfcb73ecfed70
+├── binary.dhall
+└── source.dhall
+</code></pre>
+<p>… where:</p>
+<ul>
+<li>
+<p><code>source.dhall</code> contains the result of interpreting our Dhall package:</p>
+<pre><code class="language-ShellSession">$ cat ./result/source.dhall
+True
+</code></pre>
+</li>
+<li>
+<p>The <code>.cache</code> subdirectory contains one binary cache product encoding the
+same result as <code>source.dhall</code>:</p>
+<pre><code class="language-ShellSession">$ dhall decode &lt; ./result/.cache/dhall/122027abdeddfe8503496adeb623466caa47da5f63abd2bc6fa19f6cfcb73ecfed70
+True
+</code></pre>
+</li>
+<li>
+<p><code>binary.dhall</code> contains a Dhall expression which handles fetching and decoding
+the same cache product:</p>
+<pre><code class="language-ShellSession">$ cat ./result/binary.dhall
+missing sha256:27abdeddfe8503496adeb623466caa47da5f63abd2bc6fa19f6cfcb73ecfed70
+$ cp -r ./result/.cache .cache
+
+$ chmod -R u+w .cache
+
+$ XDG_CACHE_HOME=.cache dhall --file ./result/binary.dhall
+True
+</code></pre>
+</li>
+</ul>
+<p>The <code>source.dhall</code> file is only present for packages that specify
+<code>source = true;</code>. By default, Dhall packages omit the <code>source.dhall</code> in order
+to conserve disk space when they are used exclusively as dependencies. For
+example, if we build the Prelude package it will only contain the binary
+encoding of the expression:</p>
+<pre><code class="language-ShellSession">$ nix build --file ./example.nix dhallPackages.Prelude
+
+$ tree -a result
+result
+├── .cache
+│   └── dhall
+│       └── 122026b0ef498663d269e4dc6a82b0ee289ec565d683ef4c00d0ebdd25333a5a3c98
+└── binary.dhall
+
+2 directories, 2 files
+</code></pre>
+<p>Typically, you only specify <code>source = true;</code> for the top-level Dhall expression
+of interest (such as our example <code>true.nix</code> Dhall package). However, if you
+wish to specify <code>source = true</code> for all Dhall packages, then you can amend the
+Dhall overlay like this:</p>
+<pre><code class="language-nix">{
+  dhallOverrides = self: super: {
+    # Enable source for all Dhall packages
+    buildDhallPackage = args: super.buildDhallPackage (args // { source = true; });
+
+    true = self.callPackage ./true.nix { };
+  };
+}
+</code></pre>
+<p>… and now the Prelude will contain the fully decoded result of interpreting
+the Prelude:</p>
+<pre><code class="language-ShellSession">$ nix build --file ./example.nix dhallPackages.Prelude
+
+$ tree -a result
+result
+├── .cache
+│   └── dhall
+│       └── 122026b0ef498663d269e4dc6a82b0ee289ec565d683ef4c00d0ebdd25333a5a3c98
+├── binary.dhall
+└── source.dhall
+
+$ cat ./result/source.dhall
+{ Bool =
+  { and =
+      \(_ : List Bool) -&gt;
+        List/fold Bool _ Bool (\(_ : Bool) -&gt; \(_ : Bool) -&gt; _@1 &amp;&amp; _) True
+  , build = \(_ : Type -&gt; _ -&gt; _@1 -&gt; _@2) -&gt; _ Bool True False
+  , even =
+      \(_ : List Bool) -&gt;
+        List/fold Bool _ Bool (\(_ : Bool) -&gt; \(_ : Bool) -&gt; _@1 == _) True
+  , fold =
+      \(_ : Bool) -&gt;
+…
+</code></pre>
+<h2 id='ssec-dhall-packaging-functions'><a href='languages-frameworks/dhall/#ssec-dhall-packaging-functions'>
+Packaging functions
+</a></h2>
+<p>We already saw an example of using <code>buildDhallPackage</code> to create a Dhall
+package from a single file, but most Dhall packages consist of more than one
+file and there are two derived utilities that you may find more useful when
+packaging multiple files:</p>
+<ul>
+<li>
+<p><code>buildDhallDirectoryPackage</code> - build a Dhall package from a local directory</p>
+</li>
+<li>
+<p><code>buildDhallGitHubPackage</code> - build a Dhall package from a GitHub repository</p>
+</li>
+</ul>
+<p>The <code>buildDhallPackage</code> is the lowest-level function and accepts the following
+arguments:</p>
+<ul>
+<li>
+<p><code>name</code>: The name of the derivation</p>
+</li>
+<li>
+<p><code>dependencies</code>: Dhall dependencies to build and cache ahead of time</p>
+</li>
+<li>
+<p><code>code</code>: The top-level expression to build for this package</p>
+<p>Note that the <code>code</code> field accepts an arbitrary Dhall expression.  You're
+not limited to just a file.</p>
+</li>
+<li>
+<p><code>source</code>: Set to <code>true</code> to include the decoded result as <code>source.dhall</code> in the
+build product, at the expense of requiring more disk space</p>
+</li>
+<li>
+<p><code>documentationRoot</code>: Set to the root directory of the package if you want
+<code>dhall-docs</code> to generate documentation underneath the <code>docs</code> subdirectory of
+the build product</p>
+</li>
+</ul>
+<p>The <code>buildDhallDirectoryPackage</code> is a higher-level function implemented in terms
+of <code>buildDhallPackage</code> that accepts the following arguments:</p>
+<ul>
+<li>
+<p><code>name</code>: Same as <code>buildDhallPackage</code></p>
+</li>
+<li>
+<p><code>dependencies</code>: Same as <code>buildDhallPackage</code></p>
+</li>
+<li>
+<p><code>source</code>: Same as <code>buildDhallPackage</code></p>
+</li>
+<li>
+<p><code>src</code>: The directory containing Dhall code that you want to turn into a Dhall
+package</p>
+</li>
+<li>
+<p><code>file</code>: The top-level file (<code>package.dhall</code> by default) that is the entry point
+to the rest of the package</p>
+</li>
+<li>
+<p><code>document</code>: Set to <code>true</code> to generate documentation for the package</p>
+</li>
+</ul>
+<p>The <code>buildDhallGitHubPackage</code> is another higher-level function implemented in
+terms of <code>buildDhallPackage</code> that accepts the following arguments:</p>
+<ul>
+<li>
+<p><code>name</code>: Same as <code>buildDhallPackage</code></p>
+</li>
+<li>
+<p><code>dependencies</code>: Same as <code>buildDhallPackage</code></p>
+</li>
+<li>
+<p><code>source</code>: Same as <code>buildDhallPackage</code></p>
+</li>
+<li>
+<p><code>owner</code>: The owner of the repository</p>
+</li>
+<li>
+<p><code>repo</code>: The repository name</p>
+</li>
+<li>
+<p><code>rev</code>: The desired revision (or branch, or tag)</p>
+</li>
+<li>
+<p><code>directory</code>: The subdirectory of the Git repository to package (if a
+directory other than the root of the repository)</p>
+</li>
+<li>
+<p><code>file</code>: The top-level file (<code>${directory}/package.dhall</code> by default) that is
+the entry point to the rest of the package</p>
+</li>
+<li>
+<p><code>document</code>: Set to <code>true</code> to generate documentation for the package</p>
+</li>
+</ul>
+<p>Additionally, <code>buildDhallGitHubPackage</code> accepts the same arguments as
+<code>fetchFromGitHub</code>, such as <code>hash</code> or <code>fetchSubmodules</code>.</p>
+<h2 id='ssec-dhall-dhall-to-nixpkgs'><a href='languages-frameworks/dhall/#ssec-dhall-dhall-to-nixpkgs'>
+<code>dhall-to-nixpkgs</code>
+</a></h2>
+<p>You can use the <code>dhall-to-nixpkgs</code> command-line utility to automate
+packaging Dhall code.  For example:</p>
+<pre><code class="language-ShellSession">$ nix-shell -p haskellPackages.dhall-nixpkgs nix-prefetch-git
+[nix-shell]$ dhall-to-nixpkgs github https://github.com/Gabriella439/dhall-semver.git
+{ buildDhallGitHubPackage, Prelude }:
+  buildDhallGitHubPackage {
+    name = &quot;dhall-semver&quot;;
+    githubBase = &quot;github.com&quot;;
+    owner = &quot;Gabriella439&quot;;
+    repo = &quot;dhall-semver&quot;;
+    rev = &quot;2d44ae605302ce5dc6c657a1216887fbb96392a4&quot;;
+    fetchSubmodules = false;
+    hash = &quot;sha256-n0nQtswVapWi/x7or0O3MEYmAkt/a1uvlOtnje6GGnk=&quot;;
+    directory = &quot;&quot;;
+    file = &quot;package.dhall&quot;;
+    source = false;
+    document = false;
+    dependencies = [ (Prelude.overridePackage { file = &quot;package.dhall&quot;; }) ];
+    }
+</code></pre>
+<div class='admonition note'><h3 class='title'>Note</h3>
+<p>
+<code>nix-prefetch-git</code> is added to the <code>nix-shell -p</code> invocation above, because it has to be in <code>$PATH</code> for <code>dhall-to-nixpkgs</code> to work.
+</p>
+</div>
+<p>The utility takes care of automatically detecting remote imports and converting
+them to package dependencies.  You can also use the utility on local
+Dhall directories, too:</p>
+<pre><code class="language-ShellSession">$ dhall-to-nixpkgs directory ~/proj/dhall-semver
+{ buildDhallDirectoryPackage, Prelude }:
+  buildDhallDirectoryPackage {
+    name = &quot;proj&quot;;
+    src = ~/proj/dhall-semver;
+    file = &quot;package.dhall&quot;;
+    source = false;
+    document = false;
+    dependencies = [ (Prelude.overridePackage { file = &quot;package.dhall&quot;; }) ];
+    }
+</code></pre>
+<h3 id='ssec-dhall-remote-imports-as-fod'><a href='languages-frameworks/dhall/#ssec-dhall-remote-imports-as-fod'>
+Remote imports as fixed-output derivations
+</a></h3>
+<p><code>dhall-to-nixpkgs</code> has the ability to fetch and build remote imports as
+fixed-output derivations by using their Dhall integrity check. This is
+sometimes easier than manually packaging all remote imports.</p>
+<p>This can be used like the following:</p>
+<pre><code class="language-ShellSession">$ dhall-to-nixpkgs directory --fixed-output-derivations ~/proj/dhall-semver
+{ buildDhallDirectoryPackage, buildDhallUrl }:
+  buildDhallDirectoryPackage {
+    name = &quot;proj&quot;;
+    src = ~/proj/dhall-semver;
+    file = &quot;package.dhall&quot;;
+    source = false;
+    document = false;
+    dependencies = [
+      (buildDhallUrl {
+        url = &quot;https://prelude.dhall-lang.org/v17.0.0/package.dhall&quot;;
+        hash = &quot;sha256-ENs8kZwl6QRoM9+Jeo/+JwHcOQ+giT2VjDQwUkvlpD4=&quot;;
+        dhallHash = &quot;sha256:10db3c919c25e9046833df897a8ffe2701dc390fa0893d958c3430524be5a43e&quot;;
+        })
+      ];
+    }
+</code></pre>
+<p>Here, <code>dhall-semver</code>'s <code>Prelude</code> dependency is fetched and built with the
+<code>buildDhallUrl</code> helper function, instead of being passed in as a function
+argument.</p>
+<h2 id='ssec-dhall-overriding-dependency-versions'><a href='languages-frameworks/dhall/#ssec-dhall-overriding-dependency-versions'>
+Overriding dependency versions
+</a></h2>
+<p>Suppose that we change our <code>true.dhall</code> example expression to depend on an older
+version of the Prelude (19.0.0):</p>
+<pre><code class="language-dhall">-- ./true.dhall
+
+let Prelude =
+      https://prelude.dhall-lang.org/v19.0.0/package.dhall
+        sha256:eb693342eb769f782174157eba9b5924cf8ac6793897fc36a31ccbd6f56dafe2
+
+in  Prelude.Bool.not False
+</code></pre>
+<p>If we try to rebuild that expression the build will fail:</p>
+<pre><code class="language-ShellSession">$ nix build --file ./example.nix dhallPackages.true
+builder for '/nix/store/0f1hla7ff1wiaqyk1r2ky4wnhnw114fi-true.drv' failed with exit code 1; last 10 log lines:
+
+  Dhall was compiled without the 'with-http' flag.
+
+  The requested URL was: https://prelude.dhall-lang.org/v19.0.0/package.dhall
+
+
+  4│       https://prelude.dhall-lang.org/v19.0.0/package.dhall
+  5│         sha256:eb693342eb769f782174157eba9b5924cf8ac6793897fc36a31ccbd6f56dafe2
+
+  /nix/store/rsab4y99h14912h4zplqx2iizr5n4rc2-true.dhall:4:7
+[1 built (1 failed), 0.0 MiB DL]
+error: build of '/nix/store/0f1hla7ff1wiaqyk1r2ky4wnhnw114fi-true.drv' failed
+</code></pre>
+<p>… because the default Prelude selected by Nixpkgs revision
+<code>94b2848559b12a8ed1fe433084686b2a81123c99</code> is version 20.1.0, which doesn't
+have the same integrity check as version 19.0.0. This means that version
+19.0.0 is not cached, and the interpreter is not allowed to fall back to
+importing the URL.</p>
+<p>However, we can override the default Prelude version by using <code>dhall-to-nixpkgs</code>
+to create a Dhall package for our desired Prelude:</p>
+<pre><code class="language-ShellSession">$ dhall-to-nixpkgs github https://github.com/dhall-lang/dhall-lang.git \
+    --name Prelude \
+    --directory Prelude \
+    --rev v19.0.0 \
+    &gt; Prelude.nix
+</code></pre>
+<p>… and then referencing that package in our Dhall overlay, by either overriding
+the Prelude globally for all packages, like this:</p>
+<pre><code class="language-nix">{
+  dhallOverrides = self: super: {
+    true = self.callPackage ./true.nix { };
+
+    Prelude = self.callPackage ./Prelude.nix { };
+  };
+}
+</code></pre>
+<p>… or selectively overriding the Prelude dependency for just the <code>true</code> package,
+like this:</p>
+<pre><code class="language-nix">{
+  dhallOverrides = self: super: {
+    true = self.callPackage ./true.nix {
+      Prelude = self.callPackage ./Prelude.nix { };
+    };
+  };
+}
+</code></pre>
+<h2 id='ssec-dhall-overrides'><a href='languages-frameworks/dhall/#ssec-dhall-overrides'>
+Overrides
+</a></h2>
+<p>You can override any of the arguments to <code>buildDhallGitHubPackage</code> or
+<code>buildDhallDirectoryPackage</code> using the <code>overridePackage</code> attribute of a package.
+For example, suppose we wanted to selectively enable <code>source = true</code> just for the Prelude.  We can do that like this:</p>
+<pre><code class="language-nix">{
+  dhallOverrides = self: super: {
+    Prelude = super.Prelude.overridePackage { source = true; };
+
+    # ...
+  };
+}
+</code></pre>
+        </main>
+      </div>
+    </section>
+<script defer src='highlight.pack.cf986678470772f7.js'></script>
+<script defer src='mmdoc.367f3e8986e40416.js'></script>
+<script defer src='mmdoc_search.a5b6fc7d7512cdc1.js' data-search-index='search_index.b3afff10081eb0bd.js' data-fuse='fuse.basic.min.bb997c989fa0a28e.js'></script>
+  </div>
+  </body>
+</html>

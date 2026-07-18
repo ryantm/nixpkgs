@@ -1,0 +1,533 @@
+<!doctype html>
+<html lang='en'>
+  <head>
+    <base href='../../'>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <script>
+      (() => {
+        let theme = null
+        try { theme = localStorage.getItem('theme') } catch (error) {}
+        if (theme !== 'light' && theme !== 'dark')
+          theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+        document.documentElement.classList.add(theme + '-theme')
+      })()
+    </script>
+    <meta name='description' content='GNOME'>
+    <link rel='icon' href='favicon.svg'>
+    <link rel='stylesheet' href='a11y-dark.1fcafc9d9a306955.css'>
+    <link rel='stylesheet' href='a11y-light.b466309a7fa86b1f.css'>
+    <link rel='stylesheet' href='mmdoc.e4286053b6471af4.css'>
+    <title>GNOME | nixpkgs</title>
+  </head>
+  <body>
+  <a class='skip-link' href='languages-frameworks/gnome/#main-content'>Skip to main content</a>
+  <input type='checkbox' id='sidebar-checkbox' aria-hidden='true' tabindex='-1' style='display: none;'>
+  <div class='body'>
+    <div class='nav-top-container'>
+    <nav class='nav-top' aria-label='Documentation controls'>
+      <button type='button' class='sidebar-toggle' aria-label='Toggle table of contents' aria-controls='sidebar' aria-expanded='true'></button>    <button type='button' class='search-toggle' aria-label='Open search' aria-controls='search-panel' aria-expanded='false'></button>    <button type='button' class='theme-toggle' aria-label='Switch to dark theme' aria-pressed='false'></button>    <a id='chapter-previous-button' class='chapter-previous' href='languages-frameworks/factor/#sec-language-factor' title='Factor' aria-label='Previous: Factor'>&lt;</a>
+    <a id='chapter-next-button' class='chapter-next' href='languages-frameworks/go/#sec-language-go' title='Go' aria-label='Next: Go'>&gt;</a>
+    </nav>
+    </div>
+    <nav id='sidebar' class='sidebar' aria-label='Table of contents'>
+<h1>Nixpkgs Manual</h1>
+<p>Version 26.11pre</p>
+<ul>
+<li><a href="./#preface">Preface</a>
+<ul>
+<li><a href="preface/#overview-of-nixpkgs">Overview of Nixpkgs</a></li>
+</ul>
+</li>
+<li><a href="first-package/#chap-first-package">Package your first application</a></li>
+</ul>
+<h2>Using Nixpkgs</h2>
+<ul>
+<li><a href="using/platform-support/#chap-platform-support">Platform Support</a></li>
+<li><a href="using/configuration/#chap-packageconfig">Global configuration</a></li>
+<li><a href="using/overlays/#chap-overlays">Overlays</a></li>
+<li><a href="using/overrides/#chap-overrides">Overriding</a></li>
+</ul>
+<h2>Nixpkgs Lib</h2>
+<ul>
+<li><a href="functions/#chap-functions">Functions reference</a>
+<ul>
+<li>Library Functions
+<ul>
+<li><a href="functions/library/asserts/#sec-functions-library-asserts">lib.asserts: assertion functions</a></li>
+<li><a href="functions/library/attrsets/#sec-functions-library-attrsets">lib.attrsets: attribute set functions</a></li>
+<li><a href="functions/library/strings/#sec-functions-library-strings">lib.strings: string manipulation functions</a></li>
+<li><a href="functions/library/versions/#sec-functions-library-versions">lib.versions: version string functions</a></li>
+<li><a href="functions/library/trivial/#sec-functions-library-trivial">lib.trivial: miscellaneous functions</a></li>
+<li><a href="functions/library/fixedPoints/#sec-functions-library-fixedPoints">lib.fixedPoints: explicit recursion functions</a></li>
+<li><a href="functions/library/lists/#sec-functions-library-lists">lib.lists: list manipulation functions</a></li>
+<li><a href="functions/library/debug/#sec-functions-library-debug">lib.debug: debugging functions</a></li>
+<li><a href="functions/library/options/#sec-functions-library-options">lib.options: NixOS / nixpkgs option handling</a></li>
+<li><a href="functions/library/path/#sec-functions-library-path">lib.path: path functions</a></li>
+<li><a href="functions/library/filesystem/#sec-functions-library-filesystem">lib.filesystem: filesystem functions</a></li>
+<li><a href="functions/library/fileset/#sec-functions-library-fileset">lib.fileset: file set functions</a></li>
+<li><a href="functions/library/sources/#sec-functions-library-sources">lib.sources: source filtering functions</a></li>
+<li><a href="functions/library/cli/#sec-functions-library-cli">lib.cli: command-line serialization functions</a></li>
+<li><a href="functions/library/gvariant/#sec-functions-library-gvariant">lib.gvariant: GVariant formatted string serialization functions</a></li>
+<li><a href="functions/library/fetchers/#sec-functions-library-fetchers">lib.fetchers: functions which can be reused across fetchers</a></li>
+<li><a href="functions/library/generators/#sec-functions-library-generators">lib.generators: functions that create file formats from nix data structures</a></li>
+<li><a href="functions/library/customisation/#sec-functions-library-customisation">lib.customisation: Functions to customise (derivation-related) functions, derivations, or attribute sets</a></li>
+<li><a href="functions/library/meta/#sec-functions-library-meta">lib.meta: functions for derivation metadata</a></li>
+<li><a href="functions/library/derivations/#sec-functions-library-derivations">lib.derivations: miscellaneous derivation-specific functions</a></li>
+<li><a href="functions/generators/#sec-generators">Generators</a></li>
+<li><a href="functions/debug/#sec-debug">Debugging Nix Expressions</a></li>
+<li><a href="functions/prefer-remote-fetch/#sec-prefer-remote-fetch">prefer-remote-fetch overlay</a></li>
+<li><a href="functions/nix-gitignore/#sec-pkgs-nix-gitignore">pkgs.nix-gitignore</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="module-system/module-system/#module-system">Module System</a></li>
+</ul>
+<h2>Standard Environment</h2>
+<ul>
+<li><a href="stdenv/#part-stdenv">Standard environment</a></li>
+<li><a href="stdenv/stdenv/#chap-stdenv">The Standard Environment</a></li>
+<li><a href="stdenv/meta/#chap-meta">Meta-attributes</a></li>
+<li><a href="stdenv/passthru/#chap-passthru">Passthru-attributes</a></li>
+<li><a href="stdenv/multiple-output/#chap-multiple-output">Multiple-output packages</a></li>
+<li><a href="stdenv/cross-compilation/#chap-cross">Cross-compilation</a></li>
+<li><a href="stdenv/platform-notes/#chap-platform-notes">Platform Notes</a></li>
+</ul>
+<h2>Toolchains</h2>
+<ul>
+<li><a href="toolchains/llvm/#chap-toolchains">The LLVM Toolchain</a></li>
+</ul>
+<h2>Builders</h2>
+<ul>
+<li><a href="build-helpers/#part-builders">Build helpers</a></li>
+<li><a href="build-helpers/fetchers/#chap-pkgs-fetchers">Fetchers</a></li>
+<li><a href="build-helpers/trivial-build-helpers/#chap-trivial-builders">Trivial build helpers</a></li>
+<li><a href="build-helpers/fixed-point-arguments/#chap-build-helpers-finalAttrs">Fixed-point arguments of build helpers</a></li>
+<li><a href="build-helpers/dev-shell-tools/#chap-devShellTools">Development Shell helpers</a></li>
+<li><a href="build-helpers/testers/#chap-testers">Testers</a></li>
+<li>Special build helpers
+<ul>
+<li><a href="build-helpers/special/fhs-environments/#sec-fhs-environments">buildFHSEnv</a></li>
+<li><a href="build-helpers/special/fakenss/#sec-fakeNss">fakeNss</a></li>
+<li><a href="build-helpers/special/makesetuphook/#sec-pkgs.makeSetupHook">pkgs.makeSetupHook</a></li>
+<li><a href="build-helpers/special/mkshell/#sec-pkgs-mkShell">pkgs.mkShell</a></li>
+<li><a href="packages/darwin-builder/#sec-darwin-builder">darwin.linux-builder</a></li>
+<li><a href="build-helpers/special/vm-tools/#sec-vm-tools">vmTools</a></li>
+</ul>
+</li>
+<li>Images
+<ul>
+<li><a href="build-helpers/images/appimagetools/#sec-pkgs-appimageTools">pkgs.appimageTools</a></li>
+<li><a href="build-helpers/images/dockertools/#sec-pkgs-dockerTools">pkgs.dockerTools</a></li>
+<li><a href="build-helpers/images/ocitools/#sec-pkgs-ociTools">pkgs.ociTools</a></li>
+<li><a href="build-helpers/images/portableservice/#sec-pkgs-portableService">pkgs.portableService</a></li>
+<li><a href="build-helpers/images/makediskimage/#sec-make-disk-image">&lt;nixpkgs/nixos/lib/make-disk-image.nix&gt;</a></li>
+<li><a href="build-helpers/images/binarycache/#sec-pkgs-binary-cache">pkgs.mkBinaryCache</a></li>
+</ul>
+</li>
+<li><a href="hooks/index/#chap-hooks">Hooks reference</a>
+<ul>
+<li><a href="hooks/autoconf/#setup-hook-autoconf">Autoconf</a></li>
+<li><a href="hooks/automake/#setup-hook-automake">Automake</a></li>
+<li><a href="hooks/autopatchelf/#setup-hook-autopatchelfhook">autoPatchelfHook</a></li>
+<li><a href="hooks/breakpoint/#breakpointhook">breakpointHook</a></li>
+<li><a href="hooks/cmake/#cmake">cmake</a></li>
+<li><a href="hooks/gdk-pixbuf/#setup-hook-gdk-pixbuf">gdk-pixbuf</a></li>
+<li><a href="hooks/ghc/#ghc">GHC</a></li>
+<li><a href="hooks/gnome/#gnome-platform">GNOME platform</a></li>
+<li><a href="hooks/installShellFiles/#installshellfiles">installShellFiles</a></li>
+<li><a href="hooks/libglycin/#libglycin-hooks">libglycin</a></li>
+<li><a href="hooks/libiconv/#libiconv-libintl">libiconv, libintl</a></li>
+<li><a href="hooks/libxml2/#setup-hook-libxml2">libxml2</a></li>
+<li><a href="hooks/meson/#meson">Meson</a></li>
+<li><a href="hooks/mpi-check-hook/#setup-hook-mpi-check">mpiCheckPhaseHook</a></li>
+<li><a href="hooks/ninja/#ninja">ninja</a></li>
+<li><a href="hooks/patch-rc-path-hooks/#sec-patchRcPathHooks">patchRcPath hooks</a></li>
+<li><a href="hooks/perl/#setup-hook-perl">Perl</a></li>
+<li><a href="hooks/pkg-config/#setup-hook-pkg-config">pkg-config</a></li>
+<li><a href="hooks/pnpm/#pnpm-build-hook">pnpmBuildHook</a></li>
+<li><a href="hooks/postgresql-test-hook/#sec-postgresqlTestHook">postgresqlTestHook</a></li>
+<li><a href="hooks/python/#setup-hook-python">Python</a></li>
+<li><a href="hooks/scons/#scons">scons</a></li>
+<li><a href="hooks/tetex-tex-live/#tetex-tex-live">teTeX / TeX Live</a></li>
+<li><a href="hooks/unzip/#unzip">unzip</a></li>
+<li><a href="hooks/validatePkgConfig/#validatepkgconfig">validatePkgConfig</a></li>
+<li><a href="hooks/versionCheckHook/#versioncheckhook">versionCheckHook</a></li>
+<li><a href="hooks/waf/#waf-hook">wafHook</a></li>
+<li><a href="hooks/xcbuild/#xcbuildhook">xcbuildHook</a></li>
+</ul>
+</li>
+<li><a href="languages-frameworks/index/#chap-language-support">Languages and frameworks</a>
+<ul>
+<li><a href="languages-frameworks/agda/#agda">Agda</a></li>
+<li><a href="languages-frameworks/android/#android">Android</a></li>
+<li><a href="languages-frameworks/astal/#astal">Astal</a></li>
+<li><a href="languages-frameworks/beam/#sec-beam">BEAM Languages (Erlang, Elixir &amp; LFE)</a></li>
+<li><a href="languages-frameworks/chicken/#sec-chicken">CHICKEN</a></li>
+<li><a href="languages-frameworks/cosmic/#sec-language-cosmic">COSMIC</a></li>
+<li><a href="languages-frameworks/crystal/#crystal">Crystal</a></li>
+<li><a href="languages-frameworks/cuda/#cuda">CUDA</a></li>
+<li><a href="languages-frameworks/cuelang/#cuelang">Cue (Cuelang)</a></li>
+<li><a href="languages-frameworks/dlang/#dlang">D (Dlang)</a></li>
+<li><a href="languages-frameworks/dart/#sec-language-dart">Dart</a></li>
+<li><a href="languages-frameworks/dhall/#sec-language-dhall">Dhall</a></li>
+<li><a href="languages-frameworks/dotnet/#dotnet">Dotnet</a></li>
+<li><a href="languages-frameworks/emscripten/#emscripten">Emscripten</a></li>
+<li><a href="languages-frameworks/factor/#sec-language-factor">Factor</a></li>
+<li><a href="languages-frameworks/gnome/#sec-language-gnome">GNOME</a></li>
+<li><a href="languages-frameworks/go/#sec-language-go">Go</a></li>
+<li><a href="languages-frameworks/gradle/#gradle">Gradle</a></li>
+<li><a href="languages-frameworks/hare/#sec-language-hare">Hare</a></li>
+<li><a href="languages-frameworks/haskell/#haskell">Haskell</a></li>
+<li><a href="languages-frameworks/hy/#sec-language-hy">Hy</a></li>
+<li><a href="languages-frameworks/idris/#idris">Idris</a></li>
+<li><a href="languages-frameworks/idris2/#sec-idris2">Idris2</a></li>
+<li><a href="languages-frameworks/ios/#ios">iOS</a></li>
+<li><a href="languages-frameworks/java/#sec-language-java">Java</a></li>
+<li><a href="languages-frameworks/javascript/#language-javascript">Javascript</a></li>
+<li><a href="languages-frameworks/julia/#language-julia">Julia</a></li>
+<li><a href="languages-frameworks/lean4/#sec-language-lean4">Lean 4</a></li>
+<li><a href="languages-frameworks/lisp/#lisp">lisp-modules</a></li>
+<li><a href="languages-frameworks/lua/#lua">Lua</a></li>
+<li><a href="languages-frameworks/maven/#maven">Maven</a></li>
+<li><a href="languages-frameworks/neovim/#neovim">Neovim</a></li>
+<li><a href="languages-frameworks/nim/#sec-language-nim">Nim</a></li>
+<li><a href="languages-frameworks/ocaml/#sec-language-ocaml">OCaml</a></li>
+<li><a href="languages-frameworks/octave/#sec-octave">Octave</a></li>
+<li><a href="languages-frameworks/perl/#sec-language-perl">Perl</a></li>
+<li><a href="languages-frameworks/php/#sec-php">PHP</a></li>
+<li><a href="languages-frameworks/pkg-config/#sec-pkg-config">pkg-config</a></li>
+<li><a href="languages-frameworks/python/#python">Python</a></li>
+<li><a href="languages-frameworks/qt/#sec-language-qt">Qt</a></li>
+<li><a href="languages-frameworks/r/#r">R</a></li>
+<li><a href="languages-frameworks/rocq/#sec-language-rocq">Rocq and rocq packages</a></li>
+<li><a href="languages-frameworks/ruby/#sec-language-ruby">Ruby</a></li>
+<li><a href="languages-frameworks/rust/#rust">Rust</a></li>
+<li><a href="languages-frameworks/scheme/#sec-scheme">Scheme</a></li>
+<li><a href="languages-frameworks/swift/#swift">Swift</a></li>
+<li><a href="languages-frameworks/tcl/#sec-language-tcl">Tcl</a></li>
+<li><a href="languages-frameworks/texlive/#sec-language-texlive">TeX Live</a></li>
+<li><a href="languages-frameworks/typst/#typst">Typst</a></li>
+<li><a href="languages-frameworks/vim/#vim">Vim</a></li>
+</ul>
+</li>
+<li><a href="packages/index/#chap-packages">Packages</a>
+<ul>
+<li><a href="packages/build-support/#sec-build-support">Build Support</a></li>
+<li><a href="packages/cataclysm-dda/#cataclysm-dark-days-ahead">Cataclysm: Dark Days Ahead</a></li>
+<li><a href="packages/citrix/#sec-citrix">Citrix Workspace</a></li>
+<li><a href="packages/dlib/#dlib">DLib</a></li>
+<li><a href="packages/eclipse/#sec-eclipse">Eclipse</a></li>
+<li><a href="packages/elm/#sec-elm">Elm</a></li>
+<li><a href="packages/emacs/#sec-emacs">Emacs</a></li>
+<li><a href="packages/firefox/#sec-firefox">Firefox</a></li>
+<li><a href="packages/fish/#sec-fish">Fish</a></li>
+<li><a href="packages/friction-graphics/#friction-graphics">Friction</a></li>
+<li><a href="packages/fuse/#sec-fuse">FUSE</a></li>
+<li><a href="packages/geant4/#geant4">Geant4</a></li>
+<li><a href="packages/ibus/#sec-ibus-typing-booster">ibus-engines.typing-booster</a></li>
+<li><a href="packages/inkscape/#sec-inkscape">Inkscape</a></li>
+<li><a href="packages/kakoune/#sec-kakoune">Kakoune</a></li>
+<li><a href="packages/krita/#sec-krita">Krita</a></li>
+<li><a href="packages/lhapdf/#lhapdf">LHAPDF</a></li>
+<li><a href="packages/linux/#sec-linux-kernel">Linux kernel</a></li>
+<li><a href="packages/locales/#locales">Locales</a></li>
+<li><a href="packages/etc-files/#etc">/etc files</a></li>
+<li><a href="packages/nginx/#sec-nginx">Nginx</a></li>
+<li><a href="packages/nrfutil/#sec-nrfutil">nrfutil</a></li>
+<li><a href="packages/opengl/#sec-opengl">OpenGL</a></li>
+<li><a href="packages/python-tree-sitter/#python-tree-sitter">Python Tree Sitter</a></li>
+<li><a href="packages/shell-helpers/#sec-shell-helpers">Interactive shell helpers</a></li>
+<li><a href="packages/steam/#sec-steam">Steam</a></li>
+<li><a href="packages/treefmt/#treefmt">treefmt</a></li>
+<li><a href="packages/urxvt/#sec-urxvt">Urxvt</a></li>
+<li><a href="packages/uv/#sec-uv">uv</a></li>
+<li><a href="packages/vcpkg/#sec-vcpkg">VCPKG</a></li>
+<li><a href="packages/weechat/#sec-weechat">WeeChat</a></li>
+</ul>
+</li>
+</ul>
+<h2>Modules</h2>
+<ul>
+<li><a href="modules/index/#modules">Modules</a>
+<ul>
+<li><a href="modules/generic/#modules-generic">Generic</a>
+<ul>
+<li><a href="modules/generic/#modules-generic-meta-maintainers">meta-maintainers.nix</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2>Development of Nixpkgs</h2>
+<ul>
+<li><a href="development/opening-issues/#sec-opening-issues">Opening issues</a></li>
+<li><a href="contributing/coding-conventions/#chap-conventions">Coding conventions</a></li>
+</ul>
+<h2>Interoperability Standards</h2>
+<ul>
+<li><a href="interoperability/cyclonedx/#chap-interop-cyclonedx">CycloneDX</a>
+<ul>
+<li><a href="interoperability/cyclonedx/#sec-interop.cylonedx-nix"><code>nix</code> namespace</a></li>
+<li><a href="interoperability/cyclonedx/#sec-interop.cylonedx-narinfo"><code>nix:narinfo</code></a></li>
+<li><a href="interoperability/cyclonedx/#sec-interop.cylonedx-fod"><code>nix:fod</code></a></li>
+</ul>
+</li>
+</ul>
+<h2>Release Notes</h2>
+<ul>
+<li><a href="release-notes/release-notes/#chap-release-notes">Release Notes</a>
+<ul>
+<li><a href="release-notes/rl-2611/#sec-nixpkgs-release-26.11">Nixpkgs 26.11 (&quot;Zokor&quot;, 2026.11/??)</a></li>
+<li><a href="release-notes/rl-2605/#sec-nixpkgs-release-26.05">Nixpkgs 26.05 (&quot;Yarara&quot;, 2026.05/30)</a></li>
+<li><a href="release-notes/rl-2511/#sec-nixpkgs-release-25.11">Nixpkgs 25.11 (&quot;Xantusia&quot;, 2025.11/30)</a></li>
+<li><a href="release-notes/rl-2505/#sec-nixpkgs-release-25.05">Nixpkgs 25.05 (2025.05/23)</a></li>
+</ul>
+</li>
+</ul>
+    </nav>
+    <section id='main'>
+      <div id='search-panel' class='nav-search' role='search' hidden>
+        <label class='visually-hidden' for='search'>Search documentation</label>
+        <input type='search' id='search' placeholder='Search' autocomplete='off' aria-controls='search-results'>
+        <p id='search-status' class='visually-hidden' role='status' aria-live='polite'></p>
+        <div id='search-results'></div>
+      </div>
+      <div class='main-scroll'>
+        <main id='main-content' tabindex='-1'>
+<h1 id='sec-language-gnome'><a href='languages-frameworks/gnome/#sec-language-gnome'>
+GNOME
+</a></h1>
+<h2 id='ssec-gnome-packaging'><a href='languages-frameworks/gnome/#ssec-gnome-packaging'>
+Packaging GNOME applications
+</a></h2>
+<p>Programs in the GNOME universe are written in various languages but they all use GObject-based libraries like GLib, GTK or GStreamer. These libraries are often modular, relying on looking into certain directories to find their modules. However, due to Nix’s specific file system organization, this will fail without our intervention. Fortunately, the libraries usually allow overriding the directories through environment variables, either natively or thanks to a patch in nixpkgs. <a href="stdenv/stdenv/#fun-wrapProgram">Wrapping</a> the executables to ensure correct paths are available to the application constitutes a significant part of packaging a modern desktop application. In this section, we will describe various modules needed by such applications, environment variables needed to make the modules load, and finally a script that will do the work for us.</p>
+<h3 id='ssec-gnome-settings'><a href='languages-frameworks/gnome/#ssec-gnome-settings'>
+Settings
+</a></h3>
+<p><a href="https://developer.gnome.org/gio/stable/GSettings.html">GSettings</a> API is often used for storing settings. GSettings schemas are required, to know the type and other metadata of the stored values. GLib looks for <code>glib-2.0/schemas/gschemas.compiled</code> files inside the directories of <code>XDG_DATA_DIRS</code>.</p>
+<p>On Linux, GSettings API is implemented using <a href="https://gitlab.gnome.org/GNOME/dconf">dconf</a> backend. You will need to add <code>dconf</code> <a href="languages-frameworks/gnome/#ssec-gnome-gio-modules">GIO module</a> to <code>GIO_EXTRA_MODULES</code> variable, otherwise the <code>memory</code> backend will be used and the saved settings will not be persistent.</p>
+<p>Last you will need the dconf database D-Bus service itself. You can enable it using <code>programs.dconf.enable</code>.</p>
+<p>Some applications will also require <code>gsettings-desktop-schemas</code> for things like reading proxy configuration or user interface customization. This dependency is often not mentioned by upstream, you should grep for <code>org.gnome.desktop</code> and <code>org.gnome.system</code> to see if the schemas are needed.</p>
+<h3 id='ssec-gnome-gio-modules'><a href='languages-frameworks/gnome/#ssec-gnome-gio-modules'>
+GIO modules
+</a></h3>
+<p>GLib’s <a href="https://developer.gnome.org/gio/stable/ch01.html">GIO</a> library supports several <a href="https://developer.gnome.org/gio/stable/extending-gio.html">extension points</a>. Notably, they allow:</p>
+<ul>
+<li>implementing settings backends (already <a href="languages-frameworks/gnome/#ssec-gnome-settings">mentioned</a>)</li>
+<li>adding TLS support</li>
+<li>proxy settings</li>
+<li>virtual file systems</li>
+</ul>
+<p>The modules are typically installed to <code>lib/gio/modules/</code> directory of a package and you need to add them to <code>GIO_EXTRA_MODULES</code> if you need any of those features.</p>
+<p>In particular, we recommend:</p>
+<ul>
+<li>adding <code>dconf.lib</code> for any software on Linux that reads <a href="languages-frameworks/gnome/#ssec-gnome-settings">GSettings</a> (even transitively through e.g. GTK’s file manager)</li>
+<li>adding <code>glib-networking</code> for any software that accesses network using GIO or libsoup – glib-networking contains a module that implements TLS support and loads system-wide proxy settings</li>
+</ul>
+<p>To allow software to use various virtual file systems, <code>gvfs</code> package can be also added. But that is usually an optional feature so we typically use <code>gvfs</code> from the system (e.g. installed globally using NixOS module).</p>
+<h3 id='ssec-gnome-gdk-pixbuf-loaders'><a href='languages-frameworks/gnome/#ssec-gnome-gdk-pixbuf-loaders'>
+GdkPixbuf loaders
+</a></h3>
+<p>GTK applications typically use <a href="https://gitlab.gnome.org/GNOME/gdk-pixbuf/">GdkPixbuf</a> to load images. But <code>gdk-pixbuf</code> package only supports basic bitmap formats like JPEG, PNG or TIFF, requiring to use third-party loader modules for other formats. This is especially painful since GTK itself includes SVG icons, which cannot be rendered without a loader provided by <code>librsvg</code>.</p>
+<p>Unlike other libraries mentioned in this section, GdkPixbuf only supports a single value in its controlling environment variable <code>GDK_PIXBUF_MODULE_FILE</code>. It is supposed to point to a cache file containing information about the available loaders. Each loader package will contain a <code>lib/gdk-pixbuf-2.0/2.10.0/loaders.cache</code> file describing the default loaders in <code>gdk-pixbuf</code> package plus the loader contained in the package itself. If you want to use multiple third-party loaders, you will need to create your own cache file manually. Fortunately, this is pretty rare as <a href="https://gitlab.gnome.org/federico/gdk-pixbuf-survey/blob/master/src/modules.md">not many loaders exist</a>.</p>
+<p><code>gdk-pixbuf</code> contains <a href="languages-frameworks/gnome/#ssec-gnome-hooks-gdk-pixbuf">a setup hook</a> that sets <code>GDK_PIXBUF_MODULE_FILE</code> from dependencies but as mentioned in further section, it is pretty limited. Loaders should propagate this setup hook.</p>
+<h3 id='ssec-gnome-icons'><a href='languages-frameworks/gnome/#ssec-gnome-icons'>
+Icons
+</a></h3>
+<p>When an application uses icons, an icon theme should be available in <code>XDG_DATA_DIRS</code> during runtime. The package for the default, icon-less <a href="https://www.freedesktop.org/wiki/Software/icon-theme/">hicolor-icon-theme</a> (should be propagated by every icon theme) contains <a href="languages-frameworks/gnome/#ssec-gnome-hooks-hicolor-icon-theme">a setup hook</a> that will pick up icon themes from <code>buildInputs</code> and add their datadirs to <code>XDG_ICON_DIRS</code> environment variable (this is Nixpkgs specific, not actually a XDG standard variable). Unfortunately, relying on that would mean every user has to download the theme included in the package expression no matter their preference. For that reason, we leave the installation of icon theme on the user. If you use one of the desktop environments, you probably already have an icon theme installed.</p>
+<p>In the rare case you need to use icons from dependencies (e.g. when an app forces an icon theme), you can use the following to pick them up:</p>
+<pre><code class="language-nix">{
+  buildInputs = [ pantheon.elementary-icon-theme ];
+  preFixup = ''
+    gappsWrapperArgs+=(
+      # The icon theme is hardcoded.
+      --prefix XDG_DATA_DIRS : &quot;$XDG_ICON_DIRS&quot;
+    )
+  '';
+}
+</code></pre>
+<p>To avoid costly file system access when locating icons, GTK, <a href="https://woboq.com/blog/qicon-reads-gtk-icon-cache-in-qt57.html">as well as Qt</a>, can rely on <code>icon-theme.cache</code> files from the themes' top-level directories. These files are generated using <code>gtk-update-icon-cache</code>, which is expected to be run whenever an icon is added or removed to an icon theme (typically an application icon into <code>hicolor</code> theme) and some programs do indeed run this after icon installation. However, since packages are installed into their own prefix by Nix, this would lead to conflicts. For that reason, <code>gtk3</code> provides a <a href="languages-frameworks/gnome/#ssec-gnome-hooks-gtk-drop-icon-theme-cache">setup hook</a> that will clean the file from installation. Since most applications only ship their own icon that will be loaded on start-up, it should not affect them too much. On the other hand, icon themes are much larger and more widely used so we need to cache them. Because we recommend installing icon themes globally, we will generate the cache files from all packages in a profile using a NixOS module. You can enable the cache generation using <code>gtk.iconCache.enable</code> option if your desktop environment does not already do that.</p>
+<h3 id='ssec-icon-theme-packaging'><a href='languages-frameworks/gnome/#ssec-icon-theme-packaging'>
+Packaging icon themes
+</a></h3>
+<p>Icon themes may inherit from other icon themes. The inheritance is specified using the <code>Inherits</code> key in the <code>index.theme</code> file distributed with the icon theme. According to the <a href="https://specifications.freedesktop.org/icon-theme-spec/latest">icon theme specification</a>, icons not provided by the theme are looked for in its parent icon themes. Therefore the parent themes should be installed as dependencies for a more complete experience regarding the icon sets used.</p>
+<p>The package <code>hicolor-icon-theme</code> provides a setup hook which makes symbolic links for the parent themes into the directory <code>share/icons</code> of the current theme directory in the nix store, making sure they can be found at runtime. For that to work the packages providing parent icon themes should be listed as propagated build dependencies, together with <code>hicolor-icon-theme</code>.</p>
+<p>Also make sure that <code>icon-theme.cache</code> is installed for each theme provided by the package, and set <code>dontDropIconThemeCache</code> to <code>true</code> so that the cache file is not removed by the <code>gtk3</code> setup hook.</p>
+<h3 id='ssec-gnome-themes'><a href='languages-frameworks/gnome/#ssec-gnome-themes'>
+GTK Themes
+</a></h3>
+<p>Previously, a GTK theme needed to be in <code>XDG_DATA_DIRS</code>. This is no longer necessary for most programs since GTK incorporated Adwaita theme. Some programs (for example, those designed for <a href="https://docs.elementary.io/hig">elementary HIG</a>) might require a special theme like <code>pantheon.elementary-gtk-theme</code>.</p>
+<h3 id='ssec-gnome-typelibs'><a href='languages-frameworks/gnome/#ssec-gnome-typelibs'>
+GObject introspection typelibs
+</a></h3>
+<p><a href="https://gitlab.gnome.org/GNOME/gobject-introspection">GObject introspection</a> allows applications to use C libraries in other languages easily. It does this through <code>typelib</code> files searched in <code>GI_TYPELIB_PATH</code>.</p>
+<h3 id='ssec-gnome-plugins'><a href='languages-frameworks/gnome/#ssec-gnome-plugins'>
+Various plug-ins
+</a></h3>
+<p>If your application uses <a href="https://gstreamer.freedesktop.org/">GStreamer</a> or <a href="https://gitlab.gnome.org/GNOME/grilo">Grilo</a>, you should set <code>GST_PLUGIN_SYSTEM_PATH_1_0</code> and <code>GRL_PLUGIN_PATH</code>, respectively.</p>
+<h2 id='ssec-gnome-hooks'><a href='languages-frameworks/gnome/#ssec-gnome-hooks'>
+Onto <code>wrapGApps*</code> hooks
+</a></h2>
+<p>Given the requirements above, the package expression would become messy quickly:</p>
+<pre><code class="language-nix">{
+  preFixup = ''
+    for f in $(find $out/bin/ $out/libexec/ -type f -executable); do
+      wrapProgram &quot;$f&quot; \
+        --prefix GIO_EXTRA_MODULES : &quot;${getLib dconf}/lib/gio/modules&quot; \
+        --prefix XDG_DATA_DIRS : &quot;$out/share&quot; \
+        --prefix XDG_DATA_DIRS : &quot;$out/share/gsettings-schemas/${name}&quot; \
+        --prefix XDG_DATA_DIRS : &quot;${gsettings-desktop-schemas}/share/gsettings-schemas/${gsettings-desktop-schemas.name}&quot; \
+        --prefix XDG_DATA_DIRS : &quot;${hicolor-icon-theme}/share&quot; \
+        --prefix GI_TYPELIB_PATH : &quot;${
+          lib.makeSearchPath &quot;lib/girepository-1.0&quot; [
+            pango
+            json-glib
+          ]
+        }&quot;
+    done
+  '';
+}
+</code></pre>
+<p>Fortunately, we have a <span id='ssec-gnome-hooks-wrapgappshook'>family of hooks</span> that automate this. They work in conjunction with other setup hooks that populate environment variables, and will then wrap all executables in <code>bin</code> and <code>libexec</code> directories using said variables. If a package has multiple outputs, these hooks will work on <code>outputBin</code> by default, or on the outputs listed in <code>wrapGAppsInOutputs</code> if set.</p>
+<ul>
+<li><span id='ssec-gnome-hooks-wrapgappshook3'><code>wrapGAppsHook3</code></span> for GTK 3 apps. For convenience, it also adds <code>dconf.lib</code> for a GIO module implementing a GSettings backend using <code>dconf</code>, <code>gtk3</code> for GSettings schemas, and <code>librsvg</code> for GdkPixbuf loader to the closure.</li>
+<li><span id='ssec-gnome-hooks-wrapgappshook4'><code>wrapGAppsHook4</code></span> for GTK 4 apps. Same as <code>wrapGAppsHook3</code> but replaces <code>gtk3</code> with <code>gtk4</code>.</li>
+<li><span id='ssec-gnome-hooks-wrapgappsnoguihook'><code>wrapGAppsNoGuiHook</code></span> for programs without a graphical interface. Same as the above but does not bring <code>gtk3</code> and <code>librsvg</code> into the closure.</li>
+</ul>
+<p>The hooks do the following:</p>
+<ul>
+<li>
+<p><code>wrapGApps*</code> hook itself will add the package’s <code>share</code> directory to <code>XDG_DATA_DIRS</code>.</p>
+</li>
+<li>
+<p><span id='ssec-gnome-hooks-glib'></span> <code>glib</code> setup hook will populate <code>GSETTINGS_SCHEMAS_PATH</code> and then <code>wrapGApps*</code> hook will prepend it to <code>XDG_DATA_DIRS</code>.</p>
+</li>
+<li>
+<p><span id='ssec-gnome-hooks-gdk-pixbuf'></span> <code>gdk-pixbuf</code> setup hook will populate <code>GDK_PIXBUF_MODULE_FILE</code> with the path to biggest <code>loaders.cache</code> file from the dependencies containing <a href="languages-frameworks/gnome/#ssec-gnome-gdk-pixbuf-loaders">GdkPixbuf loaders</a>. This works fine when there are only two packages containing loaders (<code>gdk-pixbuf</code> and e.g. <code>librsvg</code>) – it will choose the second one, reasonably expecting that it will be bigger since it describes extra loader in addition to the default ones. But when there are more than two loader packages, this logic will break. One possible solution would be constructing a custom cache file for each package containing a program like <code>services/x11/gdk-pixbuf.nix</code> NixOS module does. <code>wrapGApps*</code> hook copies the <code>GDK_PIXBUF_MODULE_FILE</code> environment variable into the produced wrapper.</p>
+</li>
+<li>
+<p><span id='ssec-gnome-hooks-gtk-drop-icon-theme-cache'></span> One of <code>gtk3</code>’s setup hooks will remove <code>icon-theme.cache</code> files from package’s icon theme directories to avoid conflicts. Icon theme packages should prevent this with <code>dontDropIconThemeCache = true;</code>.</p>
+</li>
+<li>
+<p><span id='ssec-gnome-hooks-dconf'></span> <code>dconf.lib</code> is a dependency of <code>wrapGApps*</code> hook, which then also adds it to the <code>GIO_EXTRA_MODULES</code> variable.</p>
+</li>
+<li>
+<p><span id='ssec-gnome-hooks-hicolor-icon-theme'></span> <code>hicolor-icon-theme</code>’s setup hook will add icon themes to <code>XDG_ICON_DIRS</code>.</p>
+</li>
+<li>
+<p><span id='ssec-gnome-hooks-gobject-introspection'></span> <code>gobject-introspection</code> setup hook populates <code>GI_TYPELIB_PATH</code> variable with <code>lib/girepository-1.0</code> directories of dependencies, which is then added to wrapper by <code>wrapGApps*</code> hook. It also adds <code>share</code> directories of dependencies to <code>XDG_DATA_DIRS</code>, which is intended to promote GIR files but it also <a href="https://github.com/NixOS/nixpkgs/issues/32790">pollutes the closures</a> of packages using <code>wrapGApps*</code> hook.</p>
+</li>
+<li>
+<p><span id='ssec-gnome-hooks-gst-grl-plugins'></span> Setup hooks of <code>gst_all_1.gstreamer</code> and <code>grilo</code> will populate the <code>GST_PLUGIN_SYSTEM_PATH_1_0</code> and <code>GRL_PLUGIN_PATH</code> variables, respectively, which will then be added to the wrapper by <code>wrapGApps*</code> hook.</p>
+</li>
+<li>
+<p><span id='ssec-gnome-hooks-libglycin'></span> <code>libglycin</code>'s <a href="hooks/libglycin/#libglycin-setup-hook">setup hook</a> will populate <code>XDG_DATA_DIRS</code> with the path to the loaders.</p>
+</li>
+</ul>
+<p>You can also pass additional arguments to <code>makeWrapper</code> using <code>gappsWrapperArgs</code> in <code>preFixup</code> hook:</p>
+<pre><code class="language-nix">{
+  preFixup = ''
+    gappsWrapperArgs+=(
+      # Thumbnailers
+      --prefix XDG_DATA_DIRS : &quot;${gdk-pixbuf}/share&quot;
+      --prefix XDG_DATA_DIRS : &quot;${librsvg}/share&quot;
+      --prefix XDG_DATA_DIRS : &quot;${shared-mime-info}/share&quot;
+    )
+  '';
+}
+</code></pre>
+<h2 id='ssec-gnome-updating'><a href='languages-frameworks/gnome/#ssec-gnome-updating'>
+Updating GNOME packages
+</a></h2>
+<p>Most GNOME package offer <a href="stdenv/passthru/#var-passthru-updateScript"><code>updateScript</code></a>, it is therefore possible to update to latest source tarball by running <code>nix-shell maintainers/scripts/update.nix --argstr package nautilus</code> or even en masse with <code>nix-shell maintainers/scripts/update.nix --argstr path gnome</code>. Read the package’s <code>NEWS</code> file to see what changed.</p>
+<h2 id='ssec-gnome-common-issues'><a href='languages-frameworks/gnome/#ssec-gnome-common-issues'>
+Frequently encountered issues
+</a></h2>
+<h3 id='ssec-gnome-common-issues-no-schemas'><a href='languages-frameworks/gnome/#ssec-gnome-common-issues-no-schemas'>
+<code>GLib-GIO-ERROR **: 06:04:50.903: No GSettings schemas are installed on the system</code>
+</a></h3>
+<p>There are no schemas available in <code>XDG_DATA_DIRS</code>. Temporarily add a random package containing schemas like <code>gsettings-desktop-schemas</code> to <code>buildInputs</code>. <a href="languages-frameworks/gnome/#ssec-gnome-hooks-glib"><code>glib</code></a> and <a href="languages-frameworks/gnome/#ssec-gnome-hooks-wrapgappshook"><code>wrapGApps*</code></a> setup hooks will take care of making the schemas available to application and you will see the actual missing schemas with the <a href="languages-frameworks/gnome/#ssec-gnome-common-issues-missing-schema">next error</a>. Or you can try looking through the source code for the actual schemas used.</p>
+<h3 id='ssec-gnome-common-issues-missing-schema'><a href='languages-frameworks/gnome/#ssec-gnome-common-issues-missing-schema'>
+<code>GLib-GIO-ERROR **: 06:04:50.903: Settings schema ‘org.gnome.foo’ is not installed</code>
+</a></h3>
+<p>Package is missing some GSettings schemas. You can find out the package containing the schema with <code>nix-locate org.gnome.foo.gschema.xml</code> and let the hooks handle the wrapping as <a href="languages-frameworks/gnome/#ssec-gnome-common-issues-no-schemas">above</a>.</p>
+<h3 id='ssec-gnome-common-issues-double-wrapped'><a href='languages-frameworks/gnome/#ssec-gnome-common-issues-double-wrapped'>
+When using <code>wrapGApps*</code> hook with special derivers or hooks you can end up with double wrapped binaries.
+</a></h3>
+<p>This is because some setup hooks like <code>qt6.wrapQtAppsHook</code> also wrap programs using <code>makeWrapper</code>.  Likewise, some derivers (e.g. <code>python.pkgs.buildPythonApplication</code>) automatically pull in their own setup hooks that produce wrappers.</p>
+<p>The simplest workaround is to disable the <code>wrapGApps*</code> hook's automatic wrapping using <code>dontWrapGApps = true;</code> while passing its <code>makeWrapper</code> arguments to another wrapper.</p>
+<p>In the case of a Python application it could look like:</p>
+<pre><code class="language-nix">python3.pkgs.buildPythonApplication {
+  pname = &quot;gnome-music&quot;;
+  version = &quot;3.32.2&quot;;
+
+  nativeBuildInputs = [
+    wrapGAppsHook3
+    gobject-introspection
+    # ...
+  ];
+
+  dontWrapGApps = true;
+
+  # Arguments to be passed to `makeWrapper`, only used by buildPython*
+  preFixup = ''
+    makeWrapperArgs+=(&quot;''${gappsWrapperArgs[@]}&quot;)
+  '';
+}
+</code></pre>
+<p>And for a QT app like:</p>
+<pre><code class="language-nix">stdenv.mkDerivation {
+  pname = &quot;calibre&quot;;
+  version = &quot;3.47.0&quot;;
+
+  nativeBuildInputs = [
+    wrapGAppsHook3
+    qt6.wrapQtAppsHook
+    qmake
+    # ...
+  ];
+
+  dontWrapGApps = true;
+
+  preFixup = ''
+    qtWrapperArgs+=(&quot;''${gappsWrapperArgs[@]}&quot;)
+  '';
+}
+</code></pre>
+<h3 id='ssec-gnome-common-issues-unwrappable-package'><a href='languages-frameworks/gnome/#ssec-gnome-common-issues-unwrappable-package'>
+I am packaging a project that cannot be wrapped, like a library or GNOME Shell extension.
+</a></h3>
+<p>You can rely on applications depending on the library setting the necessary environment variables but that is often easy to miss. Instead we recommend to patch the paths in the source code whenever possible. Here are some examples:</p>
+<ul>
+<li>
+<p><span id='ssec-gnome-common-issues-unwrappable-package-gnome-shell-ext'></span> <a href="https://github.com/NixOS/nixpkgs/blob/e981466fbb08e6231a1377539ff17fbba3270fda/pkgs/by-name/gn/gnome-shell-extensions/package.nix#L25-L32">Replacing a <code>GI_TYPELIB_PATH</code> in GNOME Shell extension</a> – we are using <code>replaceVars</code> to include the path to a typelib into a patch.</p>
+</li>
+<li>
+<p><span id='ssec-gnome-common-issues-unwrappable-package-gsettings'></span> The following examples are hardcoding GSettings schema paths. To get the schema paths we use the functions</p>
+<ul>
+<li>
+<p><code>glib.getSchemaPath</code> Takes a nix package attribute as an argument.</p>
+</li>
+<li>
+<p><code>glib.makeSchemaPath</code> Takes a package output like <code>$out</code> and a derivation name. You should use this if the schemas you need to hardcode are in the same derivation.</p>
+</li>
+</ul>
+<p><span id='ssec-gnome-common-issues-unwrappable-package-gsettings-vala'></span> <a href="https://github.com/NixOS/nixpkgs/blob/7bb8f05f12ca3cff9da72b56caa2f7472d5732bc/pkgs/desktops/pantheon/apps/elementary-files/default.nix#L78-L86">Hard-coding GSettings schema path in Vala plug-in (dynamically loaded library)</a> – here, <code>replaceVars</code> cannot be used since the schema comes from the same package preventing us from pass its path to the function, probably due to a <a href="https://github.com/NixOS/nix/issues/1846">Nix bug</a>.</p>
+<p><span id='ssec-gnome-common-issues-unwrappable-package-gsettings-c'></span> <a href="https://github.com/NixOS/nixpkgs/blob/29c120c065d03b000224872251bed93932d42412/pkgs/development/libraries/glib-networking/default.nix#L31-L34">Hard-coding GSettings schema path in C library</a> – nothing special other than using <a href="https://github.com/NixOS/nixpkgs/pull/67957#issuecomment-527717467">Coccinelle patch</a> to generate the patch itself.</p>
+</li>
+</ul>
+<h3 id='ssec-gnome-common-issues-weird-location'><a href='languages-frameworks/gnome/#ssec-gnome-common-issues-weird-location'>
+I need to wrap a binary outside <code>bin</code> and <code>libexec</code> directories.
+</a></h3>
+<p>You can manually trigger the wrapping with <code>wrapGApp</code> in <code>preFixup</code> phase. It takes a path to a program as a first argument; the remaining arguments are passed directly to <a href="stdenv/stdenv/#fun-wrapProgram"><code>wrapProgram</code></a> function.</p>
+        </main>
+      </div>
+    </section>
+<script defer src='highlight.pack.cf986678470772f7.js'></script>
+<script defer src='mmdoc.367f3e8986e40416.js'></script>
+<script defer src='mmdoc_search.a5b6fc7d7512cdc1.js' data-search-index='search_index.b3afff10081eb0bd.js' data-fuse='fuse.basic.min.bb997c989fa0a28e.js'></script>
+  </div>
+  </body>
+</html>

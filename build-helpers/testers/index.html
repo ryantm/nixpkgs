@@ -1,0 +1,1164 @@
+<!doctype html>
+<html lang='en'>
+  <head>
+    <base href='../../'>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <script>
+      (() => {
+        let theme = null
+        try { theme = localStorage.getItem('theme') } catch (error) {}
+        if (theme !== 'light' && theme !== 'dark')
+          theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+        document.documentElement.classList.add(theme + '-theme')
+      })()
+    </script>
+    <meta name='description' content='Testers'>
+    <link rel='icon' href='favicon.svg'>
+    <link rel='stylesheet' href='a11y-dark.1fcafc9d9a306955.css'>
+    <link rel='stylesheet' href='a11y-light.b466309a7fa86b1f.css'>
+    <link rel='stylesheet' href='mmdoc.e4286053b6471af4.css'>
+    <title>Testers | nixpkgs</title>
+  </head>
+  <body>
+  <a class='skip-link' href='build-helpers/testers/#main-content'>Skip to main content</a>
+  <input type='checkbox' id='sidebar-checkbox' aria-hidden='true' tabindex='-1' style='display: none;'>
+  <div class='body'>
+    <div class='nav-top-container'>
+    <nav class='nav-top' aria-label='Documentation controls'>
+      <button type='button' class='sidebar-toggle' aria-label='Toggle table of contents' aria-controls='sidebar' aria-expanded='true'></button>    <button type='button' class='search-toggle' aria-label='Open search' aria-controls='search-panel' aria-expanded='false'></button>    <button type='button' class='theme-toggle' aria-label='Switch to dark theme' aria-pressed='false'></button>    <a id='chapter-previous-button' class='chapter-previous' href='build-helpers/dev-shell-tools/#chap-devShellTools' title='Development Shell helpers' aria-label='Previous: Development Shell helpers'>&lt;</a>
+    <a id='chapter-next-button' class='chapter-next' href='build-helpers/special/fhs-environments/#sec-fhs-environments' title='buildFHSEnv' aria-label='Next: buildFHSEnv'>&gt;</a>
+    </nav>
+    </div>
+    <nav id='sidebar' class='sidebar' aria-label='Table of contents'>
+<h1>Nixpkgs Manual</h1>
+<p>Version 26.11pre</p>
+<ul>
+<li><a href="./#preface">Preface</a>
+<ul>
+<li><a href="preface/#overview-of-nixpkgs">Overview of Nixpkgs</a></li>
+</ul>
+</li>
+<li><a href="first-package/#chap-first-package">Package your first application</a></li>
+</ul>
+<h2>Using Nixpkgs</h2>
+<ul>
+<li><a href="using/platform-support/#chap-platform-support">Platform Support</a></li>
+<li><a href="using/configuration/#chap-packageconfig">Global configuration</a></li>
+<li><a href="using/overlays/#chap-overlays">Overlays</a></li>
+<li><a href="using/overrides/#chap-overrides">Overriding</a></li>
+</ul>
+<h2>Nixpkgs Lib</h2>
+<ul>
+<li><a href="functions/#chap-functions">Functions reference</a>
+<ul>
+<li>Library Functions
+<ul>
+<li><a href="functions/library/asserts/#sec-functions-library-asserts">lib.asserts: assertion functions</a></li>
+<li><a href="functions/library/attrsets/#sec-functions-library-attrsets">lib.attrsets: attribute set functions</a></li>
+<li><a href="functions/library/strings/#sec-functions-library-strings">lib.strings: string manipulation functions</a></li>
+<li><a href="functions/library/versions/#sec-functions-library-versions">lib.versions: version string functions</a></li>
+<li><a href="functions/library/trivial/#sec-functions-library-trivial">lib.trivial: miscellaneous functions</a></li>
+<li><a href="functions/library/fixedPoints/#sec-functions-library-fixedPoints">lib.fixedPoints: explicit recursion functions</a></li>
+<li><a href="functions/library/lists/#sec-functions-library-lists">lib.lists: list manipulation functions</a></li>
+<li><a href="functions/library/debug/#sec-functions-library-debug">lib.debug: debugging functions</a></li>
+<li><a href="functions/library/options/#sec-functions-library-options">lib.options: NixOS / nixpkgs option handling</a></li>
+<li><a href="functions/library/path/#sec-functions-library-path">lib.path: path functions</a></li>
+<li><a href="functions/library/filesystem/#sec-functions-library-filesystem">lib.filesystem: filesystem functions</a></li>
+<li><a href="functions/library/fileset/#sec-functions-library-fileset">lib.fileset: file set functions</a></li>
+<li><a href="functions/library/sources/#sec-functions-library-sources">lib.sources: source filtering functions</a></li>
+<li><a href="functions/library/cli/#sec-functions-library-cli">lib.cli: command-line serialization functions</a></li>
+<li><a href="functions/library/gvariant/#sec-functions-library-gvariant">lib.gvariant: GVariant formatted string serialization functions</a></li>
+<li><a href="functions/library/fetchers/#sec-functions-library-fetchers">lib.fetchers: functions which can be reused across fetchers</a></li>
+<li><a href="functions/library/generators/#sec-functions-library-generators">lib.generators: functions that create file formats from nix data structures</a></li>
+<li><a href="functions/library/customisation/#sec-functions-library-customisation">lib.customisation: Functions to customise (derivation-related) functions, derivations, or attribute sets</a></li>
+<li><a href="functions/library/meta/#sec-functions-library-meta">lib.meta: functions for derivation metadata</a></li>
+<li><a href="functions/library/derivations/#sec-functions-library-derivations">lib.derivations: miscellaneous derivation-specific functions</a></li>
+<li><a href="functions/generators/#sec-generators">Generators</a></li>
+<li><a href="functions/debug/#sec-debug">Debugging Nix Expressions</a></li>
+<li><a href="functions/prefer-remote-fetch/#sec-prefer-remote-fetch">prefer-remote-fetch overlay</a></li>
+<li><a href="functions/nix-gitignore/#sec-pkgs-nix-gitignore">pkgs.nix-gitignore</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="module-system/module-system/#module-system">Module System</a></li>
+</ul>
+<h2>Standard Environment</h2>
+<ul>
+<li><a href="stdenv/#part-stdenv">Standard environment</a></li>
+<li><a href="stdenv/stdenv/#chap-stdenv">The Standard Environment</a></li>
+<li><a href="stdenv/meta/#chap-meta">Meta-attributes</a></li>
+<li><a href="stdenv/passthru/#chap-passthru">Passthru-attributes</a></li>
+<li><a href="stdenv/multiple-output/#chap-multiple-output">Multiple-output packages</a></li>
+<li><a href="stdenv/cross-compilation/#chap-cross">Cross-compilation</a></li>
+<li><a href="stdenv/platform-notes/#chap-platform-notes">Platform Notes</a></li>
+</ul>
+<h2>Toolchains</h2>
+<ul>
+<li><a href="toolchains/llvm/#chap-toolchains">The LLVM Toolchain</a></li>
+</ul>
+<h2>Builders</h2>
+<ul>
+<li><a href="build-helpers/#part-builders">Build helpers</a></li>
+<li><a href="build-helpers/fetchers/#chap-pkgs-fetchers">Fetchers</a></li>
+<li><a href="build-helpers/trivial-build-helpers/#chap-trivial-builders">Trivial build helpers</a></li>
+<li><a href="build-helpers/fixed-point-arguments/#chap-build-helpers-finalAttrs">Fixed-point arguments of build helpers</a></li>
+<li><a href="build-helpers/dev-shell-tools/#chap-devShellTools">Development Shell helpers</a></li>
+<li><a href="build-helpers/testers/#chap-testers">Testers</a></li>
+<li>Special build helpers
+<ul>
+<li><a href="build-helpers/special/fhs-environments/#sec-fhs-environments">buildFHSEnv</a></li>
+<li><a href="build-helpers/special/fakenss/#sec-fakeNss">fakeNss</a></li>
+<li><a href="build-helpers/special/makesetuphook/#sec-pkgs.makeSetupHook">pkgs.makeSetupHook</a></li>
+<li><a href="build-helpers/special/mkshell/#sec-pkgs-mkShell">pkgs.mkShell</a></li>
+<li><a href="packages/darwin-builder/#sec-darwin-builder">darwin.linux-builder</a></li>
+<li><a href="build-helpers/special/vm-tools/#sec-vm-tools">vmTools</a></li>
+</ul>
+</li>
+<li>Images
+<ul>
+<li><a href="build-helpers/images/appimagetools/#sec-pkgs-appimageTools">pkgs.appimageTools</a></li>
+<li><a href="build-helpers/images/dockertools/#sec-pkgs-dockerTools">pkgs.dockerTools</a></li>
+<li><a href="build-helpers/images/ocitools/#sec-pkgs-ociTools">pkgs.ociTools</a></li>
+<li><a href="build-helpers/images/portableservice/#sec-pkgs-portableService">pkgs.portableService</a></li>
+<li><a href="build-helpers/images/makediskimage/#sec-make-disk-image">&lt;nixpkgs/nixos/lib/make-disk-image.nix&gt;</a></li>
+<li><a href="build-helpers/images/binarycache/#sec-pkgs-binary-cache">pkgs.mkBinaryCache</a></li>
+</ul>
+</li>
+<li><a href="hooks/index/#chap-hooks">Hooks reference</a>
+<ul>
+<li><a href="hooks/autoconf/#setup-hook-autoconf">Autoconf</a></li>
+<li><a href="hooks/automake/#setup-hook-automake">Automake</a></li>
+<li><a href="hooks/autopatchelf/#setup-hook-autopatchelfhook">autoPatchelfHook</a></li>
+<li><a href="hooks/breakpoint/#breakpointhook">breakpointHook</a></li>
+<li><a href="hooks/cmake/#cmake">cmake</a></li>
+<li><a href="hooks/gdk-pixbuf/#setup-hook-gdk-pixbuf">gdk-pixbuf</a></li>
+<li><a href="hooks/ghc/#ghc">GHC</a></li>
+<li><a href="hooks/gnome/#gnome-platform">GNOME platform</a></li>
+<li><a href="hooks/installShellFiles/#installshellfiles">installShellFiles</a></li>
+<li><a href="hooks/libglycin/#libglycin-hooks">libglycin</a></li>
+<li><a href="hooks/libiconv/#libiconv-libintl">libiconv, libintl</a></li>
+<li><a href="hooks/libxml2/#setup-hook-libxml2">libxml2</a></li>
+<li><a href="hooks/meson/#meson">Meson</a></li>
+<li><a href="hooks/mpi-check-hook/#setup-hook-mpi-check">mpiCheckPhaseHook</a></li>
+<li><a href="hooks/ninja/#ninja">ninja</a></li>
+<li><a href="hooks/patch-rc-path-hooks/#sec-patchRcPathHooks">patchRcPath hooks</a></li>
+<li><a href="hooks/perl/#setup-hook-perl">Perl</a></li>
+<li><a href="hooks/pkg-config/#setup-hook-pkg-config">pkg-config</a></li>
+<li><a href="hooks/pnpm/#pnpm-build-hook">pnpmBuildHook</a></li>
+<li><a href="hooks/postgresql-test-hook/#sec-postgresqlTestHook">postgresqlTestHook</a></li>
+<li><a href="hooks/python/#setup-hook-python">Python</a></li>
+<li><a href="hooks/scons/#scons">scons</a></li>
+<li><a href="hooks/tetex-tex-live/#tetex-tex-live">teTeX / TeX Live</a></li>
+<li><a href="hooks/unzip/#unzip">unzip</a></li>
+<li><a href="hooks/validatePkgConfig/#validatepkgconfig">validatePkgConfig</a></li>
+<li><a href="hooks/versionCheckHook/#versioncheckhook">versionCheckHook</a></li>
+<li><a href="hooks/waf/#waf-hook">wafHook</a></li>
+<li><a href="hooks/xcbuild/#xcbuildhook">xcbuildHook</a></li>
+</ul>
+</li>
+<li><a href="languages-frameworks/index/#chap-language-support">Languages and frameworks</a>
+<ul>
+<li><a href="languages-frameworks/agda/#agda">Agda</a></li>
+<li><a href="languages-frameworks/android/#android">Android</a></li>
+<li><a href="languages-frameworks/astal/#astal">Astal</a></li>
+<li><a href="languages-frameworks/beam/#sec-beam">BEAM Languages (Erlang, Elixir &amp; LFE)</a></li>
+<li><a href="languages-frameworks/chicken/#sec-chicken">CHICKEN</a></li>
+<li><a href="languages-frameworks/cosmic/#sec-language-cosmic">COSMIC</a></li>
+<li><a href="languages-frameworks/crystal/#crystal">Crystal</a></li>
+<li><a href="languages-frameworks/cuda/#cuda">CUDA</a></li>
+<li><a href="languages-frameworks/cuelang/#cuelang">Cue (Cuelang)</a></li>
+<li><a href="languages-frameworks/dlang/#dlang">D (Dlang)</a></li>
+<li><a href="languages-frameworks/dart/#sec-language-dart">Dart</a></li>
+<li><a href="languages-frameworks/dhall/#sec-language-dhall">Dhall</a></li>
+<li><a href="languages-frameworks/dotnet/#dotnet">Dotnet</a></li>
+<li><a href="languages-frameworks/emscripten/#emscripten">Emscripten</a></li>
+<li><a href="languages-frameworks/factor/#sec-language-factor">Factor</a></li>
+<li><a href="languages-frameworks/gnome/#sec-language-gnome">GNOME</a></li>
+<li><a href="languages-frameworks/go/#sec-language-go">Go</a></li>
+<li><a href="languages-frameworks/gradle/#gradle">Gradle</a></li>
+<li><a href="languages-frameworks/hare/#sec-language-hare">Hare</a></li>
+<li><a href="languages-frameworks/haskell/#haskell">Haskell</a></li>
+<li><a href="languages-frameworks/hy/#sec-language-hy">Hy</a></li>
+<li><a href="languages-frameworks/idris/#idris">Idris</a></li>
+<li><a href="languages-frameworks/idris2/#sec-idris2">Idris2</a></li>
+<li><a href="languages-frameworks/ios/#ios">iOS</a></li>
+<li><a href="languages-frameworks/java/#sec-language-java">Java</a></li>
+<li><a href="languages-frameworks/javascript/#language-javascript">Javascript</a></li>
+<li><a href="languages-frameworks/julia/#language-julia">Julia</a></li>
+<li><a href="languages-frameworks/lean4/#sec-language-lean4">Lean 4</a></li>
+<li><a href="languages-frameworks/lisp/#lisp">lisp-modules</a></li>
+<li><a href="languages-frameworks/lua/#lua">Lua</a></li>
+<li><a href="languages-frameworks/maven/#maven">Maven</a></li>
+<li><a href="languages-frameworks/neovim/#neovim">Neovim</a></li>
+<li><a href="languages-frameworks/nim/#sec-language-nim">Nim</a></li>
+<li><a href="languages-frameworks/ocaml/#sec-language-ocaml">OCaml</a></li>
+<li><a href="languages-frameworks/octave/#sec-octave">Octave</a></li>
+<li><a href="languages-frameworks/perl/#sec-language-perl">Perl</a></li>
+<li><a href="languages-frameworks/php/#sec-php">PHP</a></li>
+<li><a href="languages-frameworks/pkg-config/#sec-pkg-config">pkg-config</a></li>
+<li><a href="languages-frameworks/python/#python">Python</a></li>
+<li><a href="languages-frameworks/qt/#sec-language-qt">Qt</a></li>
+<li><a href="languages-frameworks/r/#r">R</a></li>
+<li><a href="languages-frameworks/rocq/#sec-language-rocq">Rocq and rocq packages</a></li>
+<li><a href="languages-frameworks/ruby/#sec-language-ruby">Ruby</a></li>
+<li><a href="languages-frameworks/rust/#rust">Rust</a></li>
+<li><a href="languages-frameworks/scheme/#sec-scheme">Scheme</a></li>
+<li><a href="languages-frameworks/swift/#swift">Swift</a></li>
+<li><a href="languages-frameworks/tcl/#sec-language-tcl">Tcl</a></li>
+<li><a href="languages-frameworks/texlive/#sec-language-texlive">TeX Live</a></li>
+<li><a href="languages-frameworks/typst/#typst">Typst</a></li>
+<li><a href="languages-frameworks/vim/#vim">Vim</a></li>
+</ul>
+</li>
+<li><a href="packages/index/#chap-packages">Packages</a>
+<ul>
+<li><a href="packages/build-support/#sec-build-support">Build Support</a></li>
+<li><a href="packages/cataclysm-dda/#cataclysm-dark-days-ahead">Cataclysm: Dark Days Ahead</a></li>
+<li><a href="packages/citrix/#sec-citrix">Citrix Workspace</a></li>
+<li><a href="packages/dlib/#dlib">DLib</a></li>
+<li><a href="packages/eclipse/#sec-eclipse">Eclipse</a></li>
+<li><a href="packages/elm/#sec-elm">Elm</a></li>
+<li><a href="packages/emacs/#sec-emacs">Emacs</a></li>
+<li><a href="packages/firefox/#sec-firefox">Firefox</a></li>
+<li><a href="packages/fish/#sec-fish">Fish</a></li>
+<li><a href="packages/friction-graphics/#friction-graphics">Friction</a></li>
+<li><a href="packages/fuse/#sec-fuse">FUSE</a></li>
+<li><a href="packages/geant4/#geant4">Geant4</a></li>
+<li><a href="packages/ibus/#sec-ibus-typing-booster">ibus-engines.typing-booster</a></li>
+<li><a href="packages/inkscape/#sec-inkscape">Inkscape</a></li>
+<li><a href="packages/kakoune/#sec-kakoune">Kakoune</a></li>
+<li><a href="packages/krita/#sec-krita">Krita</a></li>
+<li><a href="packages/lhapdf/#lhapdf">LHAPDF</a></li>
+<li><a href="packages/linux/#sec-linux-kernel">Linux kernel</a></li>
+<li><a href="packages/locales/#locales">Locales</a></li>
+<li><a href="packages/etc-files/#etc">/etc files</a></li>
+<li><a href="packages/nginx/#sec-nginx">Nginx</a></li>
+<li><a href="packages/nrfutil/#sec-nrfutil">nrfutil</a></li>
+<li><a href="packages/opengl/#sec-opengl">OpenGL</a></li>
+<li><a href="packages/python-tree-sitter/#python-tree-sitter">Python Tree Sitter</a></li>
+<li><a href="packages/shell-helpers/#sec-shell-helpers">Interactive shell helpers</a></li>
+<li><a href="packages/steam/#sec-steam">Steam</a></li>
+<li><a href="packages/treefmt/#treefmt">treefmt</a></li>
+<li><a href="packages/urxvt/#sec-urxvt">Urxvt</a></li>
+<li><a href="packages/uv/#sec-uv">uv</a></li>
+<li><a href="packages/vcpkg/#sec-vcpkg">VCPKG</a></li>
+<li><a href="packages/weechat/#sec-weechat">WeeChat</a></li>
+</ul>
+</li>
+</ul>
+<h2>Modules</h2>
+<ul>
+<li><a href="modules/index/#modules">Modules</a>
+<ul>
+<li><a href="modules/generic/#modules-generic">Generic</a>
+<ul>
+<li><a href="modules/generic/#modules-generic-meta-maintainers">meta-maintainers.nix</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2>Development of Nixpkgs</h2>
+<ul>
+<li><a href="development/opening-issues/#sec-opening-issues">Opening issues</a></li>
+<li><a href="contributing/coding-conventions/#chap-conventions">Coding conventions</a></li>
+</ul>
+<h2>Interoperability Standards</h2>
+<ul>
+<li><a href="interoperability/cyclonedx/#chap-interop-cyclonedx">CycloneDX</a>
+<ul>
+<li><a href="interoperability/cyclonedx/#sec-interop.cylonedx-nix"><code>nix</code> namespace</a></li>
+<li><a href="interoperability/cyclonedx/#sec-interop.cylonedx-narinfo"><code>nix:narinfo</code></a></li>
+<li><a href="interoperability/cyclonedx/#sec-interop.cylonedx-fod"><code>nix:fod</code></a></li>
+</ul>
+</li>
+</ul>
+<h2>Release Notes</h2>
+<ul>
+<li><a href="release-notes/release-notes/#chap-release-notes">Release Notes</a>
+<ul>
+<li><a href="release-notes/rl-2611/#sec-nixpkgs-release-26.11">Nixpkgs 26.11 (&quot;Zokor&quot;, 2026.11/??)</a></li>
+<li><a href="release-notes/rl-2605/#sec-nixpkgs-release-26.05">Nixpkgs 26.05 (&quot;Yarara&quot;, 2026.05/30)</a></li>
+<li><a href="release-notes/rl-2511/#sec-nixpkgs-release-25.11">Nixpkgs 25.11 (&quot;Xantusia&quot;, 2025.11/30)</a></li>
+<li><a href="release-notes/rl-2505/#sec-nixpkgs-release-25.05">Nixpkgs 25.05 (2025.05/23)</a></li>
+</ul>
+</li>
+</ul>
+    </nav>
+    <section id='main'>
+      <div id='search-panel' class='nav-search' role='search' hidden>
+        <label class='visually-hidden' for='search'>Search documentation</label>
+        <input type='search' id='search' placeholder='Search' autocomplete='off' aria-controls='search-results'>
+        <p id='search-status' class='visually-hidden' role='status' aria-live='polite'></p>
+        <div id='search-results'></div>
+      </div>
+      <div class='main-scroll'>
+        <main id='main-content' tabindex='-1'>
+<h1 id='chap-testers'><a href='build-helpers/testers/#chap-testers'>
+Testers
+</a></h1>
+<p>This chapter describes several testing builders which are available in the <code>testers</code> namespace.</p>
+<h2 id='tester-hasPkgConfigModules'><a href='build-helpers/testers/#tester-hasPkgConfigModules'>
+<code>hasPkgConfigModules</code>
+</a></h2>
+<!-- Old anchor name so links still work -->
+<p><span id='tester-hasPkgConfigModule'></span>
+Checks whether a package exposes a given list of <code>pkg-config</code> modules.
+If the <code>moduleNames</code> argument is omitted, <code>hasPkgConfigModules</code> will use <code>meta.pkgConfigModules</code>.</p>
+<div class='admonition example'><h3 id='ex-haspkgconfigmodules-defaultvalues' class='title'><a href='build-helpers/testers/#ex-haspkgconfigmodules-defaultvalues'>Example</a></h3>
+<p></p>
+<h1>Check that <code>pkg-config</code> modules are exposed using default values</h1>
+<pre><code class="language-nix">{
+  passthru.tests.pkg-config = testers.hasPkgConfigModules { package = finalAttrs.finalPackage; };
+
+  meta.pkgConfigModules = [ &quot;libfoo&quot; ];
+}
+</code></pre>
+<p></p>
+</div>
+<div class='admonition example'><h3 id='ex-haspkgconfigmodules-explicitmodules' class='title'><a href='build-helpers/testers/#ex-haspkgconfigmodules-explicitmodules'>Example</a></h3>
+<p></p>
+<h1>Check that <code>pkg-config</code> modules are exposed using explicit module names</h1>
+<pre><code class="language-nix">{
+  passthru.tests.pkg-config = testers.hasPkgConfigModules {
+    package = finalAttrs.finalPackage;
+    moduleNames = [ &quot;libfoo&quot; ];
+  };
+}
+</code></pre>
+<p></p>
+</div>
+<h2 id='tester-hasCmakeConfigModules'><a href='build-helpers/testers/#tester-hasCmakeConfigModules'>
+<code>hasCmakeConfigModules</code>
+</a></h2>
+<p>Checks whether a package exposes a given list of <code>*config.cmake</code> modules.
+Note the moduleNames used in cmake find_package are case sensitive.</p>
+<div class='admonition example'><h3 id='ex-hascmakeconfigmodules' class='title'><a href='build-helpers/testers/#ex-hascmakeconfigmodules'>Example</a></h3>
+<p></p>
+<h1>Check that <code>*config.cmake</code> modules are exposed using explicit module names</h1>
+<pre><code class="language-nix">{
+  passthru.tests.cmake-config = testers.hasCmakeConfigModules {
+    package = finalAttrs.finalPackage;
+    moduleNames = [ &quot;Foo&quot; ];
+  };
+}
+</code></pre>
+<p></p>
+</div>
+<h2 id='tester-lycheeLinkCheck'><a href='build-helpers/testers/#tester-lycheeLinkCheck'>
+<code>lycheeLinkCheck</code>
+</a></h2>
+<p>Check a packaged static site's links with the <a href="https://search.nixos.org/packages?show=lychee&amp;type=packages&amp;query=lychee"><code>lychee</code> package</a>.</p>
+<p>You may use Nix to reproducibly build static websites, such as for software documentation.
+Some packages will install documentation in their <code>out</code> or <code>doc</code> outputs, or maybe you have a dedicated package where you've made your static site reproducible by running a generator, such as <a href="https://gohugo.io/">Hugo</a> or <a href="https://rust-lang.github.io/mdBook/">mdBook</a>, in a derivation.</p>
+<p>If you have a static site that can be built with Nix, you can use <code>lycheeLinkCheck</code> to check that the hyperlinks in your site are correct, and do so as part of your Nix workflow and CI.</p>
+<div class='admonition example'><h3 id='ex-lycheelinkcheck' class='title'><a href='build-helpers/testers/#ex-lycheelinkcheck'>Example</a></h3>
+<p></p>
+<h1>Check hyperlinks in the <code>nix</code> documentation</h1>
+<pre><code class="language-nix">testers.lycheeLinkCheck { site = nix.doc + &quot;/share/doc/nix/manual&quot;; }
+</code></pre>
+<p></p>
+</div>
+<h3 id='tester-lycheeLinkCheck-return'><a href='build-helpers/testers/#tester-lycheeLinkCheck-return'>
+Return value
+</a></h3>
+<p>This tester produces a package that does not produce useful outputs, but only succeeds if the hyperlinks in your site are correct. The build log will list the broken links.</p>
+<p>It has two modes:</p>
+<ul>
+<li>
+<p>Build the returned derivation; its build process will check that internal hyperlinks are correct. This runs in the sandbox, so it will not check external hyperlinks, but it is quick and reliable.</p>
+</li>
+<li>
+<p>Invoke the <code>.online</code> attribute with <a href="https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-run"><code>nix run</code></a> (<a href="https://nixos.org/manual/nix/stable/contributing/experimental-features#xp-feature-nix-command">experimental</a>). This runs outside the sandbox, and checks that both internal and external hyperlinks are correct.
+Example:</p>
+<pre><code class="language-shell">nix run nixpkgs#lychee.tests.ok.online
+</code></pre>
+</li>
+</ul>
+<h3 id='tester-lycheeLinkCheck-inputs'><a href='build-helpers/testers/#tester-lycheeLinkCheck-inputs'>
+Inputs
+</a></h3>
+<dl>
+<dt>
+<p><code>site</code> (path or derivation) {#tester-lycheeLinkCheck-param-site}</p>
+</dt>
+<dd>
+<p>The path to the files to check.</p>
+</dd>
+<dt>
+<p><code>relocatable</code> (boolean, optional) {#tester-lycheeLinkCheck-param-relocatable}</p>
+</dt>
+<dd>
+<p>Whether the site is expected to be relocatable, i.e. servable from any URL path prefix.</p>
+</dd>
+</dl>
+<p>When <code>true</code> (the default), root-relative links (starting with <code>/</code>) are treated as errors, because they break when the site is served from a subpath or opened via <code>file://</code> URLs.</p>
+<p>When <code>false</code>, root-relative links are resolved against the <code>site</code> directory.</p>
+<dl>
+<dt>
+<p><code>remap</code> (attribute set, optional) {#tester-lycheeLinkCheck-param-remap}</p>
+</dt>
+<dd>
+<p>An attribute set where the attribute names are regular expressions.
+The values should be strings, derivations, or path values.</p>
+</dd>
+</dl>
+<p>In the returned check's default configuration, external URLs are only checked when you run the <code>.online</code> attribute.</p>
+<p>By adding remappings, you can check offline that URLs to external resources are correct, by providing a stand-in from the file system.</p>
+<p>Before checking the existence of a URL, the regular expressions are matched and replaced by their corresponding values.</p>
+<p>Example:</p>
+<pre><code class="language-nix">{
+  &quot;https://nix\\.dev/manual/nix/[a-z0-9.-]*&quot; = &quot;${nix.doc}/share/doc/nix/manual&quot;;
+  &quot;https://nixos\\.org/manual/nix/(un)?stable&quot; =
+    &quot;${emptyDirectory}/placeholder-to-disallow-old-nix-docs-urls&quot;;
+}
+</code></pre>
+<p>Store paths in the attribute values are automatically prefixed with <code>file://</code>, because lychee requires this for paths in the file system.
+If this is a problem, or if you need to control the order in which replacements are performed, use <code>extraConfig.remap</code> instead.</p>
+<dl>
+<dt>
+<p><code>extraConfig</code> (attribute set) {#tester-lycheeLinkCheck-param-extraConfig}</p>
+</dt>
+<dd>
+<p>Extra configuration to pass to <code>lychee</code> in its <a href="https://github.com/lycheeverse/lychee/blob/master/lychee.example.toml">configuration file</a>.
+It is automatically <a href="https://nixos.org/manual/nixos/stable/index.html#sec-settings-nix-representable">translated</a> to TOML.</p>
+</dd>
+</dl>
+<p>Example: <code>{ &quot;include_verbatim&quot; = true; }</code></p>
+<dl>
+<dt>
+<p><code>extraArgs</code> (list of strings, optional) {#tester-lycheeLinkCheck-param-extraArgs}</p>
+</dt>
+<dd>
+<p>Extra command line arguments to pass to the <code>lychee</code> invocation.
+These are passed in both the offline (build) and <a href="build-helpers/testers/#tester-lycheeLinkCheck-return"><code>online</code></a> modes.</p>
+</dd>
+</dl>
+<p>Example: <code>[ &quot;--format&quot; &quot;json&quot; ]</code></p>
+<dl>
+<dt>
+<p><code>lychee</code> (derivation, optional) {#tester-lycheeLinkCheck-param-lychee}</p>
+</dt>
+<dd>
+<p>The <code>lychee</code> package to use.</p>
+</dd>
+</dl>
+<h2 id='tester-shellcheck'><a href='build-helpers/testers/#tester-shellcheck'>
+<code>shellcheck</code>
+</a></h2>
+<p>Run files through <code>shellcheck</code>, a static analysis tool for shell scripts, failing if there are any issues.</p>
+<div class='admonition example'><h3 id='ex-shellcheck' class='title'><a href='build-helpers/testers/#ex-shellcheck'>Example</a></h3>
+<p></p>
+<h1>Run <code>testers.shellcheck</code></h1>
+<p>A single script</p>
+<pre><code class="language-nix">testers.shellcheck {
+  name = &quot;script&quot;;
+  src = ./script.sh;
+}
+</code></pre>
+<p>Multiple files</p>
+<pre><code class="language-nix">let
+  inherit (lib) fileset;
+in
+testers.shellcheck {
+  name = &quot;nixbsd-activate&quot;;
+  src = fileset.toSource {
+    root = ./.;
+    fileset = fileset.unions [
+      ./lib.sh
+      ./nixbsd-activate
+    ];
+  };
+}
+</code></pre>
+<p></p>
+</div>
+<h3 id='tester-shellcheck-inputs'><a href='build-helpers/testers/#tester-shellcheck-inputs'>
+Inputs
+</a></h3>
+<dl>
+<dt>
+<p><code>name</code> (string, optional)</p>
+</dt>
+<dd>
+<p>The name of the test.
+<code>name</code> will be required at a future point because it massively improves traceability of test failures, but is kept optional for now to avoid breaking existing usages.
+Defaults to <code>run-shellcheck</code>.
+The name of the derivation produced by the tester is <code>shellcheck-${name}</code> when <code>name</code> is supplied.</p>
+</dd>
+<dt>
+<p><code>src</code> (path-like)</p>
+</dt>
+<dd>
+<p>The path to the shell script(s) to check.
+This can be a single file or a directory containing shell files.
+All files in <code>src</code> will be checked, so you may want to provide <code>fileset</code>-based source instead of a whole directory.</p>
+</dd>
+</dl>
+<h3 id='tester-shellcheck-return'><a href='build-helpers/testers/#tester-shellcheck-return'>
+Return value
+</a></h3>
+<p>A derivation that runs <code>shellcheck</code> on the given script(s), producing an empty output if no issues are found.
+The build will fail if <code>shellcheck</code> finds any issues.</p>
+<h2 id='tester-shfmt'><a href='build-helpers/testers/#tester-shfmt'>
+<code>shfmt</code>
+</a></h2>
+<p>Run files through <code>shfmt</code>, a shell script formatter, failing if any files are reformatted.</p>
+<div class='admonition example'><h3 id='ex-shfmt' class='title'><a href='build-helpers/testers/#ex-shfmt'>Example</a></h3>
+<p></p>
+<h1>Run <code>testers.shfmt</code></h1>
+<p>A single script</p>
+<pre><code class="language-nix">testers.shfmt {
+  name = &quot;script&quot;;
+  src = ./script.sh;
+}
+</code></pre>
+<p>Multiple files</p>
+<pre><code class="language-nix">let
+  inherit (lib) fileset;
+in
+testers.shfmt {
+  name = &quot;nixbsd&quot;;
+  src = fileset.toSource {
+    root = ./.;
+    fileset = fileset.unions [
+      ./lib.sh
+      ./nixbsd-activate
+    ];
+  };
+}
+</code></pre>
+<p></p>
+</div>
+<h3 id='tester-shfmt-inputs'><a href='build-helpers/testers/#tester-shfmt-inputs'>
+Inputs
+</a></h3>
+<dl>
+<dt>
+<p><code>name</code> (string)</p>
+</dt>
+<dd>
+<p>The name of the test.
+<code>name</code> is required because it massively improves traceability of test failures.
+The name of the derivation produced by the tester is <code>shfmt-${name}</code>.</p>
+</dd>
+<dt>
+<p><code>src</code> (path-like)</p>
+</dt>
+<dd>
+<p>The path to the shell script(s) to check.
+This can be a single file or a directory containing shell files.
+All files in <code>src</code> will be checked, so you may want to provide <code>fileset</code>-based source instead of a whole directory.</p>
+</dd>
+<dt>
+<p><code>indent</code> (integer, optional)</p>
+</dt>
+<dd>
+<p>The number of spaces to use for indentation.
+Defaults to <code>2</code>.
+A value of <code>0</code> indents with tabs.</p>
+</dd>
+</dl>
+<h3 id='tester-shfmt-return'><a href='build-helpers/testers/#tester-shfmt-return'>
+Return value
+</a></h3>
+<p>A derivation that runs <code>shfmt</code> on the given script(s), producing an empty output upon success.
+The build will fail if <code>shfmt</code> reformats anything.</p>
+<h2 id='tester-testVersion'><a href='build-helpers/testers/#tester-testVersion'>
+<code>testVersion</code>
+</a></h2>
+<p>Checks that the output from running a command contains the specified version string in it as a whole word.</p>
+<p>NOTE: This is a check you add to <code>passthru.tests</code> which is mainly run by OfBorg, but not in Hydra. If you want a version check failure to block the build altogether, then <a href="hooks/versionCheckHook/#versioncheckhook"><code>versionCheckHook</code></a> is the tool you're looking for (and recommended for quick builds). The motivation for adding either of these checks would be:</p>
+<ul>
+<li>Catch dynamic linking errors and such and missing environment variables that should be added by wrapping.</li>
+<li>Probable protection against accidentally building the wrong version, for example when using an &quot;old&quot; hash in a fixed-output derivation.</li>
+</ul>
+<p>By default, the command to be run will be inferred from the given <code>package</code> attribute:
+it will check <code>meta.mainProgram</code> first, and fall back to <code>pname</code> or <code>name</code>.
+The default argument to the command is <code>--version</code>, and the version to be checked will be inferred from the given <code>package</code> attribute as well.</p>
+<div class='admonition example'><h3 id='ex-testversion-hello' class='title'><a href='build-helpers/testers/#ex-testversion-hello'>Example</a></h3>
+<p></p>
+<h1>Check a program version using all the default values</h1>
+<p>This example will run the command <code>hello --version</code>, and then check that the version of the <code>hello</code> package is in the output of the command.</p>
+<pre><code class="language-nix">{ passthru.tests.version = testers.testVersion { package = hello; }; }
+</code></pre>
+<p></p>
+</div>
+<div class='admonition example'><h3 id='ex-testversion-different-commandversion' class='title'><a href='build-helpers/testers/#ex-testversion-different-commandversion'>Example</a></h3>
+<p></p>
+<h1>Check the program version using a specified command and expected version string</h1>
+<p>This example will run the command <code>leetcode -V</code>, and then check that <code>leetcode 0.4.2</code> is in the output of the command as a whole word (separated by whitespaces).
+This means that an output like &quot;leetcode 0.4.21&quot; would fail the tests, and an output like &quot;You're running leetcode 0.4.2&quot; would pass the tests.</p>
+<p>A common usage of the <code>version</code> attribute is to specify <code>version = &quot;v${version}&quot;</code>.</p>
+<pre><code class="language-nix">{
+  version = &quot;0.4.2&quot;;
+
+  passthru.tests.version = testers.testVersion {
+    package = leetcode-cli;
+    command = &quot;leetcode -V&quot;;
+    version = &quot;leetcode ${version}&quot;;
+  };
+}
+</code></pre>
+<p></p>
+</div>
+<h2 id='tester-testBuildFailure'><a href='build-helpers/testers/#tester-testBuildFailure'>
+<code>testBuildFailure</code>
+</a></h2>
+<p>Make sure that a build does not succeed. This is useful for testing testers.</p>
+<p>This returns a derivation with an override on the builder, with the following effects:</p>
+<ul>
+<li>Fail the build when the original builder succeeds</li>
+<li>Move <code>$out</code> to <code>$out/result</code>, if it exists (assuming <code>out</code> is the default output)</li>
+<li>Save the build log to <code>$out/testBuildFailure.log</code> (same)</li>
+</ul>
+<p>While <code>testBuildFailure</code> is designed to keep changes to the original builder's environment to a minimum, some small changes are inevitable:</p>
+<ul>
+<li>The file <code>$TMPDIR/testBuildFailure.log</code> is present. It should not be deleted.</li>
+<li><code>stdout</code> and <code>stderr</code> are a pipe instead of a tty. This could be improved.</li>
+<li>One or two extra processes are present in the sandbox during the original builder's execution.</li>
+<li>The derivation and output hashes are different, but not unusual.</li>
+<li>The derivation includes a dependency on <code>buildPackages.bash</code> and <code>expect-failure.sh</code>, which is built to include a transitive dependency on <code>buildPackages.coreutils</code> and possibly more.
+These are not added to <code>PATH</code> or any other environment variable, so they should be hard to observe.</li>
+</ul>
+<div class='admonition example'><h3 id='ex-testBuildFailure-showingenvironmentchanges' class='title'><a href='build-helpers/testers/#ex-testBuildFailure-showingenvironmentchanges'>Example</a></h3>
+<p></p>
+<h1>Check that a build fails, and verify the changes made during build</h1>
+<pre><code class="language-nix">runCommand &quot;example&quot;
+  {
+    failed = testers.testBuildFailure (
+      runCommand &quot;fail&quot; { } ''
+        echo ok-ish &gt;$out
+        echo failing though
+        exit 3
+      ''
+    );
+  }
+  ''
+    grep -F 'ok-ish' $failed/result
+    grep -F 'failing though' $failed/testBuildFailure.log
+    [[ 3 = $(cat $failed/testBuildFailure.exit) ]]
+    touch $out
+  ''
+</code></pre>
+<p></p>
+</div>
+<h2 id='tester-testBuildFailurePrime'><a href='build-helpers/testers/#tester-testBuildFailurePrime'>
+<code>testBuildFailure'</code>
+</a></h2>
+<p>This tester wraps the functionality provided by <a href="build-helpers/testers/#tester-testBuildFailure"><code>testers.testBuildFailure</code></a> to make writing checks easier by simplifying checking the exit code of the builder and asserting the existence of entries in the builder's log.
+Additionally, users may specify a script containing additional checks, accessing the result of applying <code>testers.testBuildFailure</code> through the variable <code>failed</code>.</p>
+<p>NOTE: This tester will produce an empty output and exit with success if none of the checks fail; there is no need to <code>touch &quot;$out&quot;</code> in <code>script</code>.</p>
+<div class='admonition example'><h3 id='ex-testBuildFailurePrime-doc-example' class='title'><a href='build-helpers/testers/#ex-testBuildFailurePrime-doc-example'>Example</a></h3>
+<p></p>
+<h1>Check that a build fails, and verify the changes made during build</h1>
+<p>Re-using the example from <a href="build-helpers/testers/#ex-testBuildFailure-showingenvironmentchanges"><code>testers.testBuildFailure</code></a>, we can see how common checks are made easier and remove the need for <code>runCommand</code>:</p>
+<pre><code class="language-nix">testers.testBuildFailure' {
+  drv = runCommand &quot;doc-example&quot; { } ''
+    echo ok-ish &gt;&quot;$out&quot;
+    echo failing though
+    exit 3
+  '';
+  expectedBuilderExitCode = 3;
+  expectedBuilderLogEntries = [ &quot;failing though&quot; ];
+  script = ''
+    grep --silent -F 'ok-ish' &quot;$failed/result&quot;
+  '';
+}
+</code></pre>
+<p></p>
+</div>
+<h3 id='tester-testBuildFailurePrime-inputs'><a href='build-helpers/testers/#tester-testBuildFailurePrime-inputs'>
+Inputs
+</a></h3>
+<dl>
+<dt>
+<p><code>drv</code> (derivation)</p>
+</dt>
+<dd>
+<p>The failing derivation to wrap with <code>testBuildFailure</code>.</p>
+</dd>
+<dt>
+<p><code>name</code> (string, optional)</p>
+</dt>
+<dd>
+<p>The name of the test.
+When not provided, this value defaults to <code>testBuildFailure-${(testers.testBuildFailure drv).name}</code>.</p>
+</dd>
+<dt>
+<p><code>expectedBuilderExitCode</code> (integer, optional)</p>
+</dt>
+<dd>
+<p>The expected exit code of the builder of <code>drv</code>.
+When not provided, this value defaults to <code>1</code>.</p>
+</dd>
+<dt>
+<p><code>expectedBuilderLogEntries</code> (array of string-like values, optional)</p>
+</dt>
+<dd>
+<p>A list of string-like values which must be found in the builder's log by exact match.
+When not provided, this value defaults to <code>[ ]</code>.</p>
+</dd>
+</dl>
+<p>NOTE: Patterns and regular expressions are not supported.</p>
+<dl>
+<dt>
+<p><code>script</code> (string, optional)</p>
+</dt>
+<dd>
+<p>A string containing additional checks to run.
+When not provided, this value defaults to <code>&quot;&quot;</code>.
+The result of <code>testers.testBuildFailure drv</code> is available through the variable <code>failed</code>.
+As an example, the builder's log is at <code>&quot;$failed/testBuildFailure.log&quot;</code>.</p>
+</dd>
+</dl>
+<h3 id='tester-testBuildFailurePrime-return'><a href='build-helpers/testers/#tester-testBuildFailurePrime-return'>
+Return value
+</a></h3>
+<p>The tester produces an empty output and only succeeds when the checks using <code>expectedBuilderExitCode</code>, <code>expectedBuilderLogEntries</code>, and <code>script</code> succeed.</p>
+<h2 id='tester-testEqualContents'><a href='build-helpers/testers/#tester-testEqualContents'>
+<code>testEqualContents</code>
+</a></h2>
+<p>Check that two paths have the same contents.</p>
+<dl>
+<dt>
+<p><code>assertion</code> (string)</p>
+</dt>
+<dd>
+<p>A message that is printed before the comparison, after <code>Checking:</code>.</p>
+</dd>
+<dt>
+<p><code>expected</code> (path or value coercible to store path)</p>
+</dt>
+<dd>
+<p>The path to the expected <a href="https://nix.dev/manual/nix/latest/store/file-system-object">file system object</a> content</p>
+</dd>
+<dt>
+<p><code>actual</code> (value coercible to store path) <!-- path value is possible, but wrong in practice, but let's not bother readers with our predictions --></p>
+</dt>
+<dd>
+<p>The path to the actual file system object content to check</p>
+</dd>
+<dt>
+<p><code>postFailureMessage</code> (string)</p>
+</dt>
+<dd>
+<p>A message that is printed last if the file system object contents at the two paths don't match exactly.</p>
+</dd>
+<dt>
+<p><code>checkMetadata</code> (boolean)</p>
+</dt>
+<dd>
+<p>Whether to fail on metadata differences, such as permissions or ownership.
+Defaults to <code>true</code>.</p>
+</dd>
+</dl>
+<div class='admonition example'><h3 id='ex-testEqualContents-toyexample' class='title'><a href='build-helpers/testers/#ex-testEqualContents-toyexample'>Example</a></h3>
+<p></p>
+<h1>Check that two paths have the same contents</h1>
+<pre><code class="language-nix">testers.testEqualContents {
+  assertion = &quot;sed -e performs replacement&quot;;
+  expected = writeText &quot;expected&quot; ''
+    foo baz baz
+  '';
+  actual =
+    runCommand &quot;actual&quot;
+      {
+        # not really necessary for a package that's in stdenv
+        nativeBuildInputs = [ gnused ];
+        base = writeText &quot;base&quot; ''
+          foo bar baz
+        '';
+      }
+      ''
+        sed -e 's/bar/baz/g' $base &gt;$out
+      '';
+  # if applicable
+  postFailureMessage = ''
+    The bar-baz replacer produced an unexpected result.
+    If the new behavior is acceptable and validated against the bar-baz specification, run ./adopt-new-bar-baz-result.sh to adjust this test and require the new behavior.
+  '';
+}
+</code></pre>
+<p></p>
+</div>
+<h2 id='tester-testEqualArrayOrMap'><a href='build-helpers/testers/#tester-testEqualArrayOrMap'>
+<code>testEqualArrayOrMap</code>
+</a></h2>
+<p>Check that bash arrays (including associative arrays, referred to as &quot;maps&quot;) are populated correctly.</p>
+<p>This can be used to ensure setup hooks are registered in a certain order, or to write unit tests for shell functions which transform arrays.</p>
+<div class='admonition example'><h3 id='ex-testEqualArrayOrMap-test-function-add-cowbell' class='title'><a href='build-helpers/testers/#ex-testEqualArrayOrMap-test-function-add-cowbell'>Example</a></h3>
+<p></p>
+<h1>Test a function which appends a value to an array</h1>
+<pre><code class="language-nix">testers.testEqualArrayOrMap {
+  name = &quot;test-function-add-cowbell&quot;;
+  valuesArray = [
+    &quot;cowbell&quot;
+    &quot;cowbell&quot;
+  ];
+  expectedArray = [
+    &quot;cowbell&quot;
+    &quot;cowbell&quot;
+    &quot;cowbell&quot;
+  ];
+  script = ''
+    addCowbell() {
+      local -rn arrayNameRef=&quot;$1&quot;
+      arrayNameRef+=( &quot;cowbell&quot; )
+    }
+
+    nixLog &quot;appending all values in valuesArray to actualArray&quot;
+    for value in &quot;''${valuesArray[@]}&quot;; do
+      actualArray+=( &quot;$value&quot; )
+    done
+
+    nixLog &quot;applying addCowbell&quot;
+    addCowbell actualArray
+  '';
+}
+</code></pre>
+<p></p>
+</div>
+<h3 id='tester-testEqualArrayOrMap-inputs'><a href='build-helpers/testers/#tester-testEqualArrayOrMap-inputs'>
+Inputs
+</a></h3>
+<p>NOTE: Internally, this tester uses <code>__structuredAttrs</code> to handle marshalling between Nix expressions and shell variables.
+This imposes the restriction that arrays and &quot;maps&quot; have values which are string-like.</p>
+<p>NOTE: At least one of <code>expectedArray</code> and <code>expectedMap</code> must be provided.</p>
+<dl>
+<dt>
+<p><code>name</code> (string)</p>
+</dt>
+<dd>
+<p>The name of the test.</p>
+</dd>
+<dt>
+<p><code>script</code> (string)</p>
+</dt>
+<dd>
+<p>The singular task of <code>script</code> is to populate <code>actualArray</code> or <code>actualMap</code> (it may populate both).
+To do this, <code>script</code> may access the following shell variables:</p>
+</dd>
+</dl>
+<ul>
+<li><code>valuesArray</code> (available when <code>valuesArray</code> is provided to the tester)</li>
+<li><code>valuesMap</code> (available when <code>valuesMap</code> is provided to the tester)</li>
+<li><code>actualArray</code> (available when <code>expectedArray</code> is provided to the tester)</li>
+<li><code>actualMap</code> (available when <code>expectedMap</code> is provided to the tester)</li>
+</ul>
+<p>While both <code>expectedArray</code> and <code>expectedMap</code> are in scope during the execution of <code>script</code>, they <em>must not</em> be accessed or modified from within <code>script</code>.</p>
+<dl>
+<dt>
+<p><code>valuesArray</code> (array of string-like values, optional)</p>
+</dt>
+<dd>
+<p>An array of string-like values.
+This array may be used within <code>script</code>.</p>
+</dd>
+<dt>
+<p><code>valuesMap</code> (attribute set of string-like values, optional)</p>
+</dt>
+<dd>
+<p>An attribute set of string-like values.
+This attribute set may be used within <code>script</code>.</p>
+</dd>
+<dt>
+<p><code>expectedArray</code> (array of string-like values, optional)</p>
+</dt>
+<dd>
+<p>An array of string-like values.
+This array <em>must not</em> be accessed or modified from within <code>script</code>.
+When provided, <code>script</code> is expected to populate <code>actualArray</code>.</p>
+</dd>
+<dt>
+<p><code>expectedMap</code> (attribute set of string-like values, optional)</p>
+</dt>
+<dd>
+<p>An attribute set of string-like values.
+This attribute set <em>must not</em> be accessed or modified from within <code>script</code>.
+When provided, <code>script</code> is expected to populate <code>actualMap</code>.</p>
+</dd>
+</dl>
+<h3 id='tester-testEqualArrayOrMap-return'><a href='build-helpers/testers/#tester-testEqualArrayOrMap-return'>
+Return value
+</a></h3>
+<p>The tester produces an empty output and only succeeds when <code>expectedArray</code> and <code>expectedMap</code> match <code>actualArray</code> and <code>actualMap</code>, respectively, when non-null.
+The build log will contain differences encountered.</p>
+<h2 id='tester-testEqualDerivation'><a href='build-helpers/testers/#tester-testEqualDerivation'>
+<code>testEqualDerivation</code>
+</a></h2>
+<p>Checks that two packages produce the exact same build instructions.</p>
+<p>This can be used to make sure that a certain difference of configuration, such as the presence of an overlay does not cause a cache miss.</p>
+<p>When the derivations are equal, the return value is an empty file.
+Otherwise, the build log explains the difference via <code>nix-diff</code>.</p>
+<div class='admonition example'><h3 id='ex-testEqualDerivation-hello' class='title'><a href='build-helpers/testers/#ex-testEqualDerivation-hello'>Example</a></h3>
+<p></p>
+<h1>Check that two packages produce the same derivation</h1>
+<pre><code class="language-nix">testers.testEqualDerivation &quot;The hello package must stay the same when enabling checks.&quot; hello (
+  hello.overrideAttrs (o: {
+    doCheck = true;
+  })
+)
+</code></pre>
+<p></p>
+</div>
+<h2 id='tester-invalidateFetcherByDrvHash'><a href='build-helpers/testers/#tester-invalidateFetcherByDrvHash'>
+<code>invalidateFetcherByDrvHash</code>
+</a></h2>
+<p>Use the derivation hash to invalidate the output via name, for testing.</p>
+<p>Type: <code>(a@{ name, ... } -&gt; Derivation) -&gt; a -&gt; Derivation</code></p>
+<p>Normally, fixed output derivations can and should be cached by their output hash only, but for testing we want to re-fetch every time the fetcher changes.</p>
+<p>Changes to the fetcher become apparent in the drvPath, which is a hash of how to fetch, rather than a fixed store path.
+By inserting this hash into the name, we can make sure to re-run the fetcher every time the fetcher changes.</p>
+<p>This relies on the assumption that Nix isn't clever enough to reuse its database of local store contents to optimize fetching.</p>
+<p>You might notice that the &quot;salted&quot; name derives from the normal invocation, not the final derivation.
+<code>invalidateFetcherByDrvHash</code> has to invoke the fetcher function twice:
+once to get a derivation hash, and again to produce the final fixed output derivation.</p>
+<div class='admonition example'><h3 id='ex-invalidateFetcherByDrvHash-nix' class='title'><a href='build-helpers/testers/#ex-invalidateFetcherByDrvHash-nix'>Example</a></h3>
+<p></p>
+<h1>Prevent nix from reusing the output of a fetcher</h1>
+<pre><code class="language-nix">{
+  tests.fetchgit = testers.invalidateFetcherByDrvHash fetchgit {
+    name = &quot;nix-source&quot;;
+    url = &quot;https://github.com/NixOS/nix&quot;;
+    rev = &quot;9d9dbe6ed05854e03811c361a3380e09183f4f4a&quot;;
+    hash = &quot;sha256-7DszvbCNTjpzGRmpIVAWXk20P0/XTrWZ79KSOGLrUWY=&quot;;
+  };
+}
+</code></pre>
+<p></p>
+</div>
+<h2 id='tester-runCommand'><a href='build-helpers/testers/#tester-runCommand'>
+<code>runCommand</code>
+</a></h2>
+<p><code>runCommand :: { name, script, stdenv ? stdenvNoCC, hash ? &quot;...&quot;, ... } -&gt; Derivation</code></p>
+<p>This is a wrapper around <code>pkgs.runCommandWith</code>, which</p>
+<ul>
+<li>produces a fixed-output derivation, enabling the command(s) to access the network ;</li>
+<li>salts the derivation's name based on its inputs, ensuring the command is re-run whenever the inputs change.</li>
+</ul>
+<p>It accepts the following attributes:</p>
+<ul>
+<li>the derivation's <code>name</code> ;</li>
+<li>the <code>script</code> to be executed ;</li>
+<li><code>stdenv</code>, the environment to use, defaulting to <code>stdenvNoCC</code> ;</li>
+<li>the derivation's output <code>hash</code>, defaulting to the empty file's.
+The derivation's <code>outputHashMode</code> is set by default to recursive, so the <code>script</code> can output a directory as well.</li>
+</ul>
+<p>All other attributes are passed through to <a href="stdenv/stdenv/#sec-using-stdenv"><code>mkDerivation</code></a>,
+including <code>nativeBuildInputs</code> to specify dependencies available to the <code>script</code>.</p>
+<div class='admonition example'><h3 id='ex-tester-runCommand-nix' class='title'><a href='build-helpers/testers/#ex-tester-runCommand-nix'>Example</a></h3>
+<p></p>
+<h1>Run a command with network access</h1>
+<pre><code class="language-nix">testers.runCommand {
+  name = &quot;access-the-internet&quot;;
+  script = ''
+    curl -o /dev/null https://example.com
+    touch $out
+  '';
+  nativeBuildInputs = with pkgs; [
+    cacert
+    curl
+  ];
+}
+</code></pre>
+<p></p>
+</div>
+<h2 id='tester-runNixOSTest'><a href='build-helpers/testers/#tester-runNixOSTest'>
+<code>runNixOSTest</code>
+</a></h2>
+<p>A helper function that behaves exactly like the NixOS <code>runTest</code>, except it also assigns this Nixpkgs package set as the <code>pkgs</code> of the test and makes the <code>nixpkgs.*</code> options read-only.</p>
+<p>If your test is part of the Nixpkgs repository, or if you need a more general entrypoint, see <a href="https://nixos.org/manual/nixos/stable/index.html#sec-calling-nixos-tests">&quot;Calling a test&quot; in the NixOS manual</a>.</p>
+<div class='admonition example'><h3 id='ex-runNixOSTest-hello' class='title'><a href='build-helpers/testers/#ex-runNixOSTest-hello'>Example</a></h3>
+<p></p>
+<h1>Run a NixOS test using <code>runNixOSTest</code></h1>
+<pre><code class="language-nix">pkgs.testers.runNixOSTest (
+  { lib, ... }:
+  {
+    name = &quot;hello&quot;;
+    nodes.machine =
+      { pkgs, ... }:
+      {
+        environment.systemPackages = [ pkgs.hello ];
+      };
+    testScript = ''
+      machine.succeed(&quot;hello&quot;)
+    '';
+  }
+)
+</code></pre>
+<p></p>
+</div>
+<h2 id='tester-nixosTest'><a href='build-helpers/testers/#tester-nixosTest'>
+<code>nixosTest</code>
+</a></h2>
+<p>Run a NixOS VM network test using this evaluation of Nixpkgs.</p>
+<p>NOTE: This function is primarily for external use. NixOS itself uses <code>make-test-python.nix</code> directly. Packages defined in Nixpkgs <a href="contributing/coding-conventions/#ssec-nixos-tests-linking">reuse NixOS tests via <code>nixosTests</code>, plural</a>.</p>
+<p>It is mostly equivalent to the function <code>import ./make-test-python.nix</code> from the <a href="https://nixos.org/nixos/manual/index.html#sec-nixos-tests">NixOS manual</a>, except that the current application of Nixpkgs (<code>pkgs</code>) will be used, instead of letting NixOS invoke Nixpkgs anew.</p>
+<p>If a test machine needs to set NixOS options under <code>nixpkgs</code>, it must set only the <code>nixpkgs.pkgs</code> option.</p>
+<h3 id='tester-nixosTest-parameter'><a href='build-helpers/testers/#tester-nixosTest-parameter'>
+Parameter
+</a></h3>
+<p>A <a href="https://nixos.org/nixos/manual/index.html#sec-nixos-tests">NixOS VM test network</a>, or path to it. Example:</p>
+<pre><code class="language-nix">{
+  name = &quot;my-test&quot;;
+  nodes = {
+    machine1 =
+      {
+        lib,
+        pkgs,
+        nodes,
+        ...
+      }:
+      {
+        environment.systemPackages = [ pkgs.hello ];
+        services.foo.enable = true;
+      };
+    # machine2 = ...;
+  };
+  testScript = ''
+    start_all()
+    machine1.wait_for_unit(&quot;foo.service&quot;)
+    machine1.succeed(&quot;hello | foo-send&quot;)
+  '';
+}
+</code></pre>
+<h3 id='tester-nixosTest-result'><a href='build-helpers/testers/#tester-nixosTest-result'>
+Result
+</a></h3>
+<p>A derivation that runs the VM test.</p>
+<p>Notable attributes:</p>
+<ul>
+<li>
+<p><code>nodes</code>: the evaluated NixOS configurations. Useful for debugging and exploring the configuration.</p>
+</li>
+<li>
+<p><code>driverInteractive</code>: a script that launches an interactive Python session in the context of the <code>testScript</code>.</p>
+</li>
+</ul>
+<h2 id='tester-modularServiceCompliance'><a href='build-helpers/testers/#tester-modularServiceCompliance'>
+<code>modularServiceCompliance</code>
+</a></h2>
+<p>Compliance suite for <a href="https://nixos.org/manual/nixos/unstable/#modular-services">modular service</a> integrations.</p>
+<p>Tests that a service manager integration correctly handles the portable modular services contract: <code>process.argv</code>, sub-services, assertions, and warnings.</p>
+<h3 id='tester-modularServiceCompliance-return'><a href='build-helpers/testers/#tester-modularServiceCompliance-return'>
+Return value
+</a></h3>
+<p>An attribute set of derivations which perform the tests during their build.</p>
+<h3 id='tester-modularServiceCompliance-inputs'><a href='build-helpers/testers/#tester-modularServiceCompliance-inputs'>
+Inputs
+</a></h3>
+<dl>
+<dt>
+<p><code>evalConfig</code> (function)</p>
+</dt>
+<dd>
+<p><code>{ services } -&gt; { config; checkDrv; }</code>.
+Function to evaluate the given services in the integration's full context.
+This function is called for evaluation checks on configurations that will not be run.</p>
+</dd>
+</dl>
+<ul>
+<li>Input <code>services</code> is an attrset of modular service configurations. These should be used verbatim.</li>
+<li>Output attribute <code>config</code> is the resulting evaluated services attrset (e.g., the value of the <code>system.services</code> option in NixOS).
+This attribute must be available even if <code>checkDrv</code> would fail.</li>
+<li>Output attribute <code>checkDrv</code> is a representative derivation whose existence and buildability prove the eval is sound (e.g., <code>system.build.toplevel</code> in NixOS, but could perhaps be more specific in the case of another process manager integration).</li>
+</ul>
+<dl>
+<dt>
+<p><code>mkTest</code> (function)</p>
+</dt>
+<dd>
+<p><code>{ name, services, testExe } -&gt; derivation</code>.</p>
+</dd>
+</dl>
+<ul>
+<li>Input <code>name</code> is a test name, suitable for use as a derivation name.</li>
+<li>Input <code>services</code> is an attrset of modular service configurations, matching the structure of the integration's services option.</li>
+<li>Input <code>testExe</code> is a store path to an executable that verifies the services.</li>
+<li>Output: a derivation that runs the service manager with the provided configuration inputs and then calls <code>testExe</code> after starting the services. That executable must have access to <code>sharedDir</code>.</li>
+</ul>
+<dl>
+<dt>
+<p><code>sharedDir</code> (string)</p>
+</dt>
+<dd>
+<p>Path to a directory writable by service processes and readable by <code>testExe</code>.
+The integration must ensure this directory is available when the services and <code>testExe</code> run.</p>
+</dd>
+</dl>
+<div class='admonition example'><h3 id='ex-modularServiceCompliance-nixos' class='title'><a href='build-helpers/testers/#ex-modularServiceCompliance-nixos'>Example</a></h3>
+<p></p>
+<h1>NixOS invocation of the compliance suite</h1>
+<pre><code class="language-nix"># In nixos/tests/all-tests.nix:
+# modularServiceCompliance =
+recurseIntoAttrs (
+  pkgs.testers.modularServiceCompliance {
+    sharedDir = &quot;/tmp/modular-service-compliance&quot;;
+    evalConfig =
+      { services }:
+      let
+        machine = evalSystem (
+          { ... }:
+          {
+            system.services = services;
+            system.stateVersion = &quot;25.05&quot;;
+            fileSystems.&quot;/&quot; = {
+              device = &quot;/test/dummy&quot;;
+              fsType = &quot;auto&quot;;
+            };
+            boot.loader.grub.enable = false;
+          }
+        );
+      in
+      {
+        config = machine.config.system.services;
+        checkDrv = machine.config.system.build.toplevel;
+      };
+    mkTest =
+      {
+        name,
+        services,
+        testExe,
+      }:
+      runTest {
+        _class = &quot;nixosTest&quot;;
+        inherit name;
+        nodes.machine.system.services = services;
+        testScript = ''
+          machine.wait_for_unit(&quot;multi-user.target&quot;)
+          machine.succeed(&quot;${testExe}&quot;)
+        '';
+      };
+  }
+)
+</code></pre>
+<p></p>
+</div>
+<h3 id='tester-modularServiceCompliance-manual'><a href='build-helpers/testers/#tester-modularServiceCompliance-manual'>
+Manual compliance items
+</a></h3>
+<p>The following compliance items are not yet automated and must be verified manually when implementing a new modular service integration.</p>
+<ul>
+<li>
+<p><strong>Failing assertions prevent deployment.</strong>
+A service with <code>assertions = [{ assertion = false; message = &quot;...&quot;; }]</code> must cause the deployment to fail.
+The mechanism is integration-specific (e.g., NixOS checks assertions during <code>system.build.toplevel</code> evaluation).</p>
+</li>
+<li>
+<p><strong>Warnings are visible to the user.</strong>
+A service with <code>warnings = [ &quot;...&quot; ]</code> must surface the warning to the user.
+On NixOS these are <code>builtins.warn</code> messages emitted during evaluation.</p>
+</li>
+</ul>
+        </main>
+      </div>
+    </section>
+<script defer src='highlight.pack.cf986678470772f7.js'></script>
+<script defer src='mmdoc.367f3e8986e40416.js'></script>
+<script defer src='mmdoc_search.a5b6fc7d7512cdc1.js' data-search-index='search_index.b3afff10081eb0bd.js' data-fuse='fuse.basic.min.bb997c989fa0a28e.js'></script>
+  </div>
+  </body>
+</html>

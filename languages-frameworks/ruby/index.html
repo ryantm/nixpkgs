@@ -1,0 +1,580 @@
+<!doctype html>
+<html lang='en'>
+  <head>
+    <base href='../../'>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <script>
+      (() => {
+        let theme = null
+        try { theme = localStorage.getItem('theme') } catch (error) {}
+        if (theme !== 'light' && theme !== 'dark')
+          theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+        document.documentElement.classList.add(theme + '-theme')
+      })()
+    </script>
+    <meta name='description' content='Ruby'>
+    <link rel='icon' href='favicon.svg'>
+    <link rel='stylesheet' href='a11y-dark.1fcafc9d9a306955.css'>
+    <link rel='stylesheet' href='a11y-light.b466309a7fa86b1f.css'>
+    <link rel='stylesheet' href='mmdoc.e4286053b6471af4.css'>
+    <title>Ruby | nixpkgs</title>
+  </head>
+  <body>
+  <a class='skip-link' href='languages-frameworks/ruby/#main-content'>Skip to main content</a>
+  <input type='checkbox' id='sidebar-checkbox' aria-hidden='true' tabindex='-1' style='display: none;'>
+  <div class='body'>
+    <div class='nav-top-container'>
+    <nav class='nav-top' aria-label='Documentation controls'>
+      <button type='button' class='sidebar-toggle' aria-label='Toggle table of contents' aria-controls='sidebar' aria-expanded='true'></button>    <button type='button' class='search-toggle' aria-label='Open search' aria-controls='search-panel' aria-expanded='false'></button>    <button type='button' class='theme-toggle' aria-label='Switch to dark theme' aria-pressed='false'></button>    <a id='chapter-previous-button' class='chapter-previous' href='languages-frameworks/rocq/#sec-language-rocq' title='Rocq and rocq packages' aria-label='Previous: Rocq and rocq packages'>&lt;</a>
+    <a id='chapter-next-button' class='chapter-next' href='languages-frameworks/rust/#rust' title='Rust' aria-label='Next: Rust'>&gt;</a>
+    </nav>
+    </div>
+    <nav id='sidebar' class='sidebar' aria-label='Table of contents'>
+<h1>Nixpkgs Manual</h1>
+<p>Version 26.11pre</p>
+<ul>
+<li><a href="./#preface">Preface</a>
+<ul>
+<li><a href="preface/#overview-of-nixpkgs">Overview of Nixpkgs</a></li>
+</ul>
+</li>
+<li><a href="first-package/#chap-first-package">Package your first application</a></li>
+</ul>
+<h2>Using Nixpkgs</h2>
+<ul>
+<li><a href="using/platform-support/#chap-platform-support">Platform Support</a></li>
+<li><a href="using/configuration/#chap-packageconfig">Global configuration</a></li>
+<li><a href="using/overlays/#chap-overlays">Overlays</a></li>
+<li><a href="using/overrides/#chap-overrides">Overriding</a></li>
+</ul>
+<h2>Nixpkgs Lib</h2>
+<ul>
+<li><a href="functions/#chap-functions">Functions reference</a>
+<ul>
+<li>Library Functions
+<ul>
+<li><a href="functions/library/asserts/#sec-functions-library-asserts">lib.asserts: assertion functions</a></li>
+<li><a href="functions/library/attrsets/#sec-functions-library-attrsets">lib.attrsets: attribute set functions</a></li>
+<li><a href="functions/library/strings/#sec-functions-library-strings">lib.strings: string manipulation functions</a></li>
+<li><a href="functions/library/versions/#sec-functions-library-versions">lib.versions: version string functions</a></li>
+<li><a href="functions/library/trivial/#sec-functions-library-trivial">lib.trivial: miscellaneous functions</a></li>
+<li><a href="functions/library/fixedPoints/#sec-functions-library-fixedPoints">lib.fixedPoints: explicit recursion functions</a></li>
+<li><a href="functions/library/lists/#sec-functions-library-lists">lib.lists: list manipulation functions</a></li>
+<li><a href="functions/library/debug/#sec-functions-library-debug">lib.debug: debugging functions</a></li>
+<li><a href="functions/library/options/#sec-functions-library-options">lib.options: NixOS / nixpkgs option handling</a></li>
+<li><a href="functions/library/path/#sec-functions-library-path">lib.path: path functions</a></li>
+<li><a href="functions/library/filesystem/#sec-functions-library-filesystem">lib.filesystem: filesystem functions</a></li>
+<li><a href="functions/library/fileset/#sec-functions-library-fileset">lib.fileset: file set functions</a></li>
+<li><a href="functions/library/sources/#sec-functions-library-sources">lib.sources: source filtering functions</a></li>
+<li><a href="functions/library/cli/#sec-functions-library-cli">lib.cli: command-line serialization functions</a></li>
+<li><a href="functions/library/gvariant/#sec-functions-library-gvariant">lib.gvariant: GVariant formatted string serialization functions</a></li>
+<li><a href="functions/library/fetchers/#sec-functions-library-fetchers">lib.fetchers: functions which can be reused across fetchers</a></li>
+<li><a href="functions/library/generators/#sec-functions-library-generators">lib.generators: functions that create file formats from nix data structures</a></li>
+<li><a href="functions/library/customisation/#sec-functions-library-customisation">lib.customisation: Functions to customise (derivation-related) functions, derivations, or attribute sets</a></li>
+<li><a href="functions/library/meta/#sec-functions-library-meta">lib.meta: functions for derivation metadata</a></li>
+<li><a href="functions/library/derivations/#sec-functions-library-derivations">lib.derivations: miscellaneous derivation-specific functions</a></li>
+<li><a href="functions/generators/#sec-generators">Generators</a></li>
+<li><a href="functions/debug/#sec-debug">Debugging Nix Expressions</a></li>
+<li><a href="functions/prefer-remote-fetch/#sec-prefer-remote-fetch">prefer-remote-fetch overlay</a></li>
+<li><a href="functions/nix-gitignore/#sec-pkgs-nix-gitignore">pkgs.nix-gitignore</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="module-system/module-system/#module-system">Module System</a></li>
+</ul>
+<h2>Standard Environment</h2>
+<ul>
+<li><a href="stdenv/#part-stdenv">Standard environment</a></li>
+<li><a href="stdenv/stdenv/#chap-stdenv">The Standard Environment</a></li>
+<li><a href="stdenv/meta/#chap-meta">Meta-attributes</a></li>
+<li><a href="stdenv/passthru/#chap-passthru">Passthru-attributes</a></li>
+<li><a href="stdenv/multiple-output/#chap-multiple-output">Multiple-output packages</a></li>
+<li><a href="stdenv/cross-compilation/#chap-cross">Cross-compilation</a></li>
+<li><a href="stdenv/platform-notes/#chap-platform-notes">Platform Notes</a></li>
+</ul>
+<h2>Toolchains</h2>
+<ul>
+<li><a href="toolchains/llvm/#chap-toolchains">The LLVM Toolchain</a></li>
+</ul>
+<h2>Builders</h2>
+<ul>
+<li><a href="build-helpers/#part-builders">Build helpers</a></li>
+<li><a href="build-helpers/fetchers/#chap-pkgs-fetchers">Fetchers</a></li>
+<li><a href="build-helpers/trivial-build-helpers/#chap-trivial-builders">Trivial build helpers</a></li>
+<li><a href="build-helpers/fixed-point-arguments/#chap-build-helpers-finalAttrs">Fixed-point arguments of build helpers</a></li>
+<li><a href="build-helpers/dev-shell-tools/#chap-devShellTools">Development Shell helpers</a></li>
+<li><a href="build-helpers/testers/#chap-testers">Testers</a></li>
+<li>Special build helpers
+<ul>
+<li><a href="build-helpers/special/fhs-environments/#sec-fhs-environments">buildFHSEnv</a></li>
+<li><a href="build-helpers/special/fakenss/#sec-fakeNss">fakeNss</a></li>
+<li><a href="build-helpers/special/makesetuphook/#sec-pkgs.makeSetupHook">pkgs.makeSetupHook</a></li>
+<li><a href="build-helpers/special/mkshell/#sec-pkgs-mkShell">pkgs.mkShell</a></li>
+<li><a href="packages/darwin-builder/#sec-darwin-builder">darwin.linux-builder</a></li>
+<li><a href="build-helpers/special/vm-tools/#sec-vm-tools">vmTools</a></li>
+</ul>
+</li>
+<li>Images
+<ul>
+<li><a href="build-helpers/images/appimagetools/#sec-pkgs-appimageTools">pkgs.appimageTools</a></li>
+<li><a href="build-helpers/images/dockertools/#sec-pkgs-dockerTools">pkgs.dockerTools</a></li>
+<li><a href="build-helpers/images/ocitools/#sec-pkgs-ociTools">pkgs.ociTools</a></li>
+<li><a href="build-helpers/images/portableservice/#sec-pkgs-portableService">pkgs.portableService</a></li>
+<li><a href="build-helpers/images/makediskimage/#sec-make-disk-image">&lt;nixpkgs/nixos/lib/make-disk-image.nix&gt;</a></li>
+<li><a href="build-helpers/images/binarycache/#sec-pkgs-binary-cache">pkgs.mkBinaryCache</a></li>
+</ul>
+</li>
+<li><a href="hooks/index/#chap-hooks">Hooks reference</a>
+<ul>
+<li><a href="hooks/autoconf/#setup-hook-autoconf">Autoconf</a></li>
+<li><a href="hooks/automake/#setup-hook-automake">Automake</a></li>
+<li><a href="hooks/autopatchelf/#setup-hook-autopatchelfhook">autoPatchelfHook</a></li>
+<li><a href="hooks/breakpoint/#breakpointhook">breakpointHook</a></li>
+<li><a href="hooks/cmake/#cmake">cmake</a></li>
+<li><a href="hooks/gdk-pixbuf/#setup-hook-gdk-pixbuf">gdk-pixbuf</a></li>
+<li><a href="hooks/ghc/#ghc">GHC</a></li>
+<li><a href="hooks/gnome/#gnome-platform">GNOME platform</a></li>
+<li><a href="hooks/installShellFiles/#installshellfiles">installShellFiles</a></li>
+<li><a href="hooks/libglycin/#libglycin-hooks">libglycin</a></li>
+<li><a href="hooks/libiconv/#libiconv-libintl">libiconv, libintl</a></li>
+<li><a href="hooks/libxml2/#setup-hook-libxml2">libxml2</a></li>
+<li><a href="hooks/meson/#meson">Meson</a></li>
+<li><a href="hooks/mpi-check-hook/#setup-hook-mpi-check">mpiCheckPhaseHook</a></li>
+<li><a href="hooks/ninja/#ninja">ninja</a></li>
+<li><a href="hooks/patch-rc-path-hooks/#sec-patchRcPathHooks">patchRcPath hooks</a></li>
+<li><a href="hooks/perl/#setup-hook-perl">Perl</a></li>
+<li><a href="hooks/pkg-config/#setup-hook-pkg-config">pkg-config</a></li>
+<li><a href="hooks/pnpm/#pnpm-build-hook">pnpmBuildHook</a></li>
+<li><a href="hooks/postgresql-test-hook/#sec-postgresqlTestHook">postgresqlTestHook</a></li>
+<li><a href="hooks/python/#setup-hook-python">Python</a></li>
+<li><a href="hooks/scons/#scons">scons</a></li>
+<li><a href="hooks/tetex-tex-live/#tetex-tex-live">teTeX / TeX Live</a></li>
+<li><a href="hooks/unzip/#unzip">unzip</a></li>
+<li><a href="hooks/validatePkgConfig/#validatepkgconfig">validatePkgConfig</a></li>
+<li><a href="hooks/versionCheckHook/#versioncheckhook">versionCheckHook</a></li>
+<li><a href="hooks/waf/#waf-hook">wafHook</a></li>
+<li><a href="hooks/xcbuild/#xcbuildhook">xcbuildHook</a></li>
+</ul>
+</li>
+<li><a href="languages-frameworks/index/#chap-language-support">Languages and frameworks</a>
+<ul>
+<li><a href="languages-frameworks/agda/#agda">Agda</a></li>
+<li><a href="languages-frameworks/android/#android">Android</a></li>
+<li><a href="languages-frameworks/astal/#astal">Astal</a></li>
+<li><a href="languages-frameworks/beam/#sec-beam">BEAM Languages (Erlang, Elixir &amp; LFE)</a></li>
+<li><a href="languages-frameworks/chicken/#sec-chicken">CHICKEN</a></li>
+<li><a href="languages-frameworks/cosmic/#sec-language-cosmic">COSMIC</a></li>
+<li><a href="languages-frameworks/crystal/#crystal">Crystal</a></li>
+<li><a href="languages-frameworks/cuda/#cuda">CUDA</a></li>
+<li><a href="languages-frameworks/cuelang/#cuelang">Cue (Cuelang)</a></li>
+<li><a href="languages-frameworks/dlang/#dlang">D (Dlang)</a></li>
+<li><a href="languages-frameworks/dart/#sec-language-dart">Dart</a></li>
+<li><a href="languages-frameworks/dhall/#sec-language-dhall">Dhall</a></li>
+<li><a href="languages-frameworks/dotnet/#dotnet">Dotnet</a></li>
+<li><a href="languages-frameworks/emscripten/#emscripten">Emscripten</a></li>
+<li><a href="languages-frameworks/factor/#sec-language-factor">Factor</a></li>
+<li><a href="languages-frameworks/gnome/#sec-language-gnome">GNOME</a></li>
+<li><a href="languages-frameworks/go/#sec-language-go">Go</a></li>
+<li><a href="languages-frameworks/gradle/#gradle">Gradle</a></li>
+<li><a href="languages-frameworks/hare/#sec-language-hare">Hare</a></li>
+<li><a href="languages-frameworks/haskell/#haskell">Haskell</a></li>
+<li><a href="languages-frameworks/hy/#sec-language-hy">Hy</a></li>
+<li><a href="languages-frameworks/idris/#idris">Idris</a></li>
+<li><a href="languages-frameworks/idris2/#sec-idris2">Idris2</a></li>
+<li><a href="languages-frameworks/ios/#ios">iOS</a></li>
+<li><a href="languages-frameworks/java/#sec-language-java">Java</a></li>
+<li><a href="languages-frameworks/javascript/#language-javascript">Javascript</a></li>
+<li><a href="languages-frameworks/julia/#language-julia">Julia</a></li>
+<li><a href="languages-frameworks/lean4/#sec-language-lean4">Lean 4</a></li>
+<li><a href="languages-frameworks/lisp/#lisp">lisp-modules</a></li>
+<li><a href="languages-frameworks/lua/#lua">Lua</a></li>
+<li><a href="languages-frameworks/maven/#maven">Maven</a></li>
+<li><a href="languages-frameworks/neovim/#neovim">Neovim</a></li>
+<li><a href="languages-frameworks/nim/#sec-language-nim">Nim</a></li>
+<li><a href="languages-frameworks/ocaml/#sec-language-ocaml">OCaml</a></li>
+<li><a href="languages-frameworks/octave/#sec-octave">Octave</a></li>
+<li><a href="languages-frameworks/perl/#sec-language-perl">Perl</a></li>
+<li><a href="languages-frameworks/php/#sec-php">PHP</a></li>
+<li><a href="languages-frameworks/pkg-config/#sec-pkg-config">pkg-config</a></li>
+<li><a href="languages-frameworks/python/#python">Python</a></li>
+<li><a href="languages-frameworks/qt/#sec-language-qt">Qt</a></li>
+<li><a href="languages-frameworks/r/#r">R</a></li>
+<li><a href="languages-frameworks/rocq/#sec-language-rocq">Rocq and rocq packages</a></li>
+<li><a href="languages-frameworks/ruby/#sec-language-ruby">Ruby</a></li>
+<li><a href="languages-frameworks/rust/#rust">Rust</a></li>
+<li><a href="languages-frameworks/scheme/#sec-scheme">Scheme</a></li>
+<li><a href="languages-frameworks/swift/#swift">Swift</a></li>
+<li><a href="languages-frameworks/tcl/#sec-language-tcl">Tcl</a></li>
+<li><a href="languages-frameworks/texlive/#sec-language-texlive">TeX Live</a></li>
+<li><a href="languages-frameworks/typst/#typst">Typst</a></li>
+<li><a href="languages-frameworks/vim/#vim">Vim</a></li>
+</ul>
+</li>
+<li><a href="packages/index/#chap-packages">Packages</a>
+<ul>
+<li><a href="packages/build-support/#sec-build-support">Build Support</a></li>
+<li><a href="packages/cataclysm-dda/#cataclysm-dark-days-ahead">Cataclysm: Dark Days Ahead</a></li>
+<li><a href="packages/citrix/#sec-citrix">Citrix Workspace</a></li>
+<li><a href="packages/dlib/#dlib">DLib</a></li>
+<li><a href="packages/eclipse/#sec-eclipse">Eclipse</a></li>
+<li><a href="packages/elm/#sec-elm">Elm</a></li>
+<li><a href="packages/emacs/#sec-emacs">Emacs</a></li>
+<li><a href="packages/firefox/#sec-firefox">Firefox</a></li>
+<li><a href="packages/fish/#sec-fish">Fish</a></li>
+<li><a href="packages/friction-graphics/#friction-graphics">Friction</a></li>
+<li><a href="packages/fuse/#sec-fuse">FUSE</a></li>
+<li><a href="packages/geant4/#geant4">Geant4</a></li>
+<li><a href="packages/ibus/#sec-ibus-typing-booster">ibus-engines.typing-booster</a></li>
+<li><a href="packages/inkscape/#sec-inkscape">Inkscape</a></li>
+<li><a href="packages/kakoune/#sec-kakoune">Kakoune</a></li>
+<li><a href="packages/krita/#sec-krita">Krita</a></li>
+<li><a href="packages/lhapdf/#lhapdf">LHAPDF</a></li>
+<li><a href="packages/linux/#sec-linux-kernel">Linux kernel</a></li>
+<li><a href="packages/locales/#locales">Locales</a></li>
+<li><a href="packages/etc-files/#etc">/etc files</a></li>
+<li><a href="packages/nginx/#sec-nginx">Nginx</a></li>
+<li><a href="packages/nrfutil/#sec-nrfutil">nrfutil</a></li>
+<li><a href="packages/opengl/#sec-opengl">OpenGL</a></li>
+<li><a href="packages/python-tree-sitter/#python-tree-sitter">Python Tree Sitter</a></li>
+<li><a href="packages/shell-helpers/#sec-shell-helpers">Interactive shell helpers</a></li>
+<li><a href="packages/steam/#sec-steam">Steam</a></li>
+<li><a href="packages/treefmt/#treefmt">treefmt</a></li>
+<li><a href="packages/urxvt/#sec-urxvt">Urxvt</a></li>
+<li><a href="packages/uv/#sec-uv">uv</a></li>
+<li><a href="packages/vcpkg/#sec-vcpkg">VCPKG</a></li>
+<li><a href="packages/weechat/#sec-weechat">WeeChat</a></li>
+</ul>
+</li>
+</ul>
+<h2>Modules</h2>
+<ul>
+<li><a href="modules/index/#modules">Modules</a>
+<ul>
+<li><a href="modules/generic/#modules-generic">Generic</a>
+<ul>
+<li><a href="modules/generic/#modules-generic-meta-maintainers">meta-maintainers.nix</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2>Development of Nixpkgs</h2>
+<ul>
+<li><a href="development/opening-issues/#sec-opening-issues">Opening issues</a></li>
+<li><a href="contributing/coding-conventions/#chap-conventions">Coding conventions</a></li>
+</ul>
+<h2>Interoperability Standards</h2>
+<ul>
+<li><a href="interoperability/cyclonedx/#chap-interop-cyclonedx">CycloneDX</a>
+<ul>
+<li><a href="interoperability/cyclonedx/#sec-interop.cylonedx-nix"><code>nix</code> namespace</a></li>
+<li><a href="interoperability/cyclonedx/#sec-interop.cylonedx-narinfo"><code>nix:narinfo</code></a></li>
+<li><a href="interoperability/cyclonedx/#sec-interop.cylonedx-fod"><code>nix:fod</code></a></li>
+</ul>
+</li>
+</ul>
+<h2>Release Notes</h2>
+<ul>
+<li><a href="release-notes/release-notes/#chap-release-notes">Release Notes</a>
+<ul>
+<li><a href="release-notes/rl-2611/#sec-nixpkgs-release-26.11">Nixpkgs 26.11 (&quot;Zokor&quot;, 2026.11/??)</a></li>
+<li><a href="release-notes/rl-2605/#sec-nixpkgs-release-26.05">Nixpkgs 26.05 (&quot;Yarara&quot;, 2026.05/30)</a></li>
+<li><a href="release-notes/rl-2511/#sec-nixpkgs-release-25.11">Nixpkgs 25.11 (&quot;Xantusia&quot;, 2025.11/30)</a></li>
+<li><a href="release-notes/rl-2505/#sec-nixpkgs-release-25.05">Nixpkgs 25.05 (2025.05/23)</a></li>
+</ul>
+</li>
+</ul>
+    </nav>
+    <section id='main'>
+      <div id='search-panel' class='nav-search' role='search' hidden>
+        <label class='visually-hidden' for='search'>Search documentation</label>
+        <input type='search' id='search' placeholder='Search' autocomplete='off' aria-controls='search-results'>
+        <p id='search-status' class='visually-hidden' role='status' aria-live='polite'></p>
+        <div id='search-results'></div>
+      </div>
+      <div class='main-scroll'>
+        <main id='main-content' tabindex='-1'>
+<h1 id='sec-language-ruby'><a href='languages-frameworks/ruby/#sec-language-ruby'>
+Ruby
+</a></h1>
+<h2 id='using-ruby'><a href='languages-frameworks/ruby/#using-ruby'>
+Using Ruby
+</a></h2>
+<p>Several versions of Ruby interpreters are available on Nix, as well as over 250 gems and many applications written in Ruby. The attribute <code>ruby</code> refers to the default Ruby interpreter, which is currently MRI 3.3. It's also possible to refer to specific versions, e.g. <code>ruby_3_y</code>, <code>jruby</code>, or <code>mruby</code>.</p>
+<p>In the Nixpkgs tree, Ruby packages can be found throughout, depending on what they do, and are called from the main package set. Ruby gems, however are separate sets, and there's one default set for each interpreter (currently MRI only).</p>
+<p>There are two main approaches for using Ruby with gems. One is to use a specifically locked <code>Gemfile</code> for an application that has very strict dependencies. The other is to depend on the common gems, which we'll explain further down, and rely on them being updated regularly.</p>
+<p>The interpreters have common attributes, namely <code>gems</code>, and <code>withPackages</code>. So you can refer to <code>ruby.gems.nokogiri</code>, or <code>ruby_3_4.gems.nokogiri</code> to get the Nokogiri gem already compiled and ready to use.</p>
+<p>Since not all gems have executables like <code>nokogiri</code>, it's usually more convenient to use the <code>withPackages</code> function like this: <code>ruby.withPackages (p: with p; [ nokogiri ])</code>. This will also make sure that the Ruby in your environment will be able to find the gem and it can be used in your Ruby code (for example via <code>ruby</code> or <code>irb</code> executables) via <code>require &quot;nokogiri&quot;</code> as usual.</p>
+<h3 id='temporary-ruby-environment-with-nix-shell'><a href='languages-frameworks/ruby/#temporary-ruby-environment-with-nix-shell'>
+Temporary Ruby environment with <code>nix-shell</code>
+</a></h3>
+<p>Rather than having a single Ruby environment shared by all Ruby development projects on a system, Nix allows you to create separate environments per project. <code>nix-shell</code> gives you the possibility to temporarily load another environment akin to a combined <code>chruby</code> or <code>rvm</code> and <code>bundle exec</code>.</p>
+<p>There are two methods for loading a shell with Ruby packages. The first and recommended method is to create an environment with <code>ruby.withPackages</code> and load that.</p>
+<pre><code class="language-ShellSession">$ nix-shell -p &quot;ruby.withPackages (ps: with ps; [ nokogiri pry ])&quot;
+</code></pre>
+<p>The other method, which is not recommended, is to create an environment and list all the packages directly.</p>
+<pre><code class="language-ShellSession">$ nix-shell -p ruby.gems.nokogiri ruby.gems.pry
+</code></pre>
+<p>Again, it's possible to launch the interpreter from the shell. The Ruby interpreter has the attribute <code>gems</code> which contains all Ruby gems for that specific interpreter.</p>
+<h4 id='load-ruby-environment-from-.nix-expression'><a href='languages-frameworks/ruby/#load-ruby-environment-from-.nix-expression'>
+Load Ruby environment from <code>.nix</code> expression
+</a></h4>
+<p>As explained <a href="https://nixos.org/manual/nix/stable/command-ref/nix-shell">in the <code>nix-shell</code> section</a> of the Nix manual, <code>nix-shell</code> can also load an expression from a <code>.nix</code> file.
+Say we want to have Ruby, <code>nokogori</code>, and <code>pry</code>. Consider a <code>shell.nix</code> file with:</p>
+<pre><code class="language-nix">with import &lt;nixpkgs&gt; { };
+ruby.withPackages (
+  ps: with ps; [
+    nokogiri
+    pry
+  ]
+)
+</code></pre>
+<p>What's happening here?</p>
+<ol>
+<li>We begin with importing the Nix Packages collections. <code>import &lt;nixpkgs&gt;</code> imports the <code>&lt;nixpkgs&gt;</code> function, <code>{}</code> calls it and the <code>with</code> statement brings all attributes of <code>nixpkgs</code> in the local scope. These attributes form the main package set.</li>
+<li>Then we create a Ruby environment with the <code>withPackages</code> function.</li>
+<li>The <code>withPackages</code> function expects us to provide a function as an argument that takes the set of all ruby gems and returns a list of packages to include in the environment. Here, we select the packages <code>nokogiri</code> and <code>pry</code> from the package set.</li>
+</ol>
+<h4 id='execute-command-with---run'><a href='languages-frameworks/ruby/#execute-command-with---run'>
+Execute command with <code>--run</code>
+</a></h4>
+<p>A convenient flag for <code>nix-shell</code> is <code>--run</code>. It executes a command in the <code>nix-shell</code>. We can e.g. directly open a <code>pry</code> REPL:</p>
+<pre><code class="language-ShellSession">$ nix-shell -p &quot;ruby.withPackages (ps: with ps; [ nokogiri pry ])&quot; --run &quot;pry&quot;
+</code></pre>
+<p>Or immediately require <code>nokogiri</code> in pry:</p>
+<pre><code class="language-ShellSession">$ nix-shell -p &quot;ruby.withPackages (ps: with ps; [ nokogiri pry ])&quot; --run &quot;pry -rnokogiri&quot;
+</code></pre>
+<p>Or run a script using this environment:</p>
+<pre><code class="language-ShellSession">$ nix-shell -p &quot;ruby.withPackages (ps: with ps; [ nokogiri pry ])&quot; --run &quot;ruby example.rb&quot;
+</code></pre>
+<h4 id='using-nix-shell-as-shebang'><a href='languages-frameworks/ruby/#using-nix-shell-as-shebang'>
+Using <code>nix-shell</code> as shebang
+</a></h4>
+<p>In fact, for the last case, there is a more convenient method. You can add a <a href="https://en.wikipedia.org/wiki/Shebang_(Unix)">shebang</a> to your script specifying which dependencies <code>nix-shell</code> needs. With the following shebang, you can just execute <code>./example.rb</code>, and it will run with all dependencies.</p>
+<pre><code class="language-ruby">#! /usr/bin/env nix-shell
+#! nix-shell -i ruby -p &quot;ruby.withPackages (ps: with ps; [ nokogiri rest-client ])&quot;
+
+require 'nokogiri'
+require 'rest-client'
+
+body = RestClient.get('http://example.com').body
+puts Nokogiri::HTML(body).at('h1').text
+</code></pre>
+<h2 id='developing-with-ruby'><a href='languages-frameworks/ruby/#developing-with-ruby'>
+Developing with Ruby
+</a></h2>
+<h3 id='using-an-existing-gemfile'><a href='languages-frameworks/ruby/#using-an-existing-gemfile'>
+Using an existing Gemfile
+</a></h3>
+<p>In most cases, you'll already have a <code>Gemfile.lock</code> listing all your dependencies. This can be used to generate a <code>gemset.nix</code> which is used to fetch the gems and combine them into a single environment. The reason why you need to have a separate file for this, is that Nix requires you to have a checksum for each input to your build. Since the <code>Gemfile.lock</code> that <code>bundler</code> generates doesn't provide us with checksums, we have to first download each gem, calculate its SHA256, and store it in this separate file.</p>
+<p>So the steps from having just a <code>Gemfile</code> to a <code>gemset.nix</code> are:</p>
+<pre><code class="language-ShellSession">$ bundle lock
+$ bundix
+</code></pre>
+<p>If you already have a <code>Gemfile.lock</code>, you can run <code>bundix</code> and it will work the same.</p>
+<p>To update the gems in your <code>Gemfile.lock</code>, you may use the <code>bundix -l</code> flag, which will create a new <code>Gemfile.lock</code> in case the <code>Gemfile</code> has a more recent time of modification.</p>
+<p>Once the <code>gemset.nix</code> is generated, it can be used in a <code>bundlerEnv</code> derivation. Here is an example you could use for your <code>shell.nix</code>:</p>
+<pre><code class="language-nix"># ...
+let
+  gems = bundlerEnv {
+    name = &quot;gems-for-some-project&quot;;
+    gemdir = ./.;
+  };
+in
+mkShell {
+  packages = [
+    gems
+    gems.wrappedRuby
+  ];
+}
+</code></pre>
+<p>With this file in your directory, you can run <code>nix-shell</code> to build and use the gems. The important parts here are <code>bundlerEnv</code> and <code>wrappedRuby</code>.</p>
+<p>The <code>bundlerEnv</code> is a wrapper over all the gems in your gemset. This means that all the <code>/lib</code> and <code>/bin</code> directories will be available, and the executables of all gems (even of indirect dependencies) will end up in your <code>$PATH</code>. The <code>wrappedRuby</code> provides you with all executables that come with Ruby itself, but wrapped so they can easily find the gems in your gemset.</p>
+<p>One common issue that you might have is that you have Ruby, but also <code>bundler</code> in your gemset. That leads to a conflict for <code>/bin/bundle</code> and <code>/bin/bundler</code>. You can resolve this by wrapping either your Ruby or your gems in a <code>lowPrio</code> call. So to give the <code>bundler</code> from your gemset priority, it would be used like this:</p>
+<pre><code class="language-nix"># ...
+mkShell {
+  buildInputs = [
+    gems
+    (lowPrio gems.wrappedRuby)
+  ];
+}
+</code></pre>
+<p>Sometimes a Gemfile references other files. Such as <code>.ruby-version</code> or vendored gems. When copying the Gemfile to the nix store we need to copy those files alongside. This can be done using <code>extraConfigPaths</code>. For example:</p>
+<pre><code class="language-nix">{
+  gems = bundlerEnv {
+    name = &quot;gems-for-some-project&quot;;
+    gemdir = ./.;
+    extraConfigPaths = [ &quot;${./.}/.ruby-version&quot; ];
+  };
+}
+</code></pre>
+<h3 id='gem-specific-configurations-and-workarounds'><a href='languages-frameworks/ruby/#gem-specific-configurations-and-workarounds'>
+Gem-specific configurations and workarounds
+</a></h3>
+<p>In some cases, especially if the gem has native extensions, you might need to modify the way the gem is built.</p>
+<p>This is done via a common configuration file that includes all of the workarounds for each gem.</p>
+<p>This file lives at <code>/pkgs/development/ruby-modules/gem-config/default.nix</code>, since it already contains a lot of entries, it should be pretty easy to add the modifications you need for your needs.</p>
+<p>In the meanwhile, or if the modification is for a private gem, you can also add the configuration to only your own environment.</p>
+<p>Two places that allow this modification are the <code>ruby</code> derivation, or <code>bundlerEnv</code>.</p>
+<p>Here's the <code>ruby</code> one:</p>
+<pre><code class="language-nix">{
+  pg_version ? &quot;10&quot;,
+  pkgs ? import &lt;nixpkgs&gt; { },
+}:
+let
+  myRuby = pkgs.ruby.override {
+    defaultGemConfig = pkgs.defaultGemConfig // {
+      pg = attrs: {
+        buildFlags = [
+          &quot;--with-pg-config=${pkgs.&quot;postgresql_${pg_version}&quot;.pg_config}/bin/pg_config&quot;
+        ];
+      };
+    };
+  };
+in
+myRuby.withPackages (ps: with ps; [ pg ])
+</code></pre>
+<p>And an example with <code>bundlerEnv</code>:</p>
+<pre><code class="language-nix">{
+  pg_version ? &quot;10&quot;,
+  pkgs ? import &lt;nixpkgs&gt; { },
+}:
+let
+  gems = pkgs.bundlerEnv {
+    name = &quot;gems-for-some-project&quot;;
+    gemdir = ./.;
+    gemConfig = pkgs.defaultGemConfig // {
+      pg = attrs: {
+        buildFlags = [
+          &quot;--with-pg-config=${pkgs.&quot;postgresql_${pg_version}&quot;.pg_config}/bin/pg_config&quot;
+        ];
+      };
+    };
+  };
+in
+mkShell {
+  buildInputs = [
+    gems
+    gems.wrappedRuby
+  ];
+}
+</code></pre>
+<p>And finally via overlays:</p>
+<pre><code class="language-nix">{
+  pg_version ? &quot;10&quot;,
+}:
+let
+  pkgs = import &lt;nixpkgs&gt; {
+    overlays = [
+      (self: super: {
+        defaultGemConfig = super.defaultGemConfig // {
+          pg = attrs: {
+            buildFlags = [
+              &quot;--with-pg-config=${pkgs.&quot;postgresql_${pg_version}&quot;.pg_config}/bin/pg_config&quot;
+            ];
+          };
+        };
+      })
+    ];
+  };
+in
+pkgs.ruby.withPackages (ps: with ps; [ pg ])
+</code></pre>
+<p>Then we can get whichever postgresql version we desire and the <code>pg</code> gem will always reference it correctly:</p>
+<pre><code class="language-ShellSession">$ nix-shell --argstr pg_version 9_4 --run 'ruby -rpg -e &quot;puts PG.library_version&quot;'
+90421
+
+$ nix-shell --run 'ruby -rpg -e &quot;puts PG.library_version&quot;'
+100007
+</code></pre>
+<p>Of course for this use-case one could also use overlays since the configuration for <code>pg</code> depends on the <code>postgresql</code> alias, but for demonstration purposes this has to suffice.</p>
+<h3 id='ruby-platform-specif-gems'><a href='languages-frameworks/ruby/#ruby-platform-specif-gems'>
+Platform-specific gems
+</a></h3>
+<p>Right now, bundix has some issues with pre-built, platform-specific gems: <a href="https://github.com/nix-community/bundix/pull/68">bundix PR #68</a>.
+Until this is solved, you can tell bundler to not use platform-specific gems and instead build them from source each time:</p>
+<ul>
+<li>globally (will be set in <code>~/.config/.bundle/config</code>):</li>
+</ul>
+<pre><code class="language-shell">$ bundle config set force_ruby_platform true
+</code></pre>
+<ul>
+<li>locally (will be set in <code>&lt;project-root&gt;/.bundle/config</code>):</li>
+</ul>
+<pre><code class="language-shell">$ bundle config set --local force_ruby_platform true
+</code></pre>
+<h3 id='adding-a-gem-to-the-default-gemset'><a href='languages-frameworks/ruby/#adding-a-gem-to-the-default-gemset'>
+Adding a gem to the default gemset
+</a></h3>
+<p>Now that you know how to get a working Ruby environment with Nix, it's time to go forward and start actually developing with Ruby. We will first have a look at how Ruby gems are packaged on Nix. Then, we will look at how you can use development mode with your code.</p>
+<p>All gems in the standard set are automatically generated from a single <code>Gemfile</code>. The dependency resolution is done with <code>bundler</code> and makes it more likely that all gems are compatible with each other.</p>
+<p>To add a new gem to nixpkgs, you can put it into the <code>/pkgs/development/ruby-modules/with-packages/Gemfile</code> and run <code>./maintainers/scripts/update-ruby-packages</code>.</p>
+<p>To test that it works, you can then try using the gem with:</p>
+<pre><code class="language-shell">NIX_PATH=nixpkgs=$PWD nix-shell -p &quot;ruby.withPackages (ps: with ps; [ name-of-your-gem ])&quot;
+</code></pre>
+<p>To check the gems for any security vulnerabilities, run <code>./maintainers/scripts/audit-ruby-packages/audit-ruby-packages.bash</code>.</p>
+<h3 id='packaging-applications'><a href='languages-frameworks/ruby/#packaging-applications'>
+Packaging applications
+</a></h3>
+<p>A common task is to add a Ruby executable to Nixpkgs; popular examples would be <code>chef</code>, <code>jekyll</code>, or <code>sass</code>. A good way to do that is to use the <code>bundlerApp</code> function, that allows you to make a package that only exposes the listed executables. Otherwise, the package may cause conflicts through common paths like <code>bin/rake</code> or <code>bin/bundler</code> that aren't meant to be used.</p>
+<p>The absolute easiest way to do that is to write a <code>Gemfile</code> along these lines:</p>
+<pre><code class="language-ruby">source 'https://rubygems.org' do
+  gem 'mdl'
+end
+</code></pre>
+<p>If you want to package a specific version, you can use the standard Gemfile syntax for that, e.g. <code>gem 'mdl', '0.5.0'</code>, but if you want the latest stable version anyway, it's easier to update by running the <code>bundle lock</code> and <code>bundix</code> steps again.</p>
+<p>Now you can also make a <code>default.nix</code> that looks like this:</p>
+<pre><code class="language-nix">{ bundlerApp }:
+
+bundlerApp {
+  pname = &quot;mdl&quot;;
+  gemdir = ./.;
+  exes = [ &quot;mdl&quot; ];
+}
+</code></pre>
+<p>All that's left to do is to generate the corresponding <code>Gemfile.lock</code> and <code>gemset.nix</code> as described above in the <code>Using an existing Gemfile</code> section.</p>
+<h4 id='packaging-executables-that-require-wrapping'><a href='languages-frameworks/ruby/#packaging-executables-that-require-wrapping'>
+Packaging executables that require wrapping
+</a></h4>
+<p>Sometimes your app will depend on other executables at runtime and try to find them through the <code>PATH</code> environment variable.</p>
+<p>In this case, you can provide a <code>postBuild</code> hook to <code>bundlerApp</code> that wraps the gem in another script that prefixes the <code>PATH</code>.</p>
+<p>Of course you could also make a custom <code>gemConfig</code> if you know exactly how to patch it, but it's usually much easier to maintain with a simple wrapper so the patch doesn't have to be adjusted for each version.</p>
+<p>Here's another example:</p>
+<pre><code class="language-nix">{
+  lib,
+  bundlerApp,
+  makeWrapper,
+  git,
+  gnutar,
+  gzip,
+}:
+
+bundlerApp {
+  pname = &quot;r10k&quot;;
+  gemdir = ./.;
+  exes = [ &quot;r10k&quot; ];
+
+  nativeBuildInputs = [ makeWrapper ];
+
+  postBuild = ''
+    wrapProgram $out/bin/r10k --prefix PATH : ${
+      lib.makeBinPath [
+        git
+        gnutar
+        gzip
+      ]
+    }
+  '';
+}
+</code></pre>
+        </main>
+      </div>
+    </section>
+<script defer src='highlight.pack.cf986678470772f7.js'></script>
+<script defer src='mmdoc.367f3e8986e40416.js'></script>
+<script defer src='mmdoc_search.a5b6fc7d7512cdc1.js' data-search-index='search_index.b3afff10081eb0bd.js' data-fuse='fuse.basic.min.bb997c989fa0a28e.js'></script>
+  </div>
+  </body>
+</html>

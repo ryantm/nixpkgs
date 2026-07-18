@@ -1,0 +1,856 @@
+<!doctype html>
+<html lang='en'>
+  <head>
+    <base href='../../../'>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <script>
+      (() => {
+        let theme = null
+        try { theme = localStorage.getItem('theme') } catch (error) {}
+        if (theme !== 'light' && theme !== 'dark')
+          theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+        document.documentElement.classList.add(theme + '-theme')
+      })()
+    </script>
+    <meta name='description' content='lib.meta: functions for derivation metadata'>
+    <link rel='icon' href='favicon.svg'>
+    <link rel='stylesheet' href='a11y-dark.1fcafc9d9a306955.css'>
+    <link rel='stylesheet' href='a11y-light.b466309a7fa86b1f.css'>
+    <link rel='stylesheet' href='mmdoc.e4286053b6471af4.css'>
+    <title>lib.meta: functions for derivation metadata | nixpkgs</title>
+  </head>
+  <body>
+  <a class='skip-link' href='functions/library/meta/#main-content'>Skip to main content</a>
+  <input type='checkbox' id='sidebar-checkbox' aria-hidden='true' tabindex='-1' style='display: none;'>
+  <div class='body'>
+    <div class='nav-top-container'>
+    <nav class='nav-top' aria-label='Documentation controls'>
+      <button type='button' class='sidebar-toggle' aria-label='Toggle table of contents' aria-controls='sidebar' aria-expanded='true'></button>    <button type='button' class='search-toggle' aria-label='Open search' aria-controls='search-panel' aria-expanded='false'></button>    <button type='button' class='theme-toggle' aria-label='Switch to dark theme' aria-pressed='false'></button>    <a id='chapter-previous-button' class='chapter-previous' href='functions/library/customisation/#sec-functions-library-customisation' title='lib.customisation: Functions to customise (derivation-related) functions, derivations, or attribute sets' aria-label='Previous: lib.customisation: Functions to customise (derivation-related) functions, derivations, or attribute sets'>&lt;</a>
+    <a id='chapter-next-button' class='chapter-next' href='functions/library/derivations/#sec-functions-library-derivations' title='lib.derivations: miscellaneous derivation-specific functions' aria-label='Next: lib.derivations: miscellaneous derivation-specific functions'>&gt;</a>
+    </nav>
+    </div>
+    <nav id='sidebar' class='sidebar' aria-label='Table of contents'>
+<h1>Nixpkgs Manual</h1>
+<p>Version 26.11pre</p>
+<ul>
+<li><a href="./#preface">Preface</a>
+<ul>
+<li><a href="preface/#overview-of-nixpkgs">Overview of Nixpkgs</a></li>
+</ul>
+</li>
+<li><a href="first-package/#chap-first-package">Package your first application</a></li>
+</ul>
+<h2>Using Nixpkgs</h2>
+<ul>
+<li><a href="using/platform-support/#chap-platform-support">Platform Support</a></li>
+<li><a href="using/configuration/#chap-packageconfig">Global configuration</a></li>
+<li><a href="using/overlays/#chap-overlays">Overlays</a></li>
+<li><a href="using/overrides/#chap-overrides">Overriding</a></li>
+</ul>
+<h2>Nixpkgs Lib</h2>
+<ul>
+<li><a href="functions/#chap-functions">Functions reference</a>
+<ul>
+<li>Library Functions
+<ul>
+<li><a href="functions/library/asserts/#sec-functions-library-asserts">lib.asserts: assertion functions</a></li>
+<li><a href="functions/library/attrsets/#sec-functions-library-attrsets">lib.attrsets: attribute set functions</a></li>
+<li><a href="functions/library/strings/#sec-functions-library-strings">lib.strings: string manipulation functions</a></li>
+<li><a href="functions/library/versions/#sec-functions-library-versions">lib.versions: version string functions</a></li>
+<li><a href="functions/library/trivial/#sec-functions-library-trivial">lib.trivial: miscellaneous functions</a></li>
+<li><a href="functions/library/fixedPoints/#sec-functions-library-fixedPoints">lib.fixedPoints: explicit recursion functions</a></li>
+<li><a href="functions/library/lists/#sec-functions-library-lists">lib.lists: list manipulation functions</a></li>
+<li><a href="functions/library/debug/#sec-functions-library-debug">lib.debug: debugging functions</a></li>
+<li><a href="functions/library/options/#sec-functions-library-options">lib.options: NixOS / nixpkgs option handling</a></li>
+<li><a href="functions/library/path/#sec-functions-library-path">lib.path: path functions</a></li>
+<li><a href="functions/library/filesystem/#sec-functions-library-filesystem">lib.filesystem: filesystem functions</a></li>
+<li><a href="functions/library/fileset/#sec-functions-library-fileset">lib.fileset: file set functions</a></li>
+<li><a href="functions/library/sources/#sec-functions-library-sources">lib.sources: source filtering functions</a></li>
+<li><a href="functions/library/cli/#sec-functions-library-cli">lib.cli: command-line serialization functions</a></li>
+<li><a href="functions/library/gvariant/#sec-functions-library-gvariant">lib.gvariant: GVariant formatted string serialization functions</a></li>
+<li><a href="functions/library/fetchers/#sec-functions-library-fetchers">lib.fetchers: functions which can be reused across fetchers</a></li>
+<li><a href="functions/library/generators/#sec-functions-library-generators">lib.generators: functions that create file formats from nix data structures</a></li>
+<li><a href="functions/library/customisation/#sec-functions-library-customisation">lib.customisation: Functions to customise (derivation-related) functions, derivations, or attribute sets</a></li>
+<li><a href="functions/library/meta/#sec-functions-library-meta">lib.meta: functions for derivation metadata</a></li>
+<li><a href="functions/library/derivations/#sec-functions-library-derivations">lib.derivations: miscellaneous derivation-specific functions</a></li>
+<li><a href="functions/generators/#sec-generators">Generators</a></li>
+<li><a href="functions/debug/#sec-debug">Debugging Nix Expressions</a></li>
+<li><a href="functions/prefer-remote-fetch/#sec-prefer-remote-fetch">prefer-remote-fetch overlay</a></li>
+<li><a href="functions/nix-gitignore/#sec-pkgs-nix-gitignore">pkgs.nix-gitignore</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="module-system/module-system/#module-system">Module System</a></li>
+</ul>
+<h2>Standard Environment</h2>
+<ul>
+<li><a href="stdenv/#part-stdenv">Standard environment</a></li>
+<li><a href="stdenv/stdenv/#chap-stdenv">The Standard Environment</a></li>
+<li><a href="stdenv/meta/#chap-meta">Meta-attributes</a></li>
+<li><a href="stdenv/passthru/#chap-passthru">Passthru-attributes</a></li>
+<li><a href="stdenv/multiple-output/#chap-multiple-output">Multiple-output packages</a></li>
+<li><a href="stdenv/cross-compilation/#chap-cross">Cross-compilation</a></li>
+<li><a href="stdenv/platform-notes/#chap-platform-notes">Platform Notes</a></li>
+</ul>
+<h2>Toolchains</h2>
+<ul>
+<li><a href="toolchains/llvm/#chap-toolchains">The LLVM Toolchain</a></li>
+</ul>
+<h2>Builders</h2>
+<ul>
+<li><a href="build-helpers/#part-builders">Build helpers</a></li>
+<li><a href="build-helpers/fetchers/#chap-pkgs-fetchers">Fetchers</a></li>
+<li><a href="build-helpers/trivial-build-helpers/#chap-trivial-builders">Trivial build helpers</a></li>
+<li><a href="build-helpers/fixed-point-arguments/#chap-build-helpers-finalAttrs">Fixed-point arguments of build helpers</a></li>
+<li><a href="build-helpers/dev-shell-tools/#chap-devShellTools">Development Shell helpers</a></li>
+<li><a href="build-helpers/testers/#chap-testers">Testers</a></li>
+<li>Special build helpers
+<ul>
+<li><a href="build-helpers/special/fhs-environments/#sec-fhs-environments">buildFHSEnv</a></li>
+<li><a href="build-helpers/special/fakenss/#sec-fakeNss">fakeNss</a></li>
+<li><a href="build-helpers/special/makesetuphook/#sec-pkgs.makeSetupHook">pkgs.makeSetupHook</a></li>
+<li><a href="build-helpers/special/mkshell/#sec-pkgs-mkShell">pkgs.mkShell</a></li>
+<li><a href="packages/darwin-builder/#sec-darwin-builder">darwin.linux-builder</a></li>
+<li><a href="build-helpers/special/vm-tools/#sec-vm-tools">vmTools</a></li>
+</ul>
+</li>
+<li>Images
+<ul>
+<li><a href="build-helpers/images/appimagetools/#sec-pkgs-appimageTools">pkgs.appimageTools</a></li>
+<li><a href="build-helpers/images/dockertools/#sec-pkgs-dockerTools">pkgs.dockerTools</a></li>
+<li><a href="build-helpers/images/ocitools/#sec-pkgs-ociTools">pkgs.ociTools</a></li>
+<li><a href="build-helpers/images/portableservice/#sec-pkgs-portableService">pkgs.portableService</a></li>
+<li><a href="build-helpers/images/makediskimage/#sec-make-disk-image">&lt;nixpkgs/nixos/lib/make-disk-image.nix&gt;</a></li>
+<li><a href="build-helpers/images/binarycache/#sec-pkgs-binary-cache">pkgs.mkBinaryCache</a></li>
+</ul>
+</li>
+<li><a href="hooks/index/#chap-hooks">Hooks reference</a>
+<ul>
+<li><a href="hooks/autoconf/#setup-hook-autoconf">Autoconf</a></li>
+<li><a href="hooks/automake/#setup-hook-automake">Automake</a></li>
+<li><a href="hooks/autopatchelf/#setup-hook-autopatchelfhook">autoPatchelfHook</a></li>
+<li><a href="hooks/breakpoint/#breakpointhook">breakpointHook</a></li>
+<li><a href="hooks/cmake/#cmake">cmake</a></li>
+<li><a href="hooks/gdk-pixbuf/#setup-hook-gdk-pixbuf">gdk-pixbuf</a></li>
+<li><a href="hooks/ghc/#ghc">GHC</a></li>
+<li><a href="hooks/gnome/#gnome-platform">GNOME platform</a></li>
+<li><a href="hooks/installShellFiles/#installshellfiles">installShellFiles</a></li>
+<li><a href="hooks/libglycin/#libglycin-hooks">libglycin</a></li>
+<li><a href="hooks/libiconv/#libiconv-libintl">libiconv, libintl</a></li>
+<li><a href="hooks/libxml2/#setup-hook-libxml2">libxml2</a></li>
+<li><a href="hooks/meson/#meson">Meson</a></li>
+<li><a href="hooks/mpi-check-hook/#setup-hook-mpi-check">mpiCheckPhaseHook</a></li>
+<li><a href="hooks/ninja/#ninja">ninja</a></li>
+<li><a href="hooks/patch-rc-path-hooks/#sec-patchRcPathHooks">patchRcPath hooks</a></li>
+<li><a href="hooks/perl/#setup-hook-perl">Perl</a></li>
+<li><a href="hooks/pkg-config/#setup-hook-pkg-config">pkg-config</a></li>
+<li><a href="hooks/pnpm/#pnpm-build-hook">pnpmBuildHook</a></li>
+<li><a href="hooks/postgresql-test-hook/#sec-postgresqlTestHook">postgresqlTestHook</a></li>
+<li><a href="hooks/python/#setup-hook-python">Python</a></li>
+<li><a href="hooks/scons/#scons">scons</a></li>
+<li><a href="hooks/tetex-tex-live/#tetex-tex-live">teTeX / TeX Live</a></li>
+<li><a href="hooks/unzip/#unzip">unzip</a></li>
+<li><a href="hooks/validatePkgConfig/#validatepkgconfig">validatePkgConfig</a></li>
+<li><a href="hooks/versionCheckHook/#versioncheckhook">versionCheckHook</a></li>
+<li><a href="hooks/waf/#waf-hook">wafHook</a></li>
+<li><a href="hooks/xcbuild/#xcbuildhook">xcbuildHook</a></li>
+</ul>
+</li>
+<li><a href="languages-frameworks/index/#chap-language-support">Languages and frameworks</a>
+<ul>
+<li><a href="languages-frameworks/agda/#agda">Agda</a></li>
+<li><a href="languages-frameworks/android/#android">Android</a></li>
+<li><a href="languages-frameworks/astal/#astal">Astal</a></li>
+<li><a href="languages-frameworks/beam/#sec-beam">BEAM Languages (Erlang, Elixir &amp; LFE)</a></li>
+<li><a href="languages-frameworks/chicken/#sec-chicken">CHICKEN</a></li>
+<li><a href="languages-frameworks/cosmic/#sec-language-cosmic">COSMIC</a></li>
+<li><a href="languages-frameworks/crystal/#crystal">Crystal</a></li>
+<li><a href="languages-frameworks/cuda/#cuda">CUDA</a></li>
+<li><a href="languages-frameworks/cuelang/#cuelang">Cue (Cuelang)</a></li>
+<li><a href="languages-frameworks/dlang/#dlang">D (Dlang)</a></li>
+<li><a href="languages-frameworks/dart/#sec-language-dart">Dart</a></li>
+<li><a href="languages-frameworks/dhall/#sec-language-dhall">Dhall</a></li>
+<li><a href="languages-frameworks/dotnet/#dotnet">Dotnet</a></li>
+<li><a href="languages-frameworks/emscripten/#emscripten">Emscripten</a></li>
+<li><a href="languages-frameworks/factor/#sec-language-factor">Factor</a></li>
+<li><a href="languages-frameworks/gnome/#sec-language-gnome">GNOME</a></li>
+<li><a href="languages-frameworks/go/#sec-language-go">Go</a></li>
+<li><a href="languages-frameworks/gradle/#gradle">Gradle</a></li>
+<li><a href="languages-frameworks/hare/#sec-language-hare">Hare</a></li>
+<li><a href="languages-frameworks/haskell/#haskell">Haskell</a></li>
+<li><a href="languages-frameworks/hy/#sec-language-hy">Hy</a></li>
+<li><a href="languages-frameworks/idris/#idris">Idris</a></li>
+<li><a href="languages-frameworks/idris2/#sec-idris2">Idris2</a></li>
+<li><a href="languages-frameworks/ios/#ios">iOS</a></li>
+<li><a href="languages-frameworks/java/#sec-language-java">Java</a></li>
+<li><a href="languages-frameworks/javascript/#language-javascript">Javascript</a></li>
+<li><a href="languages-frameworks/julia/#language-julia">Julia</a></li>
+<li><a href="languages-frameworks/lean4/#sec-language-lean4">Lean 4</a></li>
+<li><a href="languages-frameworks/lisp/#lisp">lisp-modules</a></li>
+<li><a href="languages-frameworks/lua/#lua">Lua</a></li>
+<li><a href="languages-frameworks/maven/#maven">Maven</a></li>
+<li><a href="languages-frameworks/neovim/#neovim">Neovim</a></li>
+<li><a href="languages-frameworks/nim/#sec-language-nim">Nim</a></li>
+<li><a href="languages-frameworks/ocaml/#sec-language-ocaml">OCaml</a></li>
+<li><a href="languages-frameworks/octave/#sec-octave">Octave</a></li>
+<li><a href="languages-frameworks/perl/#sec-language-perl">Perl</a></li>
+<li><a href="languages-frameworks/php/#sec-php">PHP</a></li>
+<li><a href="languages-frameworks/pkg-config/#sec-pkg-config">pkg-config</a></li>
+<li><a href="languages-frameworks/python/#python">Python</a></li>
+<li><a href="languages-frameworks/qt/#sec-language-qt">Qt</a></li>
+<li><a href="languages-frameworks/r/#r">R</a></li>
+<li><a href="languages-frameworks/rocq/#sec-language-rocq">Rocq and rocq packages</a></li>
+<li><a href="languages-frameworks/ruby/#sec-language-ruby">Ruby</a></li>
+<li><a href="languages-frameworks/rust/#rust">Rust</a></li>
+<li><a href="languages-frameworks/scheme/#sec-scheme">Scheme</a></li>
+<li><a href="languages-frameworks/swift/#swift">Swift</a></li>
+<li><a href="languages-frameworks/tcl/#sec-language-tcl">Tcl</a></li>
+<li><a href="languages-frameworks/texlive/#sec-language-texlive">TeX Live</a></li>
+<li><a href="languages-frameworks/typst/#typst">Typst</a></li>
+<li><a href="languages-frameworks/vim/#vim">Vim</a></li>
+</ul>
+</li>
+<li><a href="packages/index/#chap-packages">Packages</a>
+<ul>
+<li><a href="packages/build-support/#sec-build-support">Build Support</a></li>
+<li><a href="packages/cataclysm-dda/#cataclysm-dark-days-ahead">Cataclysm: Dark Days Ahead</a></li>
+<li><a href="packages/citrix/#sec-citrix">Citrix Workspace</a></li>
+<li><a href="packages/dlib/#dlib">DLib</a></li>
+<li><a href="packages/eclipse/#sec-eclipse">Eclipse</a></li>
+<li><a href="packages/elm/#sec-elm">Elm</a></li>
+<li><a href="packages/emacs/#sec-emacs">Emacs</a></li>
+<li><a href="packages/firefox/#sec-firefox">Firefox</a></li>
+<li><a href="packages/fish/#sec-fish">Fish</a></li>
+<li><a href="packages/friction-graphics/#friction-graphics">Friction</a></li>
+<li><a href="packages/fuse/#sec-fuse">FUSE</a></li>
+<li><a href="packages/geant4/#geant4">Geant4</a></li>
+<li><a href="packages/ibus/#sec-ibus-typing-booster">ibus-engines.typing-booster</a></li>
+<li><a href="packages/inkscape/#sec-inkscape">Inkscape</a></li>
+<li><a href="packages/kakoune/#sec-kakoune">Kakoune</a></li>
+<li><a href="packages/krita/#sec-krita">Krita</a></li>
+<li><a href="packages/lhapdf/#lhapdf">LHAPDF</a></li>
+<li><a href="packages/linux/#sec-linux-kernel">Linux kernel</a></li>
+<li><a href="packages/locales/#locales">Locales</a></li>
+<li><a href="packages/etc-files/#etc">/etc files</a></li>
+<li><a href="packages/nginx/#sec-nginx">Nginx</a></li>
+<li><a href="packages/nrfutil/#sec-nrfutil">nrfutil</a></li>
+<li><a href="packages/opengl/#sec-opengl">OpenGL</a></li>
+<li><a href="packages/python-tree-sitter/#python-tree-sitter">Python Tree Sitter</a></li>
+<li><a href="packages/shell-helpers/#sec-shell-helpers">Interactive shell helpers</a></li>
+<li><a href="packages/steam/#sec-steam">Steam</a></li>
+<li><a href="packages/treefmt/#treefmt">treefmt</a></li>
+<li><a href="packages/urxvt/#sec-urxvt">Urxvt</a></li>
+<li><a href="packages/uv/#sec-uv">uv</a></li>
+<li><a href="packages/vcpkg/#sec-vcpkg">VCPKG</a></li>
+<li><a href="packages/weechat/#sec-weechat">WeeChat</a></li>
+</ul>
+</li>
+</ul>
+<h2>Modules</h2>
+<ul>
+<li><a href="modules/index/#modules">Modules</a>
+<ul>
+<li><a href="modules/generic/#modules-generic">Generic</a>
+<ul>
+<li><a href="modules/generic/#modules-generic-meta-maintainers">meta-maintainers.nix</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2>Development of Nixpkgs</h2>
+<ul>
+<li><a href="development/opening-issues/#sec-opening-issues">Opening issues</a></li>
+<li><a href="contributing/coding-conventions/#chap-conventions">Coding conventions</a></li>
+</ul>
+<h2>Interoperability Standards</h2>
+<ul>
+<li><a href="interoperability/cyclonedx/#chap-interop-cyclonedx">CycloneDX</a>
+<ul>
+<li><a href="interoperability/cyclonedx/#sec-interop.cylonedx-nix"><code>nix</code> namespace</a></li>
+<li><a href="interoperability/cyclonedx/#sec-interop.cylonedx-narinfo"><code>nix:narinfo</code></a></li>
+<li><a href="interoperability/cyclonedx/#sec-interop.cylonedx-fod"><code>nix:fod</code></a></li>
+</ul>
+</li>
+</ul>
+<h2>Release Notes</h2>
+<ul>
+<li><a href="release-notes/release-notes/#chap-release-notes">Release Notes</a>
+<ul>
+<li><a href="release-notes/rl-2611/#sec-nixpkgs-release-26.11">Nixpkgs 26.11 (&quot;Zokor&quot;, 2026.11/??)</a></li>
+<li><a href="release-notes/rl-2605/#sec-nixpkgs-release-26.05">Nixpkgs 26.05 (&quot;Yarara&quot;, 2026.05/30)</a></li>
+<li><a href="release-notes/rl-2511/#sec-nixpkgs-release-25.11">Nixpkgs 25.11 (&quot;Xantusia&quot;, 2025.11/30)</a></li>
+<li><a href="release-notes/rl-2505/#sec-nixpkgs-release-25.05">Nixpkgs 25.05 (2025.05/23)</a></li>
+</ul>
+</li>
+</ul>
+    </nav>
+    <section id='main'>
+      <div id='search-panel' class='nav-search' role='search' hidden>
+        <label class='visually-hidden' for='search'>Search documentation</label>
+        <input type='search' id='search' placeholder='Search' autocomplete='off' aria-controls='search-results'>
+        <p id='search-status' class='visually-hidden' role='status' aria-live='polite'></p>
+        <div id='search-results'></div>
+      </div>
+      <div class='main-scroll'>
+        <main id='main-content' tabindex='-1'>
+<h1 id='sec-functions-library-meta'><a href='functions/library/meta/#sec-functions-library-meta'>
+lib.meta: functions for derivation metadata
+</a></h1>
+<p>Some functions for manipulating meta attributes, as well as the
+name attribute.</p>
+<h2 id='function-library-lib.meta.addMetaAttrs'><a href='functions/library/meta/#function-library-lib.meta.addMetaAttrs'>
+<code>lib.meta.addMetaAttrs</code>
+</a></h2>
+<p>Add to or override the meta attributes of the given
+derivation.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>newAttrs</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+<dt>
+<p><code>drv</code></p>
+</dt>
+<dd>
+<p>2. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>addMetaAttrs :: AttrSet -&gt; Derivation -&gt; Derivation
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.meta.addMetaAttrs</code> usage example</h4>
+<pre><code class="language-nix">addMetaAttrs {description = &quot;Bla blah&quot;;} somePkg
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/meta.nix#L56">lib/meta.nix:56</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.meta.dontDistribute'><a href='functions/library/meta/#function-library-lib.meta.dontDistribute'>
+<code>lib.meta.dontDistribute</code>
+</a></h2>
+<p>Disable Hydra builds of given derivation.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>drv</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>dontDistribute :: Derivation -&gt; Derivation
+</code></pre>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/meta.nix#L80">lib/meta.nix:80</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.meta.setName'><a href='functions/library/meta/#function-library-lib.meta.setName'>
+<code>lib.meta.setName</code>
+</a></h2>
+<p>Change the <a href="https://nixos.org/manual/nix/stable/language/derivations.html#attr-name">symbolic name of a derivation</a>.</p>
+<div class='admonition warning'><h3 class='title'>Warning</h3>
+<p>
+Dependent derivations will be rebuilt when the symbolic name is changed.
+</p>
+</div>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>name</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+<dt>
+<p><code>drv</code></p>
+</dt>
+<dd>
+<p>2. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>setName :: String -&gt; Derivation -&gt; Derivation
+</code></pre>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/meta.nix#L105">lib/meta.nix:105</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.meta.updateName'><a href='functions/library/meta/#function-library-lib.meta.updateName'>
+<code>lib.meta.updateName</code>
+</a></h2>
+<p>Like <code>setName</code>, but takes the previous name as an argument.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>updater</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+<dt>
+<p><code>drv</code></p>
+</dt>
+<dd>
+<p>2. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>updateName :: (String -&gt; String) -&gt; Derivation -&gt; Derivation
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.meta.updateName</code> usage example</h4>
+<pre><code class="language-nix">updateName (oldName: oldName + &quot;-experimental&quot;) somePkg
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/meta.nix#L136">lib/meta.nix:136</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.meta.appendToName'><a href='functions/library/meta/#function-library-lib.meta.appendToName'>
+<code>lib.meta.appendToName</code>
+</a></h2>
+<p>Append a suffix to the name of a package (before the version
+part).</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>suffix</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>appendToName :: String -&gt; Derivation -&gt; Derivation
+</code></pre>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/meta.nix#L154">lib/meta.nix:154</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.meta.mapDerivationAttrset'><a href='functions/library/meta/#function-library-lib.meta.mapDerivationAttrset'>
+<code>lib.meta.mapDerivationAttrset</code>
+</a></h2>
+<p>Apply a function to each derivation and only to derivations in an attrset.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>f</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+<dt>
+<p><code>set</code></p>
+</dt>
+<dd>
+<p>2. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>mapDerivationAttrset :: (Derivation -&gt; a) -&gt; AttrSet -&gt; AttrSet
+</code></pre>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/meta.nix#L183">lib/meta.nix:183</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.meta.defaultPriority'><a href='functions/library/meta/#function-library-lib.meta.defaultPriority'>
+<code>lib.meta.defaultPriority</code>
+</a></h2>
+<p>The default priority of packages in Nix. See <code>defaultPriority</code> in <a href="https://github.com/NixOS/nix/blob/master/src/nix/profile.cc#L47"><code>src/nix/profile.cc</code></a>.</p>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/meta.nix#L189">lib/meta.nix:189</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.meta.setPrio'><a href='functions/library/meta/#function-library-lib.meta.setPrio'>
+<code>lib.meta.setPrio</code>
+</a></h2>
+<p>Set the nix-env priority of the package. Note that higher values are lower priority, and vice versa.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>priority</code></p>
+</dt>
+<dd>
+<p>1. The priority to set.</p>
+</dd>
+<dt>
+<p><code>drv</code></p>
+</dt>
+<dd>
+<p>2. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>setPrio :: Int -&gt; Derivation -&gt; Derivation
+</code></pre>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/meta.nix#L208">lib/meta.nix:208</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.meta.lowPrio'><a href='functions/library/meta/#function-library-lib.meta.lowPrio'>
+<code>lib.meta.lowPrio</code>
+</a></h2>
+<p>Decrease the nix-env priority of the package, i.e., other
+versions/variants of the package will be preferred.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>drv</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>lowPrio :: Derivation -&gt; Derivation
+</code></pre>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/meta.nix#L226">lib/meta.nix:226</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.meta.lowPrioSet'><a href='functions/library/meta/#function-library-lib.meta.lowPrioSet'>
+<code>lib.meta.lowPrioSet</code>
+</a></h2>
+<p>Apply <code>lowPrio</code> to an attrset with derivations.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>set</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>lowPrioSet :: { [String] :: Derivation } -&gt; { [String] :: Derivation }
+</code></pre>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/meta.nix#L243">lib/meta.nix:243</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.meta.hiPrio'><a href='functions/library/meta/#function-library-lib.meta.hiPrio'>
+<code>lib.meta.hiPrio</code>
+</a></h2>
+<p>Increase the nix-env priority of the package, i.e., this
+version/variant of the package will be preferred.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>drv</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>hiPrio :: Derivation -&gt; Derivation
+</code></pre>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/meta.nix#L261">lib/meta.nix:261</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.meta.hiPrioSet'><a href='functions/library/meta/#function-library-lib.meta.hiPrioSet'>
+<code>lib.meta.hiPrioSet</code>
+</a></h2>
+<p>Apply <code>hiPrio</code> to an attrset with derivations.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>set</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>hiPrioSet :: { [String] :: Derivation } -&gt; { [String] :: Derivation }
+</code></pre>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/meta.nix#L278">lib/meta.nix:278</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.meta.platformMatch'><a href='functions/library/meta/#function-library-lib.meta.platformMatch'>
+<code>lib.meta.platformMatch</code>
+</a></h2>
+<p>Check to see if a platform is matched by the given <code>meta.platforms</code>
+element.</p>
+<p>A <code>meta.platform</code> pattern is either</p>
+<ol>
+<li>
+<p>(legacy) a system string.</p>
+</li>
+<li>
+<p>(modern) a pattern for the entire platform structure (see <code>lib.systems.inspect.platformPatterns</code>).</p>
+</li>
+<li>
+<p>(modern) a pattern for the platform <code>parsed</code> field (see <code>lib.systems.inspect.patterns</code>).</p>
+</li>
+</ol>
+<p>We can inject these into a pattern for the whole of a structured platform,
+and then match that.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>platform</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+<dt>
+<p><code>elem</code></p>
+</dt>
+<dd>
+<p>2. Function argument</p>
+</dd>
+</dl>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.meta.platformMatch</code> usage example</h4>
+<pre><code class="language-nix">lib.meta.platformMatch { system = &quot;aarch64-darwin&quot;; } &quot;aarch64-darwin&quot;
+=&gt; true
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/meta.nix#L316">lib/meta.nix:316</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.meta.availableOn'><a href='functions/library/meta/#function-library-lib.meta.availableOn'>
+<code>lib.meta.availableOn</code>
+</a></h2>
+<p>Check if a package is available on a given platform.</p>
+<p>A package is available on a platform if both</p>
+<ol>
+<li>
+<p>One of <code>meta.platforms</code> pattern matches the given
+platform, or <code>meta.platforms</code> is not present.</p>
+</li>
+<li>
+<p>None of <code>meta.badPlatforms</code> pattern matches the given platform.</p>
+</li>
+</ol>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>platform</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+<dt>
+<p><code>pkg</code></p>
+</dt>
+<dd>
+<p>2. Function argument</p>
+</dd>
+</dl>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.meta.availableOn</code> usage example</h4>
+<pre><code class="language-nix">lib.meta.availableOn { system = &quot;aarch64-darwin&quot;; } pkg.zsh
+=&gt; true
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/meta.nix#L366">lib/meta.nix:366</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.meta.licensesSpdx'><a href='functions/library/meta/#function-library-lib.meta.licensesSpdx'>
+<code>lib.meta.licensesSpdx</code>
+</a></h2>
+<p>Mapping of SPDX ID to the attributes in lib.licenses.</p>
+<p>For SPDX IDs, see https://spdx.org/licenses.
+Note that some SPDX licenses might be missing.</p>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.meta.licensesSpdx</code> usage example</h4>
+<pre><code class="language-nix">lib.licensesSpdx.MIT == lib.licenses.mit
+=&gt; true
+lib.licensesSpdx.&quot;MY LICENSE&quot;
+=&gt; error: attribute 'MY LICENSE' missing
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/meta.nix#L390">lib/meta.nix:390</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.meta.getLicenseFromSpdxId'><a href='functions/library/meta/#function-library-lib.meta.getLicenseFromSpdxId'>
+<code>lib.meta.getLicenseFromSpdxId</code>
+</a></h2>
+<p>Get the corresponding attribute in lib.licenses from the SPDX ID
+or warn and fallback to <code>{ shortName = &lt;license string&gt;; }</code>.</p>
+<p>For SPDX IDs, see https://spdx.org/licenses.
+Note that some SPDX licenses might be missing.</p>
+<h3>Type</h3>
+<pre><code>getLicenseFromSpdxId :: String -&gt; {
+  deprecated :: Bool;
+  free :: Bool;
+  fullName :: String;
+  redistributable :: Bool;
+  shortName :: String;
+  spdxId :: String;
+  url :: String;
+}
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.meta.getLicenseFromSpdxId</code> usage example</h4>
+<pre><code class="language-nix">lib.getLicenseFromSpdxId &quot;MIT&quot; == lib.licenses.mit
+=&gt; true
+lib.getLicenseFromSpdxId &quot;mIt&quot; == lib.licenses.mit
+=&gt; true
+lib.getLicenseFromSpdxId &quot;MY LICENSE&quot;
+=&gt; trace: warning: getLicenseFromSpdxId: No license matches the given SPDX ID: MY LICENSE
+=&gt; { shortName = &quot;MY LICENSE&quot;; }
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/meta.nix#L432">lib/meta.nix:432</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.meta.getLicenseFromSpdxIdOr'><a href='functions/library/meta/#function-library-lib.meta.getLicenseFromSpdxIdOr'>
+<code>lib.meta.getLicenseFromSpdxIdOr</code>
+</a></h2>
+<p>Get the corresponding attribute in lib.licenses from the SPDX ID
+or fallback to the given default value.</p>
+<p>For SPDX IDs, see https://spdx.org/licenses.
+Note that some SPDX licenses might be missing.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>licstr</code></p>
+</dt>
+<dd>
+<p>1. SPDX ID string to find a matching license</p>
+</dd>
+<dt>
+<p><code>default</code></p>
+</dt>
+<dd>
+<p>2. Fallback value when a match is not found</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>getLicenseFromSpdxIdOr :: String -&gt; a -&gt; ({
+  deprecated :: Bool;
+  free :: Bool;
+  fullName :: String;
+  redistributable :: Bool;
+  shortName :: String;
+  spdxId :: String;
+  url :: String;
+} | a)
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.meta.getLicenseFromSpdxIdOr</code> usage example</h4>
+<pre><code class="language-nix">lib.getLicenseFromSpdxIdOr &quot;MIT&quot; null == lib.licenses.mit
+=&gt; true
+lib.getLicenseFromSpdxId &quot;mIt&quot; null == lib.licenses.mit
+=&gt; true
+lib.getLicenseFromSpdxIdOr &quot;MY LICENSE&quot; lib.licenses.free == lib.licenses.free
+=&gt; true
+lib.getLicenseFromSpdxIdOr &quot;MY LICENSE&quot; null
+=&gt; null
+lib.getLicenseFromSpdxIdOr &quot;MY LICENSE&quot; (throw &quot;No SPDX ID matches MY LICENSE&quot;)
+=&gt; error: No SPDX ID matches MY LICENSE
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/meta.nix#L488">lib/meta.nix:488</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.meta.getExe'><a href='functions/library/meta/#function-library-lib.meta.getExe'>
+<code>lib.meta.getExe</code>
+</a></h2>
+<p>Get the path to the main program of a package based on <code>meta.mainProgram</code></p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>x</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>getExe :: Derivation -&gt; StorePath
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.meta.getExe</code> usage example</h4>
+<pre><code class="language-nix">getExe pkgs.hello
+=&gt; &quot;/nix/store/g124820p9hlv4lj8qplzxw1c44dxaw1k-hello-2.12/bin/hello&quot;
+getExe pkgs.mustache-go
+=&gt; &quot;/nix/store/am9ml4f4ywvivxnkiaqwr0hyxka1xjsf-mustache-go-1.3.0/bin/mustache&quot;
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/meta.nix#L525">lib/meta.nix:525</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.meta.getExe-prime'><a href='functions/library/meta/#function-library-lib.meta.getExe-prime'>
+<code>lib.meta.getExe'</code>
+</a></h2>
+<p>Get the path of a program of a derivation.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>x</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+<dt>
+<p><code>y</code></p>
+</dt>
+<dd>
+<p>2. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>getExe' :: Derivation -&gt; String -&gt; StorePath
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.meta.getExe'</code> usage example</h4>
+<pre><code class="language-nix">getExe' pkgs.hello &quot;hello&quot;
+=&gt; &quot;/nix/store/g124820p9hlv4lj8qplzxw1c44dxaw1k-hello-2.12/bin/hello&quot;
+getExe' pkgs.imagemagick &quot;convert&quot;
+=&gt; &quot;/nix/store/5rs48jamq7k6sal98ymj9l4k2bnwq515-imagemagick-7.1.1-15/bin/convert&quot;
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/meta.nix#L571">lib/meta.nix:571</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.meta.cpeFullVersionWithVendor'><a href='functions/library/meta/#function-library-lib.meta.cpeFullVersionWithVendor'>
+<code>lib.meta.cpeFullVersionWithVendor</code>
+</a></h2>
+<p>Generate <a href="stdenv/meta/#var-meta-identifiers-cpeParts">CPE parts</a> from inputs. Copies <code>vendor</code> and <code>version</code> to the output, and sets <code>update</code> to <code>*</code>.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>vendor</code></p>
+</dt>
+<dd>
+<p>package's vendor</p>
+</dd>
+<dt>
+<p><code>version</code></p>
+</dt>
+<dd>
+<p>package's version</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>cpeFullVersionWithVendor :: String -&gt; String -&gt; { update :: String; vendor :: String; version :: String; }
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.meta.cpeFullVersionWithVendor</code> usage example</h4>
+<pre><code class="language-nix">lib.meta.cpeFullVersionWithVendor &quot;gnu&quot; &quot;1.2.3&quot;
+=&gt; {
+  vendor = &quot;gnu&quot;;
+  version = &quot;1.2.3&quot;;
+  update = &quot;*&quot;;
+}
+</code></pre>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p>
+</p>
+</div>
+<h4><code>lib.meta.cpeFullVersionWithVendor</code> usage in derivations</h4>
+<pre><code class="language-nix">mkDerivation rec {
+  version = &quot;1.2.3&quot;;
+  # ...
+  meta = {
+    # ...
+    identifiers.cpeParts = lib.meta.cpeFullVersionWithVendor &quot;gnu&quot; version;
+  };
+}
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/meta.nix#L632">lib/meta.nix:632</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+        </main>
+      </div>
+    </section>
+<script defer src='highlight.pack.cf986678470772f7.js'></script>
+<script defer src='mmdoc.367f3e8986e40416.js'></script>
+<script defer src='mmdoc_search.a5b6fc7d7512cdc1.js' data-search-index='search_index.b3afff10081eb0bd.js' data-fuse='fuse.basic.min.bb997c989fa0a28e.js'></script>
+  </div>
+  </body>
+</html>

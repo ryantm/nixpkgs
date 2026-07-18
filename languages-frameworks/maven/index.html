@@ -1,0 +1,896 @@
+<!doctype html>
+<html lang='en'>
+  <head>
+    <base href='../../'>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <script>
+      (() => {
+        let theme = null
+        try { theme = localStorage.getItem('theme') } catch (error) {}
+        if (theme !== 'light' && theme !== 'dark')
+          theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+        document.documentElement.classList.add(theme + '-theme')
+      })()
+    </script>
+    <meta name='description' content='Maven'>
+    <link rel='icon' href='favicon.svg'>
+    <link rel='stylesheet' href='a11y-dark.1fcafc9d9a306955.css'>
+    <link rel='stylesheet' href='a11y-light.b466309a7fa86b1f.css'>
+    <link rel='stylesheet' href='mmdoc.e4286053b6471af4.css'>
+    <title>Maven | nixpkgs</title>
+  </head>
+  <body>
+  <a class='skip-link' href='languages-frameworks/maven/#main-content'>Skip to main content</a>
+  <input type='checkbox' id='sidebar-checkbox' aria-hidden='true' tabindex='-1' style='display: none;'>
+  <div class='body'>
+    <div class='nav-top-container'>
+    <nav class='nav-top' aria-label='Documentation controls'>
+      <button type='button' class='sidebar-toggle' aria-label='Toggle table of contents' aria-controls='sidebar' aria-expanded='true'></button>    <button type='button' class='search-toggle' aria-label='Open search' aria-controls='search-panel' aria-expanded='false'></button>    <button type='button' class='theme-toggle' aria-label='Switch to dark theme' aria-pressed='false'></button>    <a id='chapter-previous-button' class='chapter-previous' href='languages-frameworks/lua/#lua' title='Lua' aria-label='Previous: Lua'>&lt;</a>
+    <a id='chapter-next-button' class='chapter-next' href='languages-frameworks/neovim/#neovim' title='Neovim' aria-label='Next: Neovim'>&gt;</a>
+    </nav>
+    </div>
+    <nav id='sidebar' class='sidebar' aria-label='Table of contents'>
+<h1>Nixpkgs Manual</h1>
+<p>Version 26.11pre</p>
+<ul>
+<li><a href="./#preface">Preface</a>
+<ul>
+<li><a href="preface/#overview-of-nixpkgs">Overview of Nixpkgs</a></li>
+</ul>
+</li>
+<li><a href="first-package/#chap-first-package">Package your first application</a></li>
+</ul>
+<h2>Using Nixpkgs</h2>
+<ul>
+<li><a href="using/platform-support/#chap-platform-support">Platform Support</a></li>
+<li><a href="using/configuration/#chap-packageconfig">Global configuration</a></li>
+<li><a href="using/overlays/#chap-overlays">Overlays</a></li>
+<li><a href="using/overrides/#chap-overrides">Overriding</a></li>
+</ul>
+<h2>Nixpkgs Lib</h2>
+<ul>
+<li><a href="functions/#chap-functions">Functions reference</a>
+<ul>
+<li>Library Functions
+<ul>
+<li><a href="functions/library/asserts/#sec-functions-library-asserts">lib.asserts: assertion functions</a></li>
+<li><a href="functions/library/attrsets/#sec-functions-library-attrsets">lib.attrsets: attribute set functions</a></li>
+<li><a href="functions/library/strings/#sec-functions-library-strings">lib.strings: string manipulation functions</a></li>
+<li><a href="functions/library/versions/#sec-functions-library-versions">lib.versions: version string functions</a></li>
+<li><a href="functions/library/trivial/#sec-functions-library-trivial">lib.trivial: miscellaneous functions</a></li>
+<li><a href="functions/library/fixedPoints/#sec-functions-library-fixedPoints">lib.fixedPoints: explicit recursion functions</a></li>
+<li><a href="functions/library/lists/#sec-functions-library-lists">lib.lists: list manipulation functions</a></li>
+<li><a href="functions/library/debug/#sec-functions-library-debug">lib.debug: debugging functions</a></li>
+<li><a href="functions/library/options/#sec-functions-library-options">lib.options: NixOS / nixpkgs option handling</a></li>
+<li><a href="functions/library/path/#sec-functions-library-path">lib.path: path functions</a></li>
+<li><a href="functions/library/filesystem/#sec-functions-library-filesystem">lib.filesystem: filesystem functions</a></li>
+<li><a href="functions/library/fileset/#sec-functions-library-fileset">lib.fileset: file set functions</a></li>
+<li><a href="functions/library/sources/#sec-functions-library-sources">lib.sources: source filtering functions</a></li>
+<li><a href="functions/library/cli/#sec-functions-library-cli">lib.cli: command-line serialization functions</a></li>
+<li><a href="functions/library/gvariant/#sec-functions-library-gvariant">lib.gvariant: GVariant formatted string serialization functions</a></li>
+<li><a href="functions/library/fetchers/#sec-functions-library-fetchers">lib.fetchers: functions which can be reused across fetchers</a></li>
+<li><a href="functions/library/generators/#sec-functions-library-generators">lib.generators: functions that create file formats from nix data structures</a></li>
+<li><a href="functions/library/customisation/#sec-functions-library-customisation">lib.customisation: Functions to customise (derivation-related) functions, derivations, or attribute sets</a></li>
+<li><a href="functions/library/meta/#sec-functions-library-meta">lib.meta: functions for derivation metadata</a></li>
+<li><a href="functions/library/derivations/#sec-functions-library-derivations">lib.derivations: miscellaneous derivation-specific functions</a></li>
+<li><a href="functions/generators/#sec-generators">Generators</a></li>
+<li><a href="functions/debug/#sec-debug">Debugging Nix Expressions</a></li>
+<li><a href="functions/prefer-remote-fetch/#sec-prefer-remote-fetch">prefer-remote-fetch overlay</a></li>
+<li><a href="functions/nix-gitignore/#sec-pkgs-nix-gitignore">pkgs.nix-gitignore</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="module-system/module-system/#module-system">Module System</a></li>
+</ul>
+<h2>Standard Environment</h2>
+<ul>
+<li><a href="stdenv/#part-stdenv">Standard environment</a></li>
+<li><a href="stdenv/stdenv/#chap-stdenv">The Standard Environment</a></li>
+<li><a href="stdenv/meta/#chap-meta">Meta-attributes</a></li>
+<li><a href="stdenv/passthru/#chap-passthru">Passthru-attributes</a></li>
+<li><a href="stdenv/multiple-output/#chap-multiple-output">Multiple-output packages</a></li>
+<li><a href="stdenv/cross-compilation/#chap-cross">Cross-compilation</a></li>
+<li><a href="stdenv/platform-notes/#chap-platform-notes">Platform Notes</a></li>
+</ul>
+<h2>Toolchains</h2>
+<ul>
+<li><a href="toolchains/llvm/#chap-toolchains">The LLVM Toolchain</a></li>
+</ul>
+<h2>Builders</h2>
+<ul>
+<li><a href="build-helpers/#part-builders">Build helpers</a></li>
+<li><a href="build-helpers/fetchers/#chap-pkgs-fetchers">Fetchers</a></li>
+<li><a href="build-helpers/trivial-build-helpers/#chap-trivial-builders">Trivial build helpers</a></li>
+<li><a href="build-helpers/fixed-point-arguments/#chap-build-helpers-finalAttrs">Fixed-point arguments of build helpers</a></li>
+<li><a href="build-helpers/dev-shell-tools/#chap-devShellTools">Development Shell helpers</a></li>
+<li><a href="build-helpers/testers/#chap-testers">Testers</a></li>
+<li>Special build helpers
+<ul>
+<li><a href="build-helpers/special/fhs-environments/#sec-fhs-environments">buildFHSEnv</a></li>
+<li><a href="build-helpers/special/fakenss/#sec-fakeNss">fakeNss</a></li>
+<li><a href="build-helpers/special/makesetuphook/#sec-pkgs.makeSetupHook">pkgs.makeSetupHook</a></li>
+<li><a href="build-helpers/special/mkshell/#sec-pkgs-mkShell">pkgs.mkShell</a></li>
+<li><a href="packages/darwin-builder/#sec-darwin-builder">darwin.linux-builder</a></li>
+<li><a href="build-helpers/special/vm-tools/#sec-vm-tools">vmTools</a></li>
+</ul>
+</li>
+<li>Images
+<ul>
+<li><a href="build-helpers/images/appimagetools/#sec-pkgs-appimageTools">pkgs.appimageTools</a></li>
+<li><a href="build-helpers/images/dockertools/#sec-pkgs-dockerTools">pkgs.dockerTools</a></li>
+<li><a href="build-helpers/images/ocitools/#sec-pkgs-ociTools">pkgs.ociTools</a></li>
+<li><a href="build-helpers/images/portableservice/#sec-pkgs-portableService">pkgs.portableService</a></li>
+<li><a href="build-helpers/images/makediskimage/#sec-make-disk-image">&lt;nixpkgs/nixos/lib/make-disk-image.nix&gt;</a></li>
+<li><a href="build-helpers/images/binarycache/#sec-pkgs-binary-cache">pkgs.mkBinaryCache</a></li>
+</ul>
+</li>
+<li><a href="hooks/index/#chap-hooks">Hooks reference</a>
+<ul>
+<li><a href="hooks/autoconf/#setup-hook-autoconf">Autoconf</a></li>
+<li><a href="hooks/automake/#setup-hook-automake">Automake</a></li>
+<li><a href="hooks/autopatchelf/#setup-hook-autopatchelfhook">autoPatchelfHook</a></li>
+<li><a href="hooks/breakpoint/#breakpointhook">breakpointHook</a></li>
+<li><a href="hooks/cmake/#cmake">cmake</a></li>
+<li><a href="hooks/gdk-pixbuf/#setup-hook-gdk-pixbuf">gdk-pixbuf</a></li>
+<li><a href="hooks/ghc/#ghc">GHC</a></li>
+<li><a href="hooks/gnome/#gnome-platform">GNOME platform</a></li>
+<li><a href="hooks/installShellFiles/#installshellfiles">installShellFiles</a></li>
+<li><a href="hooks/libglycin/#libglycin-hooks">libglycin</a></li>
+<li><a href="hooks/libiconv/#libiconv-libintl">libiconv, libintl</a></li>
+<li><a href="hooks/libxml2/#setup-hook-libxml2">libxml2</a></li>
+<li><a href="hooks/meson/#meson">Meson</a></li>
+<li><a href="hooks/mpi-check-hook/#setup-hook-mpi-check">mpiCheckPhaseHook</a></li>
+<li><a href="hooks/ninja/#ninja">ninja</a></li>
+<li><a href="hooks/patch-rc-path-hooks/#sec-patchRcPathHooks">patchRcPath hooks</a></li>
+<li><a href="hooks/perl/#setup-hook-perl">Perl</a></li>
+<li><a href="hooks/pkg-config/#setup-hook-pkg-config">pkg-config</a></li>
+<li><a href="hooks/pnpm/#pnpm-build-hook">pnpmBuildHook</a></li>
+<li><a href="hooks/postgresql-test-hook/#sec-postgresqlTestHook">postgresqlTestHook</a></li>
+<li><a href="hooks/python/#setup-hook-python">Python</a></li>
+<li><a href="hooks/scons/#scons">scons</a></li>
+<li><a href="hooks/tetex-tex-live/#tetex-tex-live">teTeX / TeX Live</a></li>
+<li><a href="hooks/unzip/#unzip">unzip</a></li>
+<li><a href="hooks/validatePkgConfig/#validatepkgconfig">validatePkgConfig</a></li>
+<li><a href="hooks/versionCheckHook/#versioncheckhook">versionCheckHook</a></li>
+<li><a href="hooks/waf/#waf-hook">wafHook</a></li>
+<li><a href="hooks/xcbuild/#xcbuildhook">xcbuildHook</a></li>
+</ul>
+</li>
+<li><a href="languages-frameworks/index/#chap-language-support">Languages and frameworks</a>
+<ul>
+<li><a href="languages-frameworks/agda/#agda">Agda</a></li>
+<li><a href="languages-frameworks/android/#android">Android</a></li>
+<li><a href="languages-frameworks/astal/#astal">Astal</a></li>
+<li><a href="languages-frameworks/beam/#sec-beam">BEAM Languages (Erlang, Elixir &amp; LFE)</a></li>
+<li><a href="languages-frameworks/chicken/#sec-chicken">CHICKEN</a></li>
+<li><a href="languages-frameworks/cosmic/#sec-language-cosmic">COSMIC</a></li>
+<li><a href="languages-frameworks/crystal/#crystal">Crystal</a></li>
+<li><a href="languages-frameworks/cuda/#cuda">CUDA</a></li>
+<li><a href="languages-frameworks/cuelang/#cuelang">Cue (Cuelang)</a></li>
+<li><a href="languages-frameworks/dlang/#dlang">D (Dlang)</a></li>
+<li><a href="languages-frameworks/dart/#sec-language-dart">Dart</a></li>
+<li><a href="languages-frameworks/dhall/#sec-language-dhall">Dhall</a></li>
+<li><a href="languages-frameworks/dotnet/#dotnet">Dotnet</a></li>
+<li><a href="languages-frameworks/emscripten/#emscripten">Emscripten</a></li>
+<li><a href="languages-frameworks/factor/#sec-language-factor">Factor</a></li>
+<li><a href="languages-frameworks/gnome/#sec-language-gnome">GNOME</a></li>
+<li><a href="languages-frameworks/go/#sec-language-go">Go</a></li>
+<li><a href="languages-frameworks/gradle/#gradle">Gradle</a></li>
+<li><a href="languages-frameworks/hare/#sec-language-hare">Hare</a></li>
+<li><a href="languages-frameworks/haskell/#haskell">Haskell</a></li>
+<li><a href="languages-frameworks/hy/#sec-language-hy">Hy</a></li>
+<li><a href="languages-frameworks/idris/#idris">Idris</a></li>
+<li><a href="languages-frameworks/idris2/#sec-idris2">Idris2</a></li>
+<li><a href="languages-frameworks/ios/#ios">iOS</a></li>
+<li><a href="languages-frameworks/java/#sec-language-java">Java</a></li>
+<li><a href="languages-frameworks/javascript/#language-javascript">Javascript</a></li>
+<li><a href="languages-frameworks/julia/#language-julia">Julia</a></li>
+<li><a href="languages-frameworks/lean4/#sec-language-lean4">Lean 4</a></li>
+<li><a href="languages-frameworks/lisp/#lisp">lisp-modules</a></li>
+<li><a href="languages-frameworks/lua/#lua">Lua</a></li>
+<li><a href="languages-frameworks/maven/#maven">Maven</a></li>
+<li><a href="languages-frameworks/neovim/#neovim">Neovim</a></li>
+<li><a href="languages-frameworks/nim/#sec-language-nim">Nim</a></li>
+<li><a href="languages-frameworks/ocaml/#sec-language-ocaml">OCaml</a></li>
+<li><a href="languages-frameworks/octave/#sec-octave">Octave</a></li>
+<li><a href="languages-frameworks/perl/#sec-language-perl">Perl</a></li>
+<li><a href="languages-frameworks/php/#sec-php">PHP</a></li>
+<li><a href="languages-frameworks/pkg-config/#sec-pkg-config">pkg-config</a></li>
+<li><a href="languages-frameworks/python/#python">Python</a></li>
+<li><a href="languages-frameworks/qt/#sec-language-qt">Qt</a></li>
+<li><a href="languages-frameworks/r/#r">R</a></li>
+<li><a href="languages-frameworks/rocq/#sec-language-rocq">Rocq and rocq packages</a></li>
+<li><a href="languages-frameworks/ruby/#sec-language-ruby">Ruby</a></li>
+<li><a href="languages-frameworks/rust/#rust">Rust</a></li>
+<li><a href="languages-frameworks/scheme/#sec-scheme">Scheme</a></li>
+<li><a href="languages-frameworks/swift/#swift">Swift</a></li>
+<li><a href="languages-frameworks/tcl/#sec-language-tcl">Tcl</a></li>
+<li><a href="languages-frameworks/texlive/#sec-language-texlive">TeX Live</a></li>
+<li><a href="languages-frameworks/typst/#typst">Typst</a></li>
+<li><a href="languages-frameworks/vim/#vim">Vim</a></li>
+</ul>
+</li>
+<li><a href="packages/index/#chap-packages">Packages</a>
+<ul>
+<li><a href="packages/build-support/#sec-build-support">Build Support</a></li>
+<li><a href="packages/cataclysm-dda/#cataclysm-dark-days-ahead">Cataclysm: Dark Days Ahead</a></li>
+<li><a href="packages/citrix/#sec-citrix">Citrix Workspace</a></li>
+<li><a href="packages/dlib/#dlib">DLib</a></li>
+<li><a href="packages/eclipse/#sec-eclipse">Eclipse</a></li>
+<li><a href="packages/elm/#sec-elm">Elm</a></li>
+<li><a href="packages/emacs/#sec-emacs">Emacs</a></li>
+<li><a href="packages/firefox/#sec-firefox">Firefox</a></li>
+<li><a href="packages/fish/#sec-fish">Fish</a></li>
+<li><a href="packages/friction-graphics/#friction-graphics">Friction</a></li>
+<li><a href="packages/fuse/#sec-fuse">FUSE</a></li>
+<li><a href="packages/geant4/#geant4">Geant4</a></li>
+<li><a href="packages/ibus/#sec-ibus-typing-booster">ibus-engines.typing-booster</a></li>
+<li><a href="packages/inkscape/#sec-inkscape">Inkscape</a></li>
+<li><a href="packages/kakoune/#sec-kakoune">Kakoune</a></li>
+<li><a href="packages/krita/#sec-krita">Krita</a></li>
+<li><a href="packages/lhapdf/#lhapdf">LHAPDF</a></li>
+<li><a href="packages/linux/#sec-linux-kernel">Linux kernel</a></li>
+<li><a href="packages/locales/#locales">Locales</a></li>
+<li><a href="packages/etc-files/#etc">/etc files</a></li>
+<li><a href="packages/nginx/#sec-nginx">Nginx</a></li>
+<li><a href="packages/nrfutil/#sec-nrfutil">nrfutil</a></li>
+<li><a href="packages/opengl/#sec-opengl">OpenGL</a></li>
+<li><a href="packages/python-tree-sitter/#python-tree-sitter">Python Tree Sitter</a></li>
+<li><a href="packages/shell-helpers/#sec-shell-helpers">Interactive shell helpers</a></li>
+<li><a href="packages/steam/#sec-steam">Steam</a></li>
+<li><a href="packages/treefmt/#treefmt">treefmt</a></li>
+<li><a href="packages/urxvt/#sec-urxvt">Urxvt</a></li>
+<li><a href="packages/uv/#sec-uv">uv</a></li>
+<li><a href="packages/vcpkg/#sec-vcpkg">VCPKG</a></li>
+<li><a href="packages/weechat/#sec-weechat">WeeChat</a></li>
+</ul>
+</li>
+</ul>
+<h2>Modules</h2>
+<ul>
+<li><a href="modules/index/#modules">Modules</a>
+<ul>
+<li><a href="modules/generic/#modules-generic">Generic</a>
+<ul>
+<li><a href="modules/generic/#modules-generic-meta-maintainers">meta-maintainers.nix</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2>Development of Nixpkgs</h2>
+<ul>
+<li><a href="development/opening-issues/#sec-opening-issues">Opening issues</a></li>
+<li><a href="contributing/coding-conventions/#chap-conventions">Coding conventions</a></li>
+</ul>
+<h2>Interoperability Standards</h2>
+<ul>
+<li><a href="interoperability/cyclonedx/#chap-interop-cyclonedx">CycloneDX</a>
+<ul>
+<li><a href="interoperability/cyclonedx/#sec-interop.cylonedx-nix"><code>nix</code> namespace</a></li>
+<li><a href="interoperability/cyclonedx/#sec-interop.cylonedx-narinfo"><code>nix:narinfo</code></a></li>
+<li><a href="interoperability/cyclonedx/#sec-interop.cylonedx-fod"><code>nix:fod</code></a></li>
+</ul>
+</li>
+</ul>
+<h2>Release Notes</h2>
+<ul>
+<li><a href="release-notes/release-notes/#chap-release-notes">Release Notes</a>
+<ul>
+<li><a href="release-notes/rl-2611/#sec-nixpkgs-release-26.11">Nixpkgs 26.11 (&quot;Zokor&quot;, 2026.11/??)</a></li>
+<li><a href="release-notes/rl-2605/#sec-nixpkgs-release-26.05">Nixpkgs 26.05 (&quot;Yarara&quot;, 2026.05/30)</a></li>
+<li><a href="release-notes/rl-2511/#sec-nixpkgs-release-25.11">Nixpkgs 25.11 (&quot;Xantusia&quot;, 2025.11/30)</a></li>
+<li><a href="release-notes/rl-2505/#sec-nixpkgs-release-25.05">Nixpkgs 25.05 (2025.05/23)</a></li>
+</ul>
+</li>
+</ul>
+    </nav>
+    <section id='main'>
+      <div id='search-panel' class='nav-search' role='search' hidden>
+        <label class='visually-hidden' for='search'>Search documentation</label>
+        <input type='search' id='search' placeholder='Search' autocomplete='off' aria-controls='search-results'>
+        <p id='search-status' class='visually-hidden' role='status' aria-live='polite'></p>
+        <div id='search-results'></div>
+      </div>
+      <div class='main-scroll'>
+        <main id='main-content' tabindex='-1'>
+<h1 id='maven'><a href='languages-frameworks/maven/#maven'>
+Maven
+</a></h1>
+<p>Maven is a well-known build tool for the Java ecosystem; however, it has some challenges when integrating into the Nix build system.</p>
+<p>The following provides a list of common patterns with how to package a Maven project (or any JVM language that can export to Maven) as a Nix package.</p>
+<h2 id='maven-buildmavenpackage'><a href='languages-frameworks/maven/#maven-buildmavenpackage'>
+Building a package using <code>maven.buildMavenPackage</code>
+</a></h2>
+<p>Consider the following package:</p>
+<pre><code class="language-nix">{
+  lib,
+  fetchFromGitHub,
+  jre,
+  makeWrapper,
+  maven,
+}:
+
+maven.buildMavenPackage (finalAttrs: {
+  pname = &quot;jd-cli&quot;;
+  version = &quot;1.2.1&quot;;
+
+  src = fetchFromGitHub {
+    owner = &quot;intoolswetrust&quot;;
+    repo = &quot;jd-cli&quot;;
+    tag = &quot;jd-cli-${finalAttrs.version}&quot;;
+    hash = &quot;sha256-rRttA5H0A0c44loBzbKH7Waoted3IsOgxGCD2VM0U/Q=&quot;;
+  };
+
+  mvnHash = &quot;sha256-kLpjMj05uC94/5vGMwMlFzLKNFOKeyNvq/vmB6pHTAo=&quot;;
+
+  nativeBuildInputs = [ makeWrapper ];
+
+  installPhase = ''
+    runHook preInstall
+
+    mkdir -p $out/bin $out/share/jd-cli
+    install -Dm644 jd-cli/target/jd-cli.jar $out/share/jd-cli
+
+    makeWrapper ${jre}/bin/java $out/bin/jd-cli \
+      --add-flags &quot;-jar $out/share/jd-cli/jd-cli.jar&quot;
+
+    runHook postInstall
+  '';
+
+  meta = {
+    description = &quot;Simple command line wrapper around JD Core Java Decompiler project&quot;;
+    homepage = &quot;https://github.com/intoolswetrust/jd-cli&quot;;
+    license = lib.licenses.gpl3Plus;
+    maintainers = with lib.maintainers; [ majiir ];
+  };
+})
+</code></pre>
+<p>This package calls <code>maven.buildMavenPackage</code> to do its work. The primary difference from <code>stdenv.mkDerivation</code> is the <code>mvnHash</code> variable, which is a hash of all of the Maven dependencies.</p>
+<div class='admonition tip'><h3 class='title'>Tip</h3>
+<p>
+After setting <code>maven.buildMavenPackage</code>, we then do standard Java <code>.jar</code> installation by saving the <code>.jar</code> to <code>$out/share/java</code> and then making a wrapper which allows executing that file; see <a href="languages-frameworks/java/#sec-language-java">Java</a> for additional generic information about packaging Java applications.
+</p>
+</div>
+<h3 id='maven-overriding-package-attributes'><a href='languages-frameworks/maven/#maven-overriding-package-attributes'>
+Overriding Maven package attributes
+</a></h3>
+<pre><code>overrideMavenAttrs :: (AttrSet -&gt; Derivation) | ((AttrSet -&gt; Attrset) -&gt; Derivation) -&gt; Derivation
+</code></pre>
+<p>The output of <code>buildMavenPackage</code> has an <code>overrideMavenAttrs</code> attribute, which is a function that takes either</p>
+<ul>
+<li>
+<p>any subset of the attributes that can be passed to <code>buildMavenPackage</code></p>
+<p>or</p>
+</li>
+<li>
+<p>a function that takes the argument passed to the previous invocation of <code>buildMavenPackage</code> (conventionally called <code>old</code>) and returns an attribute set that can be passed to <code>buildMavenPackage</code></p>
+</li>
+</ul>
+<p>and returns a derivation that builds a Maven package based on the old and new arguments merged.</p>
+<p>This is similar to <a href="using/overrides/#sec-pkg-overrideAttrs">Overriding</a>, but notably does not allow accessing the final value of the argument to <code>buildMavenPackage</code>.</p>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h3><code>overrideMavenAttrs</code> Example</h3>
+<p>Use <code>overrideMavenAttrs</code> to build <code>jd-cli</code> version 1.2.0 and disable some flaky test:</p>
+<pre><code class="language-nix">jd-cli.overrideMavenAttrs (old: rec {
+  version = &quot;1.2.0&quot;;
+  src = fetchFromGitHub {
+    owner = old.src.owner;
+    repo = old.src.repo;
+    tag = &quot;${old.pname}-${version}&quot;;
+    # old source hash of 1.2.0 version
+    hash = &quot;sha256-US7j6tQ6mh1libeHnQdFxPGoxHzbZHqehWSgCYynKx8=&quot;;
+  };
+
+  # tests can be disabled by prefixing it with `!`
+  # see Maven documentation for more details:
+  # https://maven.apache.org/surefire/maven-surefire-plugin/examples/single-test.html#Multiple_Formats_in_One
+  mvnParameters = lib.escapeShellArgs [
+    &quot;-Dsurefire.failIfNoSpecifiedTests=false&quot;
+    &quot;-Dtest=!JavaDecompilerTest#basicTest,!JavaDecompilerTest#patternMatchingTest&quot;
+  ];
+
+  # old mvnHash of 1.2.0 maven dependencies
+  mvnHash = &quot;sha256-N9XC1pg6Y4sUiBWIQUf16QSXCuiAPpXEHGlgApviF4I=&quot;;
+})
+</code></pre>
+<p></p>
+</div>
+<h3 id='maven-offline-build'><a href='languages-frameworks/maven/#maven-offline-build'>
+Offline build
+</a></h3>
+<p>By default, <code>buildMavenPackage</code> does the following:</p>
+<ol>
+<li>Run <code>mvn package -Dmaven.repo.local=$out/.m2 ${mvnParameters}</code> in the
+<code>fetchedMavenDeps</code> <a href="https://nixos.org/manual/nix/stable/glossary.html#gloss-fixed-output-derivation">fixed-output derivation</a>.</li>
+<li>Run <code>mvn package -o -nsu &quot;-Dmaven.repo.local=$mvnDeps/.m2&quot; ${mvnParameters}</code> again in the main derivation.</li>
+</ol>
+<p>As a result, tests are run twice.
+This also means that a failing test will trigger a new attempt to realise the fixed-output derivation, which in turn downloads all dependencies again.
+For bigger Maven projects, this might lead to a long feedback cycle.</p>
+<p>Use <code>buildOffline = true</code> to change the behaviour of `buildMavenPackage to the following:</p>
+<ol>
+<li>Run <code>mvn de.qaware.maven:go-offline-maven-plugin:1.2.8:resolve-dependencies -Dmaven.repo.local=$out/.m2 ${mvnDepsParameters}</code> in the fixed-output derivation.</li>
+<li>Run <code>mvn package -o -nsu &quot;-Dmaven.repo.local=$mvnDeps/.m2&quot; ${mvnParameters}</code> in the main derivation.</li>
+</ol>
+<p>As a result, all dependencies are downloaded in step 1 and the tests are executed in step 2.
+A failing test only triggers a rebuild of step 2 as it can reuse the dependencies of step 1 because they have not changed.</p>
+<div class='admonition warning'><h3 class='title'>Warning</h3>
+<p>
+Test dependencies are not downloaded in step 1 and are therefore missing in
+step 2 which will most probably fail the build. The <code>go-offline</code> plugin cannot
+handle these so-called <a href="https://github.com/qaware/go-offline-maven-plugin?tab=readme-ov-file#dynamic-dependencies">dynamic dependencies</a>.
+In that case you must add these dynamic dependencies manually with:</p>
+<pre><code class="language-nix">maven.buildMavenPackage {
+  manualMvnArtifacts = [
+    # add dynamic test dependencies here
+    &quot;org.apache.maven.surefire:surefire-junit-platform:3.1.2&quot;
+    &quot;org.junit.platform:junit-platform-launcher:1.10.0&quot;
+  ];
+}
+</code></pre>
+<p></p>
+</div>
+<h3 id='stable-maven-plugins'><a href='languages-frameworks/maven/#stable-maven-plugins'>
+Stable Maven plugins
+</a></h3>
+<p>Maven defines default versions for its core plugins, e.g. <code>maven-compiler-plugin</code>. If your project does not override these versions, an upgrade of Maven will change the version of the used plugins, and therefore the derivation and hash.</p>
+<p>When <code>maven</code> is upgraded, <code>mvnHash</code> for the derivation must be updated as well: otherwise, the project will be built on the derivation of old plugins, and fail because the requested plugins are missing.</p>
+<p>This clearly prevents automatic upgrades of Maven: a manual effort must be made throughout nixpkgs by any maintainer wishing to push the upgrades.</p>
+<p>To make sure that your package does not add extra manual effort when upgrading Maven, explicitly define versions for all plugins. You can check if this is the case by adding the following plugin to your (parent) POM:</p>
+<pre><code class="language-xml">&lt;plugin&gt;
+  &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+  &lt;artifactId&gt;maven-enforcer-plugin&lt;/artifactId&gt;
+  &lt;version&gt;3.3.0&lt;/version&gt;
+  &lt;executions&gt;
+    &lt;execution&gt;
+      &lt;id&gt;enforce-plugin-versions&lt;/id&gt;
+      &lt;goals&gt;
+        &lt;goal&gt;enforce&lt;/goal&gt;
+      &lt;/goals&gt;
+      &lt;configuration&gt;
+        &lt;rules&gt;
+          &lt;requirePluginVersions /&gt;
+        &lt;/rules&gt;
+      &lt;/configuration&gt;
+    &lt;/execution&gt;
+  &lt;/executions&gt;
+&lt;/plugin&gt;
+</code></pre>
+<h2 id='maven-4'><a href='languages-frameworks/maven/#maven-4'>
+Maven 4
+</a></h2>
+<p>Alongside the default <code>maven</code> package (the latest Maven 3 release), nixpkgs ships <code>maven_4</code>, which packages the <a href="https://maven.apache.org/whatsnewinmaven4.html">Maven 4</a> release line.</p>
+<p><code>maven_4</code> is a standalone derivation and can be used as a drop-in replacement wherever <code>maven</code> is used, for example to build a project with the latest Maven 4:</p>
+<pre><code class="language-nix">{
+  lib,
+  fetchFromGitHub,
+  jre,
+  makeWrapper,
+  maven_4,
+}:
+
+maven_4.buildMavenPackage (finalAttrs: {
+  pname = &quot;jd-cli&quot;;
+  version = &quot;1.2.1&quot;;
+
+  src = fetchFromGitHub {
+    owner = &quot;intoolswetrust&quot;;
+    repo = &quot;jd-cli&quot;;
+    tag = &quot;jd-cli-${finalAttrs.version}&quot;;
+    hash = &quot;sha256-rRttA5H0A0c44loBzbKH7Waoted3IsOgxGCD2VM0U/Q=&quot;;
+  };
+
+  mvnHash = &quot;&quot;;
+
+  nativeBuildInputs = [ makeWrapper ];
+
+  installPhase = ''
+    runHook preInstall
+
+    mkdir -p $out/bin $out/share/jd-cli
+    install -Dm644 jd-cli/target/jd-cli.jar $out/share/jd-cli
+
+    makeWrapper ${jre}/bin/java $out/bin/jd-cli \
+      --add-flags &quot;-jar $out/share/jd-cli/jd-cli.jar&quot;
+
+    runHook postInstall
+  '';
+
+  meta = {
+    description = &quot;Simple command line wrapper around JD Core Java Decompiler project&quot;;
+    homepage = &quot;https://github.com/intoolswetrust/jd-cli&quot;;
+    license = lib.licenses.gpl3Plus;
+    maintainers = with lib.maintainers; [ majiir ];
+  };
+})
+</code></pre>
+<p><code>maven_4</code> exposes the same <code>buildMavenPackage</code> helper as <code>maven</code> (see <a href="languages-frameworks/maven/#maven-buildmavenpackage">Maven</a>), so all of the patterns documented above apply equally. Note that the Maven dependencies resolved by Maven 4 differ from those resolved by Maven 3, so <code>mvnHash</code> must be recomputed when switching between the two.</p>
+<h2 id='maven-mvn2nix'><a href='languages-frameworks/maven/#maven-mvn2nix'>
+Manually using <code>mvn2nix</code>
+</a></h2>
+<div class='admonition warning'><h3 class='title'>Warning</h3>
+<p>
+This way is no longer recommended; see <a href="languages-frameworks/maven/#maven-buildmavenpackage">Maven</a> for the simpler and preferred way.
+</p>
+</div>
+<p>For the purposes of this example let's consider a very basic Maven project with the following <code>pom.xml</code> with a single dependency on <a href="https://github.com/vdurmont/emoji-java">emoji-java</a>.</p>
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+        xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&gt;
+  &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+  &lt;groupId&gt;io.github.fzakaria&lt;/groupId&gt;
+  &lt;artifactId&gt;maven-demo&lt;/artifactId&gt;
+  &lt;version&gt;1.0&lt;/version&gt;
+  &lt;packaging&gt;jar&lt;/packaging&gt;
+  &lt;name&gt;NixOS Maven Demo&lt;/name&gt;
+
+  &lt;dependencies&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;com.vdurmont&lt;/groupId&gt;
+        &lt;artifactId&gt;emoji-java&lt;/artifactId&gt;
+        &lt;version&gt;5.1.1&lt;/version&gt;
+      &lt;/dependency&gt;
+  &lt;/dependencies&gt;
+&lt;/project&gt;
+</code></pre>
+<p>Our main class file will be very simple:</p>
+<pre><code class="language-java">import com.vdurmont.emoji.EmojiParser;
+
+public class Main {
+  public static void main(String[] args) {
+    String str = &quot;NixOS :grinning: is super cool :smiley:!&quot;;
+    String result = EmojiParser.parseToUnicode(str);
+    System.out.println(result);
+  }
+}
+</code></pre>
+<p>You find this demo project at <a href="https://github.com/fzakaria/nixos-maven-example">https://github.com/fzakaria/nixos-maven-example</a>.</p>
+<h3 id='solving-for-dependencies'><a href='languages-frameworks/maven/#solving-for-dependencies'>
+Solving for dependencies
+</a></h3>
+<h4 id='buildmaven-with-nixosmvn2nix-maven-plugin'><a href='languages-frameworks/maven/#buildmaven-with-nixosmvn2nix-maven-plugin'>
+buildMaven with NixOS/mvn2nix-maven-plugin
+</a></h4>
+<p><code>buildMaven</code> is an alternative method that tries to follow similar patterns of other programming languages by generating a lock file. It relies on the maven plugin <a href="https://github.com/NixOS/mvn2nix-maven-plugin">mvn2nix-maven-plugin</a>.</p>
+<p>First you generate a <code>project-info.json</code> file using the maven plugin.</p>
+<blockquote>
+<p>This should be executed in the project's source repository or be told which <code>pom.xml</code> to execute with.</p>
+</blockquote>
+<pre><code class="language-bash"># run this step within the project's source repository
+❯ mvn org.nixos.mvn2nix:mvn2nix-maven-plugin:mvn2nix
+
+❯ cat project-info.json | jq | head
+{
+  &quot;project&quot;: {
+    &quot;artifactId&quot;: &quot;maven-demo&quot;,
+    &quot;groupId&quot;: &quot;org.nixos&quot;,
+    &quot;version&quot;: &quot;1.0&quot;,
+    &quot;classifier&quot;: &quot;&quot;,
+    &quot;extension&quot;: &quot;jar&quot;,
+    &quot;dependencies&quot;: [
+      {
+        &quot;artifactId&quot;: &quot;maven-resources-plugin&quot;,
+</code></pre>
+<p>This file is then given to the <code>buildMaven</code> function, and it returns 2 attributes.</p>
+<p><strong><code>repo</code></strong>:
+A Maven repository that is a symlink farm of all the dependencies found in the <code>project-info.json</code></p>
+<p><strong><code>build</code></strong>:
+A simple derivation that runs through <code>mvn compile</code> &amp; <code>mvn package</code> to build the JAR. You may use this as inspiration for more complicated derivations.</p>
+<p>Here is an <a href="https://github.com/fzakaria/nixos-maven-example/blob/main/build-maven-repository.nix">example</a> of building the Maven repository</p>
+<pre><code class="language-nix">{
+  pkgs ? import &lt;nixpkgs&gt; { },
+}:
+with pkgs;
+(buildMaven ./project-info.json).repo
+</code></pre>
+<p>The benefit over the <em>double invocation</em> as we will see below, is that the <em>/nix/store</em> entry is a <em>linkFarm</em> of every package, so that changes to your dependency set doesn't involve downloading everything from scratch.</p>
+<pre><code class="language-bash">❯ tree $(nix-build --no-out-link build-maven-repository.nix) | head
+/nix/store/g87va52nkc8jzbmi1aqdcf2f109r4dvn-maven-repository
+├── antlr
+│   └── antlr
+│       └── 2.7.2
+│           ├── antlr-2.7.2.jar -&gt; /nix/store/d027c8f2cnmj5yrynpbq2s6wmc9cb559-antlr-2.7.2.jar
+│           └── antlr-2.7.2.pom -&gt; /nix/store/mv42fc5gizl8h5g5vpywz1nfiynmzgp2-antlr-2.7.2.pom
+├── avalon-framework
+│   └── avalon-framework
+│       └── 4.1.3
+│           ├── avalon-framework-4.1.3.jar -&gt; /nix/store/iv5fp3955w3nq28ff9xfz86wvxbiw6n9-avalon-framework-4.1.3.jar
+</code></pre>
+<h4 id='double-invocation'><a href='languages-frameworks/maven/#double-invocation'>
+Double Invocation
+</a></h4>
+<div class='admonition note'><h3 class='title'>Note</h3>
+<p>
+This pattern is the simplest but may cause unnecessary rebuilds due to the output hash changing.
+</p>
+</div>
+<p>The double invocation is a <em>simple</em> way to get around the problem that <code>nix-build</code> may be sandboxed and have no Internet connectivity.</p>
+<p>It treats the entire Maven repository as a single source to be downloaded, relying on Maven's dependency resolution to satisfy the output hash. This is similar to fetchers like <code>fetchgit</code>, except it has to run a Maven build to determine what to download.</p>
+<p>The first step will be to build the Maven project as a fixed-output derivation to collect the Maven repository -- below is an <a href="https://github.com/fzakaria/nixos-maven-example/blob/main/double-invocation-repository.nix">example</a>.</p>
+<div class='admonition note'><h3 class='title'>Note</h3>
+<p>
+Traditionally the Maven repository is at <code>~/.m2/repository</code>. We will override this to be the <code>$out</code> directory.
+</p>
+</div>
+<pre><code class="language-nix">{
+  lib,
+  stdenv,
+  maven,
+}:
+stdenv.mkDerivation {
+  name = &quot;maven-repository&quot;;
+  buildInputs = [ maven ];
+  src = ./.; # or fetchFromGitHub, cleanSourceWith, etc
+  buildPhase = ''
+    runHook preBuild
+
+    mvn package -Dmaven.repo.local=$out
+
+    runHook postBuild
+  '';
+
+  # keep only *.{pom,jar,sha1,nbm} and delete all ephemeral files with lastModified timestamps inside
+  installPhase = ''
+    runHook preInstall
+
+    find $out -type f \
+      -name \*.lastUpdated -or \
+      -name resolver-status.properties -or \
+      -name _remote.repositories \
+      -delete
+
+    runHook postInstall
+  '';
+
+  # don't do any fixup
+  dontFixup = true;
+  outputHashAlgo = null;
+  outputHashMode = &quot;recursive&quot;;
+  # replace this with the correct SHA256
+  outputHash = lib.fakeHash;
+}
+</code></pre>
+<p>The build will fail, and tell you the expected <code>outputHash</code> to place. When you've set the hash, the build will return with a <code>/nix/store</code> entry whose contents are the full Maven repository.</p>
+<div class='admonition warning'><h3 class='title'>Warning</h3>
+<p>
+Some additional files are deleted that would cause the output hash to change potentially on subsequent runs.
+</p>
+</div>
+<pre><code class="language-bash">❯ tree $(nix-build --no-out-link double-invocation-repository.nix) | head
+/nix/store/8kicxzp98j68xyi9gl6jda67hp3c54fq-maven-repository
+├── backport-util-concurrent
+│   └── backport-util-concurrent
+│       └── 3.1
+│           ├── backport-util-concurrent-3.1.pom
+│           └── backport-util-concurrent-3.1.pom.sha1
+├── classworlds
+│   └── classworlds
+│       ├── 1.1
+│       │   ├── classworlds-1.1.jar
+</code></pre>
+<p>If your package uses <em>SNAPSHOT</em> dependencies or <em>version ranges</em>; there is a strong likelihood that over time, your output hash will change since the resolved dependencies may change. Hence this method is less recommended than using <code>buildMaven</code>.</p>
+<h3 id='building-a-jar'><a href='languages-frameworks/maven/#building-a-jar'>
+Building a JAR
+</a></h3>
+<p>Regardless of which strategy is chosen above, the step to build the derivation is the same.</p>
+<pre><code class="language-nix">{
+  stdenv,
+  maven,
+  callPackage,
+}:
+let
+  # pick a repository derivation, here we will use buildMaven
+  repository = callPackage ./build-maven-repository.nix { };
+in
+stdenv.mkDerivation (finalAttrs: {
+  pname = &quot;maven-demo&quot;;
+  version = &quot;1.0&quot;;
+
+  src = fetchTarball &quot;https://github.com/fzakaria/nixos-maven-example/archive/main.tar.gz&quot;;
+  buildInputs = [ maven ];
+
+  buildPhase = ''
+    runHook preBuild
+
+    echo &quot;Using repository ${repository}&quot;
+    mvn --offline -Dmaven.repo.local=${repository} package;
+
+    runHook postBuild
+  '';
+
+  installPhase = ''
+    runHook preInstall
+
+    install -Dm644 target/${finalAttrs.pname}-${finalAttrs.version}.jar $out/share/java
+
+    runHook postInstall
+  '';
+})
+</code></pre>
+<div class='admonition tip'><h3 class='title'>Tip</h3>
+<p>
+We place the library in <code>$out/share/java</code> since JDK package has a <em>stdenv setup hook</em> that adds any JARs in the <code>share/java</code> directories of the build inputs to the CLASSPATH environment.
+</p>
+</div>
+<pre><code class="language-bash">❯ tree $(nix-build --no-out-link build-jar.nix)
+/nix/store/7jw3xdfagkc2vw8wrsdv68qpsnrxgvky-maven-demo-1.0
+└── share
+    └── java
+        └── maven-demo-1.0.jar
+
+2 directories, 1 file
+</code></pre>
+<h3 id='runnable-jar'><a href='languages-frameworks/maven/#runnable-jar'>
+Runnable JAR
+</a></h3>
+<p>The previous example builds a <code>jar</code> file but that's not a file one can run.</p>
+<p>You need to use it with <code>java -jar $out/share/java/output.jar</code> and make sure to provide the required dependencies on the classpath.</p>
+<p>The following explains how to use <code>makeWrapper</code> to make the derivation produce an executable that will run the JAR file you created.</p>
+<p>We will use the same repository we built above (either <em>double invocation</em> or <em>buildMaven</em>) to setup a CLASSPATH for our JAR.</p>
+<p>The following two methods are more suited to Nix then building an <a href="https://imagej.net/Uber-JAR">UberJar</a> which may be the more traditional approach.</p>
+<h4 id='classpath'><a href='languages-frameworks/maven/#classpath'>
+CLASSPATH
+</a></h4>
+<p>This method is ideal if you are providing a derivation for <em>nixpkgs</em> and don't want to patch the project's <code>pom.xml</code>.</p>
+<p>We will read the Maven repository and flatten it to a single list. This list will then be concatenated with the <em>CLASSPATH</em> separator to create the full classpath.</p>
+<p>We make sure to provide this classpath to the <code>makeWrapper</code>.</p>
+<pre><code class="language-nix">{
+  stdenv,
+  maven,
+  callPackage,
+  makeWrapper,
+  jre,
+}:
+let
+  repository = callPackage ./build-maven-repository.nix { };
+in
+stdenv.mkDerivation (finalAttrs: {
+  pname = &quot;maven-demo&quot;;
+  version = &quot;1.0&quot;;
+
+  src = fetchTarball &quot;https://github.com/fzakaria/nixos-maven-example/archive/main.tar.gz&quot;;
+  nativeBuildInputs = [ makeWrapper ];
+  buildInputs = [ maven ];
+
+  buildPhase = ''
+    runHook preBuild
+
+    echo &quot;Using repository ${repository}&quot;
+    mvn --offline -Dmaven.repo.local=${repository} package;
+
+    runHook postBuild
+  '';
+
+  installPhase = ''
+    runHook preInstall
+
+    mkdir -p $out/bin
+
+    classpath=$(find ${repository} -name &quot;*.jar&quot; -printf ':%h/%f');
+    install -Dm644 target/maven-demo-${finalAttrs.version}.jar $out/share/java
+    # create a wrapper that will automatically set the classpath
+    # this should be the paths from the dependency derivation
+    makeWrapper ${jre}/bin/java $out/bin/maven-demo \
+          --add-flags &quot;-classpath $out/share/java/maven-demo-${finalAttrs.version}.jar:''${classpath#:}&quot; \
+          --add-flags &quot;Main&quot;
+
+    runHook postInstall
+  '';
+})
+</code></pre>
+<h4 id='manifest-file-via-maven-plugin'><a href='languages-frameworks/maven/#manifest-file-via-maven-plugin'>
+MANIFEST file via Maven Plugin
+</a></h4>
+<p>This method is ideal if you are the project owner and want to change your <code>pom.xml</code> to set the CLASSPATH within it.</p>
+<p>Augment the <code>pom.xml</code> to create a JAR with the following manifest:</p>
+<pre><code class="language-xml">&lt;build&gt;
+  &lt;plugins&gt;
+    &lt;plugin&gt;
+        &lt;artifactId&gt;maven-jar-plugin&lt;/artifactId&gt;
+        &lt;configuration&gt;
+            &lt;archive&gt;
+                &lt;manifest&gt;
+                    &lt;addClasspath&gt;true&lt;/addClasspath&gt;
+                    &lt;classpathPrefix&gt;../../repository/&lt;/classpathPrefix&gt;
+                    &lt;classpathLayoutType&gt;repository&lt;/classpathLayoutType&gt;
+                    &lt;mainClass&gt;Main&lt;/mainClass&gt;
+                &lt;/manifest&gt;
+                &lt;manifestEntries&gt;
+                    &lt;Class-Path&gt;.&lt;/Class-Path&gt;
+                &lt;/manifestEntries&gt;
+            &lt;/archive&gt;
+        &lt;/configuration&gt;
+    &lt;/plugin&gt;
+  &lt;/plugins&gt;
+&lt;/build&gt;
+</code></pre>
+<p>The above plugin instructs the JAR to look for the necessary dependencies in the <code>lib/</code> relative folder. The layout of the folder is also in the <em>maven repository</em> style.</p>
+<pre><code class="language-bash">❯ unzip -q -c $(nix-build --no-out-link runnable-jar.nix)/share/java/maven-demo-1.0.jar META-INF/MANIFEST.MF
+
+Manifest-Version: 1.0
+Archiver-Version: Plexus Archiver
+Built-By: nixbld
+Class-Path: . ../../repository/com/vdurmont/emoji-java/5.1.1/emoji-jav
+ a-5.1.1.jar ../../repository/org/json/json/20170516/json-20170516.jar
+Created-By: Apache Maven 3.6.3
+Build-Jdk: 1.8.0_265
+Main-Class: Main
+</code></pre>
+<p>We will modify the derivation above to add a symlink to our repository so that it's accessible to our JAR during the <code>installPhase</code>.</p>
+<pre><code class="language-nix">{
+  stdenv,
+  maven,
+  callPackage,
+  makeWrapper,
+  jre,
+}:
+let
+  # pick a repository derivation, here we will use buildMaven
+  repository = callPackage ./build-maven-repository.nix { };
+in
+stdenv.mkDerivation (finalAttrs: {
+  pname = &quot;maven-demo&quot;;
+  version = &quot;1.0&quot;;
+
+  src = fetchTarball &quot;https://github.com/fzakaria/nixos-maven-example/archive/main.tar.gz&quot;;
+  nativeBuildInputs = [ makeWrapper ];
+  buildInputs = [ maven ];
+
+  buildPhase = ''
+    runHook preBuild
+
+    echo &quot;Using repository ${repository}&quot;
+    mvn --offline -Dmaven.repo.local=${repository} package;
+
+    runHook postBuild
+  '';
+
+  installPhase = ''
+    runHook preInstall
+
+    mkdir -p $out/bin
+
+    # create a symbolic link for the repository directory
+    ln -s ${repository} $out/repository
+
+    install -Dm644 target/maven-demo-${finalAttrs.version}.jar $out/share/java
+    # create a wrapper that will automatically set the classpath
+    # this should be the paths from the dependency derivation
+    makeWrapper ${jre}/bin/java $out/bin/maven-demo \
+          --add-flags &quot;-jar $out/share/java/maven-demo-${finalAttrs.version}.jar&quot;
+
+    runHook postInstall
+  '';
+})
+</code></pre>
+<div class='admonition note'><h3 class='title'>Note</h3>
+<p>
+Our script produces a dependency on <code>jre</code> rather than <code>jdk</code> to restrict the runtime closure necessary to run the application.
+</p>
+</div>
+<p>This will give you an executable shell-script that launches your JAR with all the dependencies available.</p>
+<pre><code class="language-bash">❯ tree $(nix-build --no-out-link runnable-jar.nix)
+/nix/store/8d4c3ibw8ynsn01ibhyqmc1zhzz75s26-maven-demo-1.0
+├── bin
+│   └── maven-demo
+├── repository -&gt; /nix/store/g87va52nkc8jzbmi1aqdcf2f109r4dvn-maven-repository
+└── share
+    └── java
+        └── maven-demo-1.0.jar
+
+❯ $(nix-build --no-out-link --option tarball-ttl 1 runnable-jar.nix)/bin/maven-demo
+NixOS 😀 is super cool 😃!
+</code></pre>
+        </main>
+      </div>
+    </section>
+<script defer src='highlight.pack.cf986678470772f7.js'></script>
+<script defer src='mmdoc.367f3e8986e40416.js'></script>
+<script defer src='mmdoc_search.a5b6fc7d7512cdc1.js' data-search-index='search_index.b3afff10081eb0bd.js' data-fuse='fuse.basic.min.bb997c989fa0a28e.js'></script>
+  </div>
+  </body>
+</html>

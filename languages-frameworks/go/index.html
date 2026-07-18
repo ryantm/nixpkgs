@@ -1,0 +1,597 @@
+<!doctype html>
+<html lang='en'>
+  <head>
+    <base href='../../'>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <script>
+      (() => {
+        let theme = null
+        try { theme = localStorage.getItem('theme') } catch (error) {}
+        if (theme !== 'light' && theme !== 'dark')
+          theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+        document.documentElement.classList.add(theme + '-theme')
+      })()
+    </script>
+    <meta name='description' content='Go'>
+    <link rel='icon' href='favicon.svg'>
+    <link rel='stylesheet' href='a11y-dark.1fcafc9d9a306955.css'>
+    <link rel='stylesheet' href='a11y-light.b466309a7fa86b1f.css'>
+    <link rel='stylesheet' href='mmdoc.e4286053b6471af4.css'>
+    <title>Go | nixpkgs</title>
+  </head>
+  <body>
+  <a class='skip-link' href='languages-frameworks/go/#main-content'>Skip to main content</a>
+  <input type='checkbox' id='sidebar-checkbox' aria-hidden='true' tabindex='-1' style='display: none;'>
+  <div class='body'>
+    <div class='nav-top-container'>
+    <nav class='nav-top' aria-label='Documentation controls'>
+      <button type='button' class='sidebar-toggle' aria-label='Toggle table of contents' aria-controls='sidebar' aria-expanded='true'></button>    <button type='button' class='search-toggle' aria-label='Open search' aria-controls='search-panel' aria-expanded='false'></button>    <button type='button' class='theme-toggle' aria-label='Switch to dark theme' aria-pressed='false'></button>    <a id='chapter-previous-button' class='chapter-previous' href='languages-frameworks/gnome/#sec-language-gnome' title='GNOME' aria-label='Previous: GNOME'>&lt;</a>
+    <a id='chapter-next-button' class='chapter-next' href='languages-frameworks/gradle/#gradle' title='Gradle' aria-label='Next: Gradle'>&gt;</a>
+    </nav>
+    </div>
+    <nav id='sidebar' class='sidebar' aria-label='Table of contents'>
+<h1>Nixpkgs Manual</h1>
+<p>Version 26.11pre</p>
+<ul>
+<li><a href="./#preface">Preface</a>
+<ul>
+<li><a href="preface/#overview-of-nixpkgs">Overview of Nixpkgs</a></li>
+</ul>
+</li>
+<li><a href="first-package/#chap-first-package">Package your first application</a></li>
+</ul>
+<h2>Using Nixpkgs</h2>
+<ul>
+<li><a href="using/platform-support/#chap-platform-support">Platform Support</a></li>
+<li><a href="using/configuration/#chap-packageconfig">Global configuration</a></li>
+<li><a href="using/overlays/#chap-overlays">Overlays</a></li>
+<li><a href="using/overrides/#chap-overrides">Overriding</a></li>
+</ul>
+<h2>Nixpkgs Lib</h2>
+<ul>
+<li><a href="functions/#chap-functions">Functions reference</a>
+<ul>
+<li>Library Functions
+<ul>
+<li><a href="functions/library/asserts/#sec-functions-library-asserts">lib.asserts: assertion functions</a></li>
+<li><a href="functions/library/attrsets/#sec-functions-library-attrsets">lib.attrsets: attribute set functions</a></li>
+<li><a href="functions/library/strings/#sec-functions-library-strings">lib.strings: string manipulation functions</a></li>
+<li><a href="functions/library/versions/#sec-functions-library-versions">lib.versions: version string functions</a></li>
+<li><a href="functions/library/trivial/#sec-functions-library-trivial">lib.trivial: miscellaneous functions</a></li>
+<li><a href="functions/library/fixedPoints/#sec-functions-library-fixedPoints">lib.fixedPoints: explicit recursion functions</a></li>
+<li><a href="functions/library/lists/#sec-functions-library-lists">lib.lists: list manipulation functions</a></li>
+<li><a href="functions/library/debug/#sec-functions-library-debug">lib.debug: debugging functions</a></li>
+<li><a href="functions/library/options/#sec-functions-library-options">lib.options: NixOS / nixpkgs option handling</a></li>
+<li><a href="functions/library/path/#sec-functions-library-path">lib.path: path functions</a></li>
+<li><a href="functions/library/filesystem/#sec-functions-library-filesystem">lib.filesystem: filesystem functions</a></li>
+<li><a href="functions/library/fileset/#sec-functions-library-fileset">lib.fileset: file set functions</a></li>
+<li><a href="functions/library/sources/#sec-functions-library-sources">lib.sources: source filtering functions</a></li>
+<li><a href="functions/library/cli/#sec-functions-library-cli">lib.cli: command-line serialization functions</a></li>
+<li><a href="functions/library/gvariant/#sec-functions-library-gvariant">lib.gvariant: GVariant formatted string serialization functions</a></li>
+<li><a href="functions/library/fetchers/#sec-functions-library-fetchers">lib.fetchers: functions which can be reused across fetchers</a></li>
+<li><a href="functions/library/generators/#sec-functions-library-generators">lib.generators: functions that create file formats from nix data structures</a></li>
+<li><a href="functions/library/customisation/#sec-functions-library-customisation">lib.customisation: Functions to customise (derivation-related) functions, derivations, or attribute sets</a></li>
+<li><a href="functions/library/meta/#sec-functions-library-meta">lib.meta: functions for derivation metadata</a></li>
+<li><a href="functions/library/derivations/#sec-functions-library-derivations">lib.derivations: miscellaneous derivation-specific functions</a></li>
+<li><a href="functions/generators/#sec-generators">Generators</a></li>
+<li><a href="functions/debug/#sec-debug">Debugging Nix Expressions</a></li>
+<li><a href="functions/prefer-remote-fetch/#sec-prefer-remote-fetch">prefer-remote-fetch overlay</a></li>
+<li><a href="functions/nix-gitignore/#sec-pkgs-nix-gitignore">pkgs.nix-gitignore</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="module-system/module-system/#module-system">Module System</a></li>
+</ul>
+<h2>Standard Environment</h2>
+<ul>
+<li><a href="stdenv/#part-stdenv">Standard environment</a></li>
+<li><a href="stdenv/stdenv/#chap-stdenv">The Standard Environment</a></li>
+<li><a href="stdenv/meta/#chap-meta">Meta-attributes</a></li>
+<li><a href="stdenv/passthru/#chap-passthru">Passthru-attributes</a></li>
+<li><a href="stdenv/multiple-output/#chap-multiple-output">Multiple-output packages</a></li>
+<li><a href="stdenv/cross-compilation/#chap-cross">Cross-compilation</a></li>
+<li><a href="stdenv/platform-notes/#chap-platform-notes">Platform Notes</a></li>
+</ul>
+<h2>Toolchains</h2>
+<ul>
+<li><a href="toolchains/llvm/#chap-toolchains">The LLVM Toolchain</a></li>
+</ul>
+<h2>Builders</h2>
+<ul>
+<li><a href="build-helpers/#part-builders">Build helpers</a></li>
+<li><a href="build-helpers/fetchers/#chap-pkgs-fetchers">Fetchers</a></li>
+<li><a href="build-helpers/trivial-build-helpers/#chap-trivial-builders">Trivial build helpers</a></li>
+<li><a href="build-helpers/fixed-point-arguments/#chap-build-helpers-finalAttrs">Fixed-point arguments of build helpers</a></li>
+<li><a href="build-helpers/dev-shell-tools/#chap-devShellTools">Development Shell helpers</a></li>
+<li><a href="build-helpers/testers/#chap-testers">Testers</a></li>
+<li>Special build helpers
+<ul>
+<li><a href="build-helpers/special/fhs-environments/#sec-fhs-environments">buildFHSEnv</a></li>
+<li><a href="build-helpers/special/fakenss/#sec-fakeNss">fakeNss</a></li>
+<li><a href="build-helpers/special/makesetuphook/#sec-pkgs.makeSetupHook">pkgs.makeSetupHook</a></li>
+<li><a href="build-helpers/special/mkshell/#sec-pkgs-mkShell">pkgs.mkShell</a></li>
+<li><a href="packages/darwin-builder/#sec-darwin-builder">darwin.linux-builder</a></li>
+<li><a href="build-helpers/special/vm-tools/#sec-vm-tools">vmTools</a></li>
+</ul>
+</li>
+<li>Images
+<ul>
+<li><a href="build-helpers/images/appimagetools/#sec-pkgs-appimageTools">pkgs.appimageTools</a></li>
+<li><a href="build-helpers/images/dockertools/#sec-pkgs-dockerTools">pkgs.dockerTools</a></li>
+<li><a href="build-helpers/images/ocitools/#sec-pkgs-ociTools">pkgs.ociTools</a></li>
+<li><a href="build-helpers/images/portableservice/#sec-pkgs-portableService">pkgs.portableService</a></li>
+<li><a href="build-helpers/images/makediskimage/#sec-make-disk-image">&lt;nixpkgs/nixos/lib/make-disk-image.nix&gt;</a></li>
+<li><a href="build-helpers/images/binarycache/#sec-pkgs-binary-cache">pkgs.mkBinaryCache</a></li>
+</ul>
+</li>
+<li><a href="hooks/index/#chap-hooks">Hooks reference</a>
+<ul>
+<li><a href="hooks/autoconf/#setup-hook-autoconf">Autoconf</a></li>
+<li><a href="hooks/automake/#setup-hook-automake">Automake</a></li>
+<li><a href="hooks/autopatchelf/#setup-hook-autopatchelfhook">autoPatchelfHook</a></li>
+<li><a href="hooks/breakpoint/#breakpointhook">breakpointHook</a></li>
+<li><a href="hooks/cmake/#cmake">cmake</a></li>
+<li><a href="hooks/gdk-pixbuf/#setup-hook-gdk-pixbuf">gdk-pixbuf</a></li>
+<li><a href="hooks/ghc/#ghc">GHC</a></li>
+<li><a href="hooks/gnome/#gnome-platform">GNOME platform</a></li>
+<li><a href="hooks/installShellFiles/#installshellfiles">installShellFiles</a></li>
+<li><a href="hooks/libglycin/#libglycin-hooks">libglycin</a></li>
+<li><a href="hooks/libiconv/#libiconv-libintl">libiconv, libintl</a></li>
+<li><a href="hooks/libxml2/#setup-hook-libxml2">libxml2</a></li>
+<li><a href="hooks/meson/#meson">Meson</a></li>
+<li><a href="hooks/mpi-check-hook/#setup-hook-mpi-check">mpiCheckPhaseHook</a></li>
+<li><a href="hooks/ninja/#ninja">ninja</a></li>
+<li><a href="hooks/patch-rc-path-hooks/#sec-patchRcPathHooks">patchRcPath hooks</a></li>
+<li><a href="hooks/perl/#setup-hook-perl">Perl</a></li>
+<li><a href="hooks/pkg-config/#setup-hook-pkg-config">pkg-config</a></li>
+<li><a href="hooks/pnpm/#pnpm-build-hook">pnpmBuildHook</a></li>
+<li><a href="hooks/postgresql-test-hook/#sec-postgresqlTestHook">postgresqlTestHook</a></li>
+<li><a href="hooks/python/#setup-hook-python">Python</a></li>
+<li><a href="hooks/scons/#scons">scons</a></li>
+<li><a href="hooks/tetex-tex-live/#tetex-tex-live">teTeX / TeX Live</a></li>
+<li><a href="hooks/unzip/#unzip">unzip</a></li>
+<li><a href="hooks/validatePkgConfig/#validatepkgconfig">validatePkgConfig</a></li>
+<li><a href="hooks/versionCheckHook/#versioncheckhook">versionCheckHook</a></li>
+<li><a href="hooks/waf/#waf-hook">wafHook</a></li>
+<li><a href="hooks/xcbuild/#xcbuildhook">xcbuildHook</a></li>
+</ul>
+</li>
+<li><a href="languages-frameworks/index/#chap-language-support">Languages and frameworks</a>
+<ul>
+<li><a href="languages-frameworks/agda/#agda">Agda</a></li>
+<li><a href="languages-frameworks/android/#android">Android</a></li>
+<li><a href="languages-frameworks/astal/#astal">Astal</a></li>
+<li><a href="languages-frameworks/beam/#sec-beam">BEAM Languages (Erlang, Elixir &amp; LFE)</a></li>
+<li><a href="languages-frameworks/chicken/#sec-chicken">CHICKEN</a></li>
+<li><a href="languages-frameworks/cosmic/#sec-language-cosmic">COSMIC</a></li>
+<li><a href="languages-frameworks/crystal/#crystal">Crystal</a></li>
+<li><a href="languages-frameworks/cuda/#cuda">CUDA</a></li>
+<li><a href="languages-frameworks/cuelang/#cuelang">Cue (Cuelang)</a></li>
+<li><a href="languages-frameworks/dlang/#dlang">D (Dlang)</a></li>
+<li><a href="languages-frameworks/dart/#sec-language-dart">Dart</a></li>
+<li><a href="languages-frameworks/dhall/#sec-language-dhall">Dhall</a></li>
+<li><a href="languages-frameworks/dotnet/#dotnet">Dotnet</a></li>
+<li><a href="languages-frameworks/emscripten/#emscripten">Emscripten</a></li>
+<li><a href="languages-frameworks/factor/#sec-language-factor">Factor</a></li>
+<li><a href="languages-frameworks/gnome/#sec-language-gnome">GNOME</a></li>
+<li><a href="languages-frameworks/go/#sec-language-go">Go</a></li>
+<li><a href="languages-frameworks/gradle/#gradle">Gradle</a></li>
+<li><a href="languages-frameworks/hare/#sec-language-hare">Hare</a></li>
+<li><a href="languages-frameworks/haskell/#haskell">Haskell</a></li>
+<li><a href="languages-frameworks/hy/#sec-language-hy">Hy</a></li>
+<li><a href="languages-frameworks/idris/#idris">Idris</a></li>
+<li><a href="languages-frameworks/idris2/#sec-idris2">Idris2</a></li>
+<li><a href="languages-frameworks/ios/#ios">iOS</a></li>
+<li><a href="languages-frameworks/java/#sec-language-java">Java</a></li>
+<li><a href="languages-frameworks/javascript/#language-javascript">Javascript</a></li>
+<li><a href="languages-frameworks/julia/#language-julia">Julia</a></li>
+<li><a href="languages-frameworks/lean4/#sec-language-lean4">Lean 4</a></li>
+<li><a href="languages-frameworks/lisp/#lisp">lisp-modules</a></li>
+<li><a href="languages-frameworks/lua/#lua">Lua</a></li>
+<li><a href="languages-frameworks/maven/#maven">Maven</a></li>
+<li><a href="languages-frameworks/neovim/#neovim">Neovim</a></li>
+<li><a href="languages-frameworks/nim/#sec-language-nim">Nim</a></li>
+<li><a href="languages-frameworks/ocaml/#sec-language-ocaml">OCaml</a></li>
+<li><a href="languages-frameworks/octave/#sec-octave">Octave</a></li>
+<li><a href="languages-frameworks/perl/#sec-language-perl">Perl</a></li>
+<li><a href="languages-frameworks/php/#sec-php">PHP</a></li>
+<li><a href="languages-frameworks/pkg-config/#sec-pkg-config">pkg-config</a></li>
+<li><a href="languages-frameworks/python/#python">Python</a></li>
+<li><a href="languages-frameworks/qt/#sec-language-qt">Qt</a></li>
+<li><a href="languages-frameworks/r/#r">R</a></li>
+<li><a href="languages-frameworks/rocq/#sec-language-rocq">Rocq and rocq packages</a></li>
+<li><a href="languages-frameworks/ruby/#sec-language-ruby">Ruby</a></li>
+<li><a href="languages-frameworks/rust/#rust">Rust</a></li>
+<li><a href="languages-frameworks/scheme/#sec-scheme">Scheme</a></li>
+<li><a href="languages-frameworks/swift/#swift">Swift</a></li>
+<li><a href="languages-frameworks/tcl/#sec-language-tcl">Tcl</a></li>
+<li><a href="languages-frameworks/texlive/#sec-language-texlive">TeX Live</a></li>
+<li><a href="languages-frameworks/typst/#typst">Typst</a></li>
+<li><a href="languages-frameworks/vim/#vim">Vim</a></li>
+</ul>
+</li>
+<li><a href="packages/index/#chap-packages">Packages</a>
+<ul>
+<li><a href="packages/build-support/#sec-build-support">Build Support</a></li>
+<li><a href="packages/cataclysm-dda/#cataclysm-dark-days-ahead">Cataclysm: Dark Days Ahead</a></li>
+<li><a href="packages/citrix/#sec-citrix">Citrix Workspace</a></li>
+<li><a href="packages/dlib/#dlib">DLib</a></li>
+<li><a href="packages/eclipse/#sec-eclipse">Eclipse</a></li>
+<li><a href="packages/elm/#sec-elm">Elm</a></li>
+<li><a href="packages/emacs/#sec-emacs">Emacs</a></li>
+<li><a href="packages/firefox/#sec-firefox">Firefox</a></li>
+<li><a href="packages/fish/#sec-fish">Fish</a></li>
+<li><a href="packages/friction-graphics/#friction-graphics">Friction</a></li>
+<li><a href="packages/fuse/#sec-fuse">FUSE</a></li>
+<li><a href="packages/geant4/#geant4">Geant4</a></li>
+<li><a href="packages/ibus/#sec-ibus-typing-booster">ibus-engines.typing-booster</a></li>
+<li><a href="packages/inkscape/#sec-inkscape">Inkscape</a></li>
+<li><a href="packages/kakoune/#sec-kakoune">Kakoune</a></li>
+<li><a href="packages/krita/#sec-krita">Krita</a></li>
+<li><a href="packages/lhapdf/#lhapdf">LHAPDF</a></li>
+<li><a href="packages/linux/#sec-linux-kernel">Linux kernel</a></li>
+<li><a href="packages/locales/#locales">Locales</a></li>
+<li><a href="packages/etc-files/#etc">/etc files</a></li>
+<li><a href="packages/nginx/#sec-nginx">Nginx</a></li>
+<li><a href="packages/nrfutil/#sec-nrfutil">nrfutil</a></li>
+<li><a href="packages/opengl/#sec-opengl">OpenGL</a></li>
+<li><a href="packages/python-tree-sitter/#python-tree-sitter">Python Tree Sitter</a></li>
+<li><a href="packages/shell-helpers/#sec-shell-helpers">Interactive shell helpers</a></li>
+<li><a href="packages/steam/#sec-steam">Steam</a></li>
+<li><a href="packages/treefmt/#treefmt">treefmt</a></li>
+<li><a href="packages/urxvt/#sec-urxvt">Urxvt</a></li>
+<li><a href="packages/uv/#sec-uv">uv</a></li>
+<li><a href="packages/vcpkg/#sec-vcpkg">VCPKG</a></li>
+<li><a href="packages/weechat/#sec-weechat">WeeChat</a></li>
+</ul>
+</li>
+</ul>
+<h2>Modules</h2>
+<ul>
+<li><a href="modules/index/#modules">Modules</a>
+<ul>
+<li><a href="modules/generic/#modules-generic">Generic</a>
+<ul>
+<li><a href="modules/generic/#modules-generic-meta-maintainers">meta-maintainers.nix</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2>Development of Nixpkgs</h2>
+<ul>
+<li><a href="development/opening-issues/#sec-opening-issues">Opening issues</a></li>
+<li><a href="contributing/coding-conventions/#chap-conventions">Coding conventions</a></li>
+</ul>
+<h2>Interoperability Standards</h2>
+<ul>
+<li><a href="interoperability/cyclonedx/#chap-interop-cyclonedx">CycloneDX</a>
+<ul>
+<li><a href="interoperability/cyclonedx/#sec-interop.cylonedx-nix"><code>nix</code> namespace</a></li>
+<li><a href="interoperability/cyclonedx/#sec-interop.cylonedx-narinfo"><code>nix:narinfo</code></a></li>
+<li><a href="interoperability/cyclonedx/#sec-interop.cylonedx-fod"><code>nix:fod</code></a></li>
+</ul>
+</li>
+</ul>
+<h2>Release Notes</h2>
+<ul>
+<li><a href="release-notes/release-notes/#chap-release-notes">Release Notes</a>
+<ul>
+<li><a href="release-notes/rl-2611/#sec-nixpkgs-release-26.11">Nixpkgs 26.11 (&quot;Zokor&quot;, 2026.11/??)</a></li>
+<li><a href="release-notes/rl-2605/#sec-nixpkgs-release-26.05">Nixpkgs 26.05 (&quot;Yarara&quot;, 2026.05/30)</a></li>
+<li><a href="release-notes/rl-2511/#sec-nixpkgs-release-25.11">Nixpkgs 25.11 (&quot;Xantusia&quot;, 2025.11/30)</a></li>
+<li><a href="release-notes/rl-2505/#sec-nixpkgs-release-25.05">Nixpkgs 25.05 (2025.05/23)</a></li>
+</ul>
+</li>
+</ul>
+    </nav>
+    <section id='main'>
+      <div id='search-panel' class='nav-search' role='search' hidden>
+        <label class='visually-hidden' for='search'>Search documentation</label>
+        <input type='search' id='search' placeholder='Search' autocomplete='off' aria-controls='search-results'>
+        <p id='search-status' class='visually-hidden' role='status' aria-live='polite'></p>
+        <div id='search-results'></div>
+      </div>
+      <div class='main-scroll'>
+        <main id='main-content' tabindex='-1'>
+<h1 id='sec-language-go'><a href='languages-frameworks/go/#sec-language-go'>
+Go
+</a></h1>
+<h2 id='ssec-language-go'><a href='languages-frameworks/go/#ssec-language-go'>
+Building Go modules with <code>buildGoModule</code>
+</a></h2>
+<p>The function <code>buildGoModule</code> builds Go programs managed with Go modules. It builds <a href="https://go.dev/wiki/Modules">Go Modules</a> through a two phase build:</p>
+<ul>
+<li>An intermediate fetcher derivation called <code>goModules</code>. This derivation will be used to fetch all the dependencies of the Go module.</li>
+<li>A final derivation will use the output of the intermediate derivation to build the binaries and produce the final output.</li>
+</ul>
+<h3 id='ex-buildGoModule'><a href='languages-frameworks/go/#ex-buildGoModule'>
+Example for <code>buildGoModule</code>
+</a></h3>
+<p>The following is an example expression using <code>buildGoModule</code>:</p>
+<pre><code class="language-nix">{
+  pet = buildGoModule (finalAttrs: {
+    pname = &quot;pet&quot;;
+    version = &quot;0.3.4&quot;;
+
+    src = fetchFromGitHub {
+      owner = &quot;knqyf263&quot;;
+      repo = &quot;pet&quot;;
+      tag = &quot;v${finalAttrs.version}&quot;;
+      hash = &quot;sha256-Gjw1dRrgM8D3G7v6WIM2+50r4HmTXvx0Xxme2fH9TlQ=&quot;;
+    };
+
+    vendorHash = &quot;sha256-ciBIR+a1oaYH+H1PcC8cD8ncfJczk1IiJ8iYNM+R6aA=&quot;;
+
+    meta = {
+      description = &quot;Simple command-line snippet manager, written in Go&quot;;
+      homepage = &quot;https://github.com/knqyf263/pet&quot;;
+      license = lib.licenses.mit;
+      maintainers = with lib.maintainers; [ kalbasit ];
+    };
+  });
+}
+</code></pre>
+<h2 id='buildgomodule-parameters'><a href='languages-frameworks/go/#buildgomodule-parameters'>
+Attributes of <code>buildGoModule</code>
+</a></h2>
+<p>Many attributes <a href="stdenv/stdenv/#variables-controlling-the-build-phase">controlling the build phase</a> are respected by <code>buildGoModule</code>. Note that <code>buildGoModule</code> reads the following attributes also when building the <code>vendor/</code> goModules fixed output derivation as well:</p>
+<ul>
+<li><a href="stdenv/stdenv/#var-stdenv-sourceRoot"><code>sourceRoot</code></a></li>
+<li><a href="stdenv/stdenv/#var-stdenv-prePatch"><code>prePatch</code></a></li>
+<li><a href="stdenv/stdenv/#var-stdenv-patches"><code>patches</code></a></li>
+<li><a href="stdenv/stdenv/#var-stdenv-patchFlags"><code>patchFlags</code></a></li>
+<li><a href="stdenv/stdenv/#var-stdenv-postPatch"><code>postPatch</code></a></li>
+<li><a href="stdenv/stdenv/#var-stdenv-preBuild"><code>preBuild</code></a></li>
+<li><code>env</code>: useful for passing down variables such as <code>GOWORK</code>.</li>
+</ul>
+<p>To control test execution of the build derivation, the following attributes are of interest:</p>
+<ul>
+<li><a href="stdenv/stdenv/#var-stdenv-checkInputs"><code>checkInputs</code></a></li>
+<li><a href="stdenv/stdenv/#var-stdenv-preCheck"><code>preCheck</code></a></li>
+<li><a href="stdenv/stdenv/#var-stdenv-checkFlags"><code>checkFlags</code></a></li>
+</ul>
+<p>In addition to the above attributes, and the many more variables respected also by <code>stdenv.mkDerivation</code>, <code>buildGoModule</code> respects Go-specific attributes that tweak them to behave slightly differently:</p>
+<h3 id='var-go-vendorHash'><a href='languages-frameworks/go/#var-go-vendorHash'>
+<code>vendorHash</code>
+</a></h3>
+<p>Hash of the output of the intermediate fetcher derivation (the dependencies of the Go modules).</p>
+<p><code>vendorHash</code> can be set to <code>null</code>.
+In that case, rather than fetching the dependencies, the dependencies already vendored in the <code>vendor</code> directory of the source repo will be used.</p>
+<p>To avoid updating this field when dependencies change, run <code>go mod vendor</code> in your source repo and set <code>vendorHash = null;</code>.
+You can read more about <a href="https://go.dev/ref/mod#vendoring">vendoring in the Go documentation</a>.</p>
+<p>To obtain the hash, set <code>vendorHash = lib.fakeHash;</code> and run the build. (<a href="contributing/coding-conventions/#sec-source-hashes">more details here</a>).
+Another way is to use <code>nix-prefetch</code> to obtain the hash. The following command gets the value of <code>vendorHash</code> for package <code>pet</code>:</p>
+<pre><code class="language-sh">cd path/to/nixpkgs
+nix-prefetch -E &quot;{ sha256 }: ((import ./. { }).my-package.overrideAttrs { vendorHash = sha256; }).goModules&quot;
+</code></pre>
+<p><code>vendorHash</code> can be overridden with <code>overrideAttrs</code>. Override the above example like this:</p>
+<pre><code class="language-nix">{
+  pet_0_4_0 = pet.overrideAttrs (
+    finalAttrs: previousAttrs: {
+      version = &quot;0.4.0&quot;;
+      src = fetchFromGitHub {
+        inherit (previousAttrs.src) owner repo;
+        tag = &quot;v${finalAttrs.version}&quot;;
+        hash = &quot;sha256-gVTpzmXekQxGMucDKskGi+e+34nJwwsXwvQTjRO6Gdg=&quot;;
+      };
+      vendorHash = &quot;sha256-dUvp7FEW09V0xMuhewPGw3TuAic/sD7xyXEYviZ2Ivs=&quot;;
+    }
+  );
+}
+</code></pre>
+<h3 id='var-go-proxyVendor'><a href='languages-frameworks/go/#var-go-proxyVendor'>
+<code>proxyVendor</code>
+</a></h3>
+<p>If <code>true</code>, the intermediate fetcher downloads dependencies from the
+<a href="https://go.dev/ref/mod#module-proxy">Go module proxy</a> (using <code>go mod download</code>) instead of vendoring them. The resulting
+<a href="https://go.dev/ref/mod#module-cache">module cache</a> is then passed to the final derivation.</p>
+<p>This is useful if your code depends on C code and <code>go mod tidy</code> does not include the needed sources to build or
+if any dependency has case-insensitive conflicts which will produce platform-dependent <code>vendorHash</code> checksums.
+It may also be needed if the module targets language version 1.16 or earlier, since vendoring compiles all dependencies against language version 1.16 in this case.</p>
+<p>Defaults to <code>false</code>.</p>
+<h3 id='var-go-modPostBuild'><a href='languages-frameworks/go/#var-go-modPostBuild'>
+<code>modPostBuild</code>
+</a></h3>
+<p>Shell commands to run after the build of the goModules executes <code>go mod vendor</code>, and before calculating fixed output derivation's <code>vendorHash</code>.
+Note that if you change this attribute, you need to update the <code>vendorHash</code> attribute.</p>
+<h3 id='var-go-modRoot'><a href='languages-frameworks/go/#var-go-modRoot'>
+<code>modRoot</code>
+</a></h3>
+<p>The root directory of the Go module that contains the <code>go.mod</code> file.</p>
+<p>Defaults to <code>./</code>, which is the root of <code>src</code>.</p>
+<h3 id='var-go-ldflags'><a href='languages-frameworks/go/#var-go-ldflags'>
+<code>ldflags</code>
+</a></h3>
+<p>A string list of flags to pass to the Go linker tool via the <code>-ldflags</code> argument of <code>go build</code>. Possible values can be retrieved by running <code>go tool link --help</code>.
+The most common use case for this argument is to make the resulting executable aware of its own version by injecting the value of string variable using the <code>-X</code> flag. For example:</p>
+<pre><code class="language-nix">{
+  ldflags = [
+    &quot;-X main.Version=${version}&quot;
+    &quot;-X main.Commit=${version}&quot;
+  ];
+}
+</code></pre>
+<h3 id='var-go-tags'><a href='languages-frameworks/go/#var-go-tags'>
+<code>tags</code>
+</a></h3>
+<p>A string list of <a href="https://pkg.go.dev/cmd/go#hdr-Build_constraints">Go build tags (also called build constraints)</a> that are passed via the <code>-tags</code> argument of <code>go build</code>.  These constraints control whether Go files from the source should be included in the build. For example:</p>
+<pre><code class="language-nix">{
+  tags = [
+    &quot;production&quot;
+    &quot;sqlite&quot;
+  ];
+}
+</code></pre>
+<p>Tags can also be set conditionally:</p>
+<pre><code class="language-nix">{ tags = [ &quot;production&quot; ] ++ lib.optionals withSqlite [ &quot;sqlite&quot; ]; }
+</code></pre>
+<h3 id='var-go-deleteVendor'><a href='languages-frameworks/go/#var-go-deleteVendor'>
+<code>deleteVendor</code>
+</a></h3>
+<p>If set to <code>true</code>, removes the pre-existing vendor directory. This should only be used if the dependencies included in the vendor folder are broken or incomplete.</p>
+<h3 id='var-go-subPackages'><a href='languages-frameworks/go/#var-go-subPackages'>
+<code>subPackages</code>
+</a></h3>
+<p>Specified as a string or list of strings. Limits the builder from building child packages that have not been listed. If <code>subPackages</code> is not specified, all child packages will be built.</p>
+<p>Many Go projects keep the main package in a <code>cmd</code> directory.
+Following example could be used to only build the example-cli and example-server binaries:</p>
+<pre><code class="language-nix">{
+  subPackages = [
+    &quot;cmd/example-cli&quot;
+    &quot;cmd/example-server&quot;
+  ];
+}
+</code></pre>
+<h3 id='var-go-excludedPackages'><a href='languages-frameworks/go/#var-go-excludedPackages'>
+<code>excludedPackages</code>
+</a></h3>
+<p>Specified as a string or list of strings. Causes the builder to skip building child packages that match any of the provided values.</p>
+<h3 id='var-go-enableParallelBuilding'><a href='languages-frameworks/go/#var-go-enableParallelBuilding'>
+<code>enableParallelBuilding</code>
+</a></h3>
+<p>Whether builds and tests should run in parallel.</p>
+<p>Defaults to <code>true</code>.</p>
+<h3 id='var-go-allowGoReference'><a href='languages-frameworks/go/#var-go-allowGoReference'>
+<code>allowGoReference</code>
+</a></h3>
+<p>Whether the build result should be allowed to contain references to the Go tool chain. This might be needed for programs that are coupled with the compiler, but shouldn't be set without a good reason.</p>
+<p>Defaults to <code>false</code></p>
+<h3 id='var-go-goSum'><a href='languages-frameworks/go/#var-go-goSum'>
+<code>goSum</code>
+</a></h3>
+<p>Specifies the contents of the <code>go.sum</code> file and triggers rebuilds when it changes. This helps combat inconsistent dependency errors on <code>go.sum</code> changes.</p>
+<p>Defaults to <code>null</code></p>
+<h3 id='var-go-buildTestBinaries'><a href='languages-frameworks/go/#var-go-buildTestBinaries'>
+<code>buildTestBinaries</code>
+</a></h3>
+<p>This option allows to compile test binaries instead of the usual binaries produced by a package.
+Go can <a href="https://pkg.go.dev/cmd/go#hdr-Test_packages">compile test into binaries</a> using the <code>go test -c</code> command.
+These binaries can then be executed at a later point (outside the Nix sandbox) to run the tests.
+This is mostly useful for downstream consumers to run integration or end-to-end tests that won't work in the Nix sandbox, for example because they require network access.</p>
+<h2 id='ssec-go-toolchain-versions'><a href='languages-frameworks/go/#ssec-go-toolchain-versions'>
+Versioned toolchains and builders
+</a></h2>
+<p>Beside <code>buildGoModule</code>, there are also versioned builders available that pin a specific Go version, like <code>buildGo124Module</code> for Go 1.24.
+Similar, versioned toolchains are available, like <code>go_1_24</code> for Go 1.24.
+Both builder and toolchain of a certain version will be removed as soon as the Go version reaches its end of life.</p>
+<p>As toolchain updates in nixpkgs cause mass rebuilds and must go through the staging cycle, it can take a while until a new Go minor version is available to consumers of nixpkgs.
+If you want quicker access to the latest minor, use <code>go_latest</code> toolchain and <code>buildGoLatestModule</code> builder.
+To learn more about the Go maintenance and upgrade procedure in nixpkgs, check out the <a href="https://github.com/NixOS/nixpkgs/blob/master/pkgs/build-support/go/README.md#go-toolchainbuilder-upgrade-policy">Go toolchain/builder upgrade policy</a>.</p>
+<div class='admonition warning'><h3 class='title'>Warning</h3>
+<p>
+The use of <code>go_latest</code> and <code>buildGoLatestModule</code> is restricted within nixpkgs.
+The <a href="https://github.com/NixOS/nixpkgs/blob/master/pkgs/build-support/go/README.md#go-toolchainbuilder-upgrade-policy">Go toolchain/builder upgrade policy</a> must be followed.
+</p>
+</div>
+<h2 id='buildGoModule-goModules-override'><a href='languages-frameworks/go/#buildGoModule-goModules-override'>
+Overriding <code>goModules</code>
+</a></h2>
+<p>Overriding <code>&lt;pkg&gt;.goModules</code> by calling <code>goModules.overrideAttrs</code> is unsupported. Still, it is possible to override the <code>vendorHash</code> (<code>goModules</code>'s <code>outputHash</code>) and the <code>pre</code>/<code>post</code> hooks for both the build and patch phases of the primary and <code>goModules</code> derivation.</p>
+<p>Alternatively, the primary derivation provides an overridable <code>passthru.overrideModAttrs</code> function to store the attribute overlay implicitly taken by <code>goModules.overrideAttrs</code>. Here's an example usage of <code>overrideModAttrs</code>:</p>
+<pre><code class="language-nix">{
+  pet-overridden = pet.overrideAttrs (
+    finalAttrs: previousAttrs: {
+      passthru = previousAttrs.passthru // {
+        # If the original package has an `overrideModAttrs` attribute set, you'd
+        # want to extend it, and not replace it. Hence we use
+        # `lib.composeExtensions`. If you are sure the `overrideModAttrs` of the
+        # original package trivially does nothing, you can safely replace it
+        # with your own by not using `lib.composeExtensions`.
+        overrideModAttrs = lib.composeExtensions previousAttrs.passthru.overrideModAttrs (
+          finalModAttrs: previousModAttrs: {
+            # goModules-specific overriding goes here
+            postBuild = ''
+              # Here you have access to the `vendor` directory.
+              substituteInPlace vendor/github.com/example/repo/file.go \
+                --replace-fail &quot;panic(err)&quot; &quot;&quot;
+            '';
+          }
+        );
+      };
+    }
+  );
+}
+</code></pre>
+<h2 id='ssec-go-environment'><a href='languages-frameworks/go/#ssec-go-environment'>
+Controlling the Go environment
+</a></h2>
+<p>The Go build can be further tweaked by setting environment variables via the <code>env</code> attribute. In most cases, this isn't needed. Possible values can be found in the <a href="https://pkg.go.dev/cmd/go#hdr-Environment_variables">Go documentation of accepted environment variables</a>. Notice that some of these flags are set by the build helper itself and should not be set explicitly. If in doubt, grep the implementation of the build helper.</p>
+<p><code>buildGoModule</code> officially supports the following environment variables:</p>
+<h3 id='var-go-CGO_ENABLED'><a href='languages-frameworks/go/#var-go-CGO_ENABLED'>
+<code>env.CGO_ENABLED</code>
+</a></h3>
+<p>When set to <code>0</code>, the <a href="https://pkg.go.dev/cmd/cgo">cgo</a> command is disabled. As a consequence, the build
+program can't link against C libraries anymore, and the resulting binary is statically linked.</p>
+<p>When building with CGO enabled, Go will likely link some packages from the Go standard library against C libraries,
+even when the target code does not explicitly call into C dependencies. With <code>env.CGO_ENABLED = 0;</code>, Go
+will always use the Go native implementation of these internal packages. For reference see
+<a href="https://pkg.go.dev/net#hdr-Name_Resolution">net</a> and <a href="https://pkg.go.dev/os/user#pkg-overview">os/user</a> packages.
+Notice that the decision whether these packages should use native Go implementation or not can also be controlled
+on a per package level using build tags (<code>tags</code>). In case CGO is disabled, these tags have no additional effect.</p>
+<p>When a Go program depends on C libraries, place those dependencies in <code>buildInputs</code>:</p>
+<pre><code class="language-nix">{
+  buildInputs = [
+    libvirt
+    libxml2
+  ];
+}
+</code></pre>
+<p><code>env.CGO_ENABLED</code> defaults to <code>1</code>.</p>
+<h2 id='ssec-skip-go-tests'><a href='languages-frameworks/go/#ssec-skip-go-tests'>
+Skipping tests
+</a></h2>
+<p><code>buildGoModule</code> runs tests by default. Failing tests can be disabled using the <code>checkFlags</code> parameter.
+This is done with the <a href="https://pkg.go.dev/cmd/go#hdr-Testing_flags"><code>-skip</code> or <code>-run</code></a> flags of the <code>go test</code> command.</p>
+<p>For example, only a selection of tests could be run with:</p>
+<pre><code class="language-nix">{
+  # -run and -skip accept regular expressions
+  checkFlags = [ &quot;-run=^Test(Simple|Fast)$&quot; ];
+}
+</code></pre>
+<p>If a larger amount of tests should be skipped, the following pattern can be used:</p>
+<pre><code class="language-nix">{
+  checkFlags =
+    let
+      # Skip tests that require network access
+      skippedTests = [
+        &quot;TestNetwork&quot;
+        &quot;TestDatabase/with_mysql&quot; # exclude only the subtest
+        &quot;TestIntegration&quot;
+      ];
+    in
+    [ &quot;-skip=^${builtins.concatStringsSep &quot;$|^&quot; skippedTests}$&quot; ];
+}
+</code></pre>
+<p>To disable tests altogether, set <code>doCheck = false;</code>.</p>
+<h2 id='buildGoPackage-migration'><a href='languages-frameworks/go/#buildGoPackage-migration'>
+Migrating from <code>buildGoPackage</code> to <code>buildGoModule</code>
+</a></h2>
+<div class='admonition warning'><h3 class='title'>Warning</h3>
+<p>
+<code>buildGoPackage</code> was removed for the 25.05 release. It was used to build legacy Go programs
+that do not support Go modules.
+</p>
+</div>
+<p>Go modules, released 6y ago, are now widely adopted in the ecosystem.
+Most upstream projects are using Go modules, and the tooling previously used for dependency management in Go is mostly deprecated, archived or at least unmaintained at this point.</p>
+<p>In case a project doesn't have external dependencies or dependencies are vendored in a way understood by <code>go mod init</code>, migration can be done with a few changes in the package.</p>
+<ul>
+<li>Switch the builder from <code>buildGoPackage</code> to <code>buildGoModule</code></li>
+<li>Remove <code>goPackagePath</code> and other attributes specific to <code>buildGoPackage</code></li>
+<li>Set <code>vendorHash = null;</code></li>
+<li>Run <code>go mod init &lt;module name&gt;</code> in <code>postPatch</code></li>
+</ul>
+<p>In case the package has external dependencies that aren't vendored or the build setup is more complex the upstream source might need to be patched.
+Examples for the migration can be found in the <a href="https://github.com/NixOS/nixpkgs/issues/318069">issue tracking migration within nixpkgs</a>.</p>
+        </main>
+      </div>
+    </section>
+<script defer src='highlight.pack.cf986678470772f7.js'></script>
+<script defer src='mmdoc.367f3e8986e40416.js'></script>
+<script defer src='mmdoc_search.a5b6fc7d7512cdc1.js' data-search-index='search_index.b3afff10081eb0bd.js' data-fuse='fuse.basic.min.bb997c989fa0a28e.js'></script>
+  </div>
+  </body>
+</html>

@@ -1,0 +1,1887 @@
+<!doctype html>
+<html lang='en'>
+  <head>
+    <base href='../../'>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <script>
+      (() => {
+        let theme = null
+        try { theme = localStorage.getItem('theme') } catch (error) {}
+        if (theme !== 'light' && theme !== 'dark')
+          theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+        document.documentElement.classList.add(theme + '-theme')
+      })()
+    </script>
+    <meta name='description' content='The Standard Environment'>
+    <link rel='icon' href='favicon.svg'>
+    <link rel='stylesheet' href='a11y-dark.1fcafc9d9a306955.css'>
+    <link rel='stylesheet' href='a11y-light.b466309a7fa86b1f.css'>
+    <link rel='stylesheet' href='mmdoc.e4286053b6471af4.css'>
+    <title>The Standard Environment | nixpkgs</title>
+  </head>
+  <body>
+  <a class='skip-link' href='stdenv/stdenv/#main-content'>Skip to main content</a>
+  <input type='checkbox' id='sidebar-checkbox' aria-hidden='true' tabindex='-1' style='display: none;'>
+  <div class='body'>
+    <div class='nav-top-container'>
+    <nav class='nav-top' aria-label='Documentation controls'>
+      <button type='button' class='sidebar-toggle' aria-label='Toggle table of contents' aria-controls='sidebar' aria-expanded='true'></button>    <button type='button' class='search-toggle' aria-label='Open search' aria-controls='search-panel' aria-expanded='false'></button>    <button type='button' class='theme-toggle' aria-label='Switch to dark theme' aria-pressed='false'></button>    <a id='chapter-previous-button' class='chapter-previous' href='stdenv/#part-stdenv' title='Standard environment' aria-label='Previous: Standard environment'>&lt;</a>
+    <a id='chapter-next-button' class='chapter-next' href='stdenv/meta/#chap-meta' title='Meta-attributes' aria-label='Next: Meta-attributes'>&gt;</a>
+    </nav>
+    </div>
+    <nav id='sidebar' class='sidebar' aria-label='Table of contents'>
+<h1>Nixpkgs Manual</h1>
+<p>Version 26.11pre</p>
+<ul>
+<li><a href="./#preface">Preface</a>
+<ul>
+<li><a href="preface/#overview-of-nixpkgs">Overview of Nixpkgs</a></li>
+</ul>
+</li>
+<li><a href="first-package/#chap-first-package">Package your first application</a></li>
+</ul>
+<h2>Using Nixpkgs</h2>
+<ul>
+<li><a href="using/platform-support/#chap-platform-support">Platform Support</a></li>
+<li><a href="using/configuration/#chap-packageconfig">Global configuration</a></li>
+<li><a href="using/overlays/#chap-overlays">Overlays</a></li>
+<li><a href="using/overrides/#chap-overrides">Overriding</a></li>
+</ul>
+<h2>Nixpkgs Lib</h2>
+<ul>
+<li><a href="functions/#chap-functions">Functions reference</a>
+<ul>
+<li>Library Functions
+<ul>
+<li><a href="functions/library/asserts/#sec-functions-library-asserts">lib.asserts: assertion functions</a></li>
+<li><a href="functions/library/attrsets/#sec-functions-library-attrsets">lib.attrsets: attribute set functions</a></li>
+<li><a href="functions/library/strings/#sec-functions-library-strings">lib.strings: string manipulation functions</a></li>
+<li><a href="functions/library/versions/#sec-functions-library-versions">lib.versions: version string functions</a></li>
+<li><a href="functions/library/trivial/#sec-functions-library-trivial">lib.trivial: miscellaneous functions</a></li>
+<li><a href="functions/library/fixedPoints/#sec-functions-library-fixedPoints">lib.fixedPoints: explicit recursion functions</a></li>
+<li><a href="functions/library/lists/#sec-functions-library-lists">lib.lists: list manipulation functions</a></li>
+<li><a href="functions/library/debug/#sec-functions-library-debug">lib.debug: debugging functions</a></li>
+<li><a href="functions/library/options/#sec-functions-library-options">lib.options: NixOS / nixpkgs option handling</a></li>
+<li><a href="functions/library/path/#sec-functions-library-path">lib.path: path functions</a></li>
+<li><a href="functions/library/filesystem/#sec-functions-library-filesystem">lib.filesystem: filesystem functions</a></li>
+<li><a href="functions/library/fileset/#sec-functions-library-fileset">lib.fileset: file set functions</a></li>
+<li><a href="functions/library/sources/#sec-functions-library-sources">lib.sources: source filtering functions</a></li>
+<li><a href="functions/library/cli/#sec-functions-library-cli">lib.cli: command-line serialization functions</a></li>
+<li><a href="functions/library/gvariant/#sec-functions-library-gvariant">lib.gvariant: GVariant formatted string serialization functions</a></li>
+<li><a href="functions/library/fetchers/#sec-functions-library-fetchers">lib.fetchers: functions which can be reused across fetchers</a></li>
+<li><a href="functions/library/generators/#sec-functions-library-generators">lib.generators: functions that create file formats from nix data structures</a></li>
+<li><a href="functions/library/customisation/#sec-functions-library-customisation">lib.customisation: Functions to customise (derivation-related) functions, derivations, or attribute sets</a></li>
+<li><a href="functions/library/meta/#sec-functions-library-meta">lib.meta: functions for derivation metadata</a></li>
+<li><a href="functions/library/derivations/#sec-functions-library-derivations">lib.derivations: miscellaneous derivation-specific functions</a></li>
+<li><a href="functions/generators/#sec-generators">Generators</a></li>
+<li><a href="functions/debug/#sec-debug">Debugging Nix Expressions</a></li>
+<li><a href="functions/prefer-remote-fetch/#sec-prefer-remote-fetch">prefer-remote-fetch overlay</a></li>
+<li><a href="functions/nix-gitignore/#sec-pkgs-nix-gitignore">pkgs.nix-gitignore</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="module-system/module-system/#module-system">Module System</a></li>
+</ul>
+<h2>Standard Environment</h2>
+<ul>
+<li><a href="stdenv/#part-stdenv">Standard environment</a></li>
+<li><a href="stdenv/stdenv/#chap-stdenv">The Standard Environment</a></li>
+<li><a href="stdenv/meta/#chap-meta">Meta-attributes</a></li>
+<li><a href="stdenv/passthru/#chap-passthru">Passthru-attributes</a></li>
+<li><a href="stdenv/multiple-output/#chap-multiple-output">Multiple-output packages</a></li>
+<li><a href="stdenv/cross-compilation/#chap-cross">Cross-compilation</a></li>
+<li><a href="stdenv/platform-notes/#chap-platform-notes">Platform Notes</a></li>
+</ul>
+<h2>Toolchains</h2>
+<ul>
+<li><a href="toolchains/llvm/#chap-toolchains">The LLVM Toolchain</a></li>
+</ul>
+<h2>Builders</h2>
+<ul>
+<li><a href="build-helpers/#part-builders">Build helpers</a></li>
+<li><a href="build-helpers/fetchers/#chap-pkgs-fetchers">Fetchers</a></li>
+<li><a href="build-helpers/trivial-build-helpers/#chap-trivial-builders">Trivial build helpers</a></li>
+<li><a href="build-helpers/fixed-point-arguments/#chap-build-helpers-finalAttrs">Fixed-point arguments of build helpers</a></li>
+<li><a href="build-helpers/dev-shell-tools/#chap-devShellTools">Development Shell helpers</a></li>
+<li><a href="build-helpers/testers/#chap-testers">Testers</a></li>
+<li>Special build helpers
+<ul>
+<li><a href="build-helpers/special/fhs-environments/#sec-fhs-environments">buildFHSEnv</a></li>
+<li><a href="build-helpers/special/fakenss/#sec-fakeNss">fakeNss</a></li>
+<li><a href="build-helpers/special/makesetuphook/#sec-pkgs.makeSetupHook">pkgs.makeSetupHook</a></li>
+<li><a href="build-helpers/special/mkshell/#sec-pkgs-mkShell">pkgs.mkShell</a></li>
+<li><a href="packages/darwin-builder/#sec-darwin-builder">darwin.linux-builder</a></li>
+<li><a href="build-helpers/special/vm-tools/#sec-vm-tools">vmTools</a></li>
+</ul>
+</li>
+<li>Images
+<ul>
+<li><a href="build-helpers/images/appimagetools/#sec-pkgs-appimageTools">pkgs.appimageTools</a></li>
+<li><a href="build-helpers/images/dockertools/#sec-pkgs-dockerTools">pkgs.dockerTools</a></li>
+<li><a href="build-helpers/images/ocitools/#sec-pkgs-ociTools">pkgs.ociTools</a></li>
+<li><a href="build-helpers/images/portableservice/#sec-pkgs-portableService">pkgs.portableService</a></li>
+<li><a href="build-helpers/images/makediskimage/#sec-make-disk-image">&lt;nixpkgs/nixos/lib/make-disk-image.nix&gt;</a></li>
+<li><a href="build-helpers/images/binarycache/#sec-pkgs-binary-cache">pkgs.mkBinaryCache</a></li>
+</ul>
+</li>
+<li><a href="hooks/index/#chap-hooks">Hooks reference</a>
+<ul>
+<li><a href="hooks/autoconf/#setup-hook-autoconf">Autoconf</a></li>
+<li><a href="hooks/automake/#setup-hook-automake">Automake</a></li>
+<li><a href="hooks/autopatchelf/#setup-hook-autopatchelfhook">autoPatchelfHook</a></li>
+<li><a href="hooks/breakpoint/#breakpointhook">breakpointHook</a></li>
+<li><a href="hooks/cmake/#cmake">cmake</a></li>
+<li><a href="hooks/gdk-pixbuf/#setup-hook-gdk-pixbuf">gdk-pixbuf</a></li>
+<li><a href="hooks/ghc/#ghc">GHC</a></li>
+<li><a href="hooks/gnome/#gnome-platform">GNOME platform</a></li>
+<li><a href="hooks/installShellFiles/#installshellfiles">installShellFiles</a></li>
+<li><a href="hooks/libglycin/#libglycin-hooks">libglycin</a></li>
+<li><a href="hooks/libiconv/#libiconv-libintl">libiconv, libintl</a></li>
+<li><a href="hooks/libxml2/#setup-hook-libxml2">libxml2</a></li>
+<li><a href="hooks/meson/#meson">Meson</a></li>
+<li><a href="hooks/mpi-check-hook/#setup-hook-mpi-check">mpiCheckPhaseHook</a></li>
+<li><a href="hooks/ninja/#ninja">ninja</a></li>
+<li><a href="hooks/patch-rc-path-hooks/#sec-patchRcPathHooks">patchRcPath hooks</a></li>
+<li><a href="hooks/perl/#setup-hook-perl">Perl</a></li>
+<li><a href="hooks/pkg-config/#setup-hook-pkg-config">pkg-config</a></li>
+<li><a href="hooks/pnpm/#pnpm-build-hook">pnpmBuildHook</a></li>
+<li><a href="hooks/postgresql-test-hook/#sec-postgresqlTestHook">postgresqlTestHook</a></li>
+<li><a href="hooks/python/#setup-hook-python">Python</a></li>
+<li><a href="hooks/scons/#scons">scons</a></li>
+<li><a href="hooks/tetex-tex-live/#tetex-tex-live">teTeX / TeX Live</a></li>
+<li><a href="hooks/unzip/#unzip">unzip</a></li>
+<li><a href="hooks/validatePkgConfig/#validatepkgconfig">validatePkgConfig</a></li>
+<li><a href="hooks/versionCheckHook/#versioncheckhook">versionCheckHook</a></li>
+<li><a href="hooks/waf/#waf-hook">wafHook</a></li>
+<li><a href="hooks/xcbuild/#xcbuildhook">xcbuildHook</a></li>
+</ul>
+</li>
+<li><a href="languages-frameworks/index/#chap-language-support">Languages and frameworks</a>
+<ul>
+<li><a href="languages-frameworks/agda/#agda">Agda</a></li>
+<li><a href="languages-frameworks/android/#android">Android</a></li>
+<li><a href="languages-frameworks/astal/#astal">Astal</a></li>
+<li><a href="languages-frameworks/beam/#sec-beam">BEAM Languages (Erlang, Elixir &amp; LFE)</a></li>
+<li><a href="languages-frameworks/chicken/#sec-chicken">CHICKEN</a></li>
+<li><a href="languages-frameworks/cosmic/#sec-language-cosmic">COSMIC</a></li>
+<li><a href="languages-frameworks/crystal/#crystal">Crystal</a></li>
+<li><a href="languages-frameworks/cuda/#cuda">CUDA</a></li>
+<li><a href="languages-frameworks/cuelang/#cuelang">Cue (Cuelang)</a></li>
+<li><a href="languages-frameworks/dlang/#dlang">D (Dlang)</a></li>
+<li><a href="languages-frameworks/dart/#sec-language-dart">Dart</a></li>
+<li><a href="languages-frameworks/dhall/#sec-language-dhall">Dhall</a></li>
+<li><a href="languages-frameworks/dotnet/#dotnet">Dotnet</a></li>
+<li><a href="languages-frameworks/emscripten/#emscripten">Emscripten</a></li>
+<li><a href="languages-frameworks/factor/#sec-language-factor">Factor</a></li>
+<li><a href="languages-frameworks/gnome/#sec-language-gnome">GNOME</a></li>
+<li><a href="languages-frameworks/go/#sec-language-go">Go</a></li>
+<li><a href="languages-frameworks/gradle/#gradle">Gradle</a></li>
+<li><a href="languages-frameworks/hare/#sec-language-hare">Hare</a></li>
+<li><a href="languages-frameworks/haskell/#haskell">Haskell</a></li>
+<li><a href="languages-frameworks/hy/#sec-language-hy">Hy</a></li>
+<li><a href="languages-frameworks/idris/#idris">Idris</a></li>
+<li><a href="languages-frameworks/idris2/#sec-idris2">Idris2</a></li>
+<li><a href="languages-frameworks/ios/#ios">iOS</a></li>
+<li><a href="languages-frameworks/java/#sec-language-java">Java</a></li>
+<li><a href="languages-frameworks/javascript/#language-javascript">Javascript</a></li>
+<li><a href="languages-frameworks/julia/#language-julia">Julia</a></li>
+<li><a href="languages-frameworks/lean4/#sec-language-lean4">Lean 4</a></li>
+<li><a href="languages-frameworks/lisp/#lisp">lisp-modules</a></li>
+<li><a href="languages-frameworks/lua/#lua">Lua</a></li>
+<li><a href="languages-frameworks/maven/#maven">Maven</a></li>
+<li><a href="languages-frameworks/neovim/#neovim">Neovim</a></li>
+<li><a href="languages-frameworks/nim/#sec-language-nim">Nim</a></li>
+<li><a href="languages-frameworks/ocaml/#sec-language-ocaml">OCaml</a></li>
+<li><a href="languages-frameworks/octave/#sec-octave">Octave</a></li>
+<li><a href="languages-frameworks/perl/#sec-language-perl">Perl</a></li>
+<li><a href="languages-frameworks/php/#sec-php">PHP</a></li>
+<li><a href="languages-frameworks/pkg-config/#sec-pkg-config">pkg-config</a></li>
+<li><a href="languages-frameworks/python/#python">Python</a></li>
+<li><a href="languages-frameworks/qt/#sec-language-qt">Qt</a></li>
+<li><a href="languages-frameworks/r/#r">R</a></li>
+<li><a href="languages-frameworks/rocq/#sec-language-rocq">Rocq and rocq packages</a></li>
+<li><a href="languages-frameworks/ruby/#sec-language-ruby">Ruby</a></li>
+<li><a href="languages-frameworks/rust/#rust">Rust</a></li>
+<li><a href="languages-frameworks/scheme/#sec-scheme">Scheme</a></li>
+<li><a href="languages-frameworks/swift/#swift">Swift</a></li>
+<li><a href="languages-frameworks/tcl/#sec-language-tcl">Tcl</a></li>
+<li><a href="languages-frameworks/texlive/#sec-language-texlive">TeX Live</a></li>
+<li><a href="languages-frameworks/typst/#typst">Typst</a></li>
+<li><a href="languages-frameworks/vim/#vim">Vim</a></li>
+</ul>
+</li>
+<li><a href="packages/index/#chap-packages">Packages</a>
+<ul>
+<li><a href="packages/build-support/#sec-build-support">Build Support</a></li>
+<li><a href="packages/cataclysm-dda/#cataclysm-dark-days-ahead">Cataclysm: Dark Days Ahead</a></li>
+<li><a href="packages/citrix/#sec-citrix">Citrix Workspace</a></li>
+<li><a href="packages/dlib/#dlib">DLib</a></li>
+<li><a href="packages/eclipse/#sec-eclipse">Eclipse</a></li>
+<li><a href="packages/elm/#sec-elm">Elm</a></li>
+<li><a href="packages/emacs/#sec-emacs">Emacs</a></li>
+<li><a href="packages/firefox/#sec-firefox">Firefox</a></li>
+<li><a href="packages/fish/#sec-fish">Fish</a></li>
+<li><a href="packages/friction-graphics/#friction-graphics">Friction</a></li>
+<li><a href="packages/fuse/#sec-fuse">FUSE</a></li>
+<li><a href="packages/geant4/#geant4">Geant4</a></li>
+<li><a href="packages/ibus/#sec-ibus-typing-booster">ibus-engines.typing-booster</a></li>
+<li><a href="packages/inkscape/#sec-inkscape">Inkscape</a></li>
+<li><a href="packages/kakoune/#sec-kakoune">Kakoune</a></li>
+<li><a href="packages/krita/#sec-krita">Krita</a></li>
+<li><a href="packages/lhapdf/#lhapdf">LHAPDF</a></li>
+<li><a href="packages/linux/#sec-linux-kernel">Linux kernel</a></li>
+<li><a href="packages/locales/#locales">Locales</a></li>
+<li><a href="packages/etc-files/#etc">/etc files</a></li>
+<li><a href="packages/nginx/#sec-nginx">Nginx</a></li>
+<li><a href="packages/nrfutil/#sec-nrfutil">nrfutil</a></li>
+<li><a href="packages/opengl/#sec-opengl">OpenGL</a></li>
+<li><a href="packages/python-tree-sitter/#python-tree-sitter">Python Tree Sitter</a></li>
+<li><a href="packages/shell-helpers/#sec-shell-helpers">Interactive shell helpers</a></li>
+<li><a href="packages/steam/#sec-steam">Steam</a></li>
+<li><a href="packages/treefmt/#treefmt">treefmt</a></li>
+<li><a href="packages/urxvt/#sec-urxvt">Urxvt</a></li>
+<li><a href="packages/uv/#sec-uv">uv</a></li>
+<li><a href="packages/vcpkg/#sec-vcpkg">VCPKG</a></li>
+<li><a href="packages/weechat/#sec-weechat">WeeChat</a></li>
+</ul>
+</li>
+</ul>
+<h2>Modules</h2>
+<ul>
+<li><a href="modules/index/#modules">Modules</a>
+<ul>
+<li><a href="modules/generic/#modules-generic">Generic</a>
+<ul>
+<li><a href="modules/generic/#modules-generic-meta-maintainers">meta-maintainers.nix</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2>Development of Nixpkgs</h2>
+<ul>
+<li><a href="development/opening-issues/#sec-opening-issues">Opening issues</a></li>
+<li><a href="contributing/coding-conventions/#chap-conventions">Coding conventions</a></li>
+</ul>
+<h2>Interoperability Standards</h2>
+<ul>
+<li><a href="interoperability/cyclonedx/#chap-interop-cyclonedx">CycloneDX</a>
+<ul>
+<li><a href="interoperability/cyclonedx/#sec-interop.cylonedx-nix"><code>nix</code> namespace</a></li>
+<li><a href="interoperability/cyclonedx/#sec-interop.cylonedx-narinfo"><code>nix:narinfo</code></a></li>
+<li><a href="interoperability/cyclonedx/#sec-interop.cylonedx-fod"><code>nix:fod</code></a></li>
+</ul>
+</li>
+</ul>
+<h2>Release Notes</h2>
+<ul>
+<li><a href="release-notes/release-notes/#chap-release-notes">Release Notes</a>
+<ul>
+<li><a href="release-notes/rl-2611/#sec-nixpkgs-release-26.11">Nixpkgs 26.11 (&quot;Zokor&quot;, 2026.11/??)</a></li>
+<li><a href="release-notes/rl-2605/#sec-nixpkgs-release-26.05">Nixpkgs 26.05 (&quot;Yarara&quot;, 2026.05/30)</a></li>
+<li><a href="release-notes/rl-2511/#sec-nixpkgs-release-25.11">Nixpkgs 25.11 (&quot;Xantusia&quot;, 2025.11/30)</a></li>
+<li><a href="release-notes/rl-2505/#sec-nixpkgs-release-25.05">Nixpkgs 25.05 (2025.05/23)</a></li>
+</ul>
+</li>
+</ul>
+    </nav>
+    <section id='main'>
+      <div id='search-panel' class='nav-search' role='search' hidden>
+        <label class='visually-hidden' for='search'>Search documentation</label>
+        <input type='search' id='search' placeholder='Search' autocomplete='off' aria-controls='search-results'>
+        <p id='search-status' class='visually-hidden' role='status' aria-live='polite'></p>
+        <div id='search-results'></div>
+      </div>
+      <div class='main-scroll'>
+        <main id='main-content' tabindex='-1'>
+<h1 id='chap-stdenv'><a href='stdenv/stdenv/#chap-stdenv'>
+The Standard Environment
+</a></h1>
+<p>The standard build environment in the Nix Packages collection provides an environment for building Unix packages that does a lot of common build tasks automatically. In fact, for Unix packages that use the standard <code>./configure; make; make install</code> build interface, you don’t need to write a build script at all; the standard environment does everything automatically. If <code>stdenv</code> doesn’t do what you need automatically, you can easily customise or override the various build phases.</p>
+<h2 id='sec-using-stdenv'><a href='stdenv/stdenv/#sec-using-stdenv'>
+Using <code>stdenv</code>
+</a></h2>
+<p>To build a package with the standard environment, you use the function <code>stdenv.mkDerivation</code>, instead of the primitive built-in function <code>derivation</code>, e.g.</p>
+<pre><code class="language-nix">stdenv.mkDerivation {
+  name = &quot;libfoo-1.2.3&quot;;
+  src = fetchurl {
+    url = &quot;http://example.org/libfoo-1.2.3.tar.bz2&quot;;
+    hash = &quot;sha256-tWxU/LANbQE32my+9AXyt3nCT7NBVfJ45CX757EMT3Q=&quot;;
+  };
+}
+</code></pre>
+<p>(<code>stdenv</code> needs to be in scope, so if you write this in a separate Nix expression from <code>pkgs/all-packages.nix</code>, you need to pass it as a function argument.) Specifying a <code>name</code> and a <code>src</code> is the absolute minimum Nix requires. For convenience, you can also use <code>pname</code> and <code>version</code> attributes and <code>mkDerivation</code> will automatically set <code>name</code> to <code>&quot;${pname}-${version}&quot;</code> by default.
+<strong>Since <a href="https://github.com/NixOS/rfcs/pull/35">RFC 0035</a>, this is preferred for packages in Nixpkgs</strong>, as it allows us to reuse the version easily:</p>
+<pre><code class="language-nix">stdenv.mkDerivation (finalAttrs: {
+  pname = &quot;libfoo&quot;;
+  version = &quot;1.2.3&quot;;
+  src = fetchurl {
+    url = &quot;http://example.org/libfoo-source-${finalAttrs.version}.tar.bz2&quot;;
+    hash = &quot;sha256-tWxU/LANbQE32my+9AXyt3nCT7NBVfJ45CX757EMT3Q=&quot;;
+  };
+})
+</code></pre>
+<p>Many packages have dependencies that are not provided in the standard environment. It’s usually sufficient to specify those dependencies in the <code>buildInputs</code> attribute:</p>
+<pre><code class="language-nix">stdenv.mkDerivation {
+  pname = &quot;libfoo&quot;;
+  version = &quot;1.2.3&quot;;
+  # ...
+  buildInputs = [
+    libbar
+    perl
+    ncurses
+  ];
+}
+</code></pre>
+<p>This attribute ensures that the <code>bin</code> subdirectories of these packages appear in the <code>PATH</code> environment variable during the build, that their <code>include</code> subdirectories are searched by the C compiler, and so on. (See <a href="stdenv/stdenv/#ssec-setup-hooks">The Standard Environment</a> for details.)</p>
+<p>Often it is necessary to override or modify some aspect of the build. To make this easier, the standard environment breaks the package build into a number of <em>phases</em>, all of which can be overridden or modified individually: unpacking the sources, applying patches, configuring, building, and installing. (There are some others; see <a href="stdenv/stdenv/#sec-stdenv-phases">The Standard Environment</a>.) For instance, a package that doesn’t supply a makefile but instead has to be compiled &quot;manually&quot; could be handled like this:</p>
+<pre><code class="language-nix">stdenv.mkDerivation {
+  pname = &quot;fnord&quot;;
+  version = &quot;4.5&quot;;
+
+  # ...
+
+  buildPhase = ''
+    runHook preBuild
+
+    gcc foo.c -o foo
+
+    runHook postBuild
+  '';
+
+  installPhase = ''
+    runHook preInstall
+
+    mkdir -p $out/bin
+    cp foo $out/bin
+
+    runHook postInstall
+  '';
+}
+</code></pre>
+<p>(Note the use of <code>''</code>-style string literals, which are very convenient for large multi-line script fragments because they don’t need escaping of <code>&quot;</code> and <code>\</code>, and because indentation is intelligently removed.)</p>
+<p>There are many other attributes to customise the build. These are listed in <a href="stdenv/stdenv/#ssec-stdenv-attributes">The Standard Environment</a>.</p>
+<p>While the standard environment provides a generic builder, you can still supply your own build script:</p>
+<pre><code class="language-nix">stdenv.mkDerivation {
+  pname = &quot;libfoo&quot;;
+  version = &quot;1.2.3&quot;;
+  # ...
+  builder = ./builder.sh;
+}
+</code></pre>
+<p>where <code>stdenv</code> sets up the environment automatically (e.g. by resetting <code>PATH</code> and populating it from build inputs). If you want, you can use <code>stdenv</code>’s generic builder:</p>
+<pre><code class="language-bash">buildPhase() {
+  echo &quot;... this is my custom build phase ...&quot;
+  gcc foo.c -o foo
+}
+
+installPhase() {
+  mkdir -p $out/bin
+  cp foo $out/bin
+}
+
+genericBuild
+</code></pre>
+<h3 id='sec-building-stdenv-package-in-nix-shell'><a href='stdenv/stdenv/#sec-building-stdenv-package-in-nix-shell'>
+Building a <code>stdenv</code> package in <code>nix-shell</code>
+</a></h3>
+<p>To build a <code>stdenv</code> package in a <a href="https://nixos.org/manual/nix/unstable/command-ref/nix-shell.html"><code>nix-shell</code></a>, enter a shell, find the <a href="stdenv/stdenv/#sec-stdenv-phases">phases</a> you wish to build, then invoke <code>genericBuild</code> manually:</p>
+<p>Go to an empty directory, invoke <code>nix-shell</code> with the desired package, and from inside the shell, set the output variables to a writable directory:</p>
+<pre><code class="language-bash">cd &quot;$(mktemp -d)&quot;
+nix-shell '&lt;nixpkgs&gt;' -A some_package
+export out=$(pwd)/out
+</code></pre>
+<p>Next, invoke the desired parts of the build.
+First, run the phases that generate a working copy of the sources, which will change directory to the sources for you:</p>
+<pre><code class="language-bash">phases=&quot;${prePhases[*]:-} unpackPhase patchPhase&quot; genericBuild
+</code></pre>
+<p>Then, run more phases up until the failure is reached.
+If the failure is in the build or check phase, the following phases would be required:</p>
+<pre><code class="language-bash">phases=&quot;${preConfigurePhases[*]:-} configurePhase ${preBuildPhases[*]:-} buildPhase checkPhase&quot; genericBuild
+</code></pre>
+<p>Use this command to run all install phases:</p>
+<pre><code class="language-bash">phases=&quot;${preInstallPhases[*]:-} installPhase ${preFixupPhases[*]:-} fixupPhase installCheckPhase&quot; genericBuild
+</code></pre>
+<p>Single phase can be re-run as many times as necessary to examine the failure like so:</p>
+<pre><code class="language-bash">phases=&quot;buildPhase&quot; genericBuild
+</code></pre>
+<p>To modify a <a href="stdenv/stdenv/#sec-stdenv-phases">phase</a>, first print it with</p>
+<pre><code class="language-bash">echo &quot;$buildPhase&quot;
+</code></pre>
+<p>Or, if that is empty, for instance, if it is using a function:</p>
+<pre><code class="language-bash">type buildPhase
+</code></pre>
+<p>then change it in a text editor, and paste it back to the terminal.</p>
+<div class='admonition note'><h3 class='title'>Note</h3>
+<p>
+This method may have some inconsistencies in environment variables and behaviour compared to a normal build within the <a href="https://nixos.org/manual/nix/unstable/language/derivations#builder-execution">Nix build sandbox</a>.
+The following is a non-exhaustive list of such differences:</p>
+<ul>
+<li><code>TMP</code>, <code>TMPDIR</code>, and similar variables likely point to non-empty directories that the build might conflict with files in.</li>
+<li>Output store paths are not writable, so the variables for outputs need to be overridden to writable paths.</li>
+<li>Other environment variables may be inconsistent with a <code>nix-build</code> either due to <code>nix-shell</code>'s initialization script or due to the use of <code>nix-shell</code> without the <code>--pure</code> option.</li>
+</ul>
+<p>If the build fails differently inside the shell than in the sandbox, consider using <a href="hooks/breakpoint/#breakpointhook"><code>breakpointHook</code></a> and invoking <code>nix-build</code> instead.
+The <a href="https://nixos.org/manual/nix/unstable/command-ref/conf-file#conf-keep-failed"><code>--keep-failed</code></a> option for <code>nix-build</code> may also be useful to examine the build directory of a failed build.
+</p>
+</div>
+<h2 id='sec-tools-of-stdenv'><a href='stdenv/stdenv/#sec-tools-of-stdenv'>
+Tools provided by <code>stdenv</code>
+</a></h2>
+<p>The standard environment provides the following packages:</p>
+<ul>
+<li>The GNU C Compiler, configured with C and C++ support.</li>
+<li>GNU coreutils (contains a few dozen standard Unix commands).</li>
+<li>GNU findutils (contains <code>find</code>).</li>
+<li>GNU diffutils (contains <code>diff</code>, <code>cmp</code>).</li>
+<li>GNU <code>sed</code>.</li>
+<li>GNU <code>grep</code>.</li>
+<li>GNU <code>awk</code>.</li>
+<li>GNU <code>tar</code>.</li>
+<li><code>gzip</code>, <code>bzip2</code> and <code>xz</code>.</li>
+<li>GNU Make.</li>
+<li>Bash. This is the shell used for all builders in the Nix Packages collection. Not using <code>/bin/sh</code> removes a large source of portability problems.</li>
+<li>The <code>patch</code> command.</li>
+</ul>
+<p>On Linux, <code>stdenv</code> also includes the <code>patchelf</code> utility.</p>
+<h2 id='ssec-stdenv-dependencies'><a href='stdenv/stdenv/#ssec-stdenv-dependencies'>
+Specifying dependencies
+</a></h2>
+<p>Build systems often require more dependencies than just what <code>stdenv</code> provides. This section describes attributes accepted by <code>stdenv.mkDerivation</code> that can be used to make these dependencies available to the build system.</p>
+<h3 id='ssec-stdenv-dependencies-overview'><a href='stdenv/stdenv/#ssec-stdenv-dependencies-overview'>
+Overview
+</a></h3>
+<p>A full reference of the different kinds of dependencies is provided in <a href="stdenv/stdenv/#ssec-stdenv-dependencies-reference">The Standard Environment</a>, but here is an overview of the most common ones.
+It should cover most use cases.</p>
+<p>Add dependencies to <code>nativeBuildInputs</code> if they are executed during the build:</p>
+<ul>
+<li>those which are needed on <code>$PATH</code> during the build, for example <code>cmake</code> and <code>pkg-config</code></li>
+<li><a href="stdenv/stdenv/#ssec-setup-hooks">setup hooks</a>, for example <a href="stdenv/stdenv/#fun-makeWrapper"><code>makeWrapper</code></a></li>
+<li>interpreters needed by <a href="stdenv/stdenv/#patch-shebangs.sh"><code>patchShebangs</code></a> for build scripts (with the <code>--build</code> flag), which can be the case for e.g. <code>perl</code></li>
+</ul>
+<p>Add dependencies to <code>buildInputs</code> if they will end up copied or linked into the final output or otherwise used at runtime:</p>
+<ul>
+<li>libraries used by compilers, for example <code>zlib</code>,</li>
+<li>interpreters needed by <a href="stdenv/stdenv/#patch-shebangs.sh"><code>patchShebangs</code></a> for scripts which are installed, which can be the case for e.g. <code>perl</code></li>
+</ul>
+<div class='admonition note'><h3 class='title'>Note</h3>
+<p>
+These criteria are independent.</p>
+<p>For example, software using Wayland usually needs the <code>wayland</code> library at runtime, so <code>wayland</code> should be added to <code>buildInputs</code>.
+But it also executes the <code>wayland-scanner</code> program as part of the build to generate code, so <code>wayland</code> should also be added to <code>nativeBuildInputs</code>.
+</p>
+</div>
+<p>Dependencies needed only to run tests are similarly classified between native (executed during build) and non-native (executed at runtime):</p>
+<ul>
+<li><code>nativeCheckInputs</code> for test tools needed on <code>$PATH</code> (such as <code>ctest</code>) and <a href="stdenv/stdenv/#ssec-setup-hooks">setup hooks</a> (for example <a href="languages-frameworks/python/#python"><code>pytestCheckHook</code></a>)</li>
+<li><code>checkInputs</code> for libraries linked into test executables (for example the <code>qcheck</code> OCaml package)</li>
+</ul>
+<p>These dependencies are only injected when <a href="stdenv/stdenv/#var-stdenv-doCheck"><code>doCheck</code></a> is set to <code>true</code>.</p>
+<h4 id='ssec-stdenv-dependencies-overview-example'><a href='stdenv/stdenv/#ssec-stdenv-dependencies-overview-example'>
+Example
+</a></h4>
+<p>Consider for example this simplified derivation for <code>solo5</code>, a sandboxing tool:</p>
+<pre><code class="language-nix">stdenv.mkDerivation (finalAttrs: {
+  pname = &quot;solo5&quot;;
+  version = &quot;0.7.5&quot;;
+
+  src = fetchurl {
+    url = &quot;https://github.com/Solo5/solo5/releases/download/v${finalAttrs.version}/solo5-v${finalAttrs.version}.tar.gz&quot;;
+    hash = &quot;sha256-viwrS9lnaU8sTGuzK/+L/PlMM/xRRtgVuK5pixVeDEw=&quot;;
+  };
+
+  nativeBuildInputs = [
+    makeWrapper
+    pkg-config
+  ];
+
+  buildInputs = [ libseccomp ];
+
+  postInstall = ''
+    substituteInPlace $out/bin/solo5-virtio-mkimage \
+      --replace-fail &quot;/usr/lib/syslinux&quot; &quot;${syslinux}/share/syslinux&quot; \
+      --replace-fail &quot;/usr/share/syslinux&quot; &quot;${syslinux}/share/syslinux&quot; \
+      --replace-fail &quot;cp &quot; &quot;cp --no-preserve=mode &quot;
+
+    wrapProgram $out/bin/solo5-virtio-mkimage \
+      --prefix PATH : ${
+        lib.makeBinPath [
+          dosfstools
+          mtools
+          parted
+          syslinux
+        ]
+      }
+  '';
+
+  doCheck = true;
+  nativeCheckInputs = [
+    util-linux
+    qemu
+  ];
+  # `checkPhase` elided
+})
+</code></pre>
+<ul>
+<li><code>makeWrapper</code> is a setup hook, i.e., a shell script sourced by the generic builder of <code>stdenv</code>.
+It is thus executed during the build and must be added to <code>nativeBuildInputs</code>.</li>
+<li><code>pkg-config</code> is a build tool which the configure script of <code>solo5</code> expects to be on <code>$PATH</code> during the build:
+therefore, it must be added to <code>nativeBuildInputs</code>.</li>
+<li><code>libseccomp</code> is a library linked into <code>$out/bin/solo5-elftool</code>.
+As it is used at runtime, it must be added to <code>buildInputs</code>.</li>
+<li>Tests need <code>qemu</code> and <code>getopt</code> (from <code>util-linux</code>) on <code>$PATH</code>, these must be added to <code>nativeCheckInputs</code>.</li>
+<li>Some dependencies are injected directly in the shell code of phases: <code>syslinux</code>, <code>dosfstools</code>, <code>mtools</code>, and <code>parted</code>.
+In this specific case, they will end up in the output of the derivation (<code>$out</code> here).
+As Nix marks dependencies whose absolute path is present in the output as runtime dependencies, adding them to <code>buildInputs</code> is not required.</li>
+</ul>
+<p>For more complex cases, like libraries linked into an executable which is then executed as part of the build system, see <a href="stdenv/stdenv/#ssec-stdenv-dependencies-reference">The Standard Environment</a>.</p>
+<h3 id='ssec-stdenv-dependencies-reference'><a href='stdenv/stdenv/#ssec-stdenv-dependencies-reference'>
+Reference
+</a></h3>
+<p>As described in the Nix manual, almost any <code>*.drv</code> store path in a derivation’s attribute set will induce a dependency on that derivation. <code>mkDerivation</code>, however, takes a few attributes intended to include all the dependencies of a package. This is done both for structure and consistency, but also so that certain other setup can take place. For example, certain dependencies need their bin directories added to the <code>PATH</code>. That is built-in, but other setup is done via a pluggable mechanism that works in conjunction with these dependency attributes. See <a href="stdenv/stdenv/#ssec-setup-hooks">The Standard Environment</a> for details.</p>
+<p>Dependencies can be broken down along these axes: their host and target platforms relative to the new derivation’s. The platform distinctions are motivated by cross compilation; see <a href="stdenv/cross-compilation/#chap-cross">Cross-compilation</a> for exactly what each platform means. [^footnote-stdenv-ignored-build-platform] But even if one is not cross compiling, the platforms imply whether a dependency is needed at run-time or build-time.</p>
+<p>The extension of <code>PATH</code> with dependencies, alluded to above, proceeds according to the relative platforms alone. The process is carried out only for dependencies whose host platform matches the new derivation’s build platform i.e. dependencies which run on the platform where the new derivation will be built. [^footnote-stdenv-native-dependencies-in-path] For each dependency &lt;dep&gt; of those dependencies, <code>dep/bin</code>, if present, is added to the <code>PATH</code> environment variable.</p>
+<h3 id='ssec-stdenv-dependencies-propagated'><a href='stdenv/stdenv/#ssec-stdenv-dependencies-propagated'>
+Dependency propagation
+</a></h3>
+<p>Propagated dependencies are made available to all downstream dependencies.
+This is particularly useful for interpreted languages, where all transitive dependencies have to be present in the same environment.
+Therefore it is used for the Python infrastructure in Nixpkgs.</p>
+<div class='admonition note'><h3 class='title'>Note</h3>
+<p>
+Propagated dependencies should be used with care, because they obscure the actual build inputs of dependent derivations and cause side effects through setup hooks.
+This can lead to conflicting dependencies that cannot easily be resolved.
+</p>
+</div>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h1>A propagated dependency</h1>
+<pre><code class="language-nix">with import &lt;nixpkgs&gt; { };
+let
+  bar = stdenv.mkDerivation {
+    name = &quot;bar&quot;;
+    dontUnpack = true;
+    # `hello` is also made available to dependents, such as `foo`
+    propagatedBuildInputs = [ hello ];
+    postInstall = &quot;mkdir $out&quot;;
+  };
+  foo = stdenv.mkDerivation {
+    name = &quot;foo&quot;;
+    dontUnpack = true;
+    # `bar` is a direct dependency, which implicitly includes the propagated `hello`
+    buildInputs = [ bar ];
+    # The `hello` binary is available!
+    postInstall = &quot;hello &gt; $out&quot;;
+  };
+in
+foo
+</code></pre>
+<p></p>
+</div>
+<p>Dependency propagation takes cross compilation into account, meaning that dependencies that cross platform boundaries are properly adjusted.</p>
+<p>To determine the exact rules for dependency propagation, we start by assigning to each dependency a couple of ternary numbers (<code>-1</code> for <code>build</code>, <code>0</code> for <code>host</code>, and <code>1</code> for <code>target</code>) representing its <a href="stdenv/cross-compilation/#possible-dependency-types">dependency type</a>, which captures how its host and target platforms are each &quot;offset&quot; from the depending derivation’s host and target platforms. The following table summarize the different combinations that can be obtained:</p>
+<table>
+<thead>
+<tr>
+<th>Dependency type</th>
+<th>attribute name</th>
+<th>offset</th>
+<th>typical purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>build → build</code></td>
+<td><code>depsBuildBuild</code></td>
+<td><code>-1, -1</code></td>
+<td>compilers for build helpers</td>
+</tr>
+<tr>
+<td><code>build → host</code></td>
+<td><code>nativeBuildInputs</code></td>
+<td><code>-1, 0</code></td>
+<td>build tools, compilers, setup hooks</td>
+</tr>
+<tr>
+<td><code>build → target</code></td>
+<td><code>depsBuildTarget</code></td>
+<td><code>-1, 1</code></td>
+<td>compilers to build stdlibs to run on target</td>
+</tr>
+<tr>
+<td><code>host → host</code></td>
+<td><code>depsHostHost</code></td>
+<td><code>0, 0</code></td>
+<td>compilers to build C code at runtime (rare)</td>
+</tr>
+<tr>
+<td><code>host → target</code></td>
+<td><code>buildInputs</code></td>
+<td><code>0, 1</code></td>
+<td>libraries</td>
+</tr>
+<tr>
+<td><code>target → target</code></td>
+<td><code>depsTargetTarget</code></td>
+<td><code>1, 1</code></td>
+<td>stdlibs to run on target</td>
+</tr>
+</tbody>
+</table>
+<p>Algorithmically, we traverse propagated inputs, accumulating every propagated dependency’s propagated dependencies and adjusting them to account for the “shift in perspective” described by the current dependency’s platform offsets. This results in a sort of transitive closure of the dependency relation, with the offsets being approximately summed when two dependency links are combined. We also prune transitive dependencies whose combined offsets go out-of-bounds, which can be viewed as a filter over that transitive closure removing dependencies that are blatantly absurd.</p>
+<p>We can define the process precisely with <a href="https://en.wikipedia.org/wiki/Natural_deduction">Natural Deduction</a> using the inference rules below. This probably seems a bit obtuse, but so is the bash code that actually implements it! [^footnote-stdenv-find-inputs-location] They’re confusing in very different ways so… hopefully if something doesn’t make sense in one presentation, it will in the other!</p>
+<p><strong>Definitions:</strong></p>
+<dl>
+<dt>
+<p><code>dep(h_offset, t_offset, X, Y)</code></p>
+</dt>
+<dd>
+<p>Package X has a direct dependency on Y in a position with host offset <code>h_offset</code> and target offset <code>t_offset</code>.</p>
+</dd>
+</dl>
+<pre><code> For example, `nativeBuildInputs = [ Y ]` means `dep(-1, 0, X, Y)`.
+</code></pre>
+<dl>
+<dt>
+<p><code>propagated-dep(h_offset, t_offset, X, Y)</code></p>
+</dt>
+<dd>
+<p>Package X has a propagated dependency on Y in a position with host offset <code>h_offset</code> and target offset <code>t_offset</code>.</p>
+</dd>
+</dl>
+<pre><code> For example, `depsBuildTargetPropagated = [ Y ]` means `propagated-dep(-1, 1, X, Y)`.
+</code></pre>
+<dl>
+<dt>
+<p><code>mapOffset(h, t, i) = offs</code></p>
+</dt>
+<dd>
+<p>In a package X with a dependency on Y in a position with host offset <code>h</code> and target offset <code>t</code>, Y's transitive dependency Z in a position with offset <code>i</code> is mapped to offset <code>offs</code> in X.</p>
+</dd>
+</dl>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h1>Truth table of <code>mapOffset(h, t, i)</code></h1>
+<p><code>x</code> means that the dependency was discarded because <code>h + i ∉ {-1, 0, 1}</code>.</p>
+<!-- This is written as an ascii art table because the CSS was introducing so much space it was unreadable and doesn't support double lines -->
+<pre><code>  h |   t  || i=-1 |  i=0 |  i=1
+----|------||------|------|-----
+ -1 |  -1  ||   x  |  -1  |  -1
+ -1 |   0  ||   x  |  -1  |   0
+ -1 |   1  ||   x  |  -1  |   1
+  0 |   0  ||  -1  |   0  |   0
+  0 |   1  ||  -1  |   0  |   1
+  1 |   1  ||   0  |   1  |   x
+</code></pre>
+<p></p>
+</div>
+<pre><code>let mapOffset(h, t, i) = i + (if i &lt;= 0 then h else t - 1)
+
+propagated-dep(h0, t0, A, B)
+propagated-dep(h1, t1, B, C)
+h0 + h1 in {-1, 0, 1}
+h0 + t1 in {-1, 0, 1}
+-------------------------------------- Transitive property
+propagated-dep(mapOffset(h0, t0, h1),
+               mapOffset(h0, t0, t1),
+               A, C)
+</code></pre>
+<pre><code>let mapOffset(h, t, i) = i + (if i &lt;= 0 then h else t - 1)
+
+dep(h0, t0, A, B)
+propagated-dep(h1, t1, B, C)
+h0 + h1 in {-1, 0, 1}
+h0 + t1 in {-1, 0, 1}
+----------------------------- Take immediate dependencies' propagated dependencies
+propagated-dep(mapOffset(h0, t0, h1),
+               mapOffset(h0, t0, t1),
+               A, C)
+</code></pre>
+<pre><code>propagated-dep(h, t, A, B)
+----------------------------- Propagated dependencies count as dependencies
+dep(h, t, A, B)
+</code></pre>
+<p>Some explanation of this monstrosity is in order. In the common case of <code>nativeBuildInputs</code> or <code>buildInputs</code>, the target offset of a dependency is one greater than the host offset: <code>t = h + 1</code>. That means that:</p>
+<pre><code>let f(h, t, i) = i + (if i &lt;= 0 then h else t - 1)
+let f(h, h + 1, i) = i + (if i &lt;= 0 then h else (h + 1) - 1)
+let f(h, h + 1, i) = i + (if i &lt;= 0 then h else h)
+let f(h, h + 1, i) = i + h
+</code></pre>
+<p>This is where “sum-like” comes in from above: We can just sum all of the host offsets to get the host offset of the transitive dependency. The target offset is the transitive dependency is the host offset + 1, just as it was with the dependencies composed to make this transitive one; it can be ignored as it doesn’t add any new information.</p>
+<p>Because of the bounds checks, the uncommon cases are <code>h = t</code> (<code>depsBuildBuild</code>, etc) and <code>h + 2 = t</code> (<code>depsBuildTarget</code>).</p>
+<p>In the former case, the motivation for <code>mapOffset</code> is that since its host and target platforms are the same, no transitive dependency of it should be able to “discover” an offset greater than its reduced target offsets. <code>mapOffset</code> effectively “squashes” all its transitive dependencies’ offsets so that none will ever be greater than the target offset of the original <code>h = t</code> package.</p>
+<p>In the other case, <code>h + 1</code> (0) is skipped over between the host (-1) and target (1) offsets. Instead of squashing the offsets, we need to “rip” them apart so no transitive dependency’s offset is 0.</p>
+<p>Overall, the unifying theme here is that propagation shouldn’t be introducing transitive dependencies involving platforms the depending package is unaware of. [One can imagine the depending package asking for dependencies with the platforms it knows about; other platforms it doesn’t know how to ask for. The platform description in that scenario is a kind of unforgeable capability.] The offset bounds checking and definition of <code>mapOffset</code> together ensure that this is the case. Discovering a new offset is discovering a new platform, and since those platforms weren’t in the derivation “spec” of the needing package, they cannot be relevant. From a capability perspective, we can imagine that the host and target platforms of a package are the capabilities a package requires, and the depending package must provide the capability to the dependency.</p>
+<h4 id='variables-specifying-dependencies'><a href='stdenv/stdenv/#variables-specifying-dependencies'>
+Variables specifying dependencies
+</a></h4>
+<h5 id='var-stdenv-depsBuildBuild'><a href='stdenv/stdenv/#var-stdenv-depsBuildBuild'>
+<code>depsBuildBuild</code>
+</a></h5>
+<p>A list of dependencies whose host and target platforms are the new derivation’s build platform. These are programs and libraries used at build time that produce programs and libraries also used at build time. If the dependency doesn’t care about the target platform (i.e. isn’t a compiler or similar tool), put it in <code>nativeBuildInputs</code> instead. The most common use of this <code>buildPackages.stdenv.cc</code> (the compiler for <code>buildPackages</code>, which means that it's from the package set <code>buildPackages.buildPackages = pkgsBuildBuild</code>), the default C compiler for this role. That example crops up more than one might think in old commonly used C libraries.</p>
+<p>Since these packages are able to be run at build-time, they are always added to the <code>PATH</code>, as described above. But since these packages are only guaranteed to be able to run then, they shouldn’t persist as run-time dependencies. This isn’t currently enforced, but could be in the future.</p>
+<h5 id='var-stdenv-nativeBuildInputs'><a href='stdenv/stdenv/#var-stdenv-nativeBuildInputs'>
+<code>nativeBuildInputs</code>
+</a></h5>
+<p>A list of dependencies whose host platform is the new derivation’s build platform, and target platform is the new derivation’s host platform. These are programs and libraries used at build-time that, if they are a compiler or similar tool, produce code to run at run-time—i.e. tools used to build the new derivation. If the dependency doesn’t care about the target platform (i.e. isn’t a compiler or similar tool), put it here, rather than in <code>depsBuildBuild</code> or <code>depsBuildTarget</code>. This could be called <code>depsBuildHost</code>, but <code>nativeBuildInputs</code> is used for historical continuity.</p>
+<p>Since these packages are able to be run at build-time, they are added to the <code>PATH</code>, as described above. But since these packages are only guaranteed to be able to run then, they shouldn’t persist as run-time dependencies. This isn’t currently enforced, but could be in the future.</p>
+<h5 id='var-stdenv-depsBuildTarget'><a href='stdenv/stdenv/#var-stdenv-depsBuildTarget'>
+<code>depsBuildTarget</code>
+</a></h5>
+<p>A list of dependencies whose host platform is the new derivation’s build platform, and target platform is the new derivation’s target platform. These are programs used at build time that produce code to run with code produced by the depending package. Most commonly, these are tools used to build the runtime or standard library that the currently-being-built compiler will inject into any code it compiles. In many cases, the currently-being-built-compiler is itself employed for that task, but when that compiler won’t run (i.e. its build and host platform differ) this is not possible. Other times, the compiler relies on some other tool, like binutils, that is always built separately so that the dependency is unconditional.</p>
+<p>This is a somewhat confusing concept to wrap one’s head around, and for good reason. As the only dependency type where the platform offsets, <code>-1</code> and <code>1</code>, are not adjacent integers, it requires thinking of a bootstrapping stage <em>two</em> away from the current one. It and its use-case go hand in hand and are both considered poor form: try to not need this sort of dependency, and try to avoid building standard libraries and runtimes in the same derivation as the compiler produces code using them. Instead strive to build those like a normal library, using the newly-built compiler just as a normal library would. In short, do not use this attribute unless you are packaging a compiler and are sure it is needed.</p>
+<p>Since these packages are able to run at build time, they are added to the <code>PATH</code>, as described above. But since these packages are only guaranteed to be able to run then, they shouldn’t persist as run-time dependencies. This isn’t currently enforced, but could be in the future.</p>
+<h5 id='var-stdenv-depsHostHost'><a href='stdenv/stdenv/#var-stdenv-depsHostHost'>
+<code>depsHostHost</code>
+</a></h5>
+<p>A list of dependencies whose host and target platforms match the new derivation’s host platform. In practice, this would usually be tools used by compilers for macros or a metaprogramming system, or libraries used by the macros or metaprogramming code itself. It’s always preferable to use a <code>depsBuildBuild</code> dependency in the derivation being built over a <code>depsHostHost</code> on the tool doing the building for this purpose.</p>
+<h5 id='var-stdenv-buildInputs'><a href='stdenv/stdenv/#var-stdenv-buildInputs'>
+<code>buildInputs</code>
+</a></h5>
+<p>A list of dependencies whose host platform and target platform match the new derivation’s. This would be called <code>depsHostTarget</code> but for historical continuity. If the dependency doesn’t care about the target platform (i.e. isn’t a compiler or similar tool), put it here, rather than in <code>depsBuildBuild</code>.</p>
+<p>These are often programs and libraries used by the new derivation at <em>run</em>-time, but that isn’t always the case. For example, the machine code in a statically-linked library is only used at run-time, but the derivation containing the library is only needed at build-time. Even in the dynamic case, the library may also be needed at build-time to appease the linker.</p>
+<h5 id='var-stdenv-depsTargetTarget'><a href='stdenv/stdenv/#var-stdenv-depsTargetTarget'>
+<code>depsTargetTarget</code>
+</a></h5>
+<p>A list of dependencies whose host platform matches the new derivation’s target platform. These are packages that run on the target platform, e.g. the standard library or run-time deps of standard library that a compiler insists on knowing about. It’s poor form in almost all cases for a package to depend on another from a future stage [future stage corresponding to positive offset]. Do not use this attribute unless you are packaging a compiler and are sure it is needed.</p>
+<h5 id='var-stdenv-depsBuildBuildPropagated'><a href='stdenv/stdenv/#var-stdenv-depsBuildBuildPropagated'>
+<code>depsBuildBuildPropagated</code>
+</a></h5>
+<p>The propagated equivalent of <code>depsBuildBuild</code>. This perhaps never ought to be used, but it is included for consistency [see below for the others].</p>
+<h5 id='var-stdenv-propagatedNativeBuildInputs'><a href='stdenv/stdenv/#var-stdenv-propagatedNativeBuildInputs'>
+<code>propagatedNativeBuildInputs</code>
+</a></h5>
+<p>The propagated equivalent of <code>nativeBuildInputs</code>. This would be called <code>depsBuildHostPropagated</code> but for historical continuity. For example, if package <code>Y</code> has <code>propagatedNativeBuildInputs = [X]</code>, and package <code>Z</code> has <code>buildInputs = [Y]</code>, then package <code>Z</code> will be built as if it included package <code>X</code> in its <code>nativeBuildInputs</code>. Note that if instead, package <code>Z</code> has <code>nativeBuildInputs = [Y]</code>, then <code>X</code> will not be included at all.</p>
+<h5 id='var-stdenv-depsBuildTargetPropagated'><a href='stdenv/stdenv/#var-stdenv-depsBuildTargetPropagated'>
+<code>depsBuildTargetPropagated</code>
+</a></h5>
+<p>The propagated equivalent of <code>depsBuildTarget</code>. This is prefixed for the same reason of alerting potential users.</p>
+<h5 id='var-stdenv-depsHostHostPropagated'><a href='stdenv/stdenv/#var-stdenv-depsHostHostPropagated'>
+<code>depsHostHostPropagated</code>
+</a></h5>
+<p>The propagated equivalent of <code>depsHostHost</code>.</p>
+<h5 id='var-stdenv-propagatedBuildInputs'><a href='stdenv/stdenv/#var-stdenv-propagatedBuildInputs'>
+<code>propagatedBuildInputs</code>
+</a></h5>
+<p>The propagated equivalent of <code>buildInputs</code>. This would be called <code>depsHostTargetPropagated</code> but for historical continuity.</p>
+<h5 id='var-stdenv-depsTargetTargetPropagated'><a href='stdenv/stdenv/#var-stdenv-depsTargetTargetPropagated'>
+<code>depsTargetTargetPropagated</code>
+</a></h5>
+<p>The propagated equivalent of <code>depsTargetTarget</code>. This is prefixed for the same reason of alerting potential users.</p>
+<h5 id='var-stdenv-strictDeps'><a href='stdenv/stdenv/#var-stdenv-strictDeps'>
+<code>strictDeps</code>
+</a></h5>
+<p>When using native compilation, <code>stdenv</code> is lenient towards incorrect placement of a dependency into one of the dependency lists described above. That means a dependency needed at runtime often works, even if it is only present in <code>nativeBuildInputs</code>. Vice-versa, dependencies containing binaries that need to be executed during the build will work even if they are only listed in <code>buildInputs</code>.</p>
+<p>While convenient for getting to a package quickly, this behavior can break cross-compilation. Adding <code>strictDeps = true</code> as a parameter to <code>mkDerivation</code> or any of its language specific wrappers disables this behavior.</p>
+<p>The specialized <code>build*</code> functions for dlang, emacs, go, nim, ocaml, python, and rust enable this option by default.</p>
+<h2 id='ssec-stdenv-attributes'><a href='stdenv/stdenv/#ssec-stdenv-attributes'>
+Attributes
+</a></h2>
+<h3 id='variables-affecting-stdenv-initialisation'><a href='stdenv/stdenv/#variables-affecting-stdenv-initialisation'>
+Variables affecting <code>stdenv</code> initialisation
+</a></h3>
+<h4 id='var-stdenv-NIX_DEBUG'><a href='stdenv/stdenv/#var-stdenv-NIX_DEBUG'>
+<code>NIX_DEBUG</code>
+</a></h4>
+<p>A number between 0 and 7 indicating how much information to log. If set to 1 or higher, <code>stdenv</code> will print moderate debugging information during the build. In particular, the <code>gcc</code> and <code>ld</code> wrapper scripts will print out the complete command line passed to the wrapped tools. If set to 6 or higher, the <code>stdenv</code> setup script will be run with <code>set -x</code> tracing. If set to 7 or higher, the <code>gcc</code> and <code>ld</code> wrapper scripts will also be run with <code>set -x</code> tracing.</p>
+<h3 id='attributes-affecting-build-properties'><a href='stdenv/stdenv/#attributes-affecting-build-properties'>
+Attributes affecting build properties
+</a></h3>
+<h4 id='var-stdenv-enableParallelBuilding'><a href='stdenv/stdenv/#var-stdenv-enableParallelBuilding'>
+<code>enableParallelBuilding</code>
+</a></h4>
+<p>If set to <code>true</code>, <code>stdenv</code> will pass specific flags to <code>make</code> and other build tools to enable parallel building with up to <code>build-cores</code> workers.</p>
+<p>Unless set to <code>false</code>, some build systems with good support for parallel building including <code>cmake</code>, <code>meson</code>, and <code>qmake</code> will set it to <code>true</code>.</p>
+<h4 id='var-stdenv-__structuredAttrs'><a href='stdenv/stdenv/#var-stdenv-__structuredAttrs'>
+<code>__structuredAttrs</code>
+</a></h4>
+<p><code>__structuredAttrs</code> defines how derivation attributes are passed to the builder.</p>
+<p>If enabled, a shell script and a JSON representation of the derivation attributes are created.
+The environment variables {env}<code>NIX_ATTRS_SH_FILE</code> and {env}<code>NIX_ATTRS_JSON_FILE</code> point to the exact location of these files.</p>
+<p>Attributes intended to be <em>exported</em> as environment variables must be defined in the <code>env</code> attribute.
+Attributes that are <em>local</em> to the buildscript should be defined outside of <code>env</code>, to benefit from structured shell variables.</p>
+<div class='admonition important'><h3 class='title'>Important</h3>
+<p>
+<code>__structuredAttrs</code> is a complete replacement for the way attributes are handled currently, and is the preferred default.</p>
+<p><code>passAsFile</code> is disabled when <code>__structuredAttrs</code> is enabled, since {env}<code>NIX_ATTRS_JSON_FILE</code> can be read from instead.</p>
+<p>All new top level packages must enable <code>__structuredAttrs</code>.</p>
+<p></p>
+</div>
+<p>See the upstream nix documentation for more detail:</p>
+<ul>
+<li><a href="https://nix.dev/manual/nix/2.34/language/advanced-attributes.html#adv-attr-structuredAttrs">Advanced Derivation Attributes</a></li>
+<li><a href="https://nix.dev/manual/nix/2.34/store/building.html#builder-execution">Builder Execution</a></li>
+<li><a href="https://nix.dev/manual/nix/2.34/store/derivation/#structured-attrs">Structured Attributes</a></li>
+</ul>
+<h3 id='mkderivation-recursive-attributes'><a href='stdenv/stdenv/#mkderivation-recursive-attributes'>
+Fixed-point arguments of <code>mkDerivation</code>
+</a></h3>
+<p>If you pass a function to <code>mkDerivation</code>, it will call the function with an argument that represents the final state of the package: the return value of the function itself, with any overrides applied, as the function is reinvoked by any <code>overrideAttrs</code> calls. For example:</p>
+<pre><code class="language-nix">mkDerivation (finalAttrs: {
+  pname = &quot;hello&quot;;
+  withFeature = true;
+  configureFlags = lib.optionals finalAttrs.withFeature [ &quot;--with-feature&quot; ];
+})
+</code></pre>
+<p>Note that this does not use the <code>rec</code> keyword to reuse <code>withFeature</code> in <code>configureFlags</code>.
+The <code>rec</code> keyword works at the syntax level and is unaware of overriding.</p>
+<p>Instead, the definition references <code>finalAttrs</code>, allowing users to change <code>withFeature</code>
+consistently with <code>overrideAttrs</code>.</p>
+<p><code>finalAttrs</code> also contains the attribute <code>finalPackage</code>, which includes the output paths, etc.</p>
+<p>Let's look at a more elaborate example to understand the differences between
+various bindings:</p>
+<pre><code class="language-nix"># `pkg` is the _original_ definition (for illustration purposes)
+let
+  pkg = mkDerivation (finalAttrs: {
+    # ...
+
+    # An example attribute
+    packages = [ ];
+
+    # `passthru.tests` is a commonly defined attribute.
+    passthru.tests.simple = f finalAttrs.finalPackage;
+
+    # An example of an attribute containing a function
+    passthru.appendPackages =
+      packages':
+      finalAttrs.finalPackage.overrideAttrs (newSelf: super: { packages = super.packages ++ packages'; });
+
+    # For illustration purposes; referenced as
+    # `(pkg.overrideAttrs(x)).finalAttrs` etc in the text below.
+    passthru.finalAttrs = finalAttrs;
+    passthru.original = pkg;
+  });
+in
+pkg
+</code></pre>
+<p>Unlike the <code>pkg</code> binding in the above example, the <code>finalAttrs</code> parameter always references the final attributes. For instance <code>(pkg.overrideAttrs(x)).finalAttrs.finalPackage</code> is identical to <code>pkg.overrideAttrs(x)</code>, whereas <code>(pkg.overrideAttrs(x)).original</code> is the same as the original <code>pkg</code>.</p>
+<p>See also the section about <a href="stdenv/passthru/#var-passthru-tests"><code>passthru.tests</code></a>.</p>
+<h2 id='sec-stdenv-phases'><a href='stdenv/stdenv/#sec-stdenv-phases'>
+Phases
+</a></h2>
+<p><code>stdenv.mkDerivation</code> sets the Nix <a href="https://nixos.org/manual/nix/stable/expressions/derivations.html#derivations">derivation</a>'s builder to a script that loads the stdenv <code>setup.sh</code> bash library and calls <code>genericBuild</code>. Most packaging functions rely on this default builder.</p>
+<p>This generic command either invokes a script at <em>buildCommandPath</em>, or a <em>buildCommand</em>, or a number of <em>phases</em>. Package builds are split into phases to make it easier to override specific parts of the build (e.g., unpacking the sources or installing the binaries).</p>
+<p>Each phase can be overridden in its entirety either by setting the environment variable <code>namePhase</code> to a string containing some shell commands to be executed, or by redefining the shell function <code>namePhase</code>. The former is convenient to override a phase from the derivation, while the latter is convenient from a build script. However, typically one only wants to <em>add</em> some commands to a phase, e.g. by defining <code>postInstall</code> or <code>preFixup</code>, as skipping some of the default actions may have unexpected consequences. The default script for each phase is defined in the file <code>pkgs/stdenv/generic/setup.sh</code>.</p>
+<p>When overriding a phase, for example <code>installPhase</code>, it is important to start with <code>runHook preInstall</code> and end it with <code>runHook postInstall</code>, otherwise <code>preInstall</code> and <code>postInstall</code> will not be run. Even if you don't use them directly, it is good practice to do so anyways for downstream users who would want to add a <code>postInstall</code> by overriding your derivation.</p>
+<p>While inside an interactive <code>nix-shell</code>, if you wanted to run all phases in the order they would be run in an actual build, you can invoke <code>genericBuild</code> yourself.</p>
+<h3 id='ssec-controlling-phases'><a href='stdenv/stdenv/#ssec-controlling-phases'>
+Controlling phases
+</a></h3>
+<p>There are a number of variables that control what phases are executed and in what order:</p>
+<h4 id='variables-affecting-phase-control'><a href='stdenv/stdenv/#variables-affecting-phase-control'>
+Variables affecting phase control
+</a></h4>
+<h5 id='var-stdenv-phases'><a href='stdenv/stdenv/#var-stdenv-phases'>
+<code>phases</code>
+</a></h5>
+<p>Specifies the phases. You can change the order in which phases are executed, or add new phases, by setting this variable. If it’s not set, the default value is used, which is <code>$prePhases unpackPhase patchPhase $preConfigurePhases configurePhase $preBuildPhases buildPhase checkPhase $preInstallPhases installPhase fixupPhase installCheckPhase $preDistPhases distPhase $postPhases</code>.</p>
+<p>The elements of <code>phases</code> must not contain spaces. If <code>phases</code> is specified as a Nix Language attribute, it should be specified as lists instead of strings. The same rules apply to the <code>*Phases</code> variables.</p>
+<p>It is discouraged to set this variable, as it is easy to miss some important functionality hidden in some of the less obviously needed phases (like <code>fixupPhase</code> which patches the shebang of scripts).
+Usually, if you just want to add a few phases, it’s more convenient to set one of the <code>*Phases</code> variables below.</p>
+<h5 id='var-stdenv-prePhases'><a href='stdenv/stdenv/#var-stdenv-prePhases'>
+<code>prePhases</code>
+</a></h5>
+<p>Additional phases executed before any of the default phases.</p>
+<h5 id='var-stdenv-preConfigurePhases'><a href='stdenv/stdenv/#var-stdenv-preConfigurePhases'>
+<code>preConfigurePhases</code>
+</a></h5>
+<p>Additional phases executed just before the configure phase.</p>
+<h5 id='var-stdenv-preBuildPhases'><a href='stdenv/stdenv/#var-stdenv-preBuildPhases'>
+<code>preBuildPhases</code>
+</a></h5>
+<p>Additional phases executed just before the build phase.</p>
+<h5 id='var-stdenv-preInstallPhases'><a href='stdenv/stdenv/#var-stdenv-preInstallPhases'>
+<code>preInstallPhases</code>
+</a></h5>
+<p>Additional phases executed just before the install phase.</p>
+<h5 id='var-stdenv-preFixupPhases'><a href='stdenv/stdenv/#var-stdenv-preFixupPhases'>
+<code>preFixupPhases</code>
+</a></h5>
+<p>Additional phases executed just before the fixup phase.</p>
+<h5 id='var-stdenv-preDistPhases'><a href='stdenv/stdenv/#var-stdenv-preDistPhases'>
+<code>preDistPhases</code>
+</a></h5>
+<p>Additional phases executed just before the distribution phase.</p>
+<h5 id='var-stdenv-postPhases'><a href='stdenv/stdenv/#var-stdenv-postPhases'>
+<code>postPhases</code>
+</a></h5>
+<p>Additional phases executed after any of the default phases.</p>
+<h3 id='ssec-unpack-phase'><a href='stdenv/stdenv/#ssec-unpack-phase'>
+The unpack phase
+</a></h3>
+<p>The unpack phase is responsible for unpacking the source code of the package. The default implementation of <code>unpackPhase</code> unpacks the source files listed in the <code>src</code> environment variable to the current directory. It supports the following files by default:</p>
+<h4 id='tar-files'><a href='stdenv/stdenv/#tar-files'>
+Tar files
+</a></h4>
+<p>These can optionally be compressed using <code>gzip</code> (<code>.tar.gz</code>, <code>.tgz</code> or <code>.tar.Z</code>), <code>bzip2</code> (<code>.tar.bz2</code>, <code>.tbz2</code> or <code>.tbz</code>) or <code>xz</code> (<code>.tar.xz</code>, <code>.tar.lzma</code> or <code>.txz</code>).</p>
+<h4 id='zip-files'><a href='stdenv/stdenv/#zip-files'>
+Zip files
+</a></h4>
+<p>Zip files are unpacked using <code>unzip</code>. However, <code>unzip</code> is not in the standard environment, so you should add it to <code>nativeBuildInputs</code> yourself.</p>
+<h4 id='directories-in-the-nix-store'><a href='stdenv/stdenv/#directories-in-the-nix-store'>
+Directories in the Nix store
+</a></h4>
+<p>These are copied to the current directory. The hash part of the file name is stripped, e.g. <code>/nix/store/1wydxgby13cz...-my-sources</code> would be copied to <code>my-sources</code>.</p>
+<p>Additional file types can be supported by setting the <code>unpackCmd</code> variable (see below).</p>
+<h4 id='variables-controlling-the-unpack-phase'><a href='stdenv/stdenv/#variables-controlling-the-unpack-phase'>
+Variables controlling the unpack phase
+</a></h4>
+<h5 id='var-stdenv-src'><a href='stdenv/stdenv/#var-stdenv-src'>
+<code>srcs</code> / <code>src</code>
+</a></h5>
+<p>The list of source files or directories to be unpacked or copied. One of these must be set. Note that if you use <code>srcs</code>, you should also set <code>sourceRoot</code> or <code>setSourceRoot</code>.</p>
+<p>These should ideally actually be sources and licensed under a FLOSS license.  If you have to use a binary upstream release or package non-free software, make sure you correctly mark your derivation as such in the <a href="stdenv/meta/#var-meta-sourceProvenance"><code>sourceProvenance</code></a> and <a href="stdenv/meta/#sec-meta-license"><code>license</code></a> fields of the <a href="stdenv/meta/#chap-meta"><code>meta</code></a> section.</p>
+<h5 id='var-stdenv-sourceRoot'><a href='stdenv/stdenv/#var-stdenv-sourceRoot'>
+<code>sourceRoot</code>
+</a></h5>
+<p>After unpacking all of <code>src</code> and <code>srcs</code>, if neither of <code>sourceRoot</code> and <code>setSourceRoot</code> are set, <code>unpackPhase</code> of the generic builder checks that the unpacking produced a single directory and moves the current working directory into it.</p>
+<p>If <code>unpackPhase</code> produces multiple source directories, you should set <code>sourceRoot</code> to the name of the intended directory.
+You can also set <code>sourceRoot = &quot;.&quot;;</code> if you want to control it yourself in a later phase.</p>
+<p>For example, if you want your build to start in a sub-directory inside your sources, and you are using <code>fetchzip</code>-derived <code>src</code> (like <code>fetchFromGitHub</code> or similar), you need to set <code>sourceRoot = &quot;${src.name}/my-sub-directory&quot;</code>.</p>
+<h5 id='var-stdenv-setSourceRoot'><a href='stdenv/stdenv/#var-stdenv-setSourceRoot'>
+<code>setSourceRoot</code>
+</a></h5>
+<p>Alternatively to setting <code>sourceRoot</code>, you can set <code>setSourceRoot</code> to a shell command to be evaluated by the unpack phase after the sources have been unpacked. This command must set <code>sourceRoot</code>.</p>
+<p>For example, if you are using <code>fetchurl</code> on an archive file that gets unpacked into a single directory the name of which changes between package versions, and you want your build to start in its sub-directory, you need to set <code>setSourceRoot = &quot;sourceRoot=$(echo */my-sub-directory)&quot;;</code>, or in the case of multiple sources, you could use something more specific, like <code>setSourceRoot = &quot;sourceRoot=$(echo ${pname}-*/my-sub-directory)&quot;;</code>.</p>
+<h5 id='var-stdenv-preUnpack'><a href='stdenv/stdenv/#var-stdenv-preUnpack'>
+<code>preUnpack</code>
+</a></h5>
+<p>Hook executed at the start of the unpack phase.</p>
+<h5 id='var-stdenv-postUnpack'><a href='stdenv/stdenv/#var-stdenv-postUnpack'>
+<code>postUnpack</code>
+</a></h5>
+<p>Hook executed at the end of the unpack phase.</p>
+<h5 id='var-stdenv-dontUnpack'><a href='stdenv/stdenv/#var-stdenv-dontUnpack'>
+<code>dontUnpack</code>
+</a></h5>
+<p>Set to true to skip the unpack phase.</p>
+<h5 id='var-stdenv-dontMakeSourcesWritable'><a href='stdenv/stdenv/#var-stdenv-dontMakeSourcesWritable'>
+<code>dontMakeSourcesWritable</code>
+</a></h5>
+<p>If set to <code>1</code>, the unpacked sources are <em>not</em> made writable. By default, they are made writable to prevent problems with read-only sources. For example, copied store directories would be read-only without this.</p>
+<h5 id='var-stdenv-unpackCmd'><a href='stdenv/stdenv/#var-stdenv-unpackCmd'>
+<code>unpackCmd</code>
+</a></h5>
+<p>The unpack phase evaluates the string <code>$unpackCmd</code> for any unrecognised file. The path to the current source file is contained in the <code>curSrc</code> variable.</p>
+<h3 id='ssec-patch-phase'><a href='stdenv/stdenv/#ssec-patch-phase'>
+The patch phase
+</a></h3>
+<p>The patch phase applies the list of patches defined in the <code>patches</code> variable.</p>
+<h4 id='variables-controlling-the-patch-phase'><a href='stdenv/stdenv/#variables-controlling-the-patch-phase'>
+Variables controlling the patch phase
+</a></h4>
+<h5 id='var-stdenv-dontPatch'><a href='stdenv/stdenv/#var-stdenv-dontPatch'>
+<code>dontPatch</code>
+</a></h5>
+<p>Set to true to skip the patch phase.</p>
+<h5 id='var-stdenv-patches'><a href='stdenv/stdenv/#var-stdenv-patches'>
+<code>patches</code>
+</a></h5>
+<p>The list of patches. They must be in the format accepted by the <code>patch</code> command, and may optionally be compressed using <code>gzip</code> (<code>.gz</code>), <code>bzip2</code> (<code>.bz2</code>) or <code>xz</code> (<code>.xz</code>).</p>
+<h5 id='var-stdenv-patchFlags'><a href='stdenv/stdenv/#var-stdenv-patchFlags'>
+<code>patchFlags</code>
+</a></h5>
+<p>Flags to be passed to <code>patch</code>. If not set, the argument <code>-p1</code> is used, which causes the leading directory component to be stripped from the file names in each patch.</p>
+<h5 id='var-stdenv-prePatch'><a href='stdenv/stdenv/#var-stdenv-prePatch'>
+<code>prePatch</code>
+</a></h5>
+<p>Hook executed at the start of the patch phase.</p>
+<h5 id='var-stdenv-postPatch'><a href='stdenv/stdenv/#var-stdenv-postPatch'>
+<code>postPatch</code>
+</a></h5>
+<p>Hook executed at the end of the patch phase.</p>
+<h3 id='ssec-configure-phase'><a href='stdenv/stdenv/#ssec-configure-phase'>
+The configure phase
+</a></h3>
+<p>The configure phase prepares the source tree for building. The default <code>configurePhase</code> runs <code>./configure</code> (typically an Autoconf-generated script) if it exists.</p>
+<h4 id='variables-controlling-the-configure-phase'><a href='stdenv/stdenv/#variables-controlling-the-configure-phase'>
+Variables controlling the configure phase
+</a></h4>
+<h5 id='var-stdenv-configureScript'><a href='stdenv/stdenv/#var-stdenv-configureScript'>
+<code>configureScript</code>
+</a></h5>
+<p>The name of the configure script. It defaults to <code>./configure</code> if it exists; otherwise, the configure phase is skipped. This can actually be a command (like <code>perl ./Configure.pl</code>).</p>
+<h5 id='var-stdenv-configureFlags'><a href='stdenv/stdenv/#var-stdenv-configureFlags'>
+<code>configureFlags</code>
+</a></h5>
+<p>A list of strings passed as additional arguments to the configure script.</p>
+<h5 id='var-stdenv-dontConfigure'><a href='stdenv/stdenv/#var-stdenv-dontConfigure'>
+<code>dontConfigure</code>
+</a></h5>
+<p>Set to true to skip the configure phase.</p>
+<h5 id='var-stdenv-configureFlagsArray'><a href='stdenv/stdenv/#var-stdenv-configureFlagsArray'>
+<code>configureFlagsArray</code>
+</a></h5>
+<p>A shell array containing additional arguments passed to the configure script. You must use this instead of <code>configureFlags</code> if the arguments contain spaces.</p>
+<h5 id='var-stdenv-dontAddPrefix'><a href='stdenv/stdenv/#var-stdenv-dontAddPrefix'>
+<code>dontAddPrefix</code>
+</a></h5>
+<p>By default, <code>./configure</code> is passed the concatenation of <a href="stdenv/stdenv/#var-stdenv-prefixKey"><code>prefixKey</code></a> and <a href="stdenv/stdenv/#var-stdenv-prefix"><code>prefix</code></a> on the command line. Disable this by setting <code>dontAddPrefix</code> to <code>true</code>.</p>
+<h5 id='var-stdenv-prefix'><a href='stdenv/stdenv/#var-stdenv-prefix'>
+<code>prefix</code>
+</a></h5>
+<p>The prefix under which the package must be installed, passed via the <code>--prefix</code> option to the configure script. It defaults to <code>$out</code>.</p>
+<h5 id='var-stdenv-prefixKey'><a href='stdenv/stdenv/#var-stdenv-prefixKey'>
+<code>prefixKey</code>
+</a></h5>
+<p>The key to use when specifying the installation <a href="stdenv/stdenv/#var-stdenv-prefix"><code>prefix</code></a>. By default, this is set to <code>--prefix=</code> as that is used by the majority of packages. Other packages may need <code>--prefix </code> (with a trailing space) or <code>PREFIX=</code>.</p>
+<h5 id='var-stdenv-dontAddStaticConfigureFlags'><a href='stdenv/stdenv/#var-stdenv-dontAddStaticConfigureFlags'>
+<code>dontAddStaticConfigureFlags</code>
+</a></h5>
+<p>By default, when building statically, <code>stdenv</code> will try to add build system appropriate configure flags to try to enable static builds.</p>
+<p>If this is undesirable, set this variable to true.</p>
+<h5 id='var-stdenv-dontAddDisableDepTrack'><a href='stdenv/stdenv/#var-stdenv-dontAddDisableDepTrack'>
+<code>dontAddDisableDepTrack</code>
+</a></h5>
+<p>By default, the flag <code>--disable-dependency-tracking</code> is added to the configure flags to speed up Automake-based builds. If this is undesirable, set this variable to true.</p>
+<h5 id='var-stdenv-dontFixLibtool'><a href='stdenv/stdenv/#var-stdenv-dontFixLibtool'>
+<code>dontFixLibtool</code>
+</a></h5>
+<p>By default, the configure phase applies some special hackery to all files called <code>ltmain.sh</code> before running the configure script to improve the purity of Libtool-based packages [^footnote-stdenv-sys-lib-search-path] . If this is undesirable, set this variable to true.</p>
+<h5 id='var-stdenv-dontDisableStatic'><a href='stdenv/stdenv/#var-stdenv-dontDisableStatic'>
+<code>dontDisableStatic</code>
+</a></h5>
+<p>By default, when the configure script has <code>--enable-static</code>, the option <code>--disable-static</code> is added to the configure flags.</p>
+<p>If this is undesirable, set this variable to true.  It is automatically set to true when building statically, for example through <code>pkgsStatic</code>.</p>
+<h5 id='var-stdenv-configurePlatforms'><a href='stdenv/stdenv/#var-stdenv-configurePlatforms'>
+<code>configurePlatforms</code>
+</a></h5>
+<p>By default, when cross compiling, the configure script has <code>--build=...</code> and <code>--host=...</code> passed. Packages can instead pass <code>[ &quot;build&quot; &quot;host&quot; &quot;target&quot; ]</code> or a subset to control exactly which platform flags are passed. Compilers and other tools can use this to also pass the target platform. [^footnote-stdenv-build-time-guessing-impurity]</p>
+<h5 id='var-stdenv-preConfigure'><a href='stdenv/stdenv/#var-stdenv-preConfigure'>
+<code>preConfigure</code>
+</a></h5>
+<p>Hook executed at the start of the configure phase.</p>
+<h5 id='var-stdenv-postConfigure'><a href='stdenv/stdenv/#var-stdenv-postConfigure'>
+<code>postConfigure</code>
+</a></h5>
+<p>Hook executed at the end of the configure phase.</p>
+<h3 id='build-phase'><a href='stdenv/stdenv/#build-phase'>
+The build phase
+</a></h3>
+<p>The build phase is responsible for actually building the package (e.g. compiling it). The default <code>buildPhase</code> calls <code>make</code> if a file named <code>Makefile</code>, <code>makefile</code> or <code>GNUmakefile</code> exists in the current directory (or the <code>makefile</code> is explicitly set); otherwise it does nothing.</p>
+<h4 id='variables-controlling-the-build-phase'><a href='stdenv/stdenv/#variables-controlling-the-build-phase'>
+Variables controlling the build phase
+</a></h4>
+<h5 id='var-stdenv-dontBuild'><a href='stdenv/stdenv/#var-stdenv-dontBuild'>
+<code>dontBuild</code>
+</a></h5>
+<p>Set to true to skip the build phase.</p>
+<h5 id='var-stdenv-makefile'><a href='stdenv/stdenv/#var-stdenv-makefile'>
+<code>makefile</code>
+</a></h5>
+<p>The file name of the Makefile.</p>
+<h5 id='var-stdenv-makeFlags'><a href='stdenv/stdenv/#var-stdenv-makeFlags'>
+<code>makeFlags</code>
+</a></h5>
+<p>A list of strings passed as additional flags to <code>make</code>. These flags are also used by the default install and check phase. For setting make flags specific to the build phase, use <code>buildFlags</code> (see below).</p>
+<pre><code class="language-nix">{ makeFlags = [ &quot;PREFIX=$(out)&quot; ]; }
+</code></pre>
+<div class='admonition note'><h3 class='title'>Note</h3>
+<p>
+The flags are quoted in bash, but environment variables can be specified by using the make syntax.
+</p>
+</div>
+<h5 id='var-stdenv-makeFlagsArray'><a href='stdenv/stdenv/#var-stdenv-makeFlagsArray'>
+<code>makeFlagsArray</code>
+</a></h5>
+<p>A shell array containing additional arguments passed to <code>make</code>. You must use this instead of <code>makeFlags</code> if the arguments contain spaces, e.g.</p>
+<pre><code class="language-nix">{
+  preBuild = ''
+    makeFlagsArray+=(CFLAGS=&quot;-O0 -g&quot; LDFLAGS=&quot;-lfoo -lbar&quot;)
+  '';
+}
+</code></pre>
+<p>Note that shell arrays cannot be passed through environment variables, so you cannot set <code>makeFlagsArray</code> in a derivation attribute (because those are passed through environment variables): you have to define them in shell code.</p>
+<h5 id='var-stdenv-buildFlags'><a href='stdenv/stdenv/#var-stdenv-buildFlags'>
+<code>buildFlags</code> / <code>buildFlagsArray</code>
+</a></h5>
+<p>A list of strings passed as additional flags to <code>make</code>. Like <code>makeFlags</code> and <code>makeFlagsArray</code>, but only used by the build phase. Any build targets should be specified as part of the <code>buildFlags</code>.</p>
+<h5 id='var-stdenv-preBuild'><a href='stdenv/stdenv/#var-stdenv-preBuild'>
+<code>preBuild</code>
+</a></h5>
+<p>Hook executed at the start of the build phase.</p>
+<h5 id='var-stdenv-postBuild'><a href='stdenv/stdenv/#var-stdenv-postBuild'>
+<code>postBuild</code>
+</a></h5>
+<p>Hook executed at the end of the build phase.</p>
+<p>You can set flags for <code>make</code> through the <code>makeFlags</code> variable.</p>
+<p>Before and after running <code>make</code>, the hooks <code>preBuild</code> and <code>postBuild</code> are called, respectively.</p>
+<h3 id='ssec-check-phase'><a href='stdenv/stdenv/#ssec-check-phase'>
+The check phase
+</a></h3>
+<p>The check phase checks whether the package was built correctly by running its test suite. The default <code>checkPhase</code> calls <code>make $checkTarget</code>, but only if the <a href="stdenv/stdenv/#var-stdenv-doCheck"><code>doCheck</code> variable</a> is enabled.</p>
+<p>It is highly recommended, for packages' sources that are not distributed with any tests, to at least use <a href="hooks/versionCheckHook/#versioncheckhook"><code>versionCheckHook</code></a> to test that the resulting executable is basically functional.</p>
+<h4 id='variables-controlling-the-check-phase'><a href='stdenv/stdenv/#variables-controlling-the-check-phase'>
+Variables controlling the check phase
+</a></h4>
+<h5 id='var-stdenv-doCheck'><a href='stdenv/stdenv/#var-stdenv-doCheck'>
+<code>doCheck</code>
+</a></h5>
+<p>Controls whether the check phase is executed. By default it is skipped, but if <code>doCheck</code> is set to true, the check phase is usually executed. Thus you should set</p>
+<pre><code class="language-nix">{ doCheck = true; }
+</code></pre>
+<p>in the derivation to enable checks. The exception is cross compilation. Cross compiled builds never run tests, no matter how <code>doCheck</code> is set, as the newly-built program won’t run on the platform used to build it.</p>
+<h5 id='makeflags-makeflagsarray-makefile'><a href='stdenv/stdenv/#makeflags-makeflagsarray-makefile'>
+<code>makeFlags</code> / <code>makeFlagsArray</code> / <code>makefile</code>
+</a></h5>
+<p>See the <a href="stdenv/stdenv/#var-stdenv-makeFlags">build phase</a> for details.</p>
+<h5 id='var-stdenv-checkTarget'><a href='stdenv/stdenv/#var-stdenv-checkTarget'>
+<code>checkTarget</code>
+</a></h5>
+<p>The <code>make</code> target that runs the tests.
+If unset, use <code>check</code> if it exists, otherwise <code>test</code>; if neither is found, do nothing.</p>
+<h5 id='var-stdenv-checkFlags'><a href='stdenv/stdenv/#var-stdenv-checkFlags'>
+<code>checkFlags</code> / <code>checkFlagsArray</code>
+</a></h5>
+<p>A list of strings passed as additional flags to <code>make</code>. Like <code>makeFlags</code> and <code>makeFlagsArray</code>, but only used by the check phase. Unlike with <code>buildFlags</code>, the <code>checkTarget</code> is automatically added to the <code>make</code> invocation in addition to any <code>checkFlags</code> specified.</p>
+<h5 id='var-stdenv-checkInputs'><a href='stdenv/stdenv/#var-stdenv-checkInputs'>
+<code>checkInputs</code>
+</a></h5>
+<p>A list of host dependencies used by the phase, usually libraries linked into executables built during tests. This gets included in <code>buildInputs</code> when <code>doCheck</code> is set.</p>
+<h5 id='var-stdenv-nativeCheckInputs'><a href='stdenv/stdenv/#var-stdenv-nativeCheckInputs'>
+<code>nativeCheckInputs</code>
+</a></h5>
+<p>A list of native dependencies used by the phase, notably tools needed on <code>$PATH</code>. This gets included in <code>nativeBuildInputs</code> when <code>doCheck</code> is set.</p>
+<h5 id='var-stdenv-preCheck'><a href='stdenv/stdenv/#var-stdenv-preCheck'>
+<code>preCheck</code>
+</a></h5>
+<p>Hook executed at the start of the check phase.</p>
+<h5 id='var-stdenv-postCheck'><a href='stdenv/stdenv/#var-stdenv-postCheck'>
+<code>postCheck</code>
+</a></h5>
+<p>Hook executed at the end of the check phase.</p>
+<h3 id='ssec-install-phase'><a href='stdenv/stdenv/#ssec-install-phase'>
+The install phase
+</a></h3>
+<p>The install phase is responsible for installing the package in the Nix store under <code>out</code>. The default <code>installPhase</code> creates the directory <code>$out</code> and calls <code>make install</code>.</p>
+<h4 id='variables-controlling-the-install-phase'><a href='stdenv/stdenv/#variables-controlling-the-install-phase'>
+Variables controlling the install phase
+</a></h4>
+<h5 id='var-stdenv-dontInstall'><a href='stdenv/stdenv/#var-stdenv-dontInstall'>
+<code>dontInstall</code>
+</a></h5>
+<p>Set to true to skip the install phase.</p>
+<h5 id='makeflags-makeflagsarray-makefile-1'><a href='stdenv/stdenv/#makeflags-makeflagsarray-makefile-1'>
+<code>makeFlags</code> / <code>makeFlagsArray</code> / <code>makefile</code>
+</a></h5>
+<p>See the <a href="stdenv/stdenv/#var-stdenv-makeFlags">build phase</a> for details.</p>
+<h5 id='var-stdenv-installTargets'><a href='stdenv/stdenv/#var-stdenv-installTargets'>
+<code>installTargets</code>
+</a></h5>
+<p>The make targets that perform the installation. Defaults to <code>install</code>. Example:</p>
+<pre><code class="language-nix">{ installTargets = &quot;install-bin install-doc&quot;; }
+</code></pre>
+<h5 id='var-stdenv-installFlags'><a href='stdenv/stdenv/#var-stdenv-installFlags'>
+<code>installFlags</code> / <code>installFlagsArray</code>
+</a></h5>
+<p>A list of strings passed as additional flags to <code>make</code>. Like <code>makeFlags</code> and <code>makeFlagsArray</code>, but only used by the install phase. Unlike with <code>buildFlags</code>, the <code>installTargets</code> are automatically added to the <code>make</code> invocation in addition to any <code>installFlags</code> specified.</p>
+<h5 id='var-stdenv-preInstall'><a href='stdenv/stdenv/#var-stdenv-preInstall'>
+<code>preInstall</code>
+</a></h5>
+<p>Hook executed at the start of the install phase.</p>
+<h5 id='var-stdenv-postInstall'><a href='stdenv/stdenv/#var-stdenv-postInstall'>
+<code>postInstall</code>
+</a></h5>
+<p>Hook executed at the end of the install phase.</p>
+<h3 id='ssec-fixup-phase'><a href='stdenv/stdenv/#ssec-fixup-phase'>
+The fixup phase
+</a></h3>
+<p>The fixup phase performs (Nix-specific) post-processing actions on the files installed under <code>$out</code> by the install phase. The default <code>fixupPhase</code> does the following:</p>
+<ul>
+<li>It moves the <code>man/</code>, <code>doc/</code> and <code>info/</code> subdirectories of <code>$out</code> to <code>share/</code>.</li>
+<li>It strips libraries and executables of debug information.</li>
+<li>On Linux, it applies the <code>patchelf</code> command to ELF executables and libraries to remove unused directories from the <code>RPATH</code> to prevent unnecessary runtime dependencies.</li>
+<li>It rewrites the interpreter paths of shell scripts to paths found in <code>PATH</code>. E.g., <code>/usr/bin/perl</code> will be rewritten to <code>/nix/store/some-perl/bin/perl</code> found in <code>PATH</code>. See <a href="stdenv/stdenv/#patch-shebangs.sh">The Standard Environment</a> for details.</li>
+</ul>
+<h4 id='variables-controlling-the-fixup-phase'><a href='stdenv/stdenv/#variables-controlling-the-fixup-phase'>
+Variables controlling the fixup phase
+</a></h4>
+<h5 id='var-stdenv-dontFixup'><a href='stdenv/stdenv/#var-stdenv-dontFixup'>
+<code>dontFixup</code>
+</a></h5>
+<p>Set to true to skip the fixup phase.</p>
+<h5 id='var-stdenv-dontStrip'><a href='stdenv/stdenv/#var-stdenv-dontStrip'>
+<code>dontStrip</code>
+</a></h5>
+<p>If set, libraries and executables are not stripped. By default, they are.</p>
+<h5 id='var-stdenv-dontStripHost'><a href='stdenv/stdenv/#var-stdenv-dontStripHost'>
+<code>dontStripHost</code>
+</a></h5>
+<p>Like <code>dontStrip</code>, but only affects the <code>strip</code> command targeting the package’s host platform. Useful when supporting cross compilation, but otherwise feel free to ignore.</p>
+<h5 id='var-stdenv-dontStripTarget'><a href='stdenv/stdenv/#var-stdenv-dontStripTarget'>
+<code>dontStripTarget</code>
+</a></h5>
+<p>Like <code>dontStrip</code>, but only affects the <code>strip</code> command targeting the packages’ target platform. Useful when supporting cross compilation, but otherwise feel free to ignore.</p>
+<h5 id='var-stdenv-dontMoveSbin'><a href='stdenv/stdenv/#var-stdenv-dontMoveSbin'>
+<code>dontMoveSbin</code>
+</a></h5>
+<p>If set, files in <code>$out/sbin</code> are not moved to <code>$out/bin</code>. By default, they are.</p>
+<h5 id='var-stdenv-stripAllList'><a href='stdenv/stdenv/#var-stdenv-stripAllList'>
+<code>stripAllList</code>
+</a></h5>
+<p>List of directories to search for libraries and executables from which <em>all</em> symbols should be stripped. By default, it’s empty. Stripping all symbols is risky, since it may remove not just debug symbols but also ELF information necessary for normal execution.</p>
+<h5 id='var-stdenv-stripAllListTarget'><a href='stdenv/stdenv/#var-stdenv-stripAllListTarget'>
+<code>stripAllListTarget</code>
+</a></h5>
+<p>Like <code>stripAllList</code>, but only applies to packages’ target platform. By default, it’s empty. Useful when supporting cross compilation.</p>
+<h5 id='var-stdenv-stripAllFlags'><a href='stdenv/stdenv/#var-stdenv-stripAllFlags'>
+<code>stripAllFlags</code>
+</a></h5>
+<p>Flags passed to the <code>strip</code> command applied to the files in the directories listed in <code>stripAllList</code>. Defaults to <code>-s -p</code> (i.e. <code>--strip-all --preserve-dates</code>).</p>
+<h5 id='var-stdenv-stripDebugList'><a href='stdenv/stdenv/#var-stdenv-stripDebugList'>
+<code>stripDebugList</code>
+</a></h5>
+<p>List of directories to search for libraries and executables from which only debugging-related symbols should be stripped. It defaults to <code>lib lib32 lib64 libexec bin sbin</code>.</p>
+<h5 id='var-stdenv-stripDebugListTarget'><a href='stdenv/stdenv/#var-stdenv-stripDebugListTarget'>
+<code>stripDebugListTarget</code>
+</a></h5>
+<p>Like <code>stripDebugList</code>, but only applies to packages’ target platform. By default, it’s empty. Useful when supporting cross compilation.</p>
+<h5 id='var-stdenv-stripDebugFlags'><a href='stdenv/stdenv/#var-stdenv-stripDebugFlags'>
+<code>stripDebugFlags</code>
+</a></h5>
+<p>Flags passed to the <code>strip</code> command applied to the files in the directories listed in <code>stripDebugList</code>. Defaults to <code>-S -p</code> (i.e. <code>--strip-debug --preserve-dates</code>).</p>
+<h5 id='var-stdenv-stripExclude'><a href='stdenv/stdenv/#var-stdenv-stripExclude'>
+<code>stripExclude</code>
+</a></h5>
+<p>A list of filenames or path patterns to avoid stripping. A file is excluded if its name <em>or</em> path (from the derivation root) matches.</p>
+<p>This example prevents all <code>*.rlib</code> files from being stripped:</p>
+<pre><code class="language-nix">stdenv.mkDerivation {
+  # ...
+  stripExclude = [ &quot;*.rlib&quot; ];
+}
+</code></pre>
+<p>This example prevents files within certain paths from being stripped:</p>
+<pre><code class="language-nix">stdenv.mkDerivation {
+  # ...
+  stripExclude = [ &quot;lib/modules/*/build/*&quot; ];
+}
+</code></pre>
+<h5 id='var-stdenv-dontPatchELF'><a href='stdenv/stdenv/#var-stdenv-dontPatchELF'>
+<code>dontPatchELF</code>
+</a></h5>
+<p>If set, the <code>patchelf</code> command is not used to remove unnecessary <code>RPATH</code> entries. Only applies to Linux.</p>
+<h5 id='var-stdenv-dontPatchShebangs'><a href='stdenv/stdenv/#var-stdenv-dontPatchShebangs'>
+<code>dontPatchShebangs</code>
+</a></h5>
+<p>If set, scripts starting with <code>#!</code> do not have their interpreter paths rewritten to paths in the Nix store. See <a href="stdenv/stdenv/#patch-shebangs.sh">The Standard Environment</a> on how patching shebangs works.</p>
+<h5 id='var-stdenv-dontPruneLibtoolFiles'><a href='stdenv/stdenv/#var-stdenv-dontPruneLibtoolFiles'>
+<code>dontPruneLibtoolFiles</code>
+</a></h5>
+<p>If set, libtool <code>.la</code> files associated with shared libraries won’t have their <code>dependency_libs</code> field cleared.</p>
+<h5 id='var-stdenv-forceShare'><a href='stdenv/stdenv/#var-stdenv-forceShare'>
+<code>forceShare</code>
+</a></h5>
+<p>The list of directories that must be moved from <code>$out</code> to <code>$out/share</code>. Defaults to <code>man doc info</code>.</p>
+<h5 id='var-stdenv-setupHook'><a href='stdenv/stdenv/#var-stdenv-setupHook'>
+<code>setupHook</code>
+</a></h5>
+<p>A package can export a <a href="stdenv/stdenv/#ssec-setup-hooks">setup hook</a> by setting this variable. The setup hook, if defined, is copied to <code>$out/nix-support/setup-hook</code>. Environment variables are then substituted in it using <code>substituteAll</code>.</p>
+<h5 id='var-stdenv-preFixup'><a href='stdenv/stdenv/#var-stdenv-preFixup'>
+<code>preFixup</code>
+</a></h5>
+<p>Hook executed at the start of the fixup phase.</p>
+<h5 id='var-stdenv-postFixup'><a href='stdenv/stdenv/#var-stdenv-postFixup'>
+<code>postFixup</code>
+</a></h5>
+<p>Hook executed at the end of the fixup phase.</p>
+<h5 id='stdenv-separateDebugInfo'><a href='stdenv/stdenv/#stdenv-separateDebugInfo'>
+<code>separateDebugInfo</code>
+</a></h5>
+<p>If set to <code>true</code>, the standard environment will enable debug information in C/C++ builds. After installation, the debug information will be separated from the executables and stored in the output named <code>debug</code>. (This output is enabled automatically; you don’t need to set the <code>outputs</code> attribute explicitly.) To be precise, the debug information is stored in <code>debug/lib/debug/.build-id/XX/YYYY…</code>, where &lt;XXYYYY…&gt; is the &lt;build ID&gt; of the binary — a SHA-1 hash of the contents of the binary. Debuggers like GDB use the build ID to look up the separated debug information.</p>
+<div class='admonition example'><h3 id='ex-gdb-debug-symbols-socat' class='title'><a href='stdenv/stdenv/#ex-gdb-debug-symbols-socat'>Example</a></h3>
+<p></p>
+<h1>Enable debug symbols for use with GDB</h1>
+<p>To make GDB find debug information for the <code>socat</code> package and its dependencies, you can use the following <code>shell.nix</code>:</p>
+<pre><code class="language-nix">{
+  pkgs ? import &lt;nixpkgs&gt; {
+    config = { };
+    overlays = [
+      (final: prev: {
+        ncurses = prev.ncurses.overrideAttrs { separateDebugInfo = true; };
+        readline = prev.readline.overrideAttrs { separateDebugInfo = true; };
+      })
+    ];
+  },
+}:
+pkgs.mkShell {
+  NIX_DEBUG_INFO_DIRS = pkgs.lib.makeSearchPathOutput &quot;debug&quot; &quot;lib/debug&quot; [
+    pkgs.glibc
+    pkgs.ncurses
+    pkgs.openssl
+    pkgs.readline
+  ];
+
+  packages = [
+    pkgs.gdb
+    pkgs.socat
+  ];
+
+  shellHook = ''
+    gdb socat
+  '';
+}
+</code></pre>
+<p>This setup works as follows:</p>
+<ul>
+<li>Add <a href="using/overlays/#chap-overlays"><code>overlays</code></a> to the package set, since debug symbols are disabled for <code>ncurses</code> and <code>readline</code> by default.</li>
+<li>Set the environment variable <code>NIX_DEBUG_INFO_DIRS</code> in the shell. Nixpkgs patches <code>gdb</code> to use this variable for looking up debug symbols.
+<a href="functions/library/strings/#function-library-lib.strings.makeSearchPathOutput"><code>lib.makeSearchPathOutput</code></a> constructs a colon-separated search path, pointing to the directories containing the debug symbols of the listed packages.</li>
+<li>Run <code>gdb</code> on the <code>socat</code> binary on shell startup in the <a href="build-helpers/special/mkshell/#sec-pkgs-mkShell"><code>shellHook</code></a>.</li>
+</ul>
+<p></p>
+</div>
+<h3 id='ssec-installCheck-phase'><a href='stdenv/stdenv/#ssec-installCheck-phase'>
+The installCheck phase
+</a></h3>
+<p>The installCheck phase checks whether the package was installed correctly by running its test suite against the installed directories. The default <code>installCheck</code> calls <code>make installcheck</code>.</p>
+<p>It is often better to add tests that are not part of the source distribution to <code>passthru.tests</code> (see
+<a href="stdenv/passthru/#var-passthru-tests">Passthru-attributes</a>). This avoids adding overhead to every build and enables us to run them independently.</p>
+<h4 id='variables-controlling-the-installcheck-phase'><a href='stdenv/stdenv/#variables-controlling-the-installcheck-phase'>
+Variables controlling the installCheck phase
+</a></h4>
+<h5 id='var-stdenv-doInstallCheck'><a href='stdenv/stdenv/#var-stdenv-doInstallCheck'>
+<code>doInstallCheck</code>
+</a></h5>
+<p>Controls whether the installCheck phase is executed. By default it is skipped, but if <code>doInstallCheck</code> is set to true, the installCheck phase is usually executed. Thus you should set</p>
+<pre><code class="language-nix">{ doInstallCheck = true; }
+</code></pre>
+<p>in the derivation to enable install checks. The exception is cross compilation. Cross compiled builds never run tests, no matter how <code>doInstallCheck</code> is set, as the newly-built program won’t run on the platform used to build it.</p>
+<h5 id='var-stdenv-installCheckTarget'><a href='stdenv/stdenv/#var-stdenv-installCheckTarget'>
+<code>installCheckTarget</code>
+</a></h5>
+<p>The make target that runs the install tests. Defaults to <code>installcheck</code>.</p>
+<h5 id='var-stdenv-installCheckFlags'><a href='stdenv/stdenv/#var-stdenv-installCheckFlags'>
+<code>installCheckFlags</code> / <code>installCheckFlagsArray</code>
+</a></h5>
+<p>A list of strings passed as additional flags to <code>make</code>. Like <code>makeFlags</code> and <code>makeFlagsArray</code>, but only used by the installCheck phase.</p>
+<h5 id='var-stdenv-installCheckInputs'><a href='stdenv/stdenv/#var-stdenv-installCheckInputs'>
+<code>installCheckInputs</code>
+</a></h5>
+<p>A list of host dependencies used by the phase, usually libraries linked into executables built during tests. This gets included in <code>buildInputs</code> when <code>doInstallCheck</code> is set.</p>
+<h5 id='var-stdenv-nativeInstallCheckInputs'><a href='stdenv/stdenv/#var-stdenv-nativeInstallCheckInputs'>
+<code>nativeInstallCheckInputs</code>
+</a></h5>
+<p>A list of native dependencies used by the phase, notably tools needed on <code>$PATH</code>. This gets included in <code>nativeBuildInputs</code> when <code>doInstallCheck</code> is set.</p>
+<h5 id='var-stdenv-preInstallCheck'><a href='stdenv/stdenv/#var-stdenv-preInstallCheck'>
+<code>preInstallCheck</code>
+</a></h5>
+<p>Hook executed at the start of the installCheck phase.</p>
+<h5 id='var-stdenv-postInstallCheck'><a href='stdenv/stdenv/#var-stdenv-postInstallCheck'>
+<code>postInstallCheck</code>
+</a></h5>
+<p>Hook executed at the end of the installCheck phase.</p>
+<h3 id='ssec-distribution-phase'><a href='stdenv/stdenv/#ssec-distribution-phase'>
+The distribution phase
+</a></h3>
+<p>The distribution phase is intended to produce a source distribution of the package. The default <code>distPhase</code> first calls <code>make dist</code>, then it copies the resulting source tarballs to <code>$out/tarballs/</code>. This phase is only executed if the attribute <code>doDist</code> is set.</p>
+<h4 id='variables-controlling-the-distribution-phase'><a href='stdenv/stdenv/#variables-controlling-the-distribution-phase'>
+Variables controlling the distribution phase
+</a></h4>
+<h5 id='var-stdenv-doDist'><a href='stdenv/stdenv/#var-stdenv-doDist'>
+<code>doDist</code>
+</a></h5>
+<p>If set, the distribution phase is executed.</p>
+<h5 id='var-stdenv-distTarget'><a href='stdenv/stdenv/#var-stdenv-distTarget'>
+<code>distTarget</code>
+</a></h5>
+<p>The make target that produces the distribution. Defaults to <code>dist</code>.</p>
+<h5 id='var-stdenv-distFlags'><a href='stdenv/stdenv/#var-stdenv-distFlags'>
+<code>distFlags</code> / <code>distFlagsArray</code>
+</a></h5>
+<p>Additional flags passed to <code>make</code>.</p>
+<h5 id='var-stdenv-tarballs'><a href='stdenv/stdenv/#var-stdenv-tarballs'>
+<code>tarballs</code>
+</a></h5>
+<p>The names of the source distribution files to be copied to <code>$out/tarballs/</code>. It can contain shell wildcards. The default is <code>*.tar.gz</code>.</p>
+<h5 id='var-stdenv-dontCopyDist'><a href='stdenv/stdenv/#var-stdenv-dontCopyDist'>
+<code>dontCopyDist</code>
+</a></h5>
+<p>If set, no files are copied to <code>$out/tarballs/</code>.</p>
+<h5 id='var-stdenv-preDist'><a href='stdenv/stdenv/#var-stdenv-preDist'>
+<code>preDist</code>
+</a></h5>
+<p>Hook executed at the start of the distribution phase.</p>
+<h5 id='var-stdenv-postDist'><a href='stdenv/stdenv/#var-stdenv-postDist'>
+<code>postDist</code>
+</a></h5>
+<p>Hook executed at the end of the distribution phase.</p>
+<h2 id='ssec-stdenv-functions'><a href='stdenv/stdenv/#ssec-stdenv-functions'>
+Shell functions and utilities
+</a></h2>
+<p>The standard environment provides a number of useful functions.</p>
+<h3 id='fun-makeWrapper'><a href='stdenv/stdenv/#fun-makeWrapper'>
+<code>makeWrapper</code> &lt;executable&gt; &lt;wrapperfile&gt; &lt;args&gt;
+</a></h3>
+<p>Constructs a wrapper for a program with various possible arguments. It is defined as part of 2 setup-hooks named <code>makeWrapper</code> and <code>makeBinaryWrapper</code> that implement the same bash functions. Hence, to use it you have to add <code>makeWrapper</code> to your <code>nativeBuildInputs</code>. Here's an example usage:</p>
+<pre><code class="language-bash"># adds `FOOBAR=baz` to `$out/bin/foo`’s environment
+makeWrapper $out/bin/foo $wrapperfile --set FOOBAR baz
+
+# Prefixes the binary paths of `hello` and `git`
+# and suffixes the binary path of `xdg-utils`.
+# Be advised that paths often should be patched in directly
+# (via string replacements or in `configurePhase`).
+makeWrapper $out/bin/foo $wrapperfile \
+  --prefix PATH : ${lib.makeBinPath [ hello git ]} \
+  --suffix PATH : ${lib.makeBinPath [ xdg-utils ]}
+</code></pre>
+<p>Packages may expect or require other utilities to be available at runtime.
+<code>makeWrapper</code> can be used to add packages to a <code>PATH</code> environment variable local to a wrapper.</p>
+<p>Use <code>--prefix</code> to explicitly set dependencies in <code>PATH</code>.</p>
+<div class='admonition note'><h3 class='title'>Note</h3>
+<p>
+<code>--prefix</code> essentially hard-codes dependencies into the wrapper.
+They cannot be overridden without rebuilding the package.
+</p>
+</div>
+<p>If dependencies should be resolved at runtime, use <code>--suffix</code> to append fallback values to <code>PATH</code>.</p>
+<p>There’s many more kinds of arguments, they are documented in <code>nixpkgs/pkgs/build-support/setup-hooks/make-wrapper.sh</code> for the <code>makeWrapper</code> implementation and in <code>nixpkgs/pkgs/by-name/ma/makeBinaryWrapper/make-binary-wrapper.sh</code> for the <code>makeBinaryWrapper</code> implementation.</p>
+<p><code>wrapProgram</code> is a convenience function you probably want to use most of the time, implemented by both <code>makeWrapper</code> and <code>makeBinaryWrapper</code>.</p>
+<p>Using the <code>makeBinaryWrapper</code> implementation is usually preferred, as it creates a tiny <em>compiled</em> wrapper executable, that can be used as a shebang interpreter. This is needed mostly on Darwin, where shebangs cannot point to scripts, <a href="https://stackoverflow.com/questions/67100831/macos-shebang-with-absolute-path-not-working">due to a limitation with the <code>execve</code>-syscall</a>. Compiled wrappers generated by <code>makeBinaryWrapper</code> can be inspected with <code>less &lt;path-to-wrapper&gt;</code> - by scrolling past the binary data you should be able to see the shell command that generated the executable and there see the environment variables that were injected into the wrapper.</p>
+<p>However, <code>makeWrapper</code> is more flexible and implements more arguments.
+Use <code>makeWrapper</code> if you need the wrapper to use shell features (e.g. look up environment variables) at runtime.</p>
+<h3 id='fun-remove-references-to'><a href='stdenv/stdenv/#fun-remove-references-to'>
+<code>remove-references-to -t</code> &lt;storepath&gt; [ <code>-t</code> &lt;storepath&gt; ... ] &lt;file&gt; ...
+</a></h3>
+<p>Removes the references of the specified files to the specified store files. This is done without changing the size of the file by replacing the hash by <code>eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee</code>, and should work on compiled executables. This is meant to be used to remove the dependency of the output on inputs that are known to be unnecessary at runtime. Of course, reckless usage will break the patched programs.
+To use this, add <code>removeReferencesTo</code> to <code>nativeBuildInputs</code>.</p>
+<p>As <code>remove-references-to</code> is an actual executable and not a shell function, it can be used with <code>find</code>.
+Example removing all references to the compiler in the output:</p>
+<pre><code class="language-nix">{
+  postInstall = ''
+    find &quot;$out&quot; -type f -exec remove-references-to -t ${stdenv.cc} '{}' +
+  '';
+}
+</code></pre>
+<h3 id='fun-runHook'><a href='stdenv/stdenv/#fun-runHook'>
+<code>runHook</code> &lt;hook&gt;
+</a></h3>
+<p>Execute &lt;hook&gt; and the values in the array associated with it. The array's name is determined by removing <code>Hook</code> from the end of &lt;hook&gt; and appending <code>Hooks</code>.</p>
+<p>For example, <code>runHook postHook</code> would run the hook <code>postHook</code> and all of the values contained in the <code>postHooks</code> array, if it exists.</p>
+<h3 id='fun-substitute'><a href='stdenv/stdenv/#fun-substitute'>
+<code>substitute</code> &lt;infile&gt; &lt;outfile&gt; &lt;subs&gt;
+</a></h3>
+<p>Performs string substitution on the contents of &lt;infile&gt;, writing the result to &lt;outfile&gt;. The substitutions in &lt;subs&gt; are of the following form:</p>
+<h4 id='fun-substitute-replace-fail'><a href='stdenv/stdenv/#fun-substitute-replace-fail'>
+<code>--replace-fail</code> &lt;s1&gt; &lt;s2&gt;
+</a></h4>
+<p>Replace every occurrence of the string &lt;s1&gt; by &lt;s2&gt;.
+Will error if no change is made.</p>
+<h4 id='fun-substitute-replace-warn'><a href='stdenv/stdenv/#fun-substitute-replace-warn'>
+<code>--replace-warn</code> &lt;s1&gt; &lt;s2&gt;
+</a></h4>
+<p>Replace every occurrence of the string &lt;s1&gt; by &lt;s2&gt;.
+Will print a warning if no change is made.</p>
+<h4 id='fun-substitute-replace-quiet'><a href='stdenv/stdenv/#fun-substitute-replace-quiet'>
+<code>--replace-quiet</code> &lt;s1&gt; &lt;s2&gt;
+</a></h4>
+<p>Replace every occurrence of the string &lt;s1&gt; by &lt;s2&gt;.
+Will do nothing if no change can be made.</p>
+<h4 id='fun-substitute-subst-var'><a href='stdenv/stdenv/#fun-substitute-subst-var'>
+<code>--subst-var</code> &lt;varName&gt;
+</a></h4>
+<p>Replace every occurrence of <code>@varName@</code> by the contents of the environment variable &lt;varName&gt;. This is useful for generating files from templates, using <code>@...@</code> in the template as placeholders.</p>
+<h4 id='fun-substitute-subst-var-by'><a href='stdenv/stdenv/#fun-substitute-subst-var-by'>
+<code>--subst-var-by</code> &lt;varName&gt; &lt;s&gt;
+</a></h4>
+<p>Replace every occurrence of <code>@varName@</code> by the string &lt;s&gt;.</p>
+<p>Example:</p>
+<pre><code class="language-shell">substitute ./foo.in ./foo.out \
+    --replace-fail /usr/bin/bar $bar/bin/bar \
+    --replace-fail &quot;a string containing spaces&quot; &quot;some other text&quot; \
+    --subst-var someVar
+</code></pre>
+<h3 id='fun-substituteInPlace'><a href='stdenv/stdenv/#fun-substituteInPlace'>
+<code>substituteInPlace</code> &lt;multiple files&gt; &lt;subs&gt;
+</a></h3>
+<p>Like <code>substitute</code>, but performs the substitutions in place on the files passed.</p>
+<h3 id='fun-substituteAll'><a href='stdenv/stdenv/#fun-substituteAll'>
+<code>substituteAll</code> &lt;infile&gt; &lt;outfile&gt;
+</a></h3>
+<p>Replaces every occurrence of <code>@varName@</code>, where &lt;varName&gt; is any environment variable, in &lt;infile&gt;, writing the result to &lt;outfile&gt;. For instance, if &lt;infile&gt; has the contents</p>
+<pre><code class="language-bash">#! @bash@/bin/sh
+PATH=@coreutils@/bin
+echo @foo@
+</code></pre>
+<p>and the environment contains <code>bash=/nix/store/bmwp0q28cf21...-bash-3.2-p39</code> and <code>coreutils=/nix/store/68afga4khv0w...-coreutils-6.12</code>, but does not contain the variable <code>foo</code>, then the output will be</p>
+<pre><code class="language-bash">#! /nix/store/bmwp0q28cf21...-bash-3.2-p39/bin/sh
+PATH=/nix/store/68afga4khv0w...-coreutils-6.12/bin
+echo @foo@
+</code></pre>
+<p>That is, no substitution is performed for undefined variables.</p>
+<p>Environment variables that start with an uppercase letter or an underscore are filtered out, to prevent global variables (like <code>HOME</code>) or private variables (like <code>__ETC_PROFILE_DONE</code>) from accidentally getting substituted. The variables also have to be valid bash &quot;names&quot;, as defined in the bash manpage (alphanumeric or <code>_</code>, must not start with a number).</p>
+<h3 id='fun-substituteAllInPlace'><a href='stdenv/stdenv/#fun-substituteAllInPlace'>
+<code>substituteAllInPlace</code> &lt;file&gt;
+</a></h3>
+<p>Like <code>substituteAll</code>, but performs the substitutions in place on the file &lt;file&gt;.</p>
+<h3 id='fun-stripHash'><a href='stdenv/stdenv/#fun-stripHash'>
+<code>stripHash</code> &lt;path&gt;
+</a></h3>
+<p>Strips the directory and hash part of a store path, outputting the name part to <code>stdout</code>. For example:</p>
+<pre><code class="language-bash"># prints coreutils-8.24
+stripHash &quot;/nix/store/9s9r019176g7cvn2nvcw41gsp862y6b4-coreutils-8.24&quot;
+</code></pre>
+<p>If you wish to store the result in another variable, then the following idiom may be useful:</p>
+<pre><code class="language-bash">name=&quot;/nix/store/9s9r019176g7cvn2nvcw41gsp862y6b4-coreutils-8.24&quot;
+someVar=$(stripHash $name)
+</code></pre>
+<h3 id='fun-wrapProgram'><a href='stdenv/stdenv/#fun-wrapProgram'>
+<code>wrapProgram</code> &lt;executable&gt; &lt;makeWrapperArgs&gt;
+</a></h3>
+<p>Convenience function for <code>makeWrapper</code> that replaces <code>&lt;executable&gt;</code> with a wrapper that executes the original program. It takes all the same arguments as <code>makeWrapper</code>, except for <code>--inherit-argv0</code> (used by the <code>makeBinaryWrapper</code> implementation) and <code>--argv0</code> (used by both <code>makeWrapper</code> and <code>makeBinaryWrapper</code> wrapper implementations).</p>
+<p>If you will apply it multiple times, it will overwrite the wrapper file and you will end up with double wrapping, which should be avoided.</p>
+<h3 id='fun-prependToVar'><a href='stdenv/stdenv/#fun-prependToVar'>
+<code>prependToVar</code> &lt;variableName&gt; &lt;elements...&gt;
+</a></h3>
+<p>Prepend elements to a variable.</p>
+<p>Example:</p>
+<pre><code class="language-shellSession">$ configureFlags=&quot;--disable-static&quot;
+$ prependToVar configureFlags --disable-dependency-tracking --enable-foo
+$ echo $configureFlags
+--disable-dependency-tracking --enable-foo --disable-static
+</code></pre>
+<h3 id='fun-appendToVar'><a href='stdenv/stdenv/#fun-appendToVar'>
+<code>appendToVar</code> &lt;variableName&gt; &lt;elements...&gt;
+</a></h3>
+<p>Append elements to a variable.</p>
+<p>Example:</p>
+<pre><code class="language-shellSession">$ configureFlags=&quot;--disable-static&quot;
+$ appendToVar configureFlags --disable-dependency-tracking --enable-foo
+$ echo $configureFlags
+--disable-static --disable-dependency-tracking --enable-foo
+</code></pre>
+<h2 id='ssec-setup-hooks'><a href='stdenv/stdenv/#ssec-setup-hooks'>
+Package setup hooks
+</a></h2>
+<p>Nix itself considers a build-time dependency as merely something that should previously be built and accessible at build time—packages themselves are on their own to perform any additional setup. In most cases, that is fine, and the downstream derivation can deal with its own dependencies. But for a few common tasks, that would result in almost every package doing the same sort of setup work—depending not on the package itself, but entirely on which dependencies were used.</p>
+<p>To alleviate this burden, the setup hook mechanism was written, where any package can include a shell script that [by convention rather than enforcement by Nix], any downstream reverse-dependency will source as part of its build process. That allows the downstream dependency to merely specify its dependencies, and lets those dependencies effectively initialize themselves. No boilerplate mirroring the list of dependencies is needed.</p>
+<p>The setup hook mechanism is a bit of a sledgehammer though: a powerful feature with a broad and indiscriminate area of effect. The combination of its power and implicit use may be expedient, but isn’t without costs. Nix itself is unchanged, but the spirit of added dependencies being effect-free is violated even if the latter isn’t. For example, if a derivation path is mentioned more than once, Nix itself doesn’t care and makes sure the dependency derivation is already built just the same—depending is just needing something to exist, and needing is idempotent. However, a dependency specified twice will have its setup hook run twice, and that could easily change the build environment (though a well-written setup hook will therefore strive to be idempotent so this is in fact not observable). More broadly, setup hooks are anti-modular in that multiple dependencies, whether the same or different, should not interfere and yet their setup hooks may well do so.</p>
+<p>The most typical use of the setup hook is actually to add other hooks which are then run (i.e. after all the setup hooks) on each dependency. For example, the C compiler wrapper’s setup hook feeds itself flags for each dependency that contains relevant libraries and headers. This is done by defining a bash function, and appending its name to one of <code>envBuildBuildHooks</code>, <code>envBuildHostHooks</code>, <code>envBuildTargetHooks</code>, <code>envHostHostHooks</code>, <code>envHostTargetHooks</code>, or <code>envTargetTargetHooks</code>. These 6 bash variables correspond to the 6 sorts of dependencies by platform (there’s 12 total but we ignore the propagated/non-propagated axis).</p>
+<p>Packages adding a hook should not hard code a specific hook, but rather choose a variable <em>relative</em> to how they are included. Returning to the C compiler wrapper example, if the wrapper itself is an <code>n</code> dependency, then it only wants to accumulate flags from <code>n + 1</code> dependencies, as only those ones match the compiler’s target platform. The <code>hostOffset</code> variable is defined with the current dependency’s host offset <code>targetOffset</code> with its target offset, before its setup hook is sourced. Additionally, since most environment hooks don’t care about the target platform, that means the setup hook can append to the right bash array by doing something like</p>
+<pre><code class="language-bash">addEnvHooks &quot;$hostOffset&quot; myBashFunction
+</code></pre>
+<p>The <em>existence</em> of setups hooks has long been documented and packages inside Nixpkgs are free to use this mechanism. Other packages, however, should not rely on these mechanisms not changing between Nixpkgs versions. Because of the existing issues with this system, there’s little benefit from mandating it be stable for any period of time.</p>
+<p>First, let’s cover some setup hooks that are part of Nixpkgs default <code>stdenv</code>. This means that they are run for every package built using <code>stdenv.mkDerivation</code>, even with custom builders. Some of these are platform specific, so they may run on Linux but not Darwin or vice-versa.</p>
+<h3 id='move-docs.sh'><a href='stdenv/stdenv/#move-docs.sh'>
+<code>move-docs.sh</code>
+</a></h3>
+<p>This setup hook moves any installed documentation to the <code>/share</code> subdirectory directory. This includes the man, doc and info directories. This is needed for legacy programs that do not know how to use the <code>share</code> subdirectory.</p>
+<h3 id='compress-man-pages.sh'><a href='stdenv/stdenv/#compress-man-pages.sh'>
+<code>compress-man-pages.sh</code>
+</a></h3>
+<p>This setup hook compresses any man pages that have been installed. The compression is done using the gzip program. This helps to reduce the installed size of packages.</p>
+<h3 id='strip.sh'><a href='stdenv/stdenv/#strip.sh'>
+<code>strip.sh</code>
+</a></h3>
+<p>This runs the strip command on installed binaries and libraries. This removes unnecessary information like debug symbols when they are not needed. This also helps to reduce the installed size of packages.</p>
+<h3 id='patch-shebangs.sh'><a href='stdenv/stdenv/#patch-shebangs.sh'>
+<code>patch-shebangs.sh</code>
+</a></h3>
+<p>This setup hook patches installed scripts to add Nix store paths to their shebang interpreter as found in the build environment. The <a href="https://en.wikipedia.org/wiki/Shebang_(Unix)">shebang</a> line tells a Unix-like operating system which interpreter to use to execute the script's contents.</p>
+<div class='admonition note'><h3 class='title'>Note</h3>
+<p>
+The <a href="https://github.com/NixOS/nixpkgs/blob/19d4f7dc485f74109bd66ef74231285ff797a823/pkgs/stdenv/generic/builder.sh">generic builder</a> populates <code>PATH</code> from inputs of the derivation.
+</p>
+</div>
+<h4 id='patch-shebangs.sh-invocation'><a href='stdenv/stdenv/#patch-shebangs.sh-invocation'>
+Invocation
+</a></h4>
+<p>Multiple paths can be specified.</p>
+<pre><code>patchShebangs [--build | --host] PATH...
+</code></pre>
+<h5 id='patch-shebangs.sh-invocation-flags'><a href='stdenv/stdenv/#patch-shebangs.sh-invocation-flags'>
+Flags
+</a></h5>
+<dl>
+<dt>
+<p><code>--build</code></p>
+</dt>
+<dd>
+<p>Look up commands available at build time</p>
+</dd>
+<dt>
+<p><code>--host</code></p>
+</dt>
+<dd>
+<p>Look up commands available at run time</p>
+</dd>
+</dl>
+<h5 id='patch-shebangs.sh-invocation-examples'><a href='stdenv/stdenv/#patch-shebangs.sh-invocation-examples'>
+Examples
+</a></h5>
+<pre><code class="language-sh">patchShebangs --host /nix/store/&lt;hash&gt;-hello-1.0/bin
+</code></pre>
+<pre><code class="language-sh">patchShebangs --build configure
+</code></pre>
+<p><code>#!/bin/sh</code> will be rewritten to <code>#!/nix/store/&lt;hash&gt;-some-bash/bin/sh</code>.</p>
+<p><code>#!/usr/bin/env</code> gets special treatment: <code>#!/usr/bin/env python</code> is rewritten to <code>/nix/store/&lt;hash&gt;/bin/python</code>.</p>
+<p>Interpreter paths that point to a valid Nix store location are not changed.</p>
+<div class='admonition note'><h3 class='title'>Note</h3>
+<p>
+A script file must be marked as executable, otherwise it will not be
+considered.
+</p>
+</div>
+<p>This mechanism ensures that the interpreter for a given script is always found and is exactly the one specified by the build.</p>
+<p>It can be disabled by setting <a href="stdenv/stdenv/#var-stdenv-dontPatchShebangs"><code>dontPatchShebangs</code></a>:</p>
+<pre><code class="language-nix">stdenv.mkDerivation {
+  # ...
+  dontPatchShebangs = true;
+  # ...
+}
+</code></pre>
+<p>The file <a href="https://github.com/NixOS/nixpkgs/blob/19d4f7dc485f74109bd66ef74231285ff797a823/pkgs/build-support/setup-hooks/patch-shebangs.sh"><code>patch-shebangs.sh</code></a> defines the <a href="https://github.com/NixOS/nixpkgs/blob/19d4f7dc485f74109bd66ef74231285ff797a823/pkgs/build-support/setup-hooks/patch-shebangs.sh#L24-L105"><code>patchShebangs</code></a> function. It is used to implement <a href="https://github.com/NixOS/nixpkgs/blob/19d4f7dc485f74109bd66ef74231285ff797a823/pkgs/build-support/setup-hooks/patch-shebangs.sh#L107-L119"><code>patchShebangsAuto</code></a>, the <a href="stdenv/stdenv/#ssec-setup-hooks">setup hook</a> that is registered to run during the <a href="stdenv/stdenv/#ssec-fixup-phase">fixup phase</a> by default.</p>
+<p>If you need to run <code>patchShebangs</code> at build time, it must be called explicitly within <a href="stdenv/stdenv/#sec-stdenv-phases">one of the build phases</a>.</p>
+<h3 id='audit-tmpdir.sh'><a href='stdenv/stdenv/#audit-tmpdir.sh'>
+<code>audit-tmpdir.sh</code>
+</a></h3>
+<p>This verifies that no references are left from the install binaries to the directory used to build those binaries. This ensures that the binaries do not need things outside the Nix store. This is currently supported in Linux only.</p>
+<h3 id='multiple-outputs.sh'><a href='stdenv/stdenv/#multiple-outputs.sh'>
+<code>multiple-outputs.sh</code>
+</a></h3>
+<p>This setup hook adds configure flags that tell packages to install files into any one of the proper outputs listed in <code>outputs</code>. This behavior can be turned off by setting <code>setOutputFlags</code> to false in the derivation environment. See <a href="stdenv/multiple-output/#chap-multiple-output">Multiple-output packages</a> for more information.</p>
+<h3 id='move-sbin.sh'><a href='stdenv/stdenv/#move-sbin.sh'>
+<code>move-sbin.sh</code>
+</a></h3>
+<p>This setup hook moves any binaries installed in the <code>sbin/</code> subdirectory into <code>bin/</code>. In addition, a link is provided from <code>sbin/</code> to <code>bin/</code> for compatibility.</p>
+<h3 id='move-lib64.sh'><a href='stdenv/stdenv/#move-lib64.sh'>
+<code>move-lib64.sh</code>
+</a></h3>
+<p>This setup hook moves any libraries installed in the <code>lib64/</code> subdirectory into <code>lib/</code>. In addition, a link is provided from <code>lib64/</code> to <code>lib/</code> for compatibility.</p>
+<h3 id='move-systemd-user-units.sh'><a href='stdenv/stdenv/#move-systemd-user-units.sh'>
+<code>move-systemd-user-units.sh</code>
+</a></h3>
+<p>This setup hook moves any systemd user units installed in the <code>lib/</code> subdirectory into <code>share/</code>. In addition, a link is provided from <code>share/</code> to <code>lib/</code> for compatibility. This is needed for systemd to find user services when installed into the user profile.</p>
+<p>This hook only runs when compiling for Linux.</p>
+<h3 id='no-broken-symlinks.sh'><a href='stdenv/stdenv/#no-broken-symlinks.sh'>
+<code>no-broken-symlinks.sh</code>
+</a></h3>
+<p>This setup hook checks for, reports, and (by default) fails builds when &quot;broken&quot; symlinks are found. A symlink is considered &quot;broken&quot; if it's dangling (the target doesn't exist) or reflexive (it refers to itself).</p>
+<p>This hook can be disabled by setting <code>dontCheckForBrokenSymlinks</code>.</p>
+<div class='admonition note'><h3 class='title'>Note</h3>
+<p>
+The hook only considers symlinks with targets inside the Nix store or $TMPDIR directory (typically /nix/store and /build in the builder environment, the later being where build is executed).
+</p>
+</div>
+<div class='admonition note'><h3 class='title'>Note</h3>
+<p>
+The check for reflexivity is direct and does not account for transitivity, so this hook will not prevent cycles in symlinks.
+</p>
+</div>
+<h3 id='set-source-date-epoch-to-latest.sh'><a href='stdenv/stdenv/#set-source-date-epoch-to-latest.sh'>
+<code>set-source-date-epoch-to-latest.sh</code>
+</a></h3>
+<p>This sets <code>SOURCE_DATE_EPOCH</code> to the modification time of the most recent file.</p>
+<h3 id='add-bin-to-path.sh'><a href='stdenv/stdenv/#add-bin-to-path.sh'>
+<code>add-bin-to-path.sh</code>
+</a></h3>
+<p>This setup hook checks if the <code>bin/</code> directory exists in the <code>$out</code> output path
+and, if so, adds it to the <code>PATH</code> environment variable. This ensures that
+executables located in <code>$out/bin</code> are accessible.</p>
+<p>This hook is particularly useful during testing, as it allows packages to locate their executables without requiring manual modifications to the <code>PATH</code>.</p>
+<p><strong>Note</strong>: This hook is specifically designed for the <code>$out/bin</code> directory only
+and does not handle and support other paths like <code>$sourceRoot/bin</code>. It may not
+work as intended in cases with multiple outputs or when binaries are located in
+directories like <code>sbin/</code>. These caveats should be considered when using this
+hook, as they might introduce unexpected behavior in some specific cases.</p>
+<h3 id='writable-tmpdir-as-home.sh'><a href='stdenv/stdenv/#writable-tmpdir-as-home.sh'>
+<code>writable-tmpdir-as-home.sh</code>
+</a></h3>
+<p>This setup hook ensures that the directory specified by the <code>HOME</code> environment
+variable is writable. If it is not, the hook assigns <code>HOME</code> to a writable
+directory (in <code>.home</code> in <code>$NIX_BUILD_TOP</code>). This adjustment is necessary for
+certain packages that require write access to a home directory.</p>
+<p>By setting <code>HOME</code> to a writable directory, this setup hook prevents failures in
+packages that attempt to write to the home directory.</p>
+<h3 id='bintools-wrapper'><a href='stdenv/stdenv/#bintools-wrapper'>
+Bintools Wrapper and hook
+</a></h3>
+<p>The Bintools Wrapper wraps the binary utilities for a bunch of miscellaneous purposes. These are GNU Binutils when targeting Linux, and a mix of cctools and GNU binutils for Darwin. [The “Bintools” name is supposed to be a compromise between “Binutils” and “cctools” not denoting any specific implementation.] Specifically, the underlying bintools package, and a C standard library (glibc or Darwin’s libSystem, just for the dynamic loader) are all fed in, and dependency finding, hardening (see below), and purity checks for each are handled by the Bintools Wrapper. Packages typically depend on CC Wrapper, which in turn (at run time) depends on the Bintools Wrapper.</p>
+<p>The Bintools Wrapper was only just recently split off from CC Wrapper, so the division of labor is still being worked out. For example, it shouldn’t care about the C standard library, but just take a derivation with the dynamic loader (which happens to be the glibc on linux). Dependency finding however is a task both wrappers will continue to need to share, and probably the most important to understand. It is currently accomplished by collecting directories of host-platform dependencies (i.e. <code>buildInputs</code> and <code>nativeBuildInputs</code>) in environment variables. The Bintools Wrapper’s setup hook causes any <code>lib</code> and <code>lib64</code> subdirectories to be added to <code>NIX_LDFLAGS</code>. Since the CC Wrapper and the Bintools Wrapper use the same strategy, most of the Bintools Wrapper code is sparsely commented and refers to the CC Wrapper. But the CC Wrapper’s code, by contrast, has quite lengthy comments. The Bintools Wrapper merely cites those, rather than repeating them, to avoid falling out of sync.</p>
+<p>A final task of the setup hook is defining a number of standard environment variables to tell build systems which executables fulfill which purpose. They are defined to just be the base name of the tools, under the assumption that the Bintools Wrapper’s binaries will be on the path. Firstly, this helps poorly-written packages, e.g. ones that look for just <code>gcc</code> when <code>CC</code> isn’t defined yet <code>clang</code> is to be used. Secondly, this helps packages not get confused when cross-compiling, in which case multiple Bintools Wrappers may simultaneously be in use. [^footnote-stdenv-per-platform-wrapper] <code>BUILD_</code>- and <code>TARGET_</code>-prefixed versions of the normal environment variable are defined for additional Bintools Wrappers, properly disambiguating them.</p>
+<p>A problem with this final task is that the Bintools Wrapper is honest and defines <code>LD</code> as <code>ld</code>. Most packages, however, firstly use the C compiler for linking, secondly use <code>LD</code> anyways, defining it as the C compiler, and thirdly, only so define <code>LD</code> when it is undefined as a fallback. This triple-threat means Bintools Wrapper will break those packages, as LD is already defined as the actual linker which the package won’t override yet doesn’t want to use. The workaround is to define, just for the problematic package, <code>LD</code> as the C compiler. A good way to do this would be <code>preConfigure = &quot;LD=$CC&quot;</code>.</p>
+<h3 id='cc-wrapper'><a href='stdenv/stdenv/#cc-wrapper'>
+CC Wrapper and hook
+</a></h3>
+<p>The CC Wrapper wraps a C toolchain for a bunch of miscellaneous purposes. Specifically, a C compiler (GCC or Clang), wrapped binary tools, and a C standard library (glibc or Darwin’s libSystem, just for the dynamic loader) are all fed in, and dependency finding, hardening (see below), and purity checks for each are handled by the CC Wrapper. Packages typically depend on the CC Wrapper, which in turn (at run-time) depends on the Bintools Wrapper.</p>
+<p>Dependency finding is undoubtedly the main task of the CC Wrapper. This works just like the Bintools Wrapper, except that any <code>include</code> subdirectory of any relevant dependency is added to <code>NIX_CFLAGS_COMPILE</code>. The setup hook itself contains elaborate comments describing the exact mechanism by which this is accomplished.</p>
+<p>Similarly, the CC Wrapper follows the Bintools Wrapper in defining standard environment variables with the names of the tools it wraps, for the same reasons described above. Importantly, while it includes a <code>cc</code> symlink to the c compiler for portability, the <code>CC</code> will be defined using the compiler’s “real name” (i.e. <code>gcc</code> or <code>clang</code>). This helps lousy build systems that inspect on the name of the compiler rather than run it.</p>
+<p>Here are some more packages that provide a setup hook. Since the list of hooks is extensible, this is not an exhaustive list. The mechanism is only to be used as a last resort, so it might cover most uses.</p>
+<h3 id='stdenv-other-hooks'><a href='stdenv/stdenv/#stdenv-other-hooks'>
+Other hooks
+</a></h3>
+<p>Many other packages provide hooks, that are not part of <code>stdenv</code>. You can find
+these in the <a href="hooks/index/#chap-hooks">Hooks Reference</a>.</p>
+<h3 id='compiler-linker-wrapper-hooks'><a href='stdenv/stdenv/#compiler-linker-wrapper-hooks'>
+Compiler and Linker wrapper hooks
+</a></h3>
+<p>If the file <code>${cc}/nix-support/cc-wrapper-hook</code> exists, it will be run at the end of the <a href="stdenv/stdenv/#cc-wrapper">compiler wrapper</a>.
+If the file <code>${binutils}/nix-support/ld-wrapper-hook</code> exists, it will be run at the end of the linker wrapper, before the linker runs.
+If the file <code>${binutils}/nix-support/post-link-hook</code> exists, it will be run at the end of the linker wrapper.
+These hooks allow a user to inject code into the wrappers.
+As an example, these hooks can be used to extract <code>extraBefore</code>, <code>params</code> and <code>extraAfter</code> which store all the command line arguments passed to the compiler and linker respectively.</p>
+<h2 id='sec-purity-in-nixpkgs'><a href='stdenv/stdenv/#sec-purity-in-nixpkgs'>
+Purity in Nixpkgs
+</a></h2>
+<p><em>Measures taken to prevent dependencies on packages outside the store, and what you can do to prevent them.</em></p>
+<p>GCC doesn’t search in locations such as <code>/usr/include</code>. In fact, attempts to add such directories through the <code>-I</code> flag are filtered out. Likewise, the linker (from GNU binutils) doesn’t search in standard locations such as <code>/usr/lib</code>. Programs built on Linux are linked against a GNU C Library that likewise doesn’t search in the default system locations.</p>
+<h2 id='sec-hardening-in-nixpkgs'><a href='stdenv/stdenv/#sec-hardening-in-nixpkgs'>
+Hardening in Nixpkgs
+</a></h2>
+<p>There are flags available to harden packages at compile or link-time. These can be toggled using the <code>stdenv.mkDerivation</code> parameters <code>hardeningDisable</code> and <code>hardeningEnable</code>.</p>
+<p>Both parameters take a list of flags as strings. The special <code>&quot;all&quot;</code> flag can be passed to <code>hardeningDisable</code> to turn off all hardening. These flags can also be used as environment variables for testing or development purposes.</p>
+<p>For more in-depth information on these hardening flags and hardening in general, refer to the <a href="https://wiki.debian.org/Hardening">Debian Wiki</a>, <a href="https://wiki.ubuntu.com/Security/Features">Ubuntu Wiki</a>, <a href="https://wiki.gentoo.org/wiki/Project:Hardened">Gentoo Wiki</a>, and the <a href="https://wiki.archlinux.org/title/Security">Arch Wiki</a>.</p>
+<p>Note that support for some hardening flags varies by compiler, CPU architecture, target OS and libc. Combinations of these that don't support a particular hardening flag will silently ignore attempts to enable it. To see exactly which hardening flags are being employed in any invocation, the <code>NIX_DEBUG</code> environment variable can be used.</p>
+<h3 id='sec-hardening-flags-enabled-by-default'><a href='stdenv/stdenv/#sec-hardening-flags-enabled-by-default'>
+Hardening flags enabled by default
+</a></h3>
+<p>The following flags are enabled by default and might require disabling with <code>hardeningDisable</code> if the program to be packaged is incompatible.</p>
+<h4 id='format'><a href='stdenv/stdenv/#format'>
+<code>format</code>
+</a></h4>
+<p>Adds the <code>-Wformat -Wformat-security -Werror=format-security</code> compiler options. At present, this warns about calls to <code>printf</code> and <code>scanf</code> functions where the format string is not a string literal and there are no format arguments, as in <code>printf(foo);</code>. This may be a security hole if the format string came from untrusted input and contains <code>%n</code>.</p>
+<p>This needs to be turned off or fixed for errors similar to:</p>
+<pre><code>/tmp/nix-build-zynaddsubfx-2.5.2.drv-0/zynaddsubfx-2.5.2/src/UI/guimain.cpp:571:28: error: format not a string literal and no format arguments [-Werror=format-security]
+         printf(help_message);
+                            ^
+cc1plus: some warnings being treated as errors
+</code></pre>
+<h4 id='stackprotector'><a href='stdenv/stdenv/#stackprotector'>
+<code>stackprotector</code>
+</a></h4>
+<p>Adds the <code>-fstack-protector-strong --param ssp-buffer-size=4</code> compiler options. This adds safety checks against stack overwrites rendering many potential code injection attacks into aborting situations. In the best case this turns code injection vulnerabilities into denial of service or into non-issues (depending on the application).</p>
+<p>This needs to be turned off or fixed for errors similar to:</p>
+<pre><code>bin/blib.a(bios_console.o): In function `bios_handle_cup':
+/tmp/nix-build-ipxe-20141124-5cbdc41.drv-0/ipxe-5cbdc41/src/arch/i386/firmware/pcbios/bios_console.c:86: undefined reference to `__stack_chk_fail'
+</code></pre>
+<h4 id='fortify'><a href='stdenv/stdenv/#fortify'>
+<code>fortify</code>
+</a></h4>
+<p>Adds the <code>-O2 -D_FORTIFY_SOURCE=2</code> compiler options. During code generation the compiler knows a great deal of information about buffer sizes (where possible), and attempts to replace insecure unlimited length buffer function calls with length-limited ones. This is especially useful for old, crufty code. Additionally, format strings in writable memory that contain <code>%n</code> are blocked. If an application depends on such a format string, it will need to be worked around.</p>
+<p>Additionally, some warnings are enabled which might trigger build failures if compiler warnings are treated as errors in the package build. In this case, set <code>env.NIX_CFLAGS_COMPILE</code> to <code>-Wno-error=warning-type</code>.</p>
+<p>This needs to be turned off or fixed for errors similar to:</p>
+<pre><code>malloc.c:404:15: error: return type is an incomplete type
+malloc.c:410:19: error: storage size of 'ms' isn't known
+
+strdup.h:22:1: error: expected identifier or '(' before '__extension__'
+
+strsep.c:65:23: error: register name not specified for 'delim'
+
+installwatch.c:3751:5: error: conflicting types for '__open_2'
+
+fcntl2.h:50:4: error: call to '__open_missing_mode' declared with attribute error: open with O_CREAT or O_TMPFILE in second argument needs 3 arguments
+</code></pre>
+<p>Disabling <code>fortify</code> implies disablement of <code>fortify3</code></p>
+<h4 id='fortify3'><a href='stdenv/stdenv/#fortify3'>
+<code>fortify3</code>
+</a></h4>
+<p>Adds the <code>-O2 -D_FORTIFY_SOURCE=3</code> compiler options. This expands the cases that can be protected by fortify-checks to include some situations with dynamic-length buffers whose length can be inferred at runtime using compiler hints.</p>
+<p>Enabling this flag implies enablement of <code>fortify</code>. Disabling this flag does not imply disablement of <code>fortify</code>.</p>
+<p>This flag can sometimes conflict with a build-system's own attempts at enabling fortify support and result in errors complaining about <code>redefinition of _FORTIFY_SOURCE</code>.</p>
+<h4 id='pic'><a href='stdenv/stdenv/#pic'>
+<code>pic</code>
+</a></h4>
+<p>Adds the <code>-fPIC</code> compiler options. This options adds support for position independent code in shared libraries and thus making ASLR possible.</p>
+<p>Most notably, the Linux kernel, kernel modules and other code not running in an operating system environment like boot loaders won’t build with PIC enabled. The compiler will is most cases complain that PIC is not supported for a specific build.</p>
+<p>This needs to be turned off or fixed for assembler errors similar to:</p>
+<pre><code>ccbLfRgg.s: Assembler messages:
+ccbLfRgg.s:33: Error: missing or invalid displacement expression `private_key_len@GOTOFF'
+</code></pre>
+<h4 id='strictoverflow'><a href='stdenv/stdenv/#strictoverflow'>
+<code>strictoverflow</code>
+</a></h4>
+<p>Signed integer overflow is undefined behaviour according to the C standard. If it happens, it is an error in the program as it should check for overflow before it can happen, not afterwards. GCC provides built-in functions to perform arithmetic with overflow checking, which are correct and faster than any custom implementation. As a workaround, the option <code>-fno-strict-overflow</code> makes gcc behave as if signed integer overflows were defined.</p>
+<p>This flag should not trigger any build or runtime errors.</p>
+<h4 id='relro'><a href='stdenv/stdenv/#relro'>
+<code>relro</code>
+</a></h4>
+<p>Adds the <code>-z relro</code> linker option. During program load, several ELF memory sections need to be written to by the linker, but can be turned read-only before turning over control to the program. This prevents some GOT (and .dtors) overwrite attacks, but at least the part of the GOT used by the dynamic linker (.got.plt) is still vulnerable.</p>
+<p>This flag can break dynamic shared object loading. For instance, the module systems of Xorg and OpenCV are incompatible with this flag. In almost all cases the <code>bindnow</code> flag must also be disabled and incompatible programs typically fail with similar errors at runtime.</p>
+<h4 id='bindnow'><a href='stdenv/stdenv/#bindnow'>
+<code>bindnow</code>
+</a></h4>
+<p>Adds the <code>-z now</code> linker option. During program load, all dynamic symbols are resolved, allowing for the complete GOT to be marked read-only (due to <code>relro</code>). This prevents GOT overwrite attacks. For very large applications, this can incur some performance loss during initial load while symbols are resolved, but this shouldn’t be an issue for daemons.</p>
+<p>This flag can break dynamic shared object loading. For instance, the module systems of Xorg and PHP are incompatible with this flag. Programs incompatible with this flag often fail at runtime due to missing symbols, like:</p>
+<pre><code>intel_drv.so: undefined symbol: vgaHWFreeHWRec
+</code></pre>
+<h4 id='zerocallusedregs'><a href='stdenv/stdenv/#zerocallusedregs'>
+<code>zerocallusedregs</code>
+</a></h4>
+<p>Adds the <code>-fzero-call-used-regs=used-gpr</code> compiler option. This causes the general-purpose registers that an architecture's calling convention considers &quot;call-used&quot; to be zeroed on return from the function. This can make it harder for attackers to construct useful ROP gadgets and also reduces the chance of data leakage from a function call.</p>
+<h4 id='stackclashprotection'><a href='stdenv/stdenv/#stackclashprotection'>
+<code>stackclashprotection</code>
+</a></h4>
+<p>This flag adds the <code>-fstack-clash-protection</code> compiler option, which causes growth of a program's stack to access each successive page in order. This should force the guard page to be accessed and cause an attempt to &quot;jump over&quot; this guard page to crash.</p>
+<h4 id='libcxxhardeningfast'><a href='stdenv/stdenv/#libcxxhardeningfast'>
+<code>libcxxhardeningfast</code>
+</a></h4>
+<p>Adds the <code>-D_LIBCPP_HARDENING_MODE=_LIBCPP_HARDENING_MODE_FAST</code> compiler flag. This flag only has an effect on libc++ targets, and when defined, enables a set of assertions that prevent undefined behavior caused by violating preconditions of the standard library. libc++ provides several hardening modes, and this &quot;fast&quot; mode contains a set of security-critical checks that can be done with relatively little overhead in constant time.</p>
+<p>Disabling <code>libcxxhardeningfast</code> implies disablement of checks from <code>libcxxhardeningextensive</code>.</p>
+<h4 id='strictflexarrays1'><a href='stdenv/stdenv/#strictflexarrays1'>
+<code>strictflexarrays1</code>
+</a></h4>
+<p>This flag adds the <code>-fstrict-flex-arrays=1</code> compiler option, which reduces the cases the compiler treats as &quot;flexible arrays&quot; to those declared with length <code>[1]</code>, <code>[0]</code> or (the correct) <code>[]</code>. This increases the coverage of fortify checks, because such arrays declared as the trailing element of a structure can normally not have their intended length determined by the compiler.</p>
+<p>Enabling this flag on packages that still use length declarations of flexible arrays &gt;1 may cause the package to fail to compile citing accesses beyond the bounds of an array or even crash at runtime by detecting an array access as an &quot;overrun&quot;. Few projects still use length declarations of flexible arrays &gt;1.</p>
+<p>Disabling <code>strictflexarrays1</code> implies disablement of <code>strictflexarrays3</code>.</p>
+<h3 id='sec-hardening-flags-disabled-by-default'><a href='stdenv/stdenv/#sec-hardening-flags-disabled-by-default'>
+Hardening flags disabled by default
+</a></h3>
+<p>The following flags are disabled by default and should be enabled with <code>hardeningEnable</code> for packages that take untrusted input like network services.</p>
+<h4 id='nostrictaliasing'><a href='stdenv/stdenv/#nostrictaliasing'>
+<code>nostrictaliasing</code>
+</a></h4>
+<p>This flag adds the <code>-fno-strict-aliasing</code> compiler option, which prevents the compiler from assuming code has been written strictly following the standard in regards to pointer aliasing and therefore performing optimizations that may be unsafe for code that has not followed these rules.</p>
+<h4 id='strictflexarrays3'><a href='stdenv/stdenv/#strictflexarrays3'>
+<code>strictflexarrays3</code>
+</a></h4>
+<p>This flag adds the <code>-fstrict-flex-arrays=3</code> compiler option, which reduces the cases the compiler treats as &quot;flexible arrays&quot; to only those declared with length as (the correct) <code>[]</code>. This increases the coverage of fortify checks, because such arrays declared as the trailing element of a structure can normally not have their intended length determined by the compiler.</p>
+<p>Enabling this flag on packages that still use non-empty length declarations for flexible arrays may cause the package to fail to compile citing accesses beyond the bounds of an array or even crash at runtime by detecting an array access as an &quot;overrun&quot;. Many projects still use such non-empty length declarations for flexible arrays.</p>
+<p>Enabling this flag implies enablement of <code>strictflexarrays1</code>. Disabling this flag does not imply disablement of <code>strictflexarrays1</code>.</p>
+<h4 id='shadowstack'><a href='stdenv/stdenv/#shadowstack'>
+<code>shadowstack</code>
+</a></h4>
+<p>Adds the <code>-fcf-protection=return</code> compiler option. This enables the Shadow Stack feature supported by some newer processors, which maintains a user-inaccessible copy of the program's stack containing only return-addresses. When returning from a function, the processor compares the return-address value on the two stacks and throws an error if they do not match, considering it a sign of corruption and possible tampering. This should significantly increase the difficulty of ROP attacks.</p>
+<p>For the Shadow Stack to be enabled at runtime, all code linked into a process must be built with Shadow Stack enabled, so this is probably only useful to enable on a wide scale, so that all of a packages dependencies also have the feature enabled.</p>
+<p>This is currently only supported on some newer Intel and AMD processors as part of the Intel CET set of features. However, the generated code should continue to work on older processors which will simply omit any of this checking.</p>
+<p>This breaks some code that does advanced stack management or exception handling. If enabling this hardening flag it is important to test the result on a system that has known working and enabled CET support, so that any such breakage can be discovered.</p>
+<h4 id='trivialautovarinit'><a href='stdenv/stdenv/#trivialautovarinit'>
+<code>trivialautovarinit</code>
+</a></h4>
+<p>Adds the <code>-ftrivial-auto-var-init=pattern</code> compiler option. Uninitialized variables generally take on their values based on fragments of previous program state, and attackers can carefully manipulate that state to craft malicious initial values for these variables. This flag causes &quot;trivially-initializable&quot; uninitialized stack variables to be forcibly initialized with a nonzero value that is likely to cause a crash (and therefore be noticed).</p>
+<p>Use of this flag is controversial as it can prevent tools that detect uninitialized variable use (such as valgrind) from operating correctly.</p>
+<p>This should be turned off or fixed for build errors such as:</p>
+<pre><code>sorry, unimplemented: __builtin_clear_padding not supported for variable length aggregates
+</code></pre>
+<h4 id='glibcxxassertions'><a href='stdenv/stdenv/#glibcxxassertions'>
+<code>glibcxxassertions</code>
+</a></h4>
+<p>Adds the <code>-D_GLIBCXX_ASSERTIONS</code> compiler flag. This flag only has an effect on libstdc++ targets, and when defined, enables extra error checking in the form of precondition assertions, such as bounds checking in c++ strings and null pointer checks when dereferencing c++ smart pointers.</p>
+<p>These checks may have an impact on performance in some cases.</p>
+<h4 id='libcxxhardeningextensive'><a href='stdenv/stdenv/#libcxxhardeningextensive'>
+<code>libcxxhardeningextensive</code>
+</a></h4>
+<p>Adds the <code>-D_LIBCPP_HARDENING_MODE=_LIBCPP_HARDENING_MODE_EXTENSIVE</code> compiler flag. This flag only has an effect on libc++ targets, and when defined, enables a set of assertions that prevent undefined behavior caused by violating preconditions of the standard library. libc++ provides several hardening modes, and this &quot;extensive&quot; mode adds checks for undefined behavior that incur relatively little overhead but aren’t security-critical. The additional rigour impacts performance more than fast mode: benchmarking is recommended to determine if it is acceptable for a particular application.</p>
+<p>Enabling this flag implies enablement of checks from <code>libcxxhardeningfast</code>. Disabling this flag does not imply disablement of checks from <code>libcxxhardeningfast</code>.</p>
+<h4 id='pacret'><a href='stdenv/stdenv/#pacret'>
+<code>pacret</code>
+</a></h4>
+<p>This flag adds the <code>-mbranch-protection=pac-ret</code> compiler option on aarch64-linux targets. This uses ARM v8.3's Pointer Authentication feature to sign function return pointers before adding them to the stack. The pointer's authenticity is then validated before returning to its destination. This dramatically increases the difficulty of ROP exploitation techniques.</p>
+<p>This may cause problems with code that does advanced stack manipulation, and debugging/stack-unwinding tools need to be pac-ret aware to work correctly when these features are in operation.</p>
+<p>Pre-ARM v8.3 processors will ignore Pointer Authentication instructions, so code built with this flag will continue to work on older processors, though without any of the intended protections. If enabling this flag, it is recommended to ensure the resultant packages are tested against an ARM v8.3+ linux system with known-working Pointer Authentication support so that any breakage caused by this feature is actually detected.</p>
+<p>[^footnote-stdenv-ignored-build-platform]: The build platform is ignored because it is a mere implementation detail of the package satisfying the dependency: As a general programming principle, dependencies are always <em>specified</em> as interfaces, not concrete implementation.
+[^footnote-stdenv-native-dependencies-in-path]: Currently, this means for native builds all dependencies are put on the <code>PATH</code>. But in the future that may not be the case for sake of matching cross: the platforms would be assumed to be unique for native and cross builds alike, so only the <code>depsBuild*</code> and <code>nativeBuildInputs</code> would be added to the <code>PATH</code>.
+[^footnote-stdenv-propagated-dependencies]: Nix itself already takes a package’s transitive dependencies into account, but this propagation ensures nixpkgs-specific infrastructure like <a href="stdenv/stdenv/#ssec-setup-hooks">setup hooks</a> also are run as if it were a propagated dependency.
+[^footnote-stdenv-find-inputs-location]: The <code>findInputs</code> function, currently residing in <code>pkgs/stdenv/generic/setup.sh</code>, implements the propagation logic.
+[^footnote-stdenv-sys-lib-search-path]: It clears the <code>sys_lib_*search_path</code> variables in the Libtool script to prevent Libtool from using libraries in <code>/usr/lib</code> and such.
+[^footnote-stdenv-build-time-guessing-impurity]: Eventually these will be passed building natively as well, to improve determinism: build-time guessing, as is done today, is a risk of impurity.
+[^footnote-stdenv-per-platform-wrapper]: Each wrapper targets a single platform, so if binaries for multiple platforms are needed, the underlying binaries must be wrapped multiple times. As this is a property of the wrapper itself, the multiple wrappings are needed whether or not the same underlying binaries can target multiple platforms.</p>
+        </main>
+      </div>
+    </section>
+<script defer src='highlight.pack.cf986678470772f7.js'></script>
+<script defer src='mmdoc.367f3e8986e40416.js'></script>
+<script defer src='mmdoc_search.a5b6fc7d7512cdc1.js' data-search-index='search_index.b3afff10081eb0bd.js' data-fuse='fuse.basic.min.bb997c989fa0a28e.js'></script>
+  </div>
+  </body>
+</html>

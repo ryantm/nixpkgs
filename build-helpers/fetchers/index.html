@@ -1,0 +1,1440 @@
+<!doctype html>
+<html lang='en'>
+  <head>
+    <base href='../../'>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <script>
+      (() => {
+        let theme = null
+        try { theme = localStorage.getItem('theme') } catch (error) {}
+        if (theme !== 'light' && theme !== 'dark')
+          theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+        document.documentElement.classList.add(theme + '-theme')
+      })()
+    </script>
+    <meta name='description' content='Fetchers'>
+    <link rel='icon' href='favicon.svg'>
+    <link rel='stylesheet' href='a11y-dark.1fcafc9d9a306955.css'>
+    <link rel='stylesheet' href='a11y-light.b466309a7fa86b1f.css'>
+    <link rel='stylesheet' href='mmdoc.e4286053b6471af4.css'>
+    <title>Fetchers | nixpkgs</title>
+  </head>
+  <body>
+  <a class='skip-link' href='build-helpers/fetchers/#main-content'>Skip to main content</a>
+  <input type='checkbox' id='sidebar-checkbox' aria-hidden='true' tabindex='-1' style='display: none;'>
+  <div class='body'>
+    <div class='nav-top-container'>
+    <nav class='nav-top' aria-label='Documentation controls'>
+      <button type='button' class='sidebar-toggle' aria-label='Toggle table of contents' aria-controls='sidebar' aria-expanded='true'></button>    <button type='button' class='search-toggle' aria-label='Open search' aria-controls='search-panel' aria-expanded='false'></button>    <button type='button' class='theme-toggle' aria-label='Switch to dark theme' aria-pressed='false'></button>    <a id='chapter-previous-button' class='chapter-previous' href='build-helpers/#part-builders' title='Build helpers' aria-label='Previous: Build helpers'>&lt;</a>
+    <a id='chapter-next-button' class='chapter-next' href='build-helpers/trivial-build-helpers/#chap-trivial-builders' title='Trivial build helpers' aria-label='Next: Trivial build helpers'>&gt;</a>
+    </nav>
+    </div>
+    <nav id='sidebar' class='sidebar' aria-label='Table of contents'>
+<h1>Nixpkgs Manual</h1>
+<p>Version 26.11pre</p>
+<ul>
+<li><a href="./#preface">Preface</a>
+<ul>
+<li><a href="preface/#overview-of-nixpkgs">Overview of Nixpkgs</a></li>
+</ul>
+</li>
+<li><a href="first-package/#chap-first-package">Package your first application</a></li>
+</ul>
+<h2>Using Nixpkgs</h2>
+<ul>
+<li><a href="using/platform-support/#chap-platform-support">Platform Support</a></li>
+<li><a href="using/configuration/#chap-packageconfig">Global configuration</a></li>
+<li><a href="using/overlays/#chap-overlays">Overlays</a></li>
+<li><a href="using/overrides/#chap-overrides">Overriding</a></li>
+</ul>
+<h2>Nixpkgs Lib</h2>
+<ul>
+<li><a href="functions/#chap-functions">Functions reference</a>
+<ul>
+<li>Library Functions
+<ul>
+<li><a href="functions/library/asserts/#sec-functions-library-asserts">lib.asserts: assertion functions</a></li>
+<li><a href="functions/library/attrsets/#sec-functions-library-attrsets">lib.attrsets: attribute set functions</a></li>
+<li><a href="functions/library/strings/#sec-functions-library-strings">lib.strings: string manipulation functions</a></li>
+<li><a href="functions/library/versions/#sec-functions-library-versions">lib.versions: version string functions</a></li>
+<li><a href="functions/library/trivial/#sec-functions-library-trivial">lib.trivial: miscellaneous functions</a></li>
+<li><a href="functions/library/fixedPoints/#sec-functions-library-fixedPoints">lib.fixedPoints: explicit recursion functions</a></li>
+<li><a href="functions/library/lists/#sec-functions-library-lists">lib.lists: list manipulation functions</a></li>
+<li><a href="functions/library/debug/#sec-functions-library-debug">lib.debug: debugging functions</a></li>
+<li><a href="functions/library/options/#sec-functions-library-options">lib.options: NixOS / nixpkgs option handling</a></li>
+<li><a href="functions/library/path/#sec-functions-library-path">lib.path: path functions</a></li>
+<li><a href="functions/library/filesystem/#sec-functions-library-filesystem">lib.filesystem: filesystem functions</a></li>
+<li><a href="functions/library/fileset/#sec-functions-library-fileset">lib.fileset: file set functions</a></li>
+<li><a href="functions/library/sources/#sec-functions-library-sources">lib.sources: source filtering functions</a></li>
+<li><a href="functions/library/cli/#sec-functions-library-cli">lib.cli: command-line serialization functions</a></li>
+<li><a href="functions/library/gvariant/#sec-functions-library-gvariant">lib.gvariant: GVariant formatted string serialization functions</a></li>
+<li><a href="functions/library/fetchers/#sec-functions-library-fetchers">lib.fetchers: functions which can be reused across fetchers</a></li>
+<li><a href="functions/library/generators/#sec-functions-library-generators">lib.generators: functions that create file formats from nix data structures</a></li>
+<li><a href="functions/library/customisation/#sec-functions-library-customisation">lib.customisation: Functions to customise (derivation-related) functions, derivations, or attribute sets</a></li>
+<li><a href="functions/library/meta/#sec-functions-library-meta">lib.meta: functions for derivation metadata</a></li>
+<li><a href="functions/library/derivations/#sec-functions-library-derivations">lib.derivations: miscellaneous derivation-specific functions</a></li>
+<li><a href="functions/generators/#sec-generators">Generators</a></li>
+<li><a href="functions/debug/#sec-debug">Debugging Nix Expressions</a></li>
+<li><a href="functions/prefer-remote-fetch/#sec-prefer-remote-fetch">prefer-remote-fetch overlay</a></li>
+<li><a href="functions/nix-gitignore/#sec-pkgs-nix-gitignore">pkgs.nix-gitignore</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="module-system/module-system/#module-system">Module System</a></li>
+</ul>
+<h2>Standard Environment</h2>
+<ul>
+<li><a href="stdenv/#part-stdenv">Standard environment</a></li>
+<li><a href="stdenv/stdenv/#chap-stdenv">The Standard Environment</a></li>
+<li><a href="stdenv/meta/#chap-meta">Meta-attributes</a></li>
+<li><a href="stdenv/passthru/#chap-passthru">Passthru-attributes</a></li>
+<li><a href="stdenv/multiple-output/#chap-multiple-output">Multiple-output packages</a></li>
+<li><a href="stdenv/cross-compilation/#chap-cross">Cross-compilation</a></li>
+<li><a href="stdenv/platform-notes/#chap-platform-notes">Platform Notes</a></li>
+</ul>
+<h2>Toolchains</h2>
+<ul>
+<li><a href="toolchains/llvm/#chap-toolchains">The LLVM Toolchain</a></li>
+</ul>
+<h2>Builders</h2>
+<ul>
+<li><a href="build-helpers/#part-builders">Build helpers</a></li>
+<li><a href="build-helpers/fetchers/#chap-pkgs-fetchers">Fetchers</a></li>
+<li><a href="build-helpers/trivial-build-helpers/#chap-trivial-builders">Trivial build helpers</a></li>
+<li><a href="build-helpers/fixed-point-arguments/#chap-build-helpers-finalAttrs">Fixed-point arguments of build helpers</a></li>
+<li><a href="build-helpers/dev-shell-tools/#chap-devShellTools">Development Shell helpers</a></li>
+<li><a href="build-helpers/testers/#chap-testers">Testers</a></li>
+<li>Special build helpers
+<ul>
+<li><a href="build-helpers/special/fhs-environments/#sec-fhs-environments">buildFHSEnv</a></li>
+<li><a href="build-helpers/special/fakenss/#sec-fakeNss">fakeNss</a></li>
+<li><a href="build-helpers/special/makesetuphook/#sec-pkgs.makeSetupHook">pkgs.makeSetupHook</a></li>
+<li><a href="build-helpers/special/mkshell/#sec-pkgs-mkShell">pkgs.mkShell</a></li>
+<li><a href="packages/darwin-builder/#sec-darwin-builder">darwin.linux-builder</a></li>
+<li><a href="build-helpers/special/vm-tools/#sec-vm-tools">vmTools</a></li>
+</ul>
+</li>
+<li>Images
+<ul>
+<li><a href="build-helpers/images/appimagetools/#sec-pkgs-appimageTools">pkgs.appimageTools</a></li>
+<li><a href="build-helpers/images/dockertools/#sec-pkgs-dockerTools">pkgs.dockerTools</a></li>
+<li><a href="build-helpers/images/ocitools/#sec-pkgs-ociTools">pkgs.ociTools</a></li>
+<li><a href="build-helpers/images/portableservice/#sec-pkgs-portableService">pkgs.portableService</a></li>
+<li><a href="build-helpers/images/makediskimage/#sec-make-disk-image">&lt;nixpkgs/nixos/lib/make-disk-image.nix&gt;</a></li>
+<li><a href="build-helpers/images/binarycache/#sec-pkgs-binary-cache">pkgs.mkBinaryCache</a></li>
+</ul>
+</li>
+<li><a href="hooks/index/#chap-hooks">Hooks reference</a>
+<ul>
+<li><a href="hooks/autoconf/#setup-hook-autoconf">Autoconf</a></li>
+<li><a href="hooks/automake/#setup-hook-automake">Automake</a></li>
+<li><a href="hooks/autopatchelf/#setup-hook-autopatchelfhook">autoPatchelfHook</a></li>
+<li><a href="hooks/breakpoint/#breakpointhook">breakpointHook</a></li>
+<li><a href="hooks/cmake/#cmake">cmake</a></li>
+<li><a href="hooks/gdk-pixbuf/#setup-hook-gdk-pixbuf">gdk-pixbuf</a></li>
+<li><a href="hooks/ghc/#ghc">GHC</a></li>
+<li><a href="hooks/gnome/#gnome-platform">GNOME platform</a></li>
+<li><a href="hooks/installShellFiles/#installshellfiles">installShellFiles</a></li>
+<li><a href="hooks/libglycin/#libglycin-hooks">libglycin</a></li>
+<li><a href="hooks/libiconv/#libiconv-libintl">libiconv, libintl</a></li>
+<li><a href="hooks/libxml2/#setup-hook-libxml2">libxml2</a></li>
+<li><a href="hooks/meson/#meson">Meson</a></li>
+<li><a href="hooks/mpi-check-hook/#setup-hook-mpi-check">mpiCheckPhaseHook</a></li>
+<li><a href="hooks/ninja/#ninja">ninja</a></li>
+<li><a href="hooks/patch-rc-path-hooks/#sec-patchRcPathHooks">patchRcPath hooks</a></li>
+<li><a href="hooks/perl/#setup-hook-perl">Perl</a></li>
+<li><a href="hooks/pkg-config/#setup-hook-pkg-config">pkg-config</a></li>
+<li><a href="hooks/pnpm/#pnpm-build-hook">pnpmBuildHook</a></li>
+<li><a href="hooks/postgresql-test-hook/#sec-postgresqlTestHook">postgresqlTestHook</a></li>
+<li><a href="hooks/python/#setup-hook-python">Python</a></li>
+<li><a href="hooks/scons/#scons">scons</a></li>
+<li><a href="hooks/tetex-tex-live/#tetex-tex-live">teTeX / TeX Live</a></li>
+<li><a href="hooks/unzip/#unzip">unzip</a></li>
+<li><a href="hooks/validatePkgConfig/#validatepkgconfig">validatePkgConfig</a></li>
+<li><a href="hooks/versionCheckHook/#versioncheckhook">versionCheckHook</a></li>
+<li><a href="hooks/waf/#waf-hook">wafHook</a></li>
+<li><a href="hooks/xcbuild/#xcbuildhook">xcbuildHook</a></li>
+</ul>
+</li>
+<li><a href="languages-frameworks/index/#chap-language-support">Languages and frameworks</a>
+<ul>
+<li><a href="languages-frameworks/agda/#agda">Agda</a></li>
+<li><a href="languages-frameworks/android/#android">Android</a></li>
+<li><a href="languages-frameworks/astal/#astal">Astal</a></li>
+<li><a href="languages-frameworks/beam/#sec-beam">BEAM Languages (Erlang, Elixir &amp; LFE)</a></li>
+<li><a href="languages-frameworks/chicken/#sec-chicken">CHICKEN</a></li>
+<li><a href="languages-frameworks/cosmic/#sec-language-cosmic">COSMIC</a></li>
+<li><a href="languages-frameworks/crystal/#crystal">Crystal</a></li>
+<li><a href="languages-frameworks/cuda/#cuda">CUDA</a></li>
+<li><a href="languages-frameworks/cuelang/#cuelang">Cue (Cuelang)</a></li>
+<li><a href="languages-frameworks/dlang/#dlang">D (Dlang)</a></li>
+<li><a href="languages-frameworks/dart/#sec-language-dart">Dart</a></li>
+<li><a href="languages-frameworks/dhall/#sec-language-dhall">Dhall</a></li>
+<li><a href="languages-frameworks/dotnet/#dotnet">Dotnet</a></li>
+<li><a href="languages-frameworks/emscripten/#emscripten">Emscripten</a></li>
+<li><a href="languages-frameworks/factor/#sec-language-factor">Factor</a></li>
+<li><a href="languages-frameworks/gnome/#sec-language-gnome">GNOME</a></li>
+<li><a href="languages-frameworks/go/#sec-language-go">Go</a></li>
+<li><a href="languages-frameworks/gradle/#gradle">Gradle</a></li>
+<li><a href="languages-frameworks/hare/#sec-language-hare">Hare</a></li>
+<li><a href="languages-frameworks/haskell/#haskell">Haskell</a></li>
+<li><a href="languages-frameworks/hy/#sec-language-hy">Hy</a></li>
+<li><a href="languages-frameworks/idris/#idris">Idris</a></li>
+<li><a href="languages-frameworks/idris2/#sec-idris2">Idris2</a></li>
+<li><a href="languages-frameworks/ios/#ios">iOS</a></li>
+<li><a href="languages-frameworks/java/#sec-language-java">Java</a></li>
+<li><a href="languages-frameworks/javascript/#language-javascript">Javascript</a></li>
+<li><a href="languages-frameworks/julia/#language-julia">Julia</a></li>
+<li><a href="languages-frameworks/lean4/#sec-language-lean4">Lean 4</a></li>
+<li><a href="languages-frameworks/lisp/#lisp">lisp-modules</a></li>
+<li><a href="languages-frameworks/lua/#lua">Lua</a></li>
+<li><a href="languages-frameworks/maven/#maven">Maven</a></li>
+<li><a href="languages-frameworks/neovim/#neovim">Neovim</a></li>
+<li><a href="languages-frameworks/nim/#sec-language-nim">Nim</a></li>
+<li><a href="languages-frameworks/ocaml/#sec-language-ocaml">OCaml</a></li>
+<li><a href="languages-frameworks/octave/#sec-octave">Octave</a></li>
+<li><a href="languages-frameworks/perl/#sec-language-perl">Perl</a></li>
+<li><a href="languages-frameworks/php/#sec-php">PHP</a></li>
+<li><a href="languages-frameworks/pkg-config/#sec-pkg-config">pkg-config</a></li>
+<li><a href="languages-frameworks/python/#python">Python</a></li>
+<li><a href="languages-frameworks/qt/#sec-language-qt">Qt</a></li>
+<li><a href="languages-frameworks/r/#r">R</a></li>
+<li><a href="languages-frameworks/rocq/#sec-language-rocq">Rocq and rocq packages</a></li>
+<li><a href="languages-frameworks/ruby/#sec-language-ruby">Ruby</a></li>
+<li><a href="languages-frameworks/rust/#rust">Rust</a></li>
+<li><a href="languages-frameworks/scheme/#sec-scheme">Scheme</a></li>
+<li><a href="languages-frameworks/swift/#swift">Swift</a></li>
+<li><a href="languages-frameworks/tcl/#sec-language-tcl">Tcl</a></li>
+<li><a href="languages-frameworks/texlive/#sec-language-texlive">TeX Live</a></li>
+<li><a href="languages-frameworks/typst/#typst">Typst</a></li>
+<li><a href="languages-frameworks/vim/#vim">Vim</a></li>
+</ul>
+</li>
+<li><a href="packages/index/#chap-packages">Packages</a>
+<ul>
+<li><a href="packages/build-support/#sec-build-support">Build Support</a></li>
+<li><a href="packages/cataclysm-dda/#cataclysm-dark-days-ahead">Cataclysm: Dark Days Ahead</a></li>
+<li><a href="packages/citrix/#sec-citrix">Citrix Workspace</a></li>
+<li><a href="packages/dlib/#dlib">DLib</a></li>
+<li><a href="packages/eclipse/#sec-eclipse">Eclipse</a></li>
+<li><a href="packages/elm/#sec-elm">Elm</a></li>
+<li><a href="packages/emacs/#sec-emacs">Emacs</a></li>
+<li><a href="packages/firefox/#sec-firefox">Firefox</a></li>
+<li><a href="packages/fish/#sec-fish">Fish</a></li>
+<li><a href="packages/friction-graphics/#friction-graphics">Friction</a></li>
+<li><a href="packages/fuse/#sec-fuse">FUSE</a></li>
+<li><a href="packages/geant4/#geant4">Geant4</a></li>
+<li><a href="packages/ibus/#sec-ibus-typing-booster">ibus-engines.typing-booster</a></li>
+<li><a href="packages/inkscape/#sec-inkscape">Inkscape</a></li>
+<li><a href="packages/kakoune/#sec-kakoune">Kakoune</a></li>
+<li><a href="packages/krita/#sec-krita">Krita</a></li>
+<li><a href="packages/lhapdf/#lhapdf">LHAPDF</a></li>
+<li><a href="packages/linux/#sec-linux-kernel">Linux kernel</a></li>
+<li><a href="packages/locales/#locales">Locales</a></li>
+<li><a href="packages/etc-files/#etc">/etc files</a></li>
+<li><a href="packages/nginx/#sec-nginx">Nginx</a></li>
+<li><a href="packages/nrfutil/#sec-nrfutil">nrfutil</a></li>
+<li><a href="packages/opengl/#sec-opengl">OpenGL</a></li>
+<li><a href="packages/python-tree-sitter/#python-tree-sitter">Python Tree Sitter</a></li>
+<li><a href="packages/shell-helpers/#sec-shell-helpers">Interactive shell helpers</a></li>
+<li><a href="packages/steam/#sec-steam">Steam</a></li>
+<li><a href="packages/treefmt/#treefmt">treefmt</a></li>
+<li><a href="packages/urxvt/#sec-urxvt">Urxvt</a></li>
+<li><a href="packages/uv/#sec-uv">uv</a></li>
+<li><a href="packages/vcpkg/#sec-vcpkg">VCPKG</a></li>
+<li><a href="packages/weechat/#sec-weechat">WeeChat</a></li>
+</ul>
+</li>
+</ul>
+<h2>Modules</h2>
+<ul>
+<li><a href="modules/index/#modules">Modules</a>
+<ul>
+<li><a href="modules/generic/#modules-generic">Generic</a>
+<ul>
+<li><a href="modules/generic/#modules-generic-meta-maintainers">meta-maintainers.nix</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2>Development of Nixpkgs</h2>
+<ul>
+<li><a href="development/opening-issues/#sec-opening-issues">Opening issues</a></li>
+<li><a href="contributing/coding-conventions/#chap-conventions">Coding conventions</a></li>
+</ul>
+<h2>Interoperability Standards</h2>
+<ul>
+<li><a href="interoperability/cyclonedx/#chap-interop-cyclonedx">CycloneDX</a>
+<ul>
+<li><a href="interoperability/cyclonedx/#sec-interop.cylonedx-nix"><code>nix</code> namespace</a></li>
+<li><a href="interoperability/cyclonedx/#sec-interop.cylonedx-narinfo"><code>nix:narinfo</code></a></li>
+<li><a href="interoperability/cyclonedx/#sec-interop.cylonedx-fod"><code>nix:fod</code></a></li>
+</ul>
+</li>
+</ul>
+<h2>Release Notes</h2>
+<ul>
+<li><a href="release-notes/release-notes/#chap-release-notes">Release Notes</a>
+<ul>
+<li><a href="release-notes/rl-2611/#sec-nixpkgs-release-26.11">Nixpkgs 26.11 (&quot;Zokor&quot;, 2026.11/??)</a></li>
+<li><a href="release-notes/rl-2605/#sec-nixpkgs-release-26.05">Nixpkgs 26.05 (&quot;Yarara&quot;, 2026.05/30)</a></li>
+<li><a href="release-notes/rl-2511/#sec-nixpkgs-release-25.11">Nixpkgs 25.11 (&quot;Xantusia&quot;, 2025.11/30)</a></li>
+<li><a href="release-notes/rl-2505/#sec-nixpkgs-release-25.05">Nixpkgs 25.05 (2025.05/23)</a></li>
+</ul>
+</li>
+</ul>
+    </nav>
+    <section id='main'>
+      <div id='search-panel' class='nav-search' role='search' hidden>
+        <label class='visually-hidden' for='search'>Search documentation</label>
+        <input type='search' id='search' placeholder='Search' autocomplete='off' aria-controls='search-results'>
+        <p id='search-status' class='visually-hidden' role='status' aria-live='polite'></p>
+        <div id='search-results'></div>
+      </div>
+      <div class='main-scroll'>
+        <main id='main-content' tabindex='-1'>
+<h1 id='chap-pkgs-fetchers'><a href='build-helpers/fetchers/#chap-pkgs-fetchers'>
+Fetchers
+</a></h1>
+<p>Building software with Nix often requires downloading source code and other files from the internet.
+To this end, we use functions that we call <em>fetchers</em>, which obtain remote sources via various protocols and services.</p>
+<p>Nix provides built-in fetchers such as <a href="https://nixos.org/manual/nix/stable/language/builtins.html#builtins-fetchTarball"><code>fetchTarball</code></a>.
+Nixpkgs provides its own fetchers, which work differently:</p>
+<ul>
+<li>A built-in fetcher will download and cache files at evaluation time and produce a <a href="https://nixos.org/manual/nix/stable/glossary#gloss-store-path">store path</a>.
+A Nixpkgs fetcher will create a (<a href="https://nixos.org/manual/nix/stable/glossary#gloss-fixed-output-derivation">fixed-output</a>) <a href="https://nixos.org/manual/nix/stable/glossary#gloss-derivation">derivation</a>, and files are downloaded at build time.</li>
+<li>Built-in fetchers will invalidate their cache after <a href="https://nixos.org/manual/nix/stable/command-ref/conf-file#conf-tarball-ttl"><code>tarball-ttl</code></a> expires, and will require network activity to check if the cache entry is up to date.
+Nixpkgs fetchers only re-download if the specified hash changes or the store object is not available.</li>
+<li>Built-in fetchers do not use <a href="https://nixos.org/manual/nix/stable/command-ref/conf-file#conf-substituters">substituters</a>.
+Derivations produced by Nixpkgs fetchers will use any configured binary cache transparently.</li>
+</ul>
+<p>This significantly reduces the time needed to evaluate Nixpkgs, and allows <a href="https://nixos.org/hydra">Hydra</a> to retain and re-distribute sources used by Nixpkgs in the <a href="https://cache.nixos.org">public binary cache</a>.
+For these reasons, Nix's built-in fetchers are not allowed in Nixpkgs.</p>
+<p>The following table summarises the differences:</p>
+<table>
+<thead>
+<tr>
+<th>Fetchers</th>
+<th>Download</th>
+<th>Output</th>
+<th>Cache</th>
+<th>Re-download when</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>builtins.fetch*</code></td>
+<td>evaluation time</td>
+<td>store path</td>
+<td><code>/nix/store</code>, <code>~/.cache/nix</code></td>
+<td><code>tarball-ttl</code> expires, cache miss in <code>~/.cache/nix</code>, output store object not in local store</td>
+</tr>
+<tr>
+<td><code>pkgs.fetch*</code></td>
+<td>build time</td>
+<td>derivation</td>
+<td><code>/nix/store</code>, substituters</td>
+<td>output store object not available</td>
+</tr>
+</tbody>
+</table>
+<div class='admonition tip'><h3 class='title'>Tip</h3>
+<p>
+<code>pkgs.fetchFrom*</code> helpers retrieve <em>snapshots</em> of version-controlled sources, as opposed to the entire version history, which is more efficient.
+<code>pkgs.fetchgit</code> by default also has the same behaviour, but can be changed through specific attributes given to it.
+</p>
+</div>
+<h2 id='chap-pkgs-fetchers-caveats'><a href='build-helpers/fetchers/#chap-pkgs-fetchers-caveats'>
+Caveats
+</a></h2>
+<p>Because Nixpkgs fetchers are fixed-output derivations, an <a href="https://nixos.org/manual/nix/stable/language/advanced-attributes#adv-attr-outputHash">output hash</a> has to be specified, usually indirectly through a <code>hash</code> attribute.
+This hash refers to the derivation output, which can be different from the remote source itself!</p>
+<p>This has the following implications that you should be aware of:</p>
+<ul>
+<li>
+<p>Use Nix (or Nix-aware) tooling to produce the output hash.</p>
+</li>
+<li>
+<p>When changing any fetcher parameters, always update the output hash.
+Use one of the methods from <a href="build-helpers/fetchers/#sec-pkgs-fetchers-updating-source-hashes">Fetchers</a>.
+Otherwise, existing store objects that match the output hash will be re-used rather than fetching new content.</p>
+<div class='admonition note'><h3 class='title'>Note</h3>
+<p>
+A similar problem arises while testing changes to a fetcher's implementation.
+If the output of the derivation already exists in the Nix store, test failures can go undetected.
+The <a href="build-helpers/testers/#tester-invalidateFetcherByDrvHash"><code>invalidateFetcherByDrvHash</code></a> function helps prevent reusing cached derivations.
+</p>
+</div>
+</li>
+</ul>
+<h2 id='sec-pkgs-fetchers-updating-source-hashes'><a href='build-helpers/fetchers/#sec-pkgs-fetchers-updating-source-hashes'>
+Updating source hashes
+</a></h2>
+<p>There are several ways to obtain the hash corresponding to a remote source.
+Unless you understand how the fetcher you're using calculates the hash from the downloaded contents, you should use <a href="build-helpers/fetchers/#sec-pkgs-fetchers-updating-source-hashes-fakehash-method">the fake hash method</a>.</p>
+<ol>
+<li>
+<p><span id='sec-pkgs-fetchers-updating-source-hashes-fakehash-method'></span> The fake hash method: In your package recipe, set the hash to one of</p>
+<ul>
+<li><code>&quot;&quot;</code></li>
+<li><code>lib.fakeHash</code></li>
+<li><code>lib.fakeSha256</code></li>
+<li><code>lib.fakeSha512</code></li>
+</ul>
+<p>Attempt to build, extract the calculated hashes from error messages, and put them into the recipe.</p>
+<div class='admonition warning'><h3 class='title'>Warning</h3>
+<p>
+You must use one of these four fake hashes and not some arbitrarily-chosen hash.
+See <a href="build-helpers/fetchers/#sec-pkgs-fetchers-secure-hashes">Fetchers</a> for details.
+</p>
+</div>
+<div class='admonition example'><h3 id='ex-fetchers-update-fod-hash' class='title'><a href='build-helpers/fetchers/#ex-fetchers-update-fod-hash'>Example</a></h3>
+<p></p>
+<h1>Update source hash with the fake hash method</h1>
+<p>Consider the following recipe that produces a plain file:</p>
+<pre><code class="language-nix">{ fetchurl }:
+fetchurl {
+  url = &quot;https://raw.githubusercontent.com/NixOS/nixpkgs/23.05/.version&quot;;
+  hash = &quot;sha256-ZHl1emidXVojm83LCVrwULpwIzKE/mYwfztVkvpruOM=&quot;;
+}
+</code></pre>
+<p>A common mistake is to update a fetcher parameter, such as <code>url</code>, without updating the hash:</p>
+<pre><code class="language-nix">{ fetchurl }:
+fetchurl {
+  url = &quot;https://raw.githubusercontent.com/NixOS/nixpkgs/23.11/.version&quot;;
+  hash = &quot;sha256-ZHl1emidXVojm83LCVrwULpwIzKE/mYwfztVkvpruOM=&quot;;
+}
+</code></pre>
+<p><strong>This will produce the same output as before!</strong>
+Set the hash to an empty string:</p>
+<pre><code class="language-nix">{ fetchurl }:
+fetchurl {
+  url = &quot;https://raw.githubusercontent.com/NixOS/nixpkgs/23.11/.version&quot;;
+  hash = &quot;&quot;;
+}
+</code></pre>
+<p>When building the package, use the error message to determine the correct hash:</p>
+<pre><code class="language-shell">$ nix-build
+(some output removed for clarity)
+error: hash mismatch in fixed-output derivation '/nix/store/7yynn53jpc93l76z9zdjj4xdxgynawcw-version.drv':
+        specified: sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
+            got:    sha256-BZqI7r0MNP29yGH5+yW2tjU9OOpOCEvwWKrWCv5CQ0I=
+error: build of '/nix/store/bqdjcw5ij5ymfbm41dq230chk9hdhqff-version.drv' failed
+</code></pre>
+<p></p>
+</div>
+</li>
+<li>
+<p>Prefetch the source with <a href="https://search.nixos.org/packages?buckets=%7B%22package_attr_set%22%3A%5B%22No%20package%20set%22%5D%2C%22package_license_set%22%3A%5B%5D%2C%22package_maintainers_set%22%3A%5B%5D%2C%22package_platforms%22%3A%5B%5D%7D&amp;query=nix-prefetch"><code>nix-prefetch-&lt;type&gt; &lt;URL&gt;</code></a>, where <code>&lt;type&gt;</code> is one of</p>
+<ul>
+<li><code>url</code></li>
+<li><code>git</code></li>
+<li><code>hg</code></li>
+<li><code>cvs</code></li>
+<li><code>bzr</code></li>
+<li><code>svn</code></li>
+<li><code>darcs</code></li>
+<li><code>pijul</code></li>
+</ul>
+<p>The hash is printed to stdout.</p>
+</li>
+<li>
+<p>Prefetch by package source (with <code>nix-prefetch-url '&lt;nixpkgs&gt;' -A &lt;package&gt;.src</code>, where <code>&lt;package&gt;</code> is package attribute name).
+The hash is printed to stdout.</p>
+<p>This works well when you've upgraded the existing package version and want to find out new hash, but is useless if the package can't be accessed by attribute or the package has multiple sources (<code>.srcs</code>, architecture-dependent sources, etc).</p>
+</li>
+<li>
+<p>Upstream hash: use it when upstream provides <code>sha256</code> or <code>sha512</code>.
+Don't use it when upstream provides <code>md5</code>, compute <code>sha256</code> instead.</p>
+<p>A little nuance is that <code>nix-prefetch-*</code> tools produce hashes with the <code>nix32</code> encoding (a Nix-specific base32 adaptation), but upstream usually provides hexadecimal (<code>base16</code>) encoding.
+Fetchers understand both formats.
+Nixpkgs does not standardise on any one format.</p>
+<p>You can convert between hash formats with <a href="https://nixos.org/manual/nix/stable/command-ref/nix-hash"><code>nix-hash</code></a>.</p>
+</li>
+<li>
+<p>Extract the hash from a local source archive with <code>sha256sum</code>.
+Use <code>nix-prefetch-url file:///path/to/archive</code> if you want the custom Nix <code>base32</code> hash.</p>
+</li>
+</ol>
+<h2 id='sec-pkgs-fetchers-secure-hashes'><a href='build-helpers/fetchers/#sec-pkgs-fetchers-secure-hashes'>
+Obtaining hashes securely
+</a></h2>
+<p>It's always a good idea to avoid Man-in-the-Middle (MITM) attacks when downloading source contents.
+Otherwise, you could unknowingly download malware instead of the intended source, and instead of the actual source hash, you'll end up using the hash of malware.
+Here are security considerations for this scenario:</p>
+<ul>
+<li>
+<p><code>http://</code> URLs are not secure to prefetch hashes.</p>
+</li>
+<li>
+<p>Upstream hashes should be obtained via a secure protocol.</p>
+</li>
+<li>
+<p><code>https://</code> URLs give you more protections when using <code>nix-prefetch-*</code> or for upstream hashes.</p>
+</li>
+<li>
+<p><code>https://</code> URLs are secure when using the <a href="build-helpers/fetchers/#sec-pkgs-fetchers-updating-source-hashes-fakehash-method">fake hash method</a> <em>only if</em> you use one of the listed fake hashes.
+If you use any other hash, the download will be exposed to MITM attacks even if you use HTTPS URLs.</p>
+<p>In more concrete terms, if you use any other hash, the <a href="https://curl.se/docs/manpage.html#-k"><code>--insecure</code> flag</a> will be passed to the underlying call to <code>curl</code> when downloading content.</p>
+</li>
+</ul>
+<h2 id='sec-pkgs-fetchers-proxy'><a href='build-helpers/fetchers/#sec-pkgs-fetchers-proxy'>
+Proxy usage
+</a></h2>
+<p>Nixpkgs fetchers can make use of a http(s) proxy. Each fetcher will automatically inherit proxy-related environment variables (<code>http_proxy</code>, <code>https_proxy</code>, etc) via <a href="https://nixos.org/manual/nix/stable/language/advanced-attributes#adv-attr-impureEnvVars">impureEnvVars</a>.</p>
+<p>The environment variable <code>NIX_SSL_CERT_FILE</code> is also inherited in fetchers, and can be used to provide a custom certificate bundle to fetchers. This is usually required for a https proxy to work without certificate validation errors.</p>
+<p>To use a temporary Tor instance as a proxy for fetching from <code>.onion</code> addresses, add <code>nativeBuildInputs = [ tor.proxyHook ];</code> to the fetcher parameters.</p>
+<p><span id='fetchurl'></span></p>
+<h2 id='sec-pkgs-fetchers-fetchurl'><a href='build-helpers/fetchers/#sec-pkgs-fetchers-fetchurl'>
+<code>fetchurl</code>
+</a></h2>
+<p><code>fetchurl</code> returns a <a href="https://nixos.org/manual/nix/stable/glossary.html#gloss-fixed-output-derivation">fixed-output derivation</a> which downloads content from a given URL and stores the unaltered contents within the Nix store.</p>
+<p>It uses {manpage}<code>curl(1)</code> internally, and allows its behaviour to be modified by specifying a few attributes in the argument to <code>fetchurl</code> (see the documentation for attributes <code>curlOpts</code>, <code>curlOptsList</code>, and <code>netrcPhase</code>).</p>
+<p>The resulting <a href="https://nixos.org/manual/nix/stable/store/store-path">store path</a> is determined by the hash given to <code>fetchurl</code>, and also the <code>name</code> (or <code>pname</code> and <code>version</code>) values.</p>
+<p>If neither <code>name</code> nor <code>pname</code> and <code>version</code> are specified when calling <code>fetchurl</code>, it will default to using the <a href="https://nixos.org/manual/nix/stable/language/builtins.html#builtins-baseNameOf">basename</a> of <code>url</code> or the first element of <code>urls</code>.
+If <code>pname</code> and <code>version</code> are specified, <code>fetchurl</code> will use those values and will ignore <code>name</code>, even if it is also specified.</p>
+<h3 id='sec-pkgs-fetchers-fetchurl-inputs'><a href='build-helpers/fetchers/#sec-pkgs-fetchers-fetchurl-inputs'>
+Inputs
+</a></h3>
+<p><code>fetchurl</code> requires an attribute set with the following attributes:</p>
+<dl>
+<dt>
+<p><code>url</code> (String; <em>optional</em>)</p>
+</dt>
+<dd>
+<p>The URL to download from.</p>
+</dd>
+</dl>
+<div class='admonition note'><h3 class='title'>Note</h3>
+<p>
+Either <code>url</code> or <code>urls</code> must be specified, but not both.
+</p>
+</div>
+<p>All URLs of the format <a href="https://curl.se/docs/url-syntax.html#rfc-3986-plus">specified here</a> are supported.</p>
+<p><em>Default value:</em> <code>&quot;&quot;</code>.</p>
+<dl>
+<dt>
+<p><code>urls</code> (List of String; <em>optional</em>)</p>
+</dt>
+<dd>
+<p>A list of URLs, specifying download locations for the same content.
+Each URL will be tried in order until one of them succeeds with some content or all of them fail.
+See <a href="build-helpers/fetchers/#ex-fetchers-fetchurl-nixpkgs-version-multiple-urls">Fetchers</a> to understand how this attribute affects the behaviour of <code>fetchurl</code>.</p>
+</dd>
+</dl>
+<div class='admonition note'><h3 class='title'>Note</h3>
+<p>
+Either <code>url</code> or <code>urls</code> must be specified, but not both.
+</p>
+</div>
+<p><em>Default value:</em> <code>[]</code>.</p>
+<dl>
+<dt>
+<p><code>hash</code> (String; <em>optional</em>)</p>
+</dt>
+<dd>
+<p>Hash of the derivation output of <code>fetchurl</code>, following the format for integrity metadata as defined by <a href="https://www.w3.org/TR/SRI/">SRI</a>.
+For more information, see <a href="build-helpers/fetchers/#chap-pkgs-fetchers-caveats">Fetchers</a>.</p>
+</dd>
+</dl>
+<div class='admonition note'><h3 class='title'>Note</h3>
+<p>
+It is recommended that you use the <code>hash</code> attribute instead of the other hash-specific attributes that exist for backwards compatibility.</p>
+<p>If <code>hash</code> is not specified, you must specify <code>outputHash</code> and <code>outputHashAlgo</code>, or one of <code>sha512</code>, <code>sha256</code>, or <code>sha1</code>.
+</p>
+</div>
+<p><em>Default value:</em> <code>&quot;&quot;</code>.</p>
+<dl>
+<dt>
+<p><code>outputHash</code> (String; <em>optional</em>)</p>
+</dt>
+<dd>
+<p>Hash of the derivation output of <code>fetchurl</code> in the format expected by Nix.
+See <a href="https://nixos.org/manual/nix/stable/language/advanced-attributes.html#adv-attr-outputHash">the documentation on the Nix manual</a> for more information about its format.</p>
+</dd>
+</dl>
+<div class='admonition note'><h3 class='title'>Note</h3>
+<p>
+It is recommended that you use the <code>hash</code> attribute instead.</p>
+<p>If <code>outputHash</code> is specified, you must also specify <code>outputHashAlgo</code>.
+</p>
+</div>
+<p><em>Default value:</em> <code>&quot;&quot;</code>.</p>
+<dl>
+<dt>
+<p><code>outputHashAlgo</code> (String; <em>optional</em>)</p>
+</dt>
+<dd>
+<p>Algorithm used to generate the value specified in <code>outputHash</code>.
+See <a href="https://nixos.org/manual/nix/stable/language/advanced-attributes.html#adv-attr-outputHashAlgo">the documentation on the Nix manual</a> for more information about the values it supports.</p>
+</dd>
+</dl>
+<div class='admonition note'><h3 class='title'>Note</h3>
+<p>
+It is recommended that you use the <code>hash</code> attribute instead.</p>
+<p>The value specified in <code>outputHashAlgo</code> will be ignored if <code>outputHash</code> isn't also specified.
+</p>
+</div>
+<p><em>Default value:</em> <code>&quot;&quot;</code>.</p>
+<dl>
+<dt>
+<p><code>sha1</code> (String; <em>optional</em>)</p>
+</dt>
+<dd>
+<p>SHA-1 hash of the derivation output of <code>fetchurl</code> in the format expected by Nix.
+See <a href="https://nixos.org/manual/nix/stable/language/advanced-attributes.html#adv-attr-outputHash">the documentation on the Nix manual</a> for more information about its format.</p>
+</dd>
+</dl>
+<div class='admonition note'><h3 class='title'>Note</h3>
+<p>
+It is recommended that you use the <code>hash</code> attribute instead.
+</p>
+</div>
+<p><em>Default value:</em> <code>&quot;&quot;</code>.</p>
+<dl>
+<dt>
+<p><code>sha256</code> (String; <em>optional</em>)</p>
+</dt>
+<dd>
+<p>SHA-256 hash of the derivation output of <code>fetchurl</code> in the format expected by Nix.
+See <a href="https://nixos.org/manual/nix/stable/language/advanced-attributes.html#adv-attr-outputHash">the documentation on the Nix manual</a> for more information about its format.</p>
+</dd>
+</dl>
+<div class='admonition note'><h3 class='title'>Note</h3>
+<p>
+It is recommended that you use the <code>hash</code> attribute instead.
+</p>
+</div>
+<p><em>Default value:</em> <code>&quot;&quot;</code>.</p>
+<dl>
+<dt>
+<p><code>sha512</code> (String; <em>optional</em>)</p>
+</dt>
+<dd>
+<p>SHA-512 hash of the derivation output of <code>fetchurl</code> in the format expected by Nix.
+See <a href="https://nixos.org/manual/nix/stable/language/advanced-attributes.html#adv-attr-outputHash">the documentation on the Nix manual</a> for more information about its format.</p>
+</dd>
+</dl>
+<div class='admonition note'><h3 class='title'>Note</h3>
+<p>
+It is recommended that you use the <code>hash</code> attribute instead.
+</p>
+</div>
+<p><em>Default value:</em> <code>&quot;&quot;</code>.</p>
+<dl>
+<dt>
+<p><code>name</code> (String; <em>optional</em>)</p>
+</dt>
+<dd>
+<p>The symbolic name of the downloaded file when saved in the Nix store.
+See <a href="build-helpers/fetchers/#sec-pkgs-fetchers-fetchurl">the <code>fetchurl</code> overview</a> for details on how the name of the file is decided.</p>
+</dd>
+</dl>
+<p><em>Default value:</em> <code>&quot;&quot;</code>.</p>
+<dl>
+<dt>
+<p><code>pname</code> (String; <em>optional</em>)</p>
+</dt>
+<dd>
+<p>A base name, which will be combined with <code>version</code> to form the symbolic name of the downloaded file when saved in the Nix store.
+See <a href="build-helpers/fetchers/#sec-pkgs-fetchers-fetchurl">the <code>fetchurl</code> overview</a> for details on how the name of the file is decided.</p>
+</dd>
+</dl>
+<div class='admonition note'><h3 class='title'>Note</h3>
+<p>
+If <code>pname</code> is specified, you must also specify <code>version</code>, otherwise <code>fetchurl</code> will ignore the value of <code>pname</code>.
+</p>
+</div>
+<p><em>Default value:</em> <code>&quot;&quot;</code>.</p>
+<dl>
+<dt>
+<p><code>version</code> (String; <em>optional</em>)</p>
+</dt>
+<dd>
+<p>A version, which will be combined with <code>pname</code> to form the symbolic name of the downloaded file when saved in the Nix store.
+See <a href="build-helpers/fetchers/#sec-pkgs-fetchers-fetchurl">the <code>fetchurl</code> overview</a> for details on how the name of the file is decided.</p>
+</dd>
+</dl>
+<p><em>Default value:</em> <code>&quot;&quot;</code>.</p>
+<dl>
+<dt>
+<p><code>recursiveHash</code> (Boolean; <em>optional</em>) <span id='sec-pkgs-fetchers-fetchurl-inputs-recursiveHash'></span></p>
+</dt>
+<dd>
+<p>If set to <code>true</code>, will signal to Nix that the hash given to <code>fetchurl</code> was calculated using the <code>&quot;recursive&quot;</code> mode.
+See <a href="https://nixos.org/manual/nix/stable/language/advanced-attributes.html#adv-attr-outputHashMode">the documentation on the Nix manual</a> for more information about the existing modes.</p>
+</dd>
+</dl>
+<p>By default, <code>fetchurl</code> uses <code>&quot;recursive&quot;</code> mode when the <code>executable</code> attribute is set to <code>true</code>, so you don't need to specify <code>recursiveHash</code> in this case.</p>
+<p><em>Default value:</em> <code>false</code>.</p>
+<dl>
+<dt>
+<p><code>executable</code> (Boolean; <em>optional</em>)</p>
+</dt>
+<dd>
+<p>If <code>true</code>, sets the executable bit on the downloaded file.</p>
+</dd>
+</dl>
+<p><em>Default value</em>: <code>false</code>.</p>
+<dl>
+<dt>
+<p><code>downloadToTemp</code> (Boolean; <em>optional</em>) <span id='sec-pkgs-fetchers-fetchurl-inputs-downloadToTemp'></span></p>
+</dt>
+<dd>
+<p>If <code>true</code>, saves the downloaded file to a temporary location instead of the expected Nix store location.
+This is useful when used in conjunction with <code>postFetch</code> attribute, otherwise <code>fetchurl</code> will not produce any meaningful output.</p>
+</dd>
+</dl>
+<p>The location of the downloaded file will be set in the <code>$downloadedFile</code> variable, which should be used by the script in the <code>postFetch</code> attribute.
+See <a href="build-helpers/fetchers/#ex-fetchers-fetchurl-nixpkgs-version-postfetch">Fetchers</a> to understand how to work with this attribute.</p>
+<p><em>Default value:</em> <code>false</code>.</p>
+<dl>
+<dt>
+<p><code>postFetch</code> (String; <em>optional</em>)</p>
+</dt>
+<dd>
+<p>Script executed after the file has been downloaded successfully, and before <code>fetchurl</code> finishes running.
+Useful for post-processing, to check or transform the file in some way.
+See <a href="build-helpers/fetchers/#ex-fetchers-fetchurl-nixpkgs-version-postfetch">Fetchers</a> to understand how to work with this attribute.</p>
+</dd>
+</dl>
+<p><em>Default value:</em> <code>&quot;&quot;</code>.</p>
+<dl>
+<dt>
+<p><code>netrcPhase</code> (String or Null; <em>optional</em>)</p>
+</dt>
+<dd>
+<p>Script executed to create a {manpage}<code>netrc(5)</code> file to be used with {manpage}<code>curl(1)</code>.
+The script should create the <code>netrc</code> file (note that it does not begin with a &quot;.&quot;) in the directory it's currently running in (<code>$PWD</code>).</p>
+</dd>
+</dl>
+<p>The script is executed during the setup done by <code>fetchurl</code> before it runs any of its code to download the specified content.</p>
+<div class='admonition note'><h3 class='title'>Note</h3>
+<p>
+If specified, <code>fetchurl</code> will automatically alter its invocation of {manpage}<code>curl(1)</code> to use the <code>netrc</code> file, so you don't need to add anything to <code>curlOpts</code> or <code>curlOptsList</code>.
+</p>
+</div>
+<div class='admonition caution'><h3 class='title'>Caution</h3>
+<p>
+Since <code>netrcPhase</code> needs to be specified in your source Nix code, any secrets that you put directly in it will be world-readable by design (both in your source code, and when the derivation gets created in the Nix store).</p>
+<p>If you want to avoid this behaviour, see the documentation of <code>netrcImpureEnvVars</code> for an alternative way of dealing with these secrets.
+</p>
+</div>
+<p><em>Default value</em>: <code>null</code>.</p>
+<dl>
+<dt>
+<p><code>netrcImpureEnvVars</code> (List of String; <em>optional</em>)</p>
+</dt>
+<dd>
+<p>If specified, <code>fetchurl</code> will add these environment variable names to the list of <a href="https://nixos.org/manual/nix/stable/language/advanced-attributes.html#adv-attr-impureEnvVars">impure environment variables</a>, which will be passed from the environment of the calling user to the builder running the <code>fetchurl</code> code.</p>
+</dd>
+</dl>
+<p>This is useful when used with <code>netrcPhase</code> to hide any secrets that are used in it, because the script in <code>netrcPhase</code> only needs to reference the environment variables with the secrets in them instead.
+However, note that these are called <em>impure</em> variables for a reason:
+the environment that starts the build needs to have these variables declared for everything to work properly, which means that additional setup is required outside what Nix controls.</p>
+<p><em>Default value:</em> <code>[]</code>.</p>
+<dl>
+<dt>
+<p><code>curlOpts</code> (String; <em>optional</em>)</p>
+</dt>
+<dd>
+<p>If specified, this value will be appended to the invocation of {manpage}<code>curl(1)</code> when downloading the URL(s) given to <code>fetchurl</code>.
+Multiple arguments can be separated by spaces normally, but values with whitespaces will be interpreted as multiple arguments (instead of a single value), even if the value is escaped.
+See <code>curlOptsList</code> for a way to pass values with whitespaces in them.</p>
+</dd>
+</dl>
+<p><em>Default value:</em> <code>&quot;&quot;</code>.</p>
+<dl>
+<dt>
+<p><code>curlOptsList</code> (List of String; <em>optional</em>)</p>
+</dt>
+<dd>
+<p>If specified, each element of this list will be passed as an argument to the invocation of {manpage}<code>curl(1)</code> when downloading the URL(s) given to <code>fetchurl</code>.
+This allows passing values that contain spaces, with no escaping needed.</p>
+</dd>
+</dl>
+<p><em>Default value:</em> <code>[]</code>.</p>
+<dl>
+<dt>
+<p><code>showURLs</code> (Boolean; <em>optional</em>)</p>
+</dt>
+<dd>
+<p>If set to <code>true</code>, this will stop <code>fetchurl</code> from downloading anything at all.
+Instead, it will output a list of all the URLs it would've used to download the content (after resolving <code>mirror://</code> URLs, for example).
+This is useful for debugging.</p>
+</dd>
+</dl>
+<p><em>Default value:</em> <code>false</code>.</p>
+<dl>
+<dt>
+<p><code>meta</code> (Attribute Set; <em>optional</em>)</p>
+</dt>
+<dd>
+<p>Specifies any <a href="stdenv/meta/#chap-meta">meta-attributes</a> for the derivation returned by <code>fetchurl</code>.</p>
+</dd>
+</dl>
+<p><em>Default value:</em> <code>{}</code>.</p>
+<dl>
+<dt>
+<p><code>passthru</code> (Attribute Set; <em>optional</em>)</p>
+</dt>
+<dd>
+<p>Specifies any extra <a href="stdenv/passthru/#chap-passthru"><code>passthru</code></a> attributes for the derivation returned by <code>fetchurl</code>.
+Note that <code>fetchurl</code> defines <a href="build-helpers/fetchers/#ssec-pkgs-fetchers-fetchurl-passthru-outputs"><code>passthru</code> attributes of its own</a>.
+Attributes specified in <code>passthru</code> can override the default attributes returned by <code>fetchurl</code>.</p>
+</dd>
+</dl>
+<p><em>Default value:</em> <code>{}</code>.</p>
+<dl>
+<dt>
+<p><code>preferLocalBuild</code> (Boolean; <em>optional</em>)</p>
+</dt>
+<dd>
+<p>This is the same attribute as <a href="https://nixos.org/manual/nix/stable/language/advanced-attributes.html#adv-attr-preferLocalBuild">defined in the Nix manual</a>.
+It is <code>true</code> by default because making a remote machine download the content just duplicates network traffic (since the local machine might download the results from the derivation anyway), but this could be useful in cases where network access is restricted on local machines.</p>
+</dd>
+</dl>
+<p><em>Default value:</em> <code>true</code>.</p>
+<dl>
+<dt>
+<p><code>nativeBuildInputs</code> (List of Attribute Set; <em>optional</em>)</p>
+</dt>
+<dd>
+<p>Additional packages needed to download the content.
+This is useful if you need extra packages for <code>postFetch</code> or <code>netrcPhase</code>, for example.
+Has the same semantics as in <a href="stdenv/stdenv/#var-stdenv-nativeBuildInputs">The Standard Environment</a>.
+See <a href="build-helpers/fetchers/#ex-fetchers-fetchurl-nixpkgs-version-postfetch">Fetchers</a> to understand how this can be used with <code>postFetch</code>.</p>
+</dd>
+</dl>
+<p><em>Default value:</em> <code>[]</code>.</p>
+<h3 id='ssec-pkgs-fetchers-fetchurl-passthru-outputs'><a href='build-helpers/fetchers/#ssec-pkgs-fetchers-fetchurl-passthru-outputs'>
+Passthru outputs
+</a></h3>
+<p><code>fetchurl</code> also defines its own <a href="stdenv/passthru/#chap-passthru"><code>passthru</code></a> attributes:</p>
+<dl>
+<dt>
+<p><code>url</code> (String)</p>
+</dt>
+<dd>
+<p>The same <code>url</code> attribute passed in the argument to <code>fetchurl</code>.</p>
+</dd>
+</dl>
+<h3 id='ssec-pkgs-fetchers-fetchurl-examples'><a href='build-helpers/fetchers/#ssec-pkgs-fetchers-fetchurl-examples'>
+Examples
+</a></h3>
+<div class='admonition example'><h3 id='ex-fetchers-fetchurl-nixpkgs-version' class='title'><a href='build-helpers/fetchers/#ex-fetchers-fetchurl-nixpkgs-version'>Example</a></h3>
+<p></p>
+<h1>Using <code>fetchurl</code> to download a file</h1>
+<p>The following package downloads a small file from a URL and shows the most common way to use <code>fetchurl</code>:</p>
+<pre><code class="language-nix">{ fetchurl }:
+fetchurl {
+  url = &quot;https://raw.githubusercontent.com/NixOS/nixpkgs/23.11/.version&quot;;
+  hash = &quot;sha256-BZqI7r0MNP29yGH5+yW2tjU9OOpOCEvwWKrWCv5CQ0I=&quot;;
+}
+</code></pre>
+<p>After building the package, the file will be downloaded and placed into the Nix store:</p>
+<pre><code class="language-shell">$ nix-build
+(output removed for clarity)
+/nix/store/4g9y3x851wqrvim4zcz5x2v3zivmsq8n-version
+
+$ cat /nix/store/4g9y3x851wqrvim4zcz5x2v3zivmsq8n-version
+23.11
+</code></pre>
+<p></p>
+</div>
+<div class='admonition example'><h3 id='ex-fetchers-fetchurl-nixpkgs-version-multiple-urls' class='title'><a href='build-helpers/fetchers/#ex-fetchers-fetchurl-nixpkgs-version-multiple-urls'>Example</a></h3>
+<p></p>
+<h1>Using <code>fetchurl</code> to download a file with multiple possible URLs</h1>
+<p>The following package adapts <a href="build-helpers/fetchers/#ex-fetchers-fetchurl-nixpkgs-version">Fetchers</a> to use multiple URLs.
+The first URL was crafted to intentionally return an error to illustrate how <code>fetchurl</code> will try multiple URLs until it finds one that works (or all URLs fail).</p>
+<pre><code class="language-nix">{ fetchurl }:
+fetchurl {
+  urls = [
+    &quot;https://raw.githubusercontent.com/NixOS/nixpkgs/23.11/does-not-exist&quot;
+    &quot;https://raw.githubusercontent.com/NixOS/nixpkgs/23.11/.version&quot;
+  ];
+  hash = &quot;sha256-BZqI7r0MNP29yGH5+yW2tjU9OOpOCEvwWKrWCv5CQ0I=&quot;;
+}
+</code></pre>
+<p>After building the package, both URLs will be used to download the file:</p>
+<pre><code class="language-shell">$ nix-build
+(some output removed for clarity)
+trying https://raw.githubusercontent.com/NixOS/nixpkgs/23.11/does-not-exist
+(some output removed for clarity)
+curl: (22) The requested URL returned error: 404
+
+trying https://raw.githubusercontent.com/NixOS/nixpkgs/23.11/.version
+(some output removed for clarity)
+/nix/store/n9asny31z32q7sdw6a8r1gllrsfy53kl-does-not-exist
+
+$ cat /nix/store/n9asny31z32q7sdw6a8r1gllrsfy53kl-does-not-exist
+23.11
+</code></pre>
+<p>However, note that the name of the file was derived from the first URL (this is further explained in <a href="build-helpers/fetchers/#sec-pkgs-fetchers-fetchurl">the <code>fetchurl</code> overview</a>).
+To ensure the result will have the same name regardless of which URLs are used, we can modify the package:</p>
+<pre><code class="language-nix">{ fetchurl }:
+fetchurl {
+  name = &quot;nixpkgs-version&quot;;
+  urls = [
+    &quot;https://raw.githubusercontent.com/NixOS/nixpkgs/23.11/does-not-exist&quot;
+    &quot;https://raw.githubusercontent.com/NixOS/nixpkgs/23.11/.version&quot;
+  ];
+  hash = &quot;sha256-BZqI7r0MNP29yGH5+yW2tjU9OOpOCEvwWKrWCv5CQ0I=&quot;;
+}
+</code></pre>
+<p>After building the package, the result will have the name we specified:</p>
+<pre><code class="language-shell">$ nix-build
+(output removed for clarity)
+/nix/store/zczb6wl3al6jm9sm5h3pr6nqn0i5ji9z-nixpkgs-version
+</code></pre>
+<p></p>
+</div>
+<div class='admonition example'><h3 id='ex-fetchers-fetchurl-nixpkgs-version-postfetch' class='title'><a href='build-helpers/fetchers/#ex-fetchers-fetchurl-nixpkgs-version-postfetch'>Example</a></h3>
+<p></p>
+<h1>Manipulating the content downloaded by <code>fetchurl</code></h1>
+<p>It might be useful to manipulate the content downloaded by <code>fetchurl</code> directly in its derivation.
+In this example, we'll adapt <a href="build-helpers/fetchers/#ex-fetchers-fetchurl-nixpkgs-version">Fetchers</a> to append the result of running the <code>hello</code> package to the contents we download, purely to illustrate how to manipulate the content.</p>
+<pre><code class="language-nix">{
+  fetchurl,
+  hello,
+  lib,
+}:
+fetchurl {
+  url = &quot;https://raw.githubusercontent.com/NixOS/nixpkgs/23.11/.version&quot;;
+
+  nativeBuildInputs = [ hello ];
+
+  downloadToTemp = true;
+  postFetch = ''
+    hello &gt;&gt; &quot;$downloadedFile&quot;
+    mv &quot;$downloadedFile&quot; &quot;$out&quot;
+  '';
+
+  hash = &quot;sha256-ceooQQYmDx5+0nfg40uU3NNI2yKrixP7HZ/xLZUNv+w=&quot;;
+}
+</code></pre>
+<p>After building the package, the resulting file will have &quot;Hello, world!&quot; appended to it:</p>
+<pre><code class="language-shell">$ nix-build
+(output removed for clarity)
+/nix/store/ifi6pp7q0ag5h7c5v9h1c1c7bhd10c7f-version
+
+$ cat /nix/store/ifi6pp7q0ag5h7c5v9h1c1c7bhd10c7f-version
+23.11
+Hello, world!
+</code></pre>
+<p>Note that the <code>hash</code> specified in the package is different than the hash specified in <a href="build-helpers/fetchers/#ex-fetchers-fetchurl-nixpkgs-version">Fetchers</a>, because the contents of the output have changed (even though the actual file that was downloaded is the same).
+See <a href="build-helpers/fetchers/#chap-pkgs-fetchers-caveats">Fetchers</a> for more details on how to work with the <code>hash</code> attribute when the output changes.
+</p>
+</div>
+<h2 id='sec-pkgs-fetchers-fetchzip'><a href='build-helpers/fetchers/#sec-pkgs-fetchers-fetchzip'>
+<code>fetchzip</code>
+</a></h2>
+<p>Returns a <a href="https://nixos.org/manual/nix/stable/glossary.html#gloss-fixed-output-derivation">fixed-output derivation</a> which downloads an archive from a given URL and decompresses it.</p>
+<p>Despite its name, <code>fetchzip</code> is not limited to <code>.zip</code> files but can also be used with <a href="stdenv/stdenv/#tar-files">various compressed tarball formats</a> by default.
+This can be extended by specifying additional attributes, see <a href="build-helpers/fetchers/#ex-fetchers-fetchzip-rar-archive">Fetchers</a> to understand how to do that.</p>
+<h3 id='sec-pkgs-fetchers-fetchzip-inputs'><a href='build-helpers/fetchers/#sec-pkgs-fetchers-fetchzip-inputs'>
+Inputs
+</a></h3>
+<p><code>fetchzip</code> requires an attribute set, and most attributes are passed to the underlying call to <a href="build-helpers/fetchers/#sec-pkgs-fetchers-fetchurl"><code>fetchurl</code></a>.</p>
+<p>The attributes below are treated differently by <code>fetchzip</code> when compared to what <code>fetchurl</code> expects:</p>
+<dl>
+<dt>
+<p><code>name</code> (String; <em>optional</em>)</p>
+</dt>
+<dd>
+<p>Works as defined in <code>fetchurl</code>, but has a different default value than <code>fetchurl</code>.</p>
+</dd>
+</dl>
+<p><em>Default value:</em> <code>&quot;source&quot;</code>.</p>
+<dl>
+<dt>
+<p><code>nativeBuildInputs</code> (List of Attribute Set; <em>optional</em>)</p>
+</dt>
+<dd>
+<p>Works as defined in <code>fetchurl</code>, but it is also augmented by <code>fetchzip</code> to include packages to deal with additional archives (such as <code>.zip</code>).</p>
+</dd>
+</dl>
+<p><em>Default value:</em> <code>[]</code>.</p>
+<dl>
+<dt>
+<p><code>postFetch</code> (String; <em>optional</em>)</p>
+</dt>
+<dd>
+<p>Works as defined in <code>fetchurl</code>, but it is also augmented with the code needed to make <code>fetchzip</code> work.</p>
+</dd>
+</dl>
+<div class='admonition caution'><h3 class='title'>Caution</h3>
+<p>
+It is only safe to modify files in <code>$out</code> in <code>postFetch</code>.
+Consult the implementation of <code>fetchzip</code> for anything more involved.
+</p>
+</div>
+<p><em>Default value:</em> <code>&quot;&quot;</code>.</p>
+<dl>
+<dt>
+<p><code>stripRoot</code> (Boolean; <em>optional</em>)</p>
+</dt>
+<dd>
+<p>If <code>true</code>, the decompressed contents are moved one level up the directory tree.</p>
+</dd>
+</dl>
+<p>This is useful for archives that decompress into a single directory which commonly includes some values that change with time, such as version numbers.
+When this is the case (and <code>stripRoot</code> is <code>true</code>), <code>fetchzip</code> will remove this directory and make the decompressed contents available in the top-level directory.</p>
+<p><a href="build-helpers/fetchers/#ex-fetchers-fetchzip-simple-striproot">Fetchers</a> shows what this attribute does.</p>
+<p>This attribute is <strong>not</strong> passed through to <code>fetchurl</code>.</p>
+<p><em>Default value:</em> <code>true</code>.</p>
+<dl>
+<dt>
+<p><code>extension</code> (String or Null; <em>optional</em>)</p>
+</dt>
+<dd>
+<p>If set, the archive downloaded by <code>fetchzip</code> will be renamed to a filename with the extension specified in this attribute.</p>
+</dd>
+</dl>
+<p>This is useful when making <code>fetchzip</code> support additional types of archives, because the implementation may use the extension of an archive to determine whether they can decompress it.
+If the URL you're using to download the contents doesn't end with the extension associated with the archive, use this attribute to fix the filename of the archive.</p>
+<p>This attribute is <strong>not</strong> passed through to <code>fetchurl</code>.</p>
+<p><em>Default value:</em> <code>null</code>.</p>
+<dl>
+<dt>
+<p><code>recursiveHash</code> (Boolean; <em>optional</em>)</p>
+</dt>
+<dd>
+<p>Works <a href="build-helpers/fetchers/#sec-pkgs-fetchers-fetchurl-inputs-recursiveHash">as defined in <code>fetchurl</code></a>, but its default value is different than for <code>fetchurl</code>.</p>
+</dd>
+</dl>
+<p><em>Default value:</em> <code>true</code>.</p>
+<dl>
+<dt>
+<p><code>downloadToTemp</code> (Boolean; <em>optional</em>)</p>
+</dt>
+<dd>
+<p>Works <a href="build-helpers/fetchers/#sec-pkgs-fetchers-fetchurl-inputs-downloadToTemp">as defined in <code>fetchurl</code></a>, but its default value is different than for <code>fetchurl</code>.</p>
+</dd>
+</dl>
+<p><em>Default value:</em> <code>true</code>.</p>
+<dl>
+<dt>
+<p><code>extraPostFetch</code> <strong>DEPRECATED</strong></p>
+</dt>
+<dd>
+<p>This attribute is deprecated.
+Please use <code>postFetch</code> instead.</p>
+</dd>
+</dl>
+<p>This attribute is <strong>not</strong> passed through to <code>fetchurl</code>.</p>
+<h3 id='sec-pkgs-fetchers-fetchzip-examples'><a href='build-helpers/fetchers/#sec-pkgs-fetchers-fetchzip-examples'>
+Examples
+</a></h3>
+<div class='admonition :{.example'><h3 id='ex-fetchers-fetchzip-simple-striproot' class='title'><a href='build-helpers/fetchers/#ex-fetchers-fetchzip-simple-striproot'>:{.example</a></h3>
+<p></p>
+<h1>Using <code>fetchzip</code> to output contents directly</h1>
+<p>The following recipe shows how to use <code>fetchzip</code> to decompress a <code>.tar.gz</code> archive:</p>
+<pre><code class="language-nix">{ fetchzip }:
+fetchzip {
+  url = &quot;https://github.com/NixOS/patchelf/releases/download/0.18.0/patchelf-0.18.0.tar.gz&quot;;
+  hash = &quot;sha256-3ABYlME9R8klcpJ7MQpyFEFwHmxDDEzIYBqu/CpDYmg=&quot;;
+}
+</code></pre>
+<p>This archive has all its contents in a directory named <code>patchelf-0.18.0</code>.
+This means that after decompressing, you'd have to enter this directory to see the contents of the archive.
+However, <code>fetchzip</code> makes this easier through the attribute <code>stripRoot</code> (enabled by default).</p>
+<p>After building the recipe, the derivation output will show all the files in the archive at the top level:</p>
+<pre><code class="language-shell">$ nix-build
+(output removed for clarity)
+/nix/store/1b7h3fvmgrcddvs0m299hnqxlgli1yjw-source
+
+$ ls /nix/store/1b7h3fvmgrcddvs0m299hnqxlgli1yjw-source
+aclocal.m4  completions  configure.ac  m4           Makefile.in  patchelf.spec     README.md  tests
+build-aux   configure    COPYING       Makefile.am  patchelf.1   patchelf.spec.in  src        version
+</code></pre>
+<p>If <code>stripRoot</code> is set to <code>false</code>, the derivation output will be the decompressed archive as-is:</p>
+<pre><code class="language-nix">{ fetchzip }:
+fetchzip {
+  url = &quot;https://github.com/NixOS/patchelf/releases/download/0.18.0/patchelf-0.18.0.tar.gz&quot;;
+  hash = &quot;sha256-uv3FuKE4DqpHT3yfE0qcnq0gYjDNQNKZEZt2+PUAneg=&quot;;
+  stripRoot = false;
+}
+</code></pre>
+<div class='admonition caution'><h3 class='title'>Caution</h3>
+<p>
+The hash changed!
+Whenever changing attributes of a Nixpkgs fetcher, <a href="build-helpers/fetchers/#chap-pkgs-fetchers-caveats">remember to invalidate the hash</a>, otherwise you won't get the results you're expecting!
+</p>
+</div>
+<p>After building the recipe:</p>
+<pre><code class="language-shell">$ nix-build
+(output removed for clarity)
+/nix/store/2hy5bxw7xgbgxkn0i4x6hjr8w3dbx16c-source
+
+$ ls /nix/store/2hy5bxw7xgbgxkn0i4x6hjr8w3dbx16c-source
+patchelf-0.18.0
+</code></pre>
+<div class='admonition :'><h3 class='title'>:</h3>
+<p></p>
+<div class='admonition :{.example'><h3 id='ex-fetchers-fetchzip-rar-archive' class='title'><a href='build-helpers/fetchers/#ex-fetchers-fetchzip-rar-archive'>:{.example</a></h3>
+<p></p>
+<h1>Using <code>fetchzip</code> to decompress a <code>.rar</code> file</h1>
+<p>The <code>unrar</code> package provides a <a href="stdenv/stdenv/#ssec-setup-hooks">setup hook</a> to decompress <code>.rar</code> archives during the <a href="stdenv/stdenv/#ssec-unpack-phase">unpack phase</a>, which can be used with <code>fetchzip</code> to decompress those archives:</p>
+<pre><code class="language-nix">{ fetchzip, unrar }:
+fetchzip {
+  url = &quot;https://archive.org/download/SpaceCadet_Plus95/Space_Cadet.rar&quot;;
+  hash = &quot;sha256-fC+zsR8BY6vXpUkVd6i1jF0IZZxVKVvNi6VWCKT+pA4=&quot;;
+  stripRoot = false;
+  nativeBuildInputs = [ unrar ];
+}
+</code></pre>
+<p>Since this particular <code>.rar</code> file doesn't put its contents in a directory inside the archive, <code>stripRoot</code> must be set to <code>false</code>.</p>
+<p>After building the recipe, the derivation output will show the decompressed files:</p>
+<pre><code class="language-shell">$ nix-build
+(output removed for clarity)
+/nix/store/zpn7knxfva6rfjja2gbb4p3l9w1f0d36-source
+
+$ ls /nix/store/zpn7knxfva6rfjja2gbb4p3l9w1f0d36-source
+FONT.DAT      PINBALL.DAT  PINBALL.EXE	PINBALL2.MID  TABLE.BMP    WMCONFIG.EXE
+MSCREATE.DIR  PINBALL.DOC  PINBALL.MID	Sounds	     WAVEMIX.INF
+</code></pre>
+<div class='admonition :'><h3 class='title'>:</h3>
+<p></p>
+<h2 id='fetchpatch'><a href='build-helpers/fetchers/#fetchpatch'>
+<code>fetchpatch</code>
+</a></h2>
+<p><code>fetchpatch</code> works very similarly to <code>fetchurl</code> with the same arguments expected. It expects patch files as a source and performs normalization on them before computing the checksum. For example, it will remove comments or other unstable parts that are sometimes added by version control systems and can change over time.</p>
+<ul>
+<li><code>relative</code>: Similar to using <code>git-diff</code>'s <code>--relative</code> flag, only keep changes inside the specified directory, making paths relative to it.</li>
+<li><code>stripLen</code>: Remove the first <code>stripLen</code> components of pathnames in the patch.</li>
+<li><code>decode</code>: Pipe the downloaded data through this command before processing it as a patch.</li>
+<li><code>extraPrefix</code>: Prefix pathnames by this string.</li>
+<li><code>excludes</code>: Exclude files matching these patterns (applies after the above arguments).</li>
+<li><code>includes</code>: Include only files matching these patterns (applies after the above arguments).</li>
+<li><code>hunks</code>: Choose the specified hunks from each file (applies after the above arguments).
+Note that you can specify a list of numbers or ranges of numbers
+(for example, <code>[ 1 2 3 4 ]</code>, <code>[ &quot;1-4&quot; ]</code>, <code>[ &quot;-4&quot; ]</code>, or <code>[ &quot;1-&quot; ]</code> would all be the same effective range in a patch applying 4 hunks to a single file).</li>
+<li><code>revert</code>: Revert the patch.</li>
+</ul>
+<p>Note that because the checksum is computed after applying these effects, using or modifying these arguments will have no effect unless the <code>hash</code> argument is changed as well.</p>
+<p>Most other fetchers return a directory rather than a single file.</p>
+<h2 id='fetchdebianpatch'><a href='build-helpers/fetchers/#fetchdebianpatch'>
+<code>fetchDebianPatch</code>
+</a></h2>
+<p>A wrapper around <code>fetchpatch</code>, which takes:</p>
+<ul>
+<li><code>patch</code> and <code>hash</code>: the patch's filename,
+and its hash after normalization by <code>fetchpatch</code> ;</li>
+<li><code>pname</code>: the Debian source package's name ;</li>
+<li><code>version</code>: the upstream version number ;</li>
+<li><code>debianRevision</code>: the <a href="https://www.debian.org/doc/debian-policy/ch-controlfields.html#version">Debian revision number</a> if applicable ;</li>
+<li>the <code>area</code> of the Debian archive: <code>main</code> (default), <code>contrib</code>, or <code>non-free</code>.</li>
+</ul>
+<p>Here is an example of <code>fetchDebianPatch</code> in action:</p>
+<pre><code class="language-nix">{
+  lib,
+  fetchDebianPatch,
+  buildPythonPackage,
+}:
+
+buildPythonPackage rec {
+  pname = &quot;pysimplesoap&quot;;
+  version = &quot;1.16.2&quot;;
+  src = &lt;...&gt;;
+
+  patches = [
+    (fetchDebianPatch {
+      inherit pname version;
+      debianRevision = &quot;5&quot;;
+      patch = &quot;Add-quotes-to-SOAPAction-header-in-SoapClient.patch&quot;;
+      hash = &quot;sha256-xA8Wnrpr31H8wy3zHSNfezFNjUJt1HbSXn3qUMzeKc0=&quot;;
+    })
+  ];
+
+  # ...
+}
+</code></pre>
+<p>Patches are fetched from <code>sources.debian.org</code>, and so must come from a
+package version that was uploaded to the Debian archive.  Packages may
+be removed from there once that specific version isn't in any suite
+anymore (stable, testing, unstable, etc.), so maintainers should use
+<code>copy-tarballs.pl</code> to archive the patch if it needs to be available
+longer-term.</p>
+<h2 id='fetchsvn'><a href='build-helpers/fetchers/#fetchsvn'>
+<code>fetchsvn</code>
+</a></h2>
+<p>Used with Subversion. Expects <code>url</code> to a Subversion directory, <code>rev</code>, and <code>hash</code>.</p>
+<h2 id='fetchgit'><a href='build-helpers/fetchers/#fetchgit'>
+<code>fetchgit</code>
+</a></h2>
+<p>Used with Git. Expects <code>url</code> to a Git repo, <code>rev</code> or <code>tag</code>, and <code>hash</code>. <code>rev</code> in this case can be the full git commit id (SHA1 hash), or use <code>tag</code> for a tag name like <code>refs/tags/v1.0</code>.</p>
+<p>If you want to fetch a tag you should pass the <code>tag</code> parameter instead of <code>rev</code> which has the same effect as setting <code>rev = &quot;refs/tags&quot;/${version}&quot;</code>.
+This is safer than just setting <code>rev = version</code> w.r.t. possible branch and tag name conflicts.</p>
+<p>Additionally, the following optional arguments can be given:</p>
+<dl>
+<dt>
+<p><em><code>fetchSubmodules</code></em> (Boolean)</p>
+</dt>
+<dd>
+<p>Whether to also fetch the submodules of a repository.</p>
+</dd>
+<dt>
+<p><em><code>fetchLFS</code></em> (Boolean)</p>
+</dt>
+<dd>
+<p>Whether to fetch LFS objects.</p>
+</dd>
+<dt>
+<p><em><code>preFetch</code></em> (String)</p>
+</dt>
+<dd>
+<p>Shell code to be executed before the repository has been fetched, to allow
+changing the environment the fetcher runs in.</p>
+</dd>
+<dt>
+<p><em><code>postFetch</code></em> (String)</p>
+</dt>
+<dd>
+<p>Shell code executed after the repository has been fetched successfully.
+This can do things like check or transform the file.</p>
+</dd>
+<dt>
+<p><em><code>leaveDotGit</code></em> (Boolean)</p>
+</dt>
+<dd>
+<p>Whether the <code>.git</code> directory of the clone should <em>not</em> be removed after checkout.</p>
+</dd>
+</dl>
+<p>Be warned though that the git repository format is not stable and this flag is therefore not suitable for actual use by itself.
+Only use this for testing purposes or in conjunction with removing the <code>.git</code> directory in <code>postFetch</code>.</p>
+<dl>
+<dt>
+<p><em><code>deepClone</code></em> (Boolean)</p>
+</dt>
+<dd>
+<p>Clone the entire repository as opposed to just creating a shallow clone.
+This implies <code>leaveDotGit</code>.</p>
+</dd>
+<dt>
+<p><em><code>fetchTags</code></em> (Boolean)</p>
+</dt>
+<dd>
+<p>Whether to fetch all tags from the remote repository. This is useful when the build process needs to run <code>git describe</code> or other commands that require tag information to be available. This parameter implies <code>leaveDotGit</code>, as tags are stored in the <code>.git</code> directory.</p>
+</dd>
+<dt>
+<p><em><code>sparseCheckout</code></em> (List of String)</p>
+</dt>
+<dd>
+<p>Prevent git from fetching unnecessary blobs from server.
+This is useful if only parts of the repository are needed.</p>
+</dd>
+</dl>
+<div class='admonition example'><h3 id='ex-fetchgit-sparseCheckout' class='title'><a href='build-helpers/fetchers/#ex-fetchgit-sparseCheckout'>Example</a></h3>
+<p></p>
+<h1>Use <code>sparseCheckout</code> to only include some directories:</h1>
+<pre><code class="language-nix">{ stdenv, fetchgit }:
+
+stdenv.mkDerivation {
+  name = &quot;hello&quot;;
+  src = fetchgit {
+    url = &quot;https://...&quot;;
+    sparseCheckout = [
+      &quot;directory/to/be/included&quot;
+      &quot;another/directory&quot;
+    ];
+    hash = &quot;sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=&quot;;
+  };
+}
+</code></pre>
+<p></p>
+</div>
+<p>See <a href="https://git-scm.com/docs/git-sparse-checkout">git sparse-checkout</a> for more information.</p>
+<dl>
+<dt>
+<p><em><code>rootDir</code></em> (String)</p>
+</dt>
+<dd>
+<p>When not empty, copy only contents of the subdirectory of the repository to the result. Automatically sets <code>sparseCheckout</code> and <code>nonConeMode</code> to avoid checking out any extra pieces. Incompatible with <code>leaveDotGit</code>.</p>
+</dd>
+</dl>
+<p>Some additional parameters for niche use-cases can be found listed in the function parameters in the declaration of <code>fetchgit</code>: <code>pkgs/build-support/fetchgit/default.nix</code>.
+Future parameters additions might also happen without immediately being documented here.</p>
+<h2 id='fetchfossil'><a href='build-helpers/fetchers/#fetchfossil'>
+<code>fetchfossil</code>
+</a></h2>
+<p>Used with Fossil. Expects <code>url</code> to a Fossil archive, <code>rev</code>, and <code>hash</code>.</p>
+<h2 id='fetchcvs'><a href='build-helpers/fetchers/#fetchcvs'>
+<code>fetchcvs</code>
+</a></h2>
+<p>Used with CVS. Expects <code>cvsRoot</code>, <code>tag</code>, and <code>hash</code>.</p>
+<h2 id='fetchhg'><a href='build-helpers/fetchers/#fetchhg'>
+<code>fetchhg</code>
+</a></h2>
+<p>Used with Mercurial. Expects <code>url</code>, <code>rev</code>, <code>hash</code>, overridable with <a href="using/overrides/#sec-pkg-overrideAttrs"><code>&lt;pkg&gt;.overrideAttrs</code></a>.</p>
+<p>A number of fetcher functions wrap part of <code>fetchurl</code> and <code>fetchzip</code>. They are mainly convenience functions intended for commonly used destinations of source code in Nixpkgs. These wrapper fetchers are listed below.</p>
+<h2 id='fetchfromgitea'><a href='build-helpers/fetchers/#fetchfromgitea'>
+<code>fetchFromGitea</code>, <code>fetchFromForgejo</code> and <code>fetchFromCodeberg</code>
+</a></h2>
+<p><code>fetchFromGitea</code>, also aliased to <code>fetchFromForgejo</code>, expects five arguments. <code>domain</code> is the Gitea/Forgejo server name. <code>owner</code> is a string corresponding to the user or organization that controls this repository. <code>repo</code> corresponds to the name of the software repository. These are located at the top of every Gitea/Forgejo HTML page as <code>owner</code>/<code>repo</code>. <code>rev</code> corresponds to the Git commit hash or tag (e.g <code>v1.0</code>) that will be downloaded from Git. Finally, <code>hash</code> corresponds to the hash of the extracted directory. Again, other hash algorithms are also available but <code>hash</code> is currently preferred.</p>
+<p>As &lt;codeberg.org&gt; is currently the most popular public Forgejo server, the <code>fetchFromCodeberg</code> fetcher is also available, which pre-fills the <code>domain</code> attribute.</p>
+<h2 id='fetchfromgithub'><a href='build-helpers/fetchers/#fetchfromgithub'>
+<code>fetchFromGitHub</code>
+</a></h2>
+<p><code>fetchFromGitHub</code> expects four arguments. <code>owner</code> is a string corresponding to the GitHub user or organization that controls this repository. <code>repo</code> corresponds to the name of the software repository. These are located at the top of every GitHub HTML page as <code>owner</code>/<code>repo</code>. <code>rev</code> corresponds to the Git commit hash or tag (e.g <code>v1.0</code>) that will be downloaded from Git. If you need to fetch a tag however, you should prefer to use the <code>tag</code> parameter which achieves this in a safer way with less boilerplate. Finally, <code>hash</code> corresponds to the hash of the extracted directory. Again, other hash algorithms are also available, but <code>hash</code> is currently preferred.</p>
+<p>To use a different GitHub instance, use <code>githubBase</code> (defaults to <code>&quot;github.com&quot;</code>).</p>
+<p>By default, <code>fetchFromGitHub</code> uses <code>fetchzip</code> to download GitHub's source archive for the specified revision.
+However, <code>fetchFromGitHub</code> will automatically switch to using <code>fetchgit</code> in any of these cases:</p>
+<ul>
+<li><code>forceFetchGit</code>, <code>leaveDotGit</code>, <code>deepClone</code>, <code>fetchLFS</code>, or <code>fetchSubmodules</code> are set to <code>true</code></li>
+<li><code>sparseCheckout</code> contains any entries (is a non-empty list)</li>
+<li><code>rootDir</code> is set to a non-empty string</li>
+</ul>
+<p>When <code>fetchgit</code> is used, refer to the <code>fetchgit</code> section for documentation of its available options.</p>
+<h2 id='fetchfromgitlab'><a href='build-helpers/fetchers/#fetchfromgitlab'>
+<code>fetchFromGitLab</code>
+</a></h2>
+<p>This is used with GitLab repositories. It behaves similarly to <code>fetchFromGitHub</code>, and expects <code>owner</code>, <code>repo</code>, <code>rev</code>, and <code>hash</code>.</p>
+<p>To use a specific GitLab instance, use <code>domain</code> (defaults to <code>&quot;gitlab.com&quot;</code>).</p>
+<h2 id='fetchfromgitiles'><a href='build-helpers/fetchers/#fetchfromgitiles'>
+<code>fetchFromGitiles</code>
+</a></h2>
+<p>This is used with Gitiles repositories. The arguments expected are similar to <code>fetchgit</code>.</p>
+<h2 id='fetchfrombitbucket'><a href='build-helpers/fetchers/#fetchfrombitbucket'>
+<code>fetchFromBitbucket</code>
+</a></h2>
+<p>Used for repositories hosted on Bitbucket (<code>&quot;bitbucket.org&quot;</code>) owned by the Australian-based Atlassian Corporation. It requires an <code>owner</code> and <code>repo</code> argument which are both strings that reference the workspace ID and repository name hosted on Bitbucket cloud as well as either a <code>tag</code> or <code>rev</code> argument.</p>
+<p>By default, <code>fetchFromBitbucket</code> will attempt to download a commit snapshot tarball at the specified <code>tag</code> or <code>rev</code> at <code>https://bitbucket.org/&lt;owner&gt;/&lt;repo&gt;/get/&lt;tag-or-rev&gt;.tar.gz</code></p>
+<p>However, <code>fetchFromBitbucket</code> will automatically switch to using <code>fetchgit</code> and fetch from <code>https://bitbucket.org/&lt;owner&gt;/&lt;repo&gt;.git</code> in any of these cases:</p>
+<ul>
+<li><code>forceFetchGit</code>, <code>leaveDotGit</code>, <code>deepClone</code>, <code>fetchLFS</code>, or <code>fetchSubmodules</code> are set to <code>true</code></li>
+<li><code>sparseCheckout</code> contains any entries (is a non-empty list)</li>
+<li><code>rootDir</code> is set to a non-empty string</li>
+</ul>
+<p>When <code>fetchgit</code> is used, refer to the <code>fetchgit</code> section for documentation of its available options.</p>
+<h2 id='fetchfromrepoorcz'><a href='build-helpers/fetchers/#fetchfromrepoorcz'>
+<code>fetchFromRepoOrCz</code>
+</a></h2>
+<p>This is used with repo.or.cz repositories. The arguments expected are very similar to <code>fetchFromGitHub</code> above.</p>
+<h2 id='fetchfromsourcehut'><a href='build-helpers/fetchers/#fetchfromsourcehut'>
+<code>fetchFromSourcehut</code>
+</a></h2>
+<p>This is used with sourcehut repositories. Similar to <code>fetchFromGitHub</code> above,
+it expects <code>owner</code>, <code>repo</code>, <code>rev</code> and <code>hash</code>, but don't forget the tilde (~)
+in front of the username! Expected arguments also include <code>vc</code> (&quot;git&quot; (default)
+or &quot;hg&quot;), <code>domain</code> and <code>fetchSubmodules</code>.</p>
+<p>If <code>fetchSubmodules</code> is <code>true</code>, <code>fetchFromSourcehut</code> uses <code>fetchgit</code>
+or <code>fetchhg</code> with <code>fetchSubmodules</code> or <code>fetchSubrepos</code> set to <code>true</code>,
+respectively. Otherwise, the fetcher uses <code>fetchzip</code>.</p>
+<h2 id='fetchfromradicle'><a href='build-helpers/fetchers/#fetchfromradicle'>
+<code>fetchFromRadicle</code>
+</a></h2>
+<p>This is used with Radicle repositories. The arguments expected are similar to <code>fetchgit</code>.</p>
+<p>Requires a <code>seed</code> argument (e.g. <code>seed.radicle.dev</code> or <code>rosa.radicle.network</code>) and a <code>repo</code> argument
+(the repository id <em>without</em> the <code>rad:</code> prefix). Also accepts an optional <code>node</code> argument which
+contains the id of the node from which to fetch the specified ref. If <code>node</code> is <code>null</code> (the
+default), a canonical ref is fetched instead.</p>
+<pre><code class="language-nix">fetchFromRadicle {
+  seed = &quot;seed.radicle.dev&quot;;
+  repo = &quot;z3gqcJUoA1n9HaHKufZs5FCSGazv5&quot;; # heartwood
+  tag = &quot;releases/1.3.0&quot;;
+  hash = &quot;sha256-4o88BWKGGOjCIQy7anvzbA/kPOO+ZsLMzXJhE61odjw=&quot;;
+}
+</code></pre>
+<h2 id='fetchradiclepatch'><a href='build-helpers/fetchers/#fetchradiclepatch'>
+<code>fetchRadiclePatch</code>
+</a></h2>
+<p><code>fetchRadiclePatch</code> works very similarly to <code>fetchFromRadicle</code> with almost the same arguments
+expected. However, instead of a <code>rev</code> or <code>tag</code> argument, a <code>revision</code> argument is expected, which
+contains the full revision id of the Radicle patch to fetch.</p>
+<pre><code class="language-nix">fetchRadiclePatch {
+  seed = &quot;rosa.radicle.network&quot;;
+  repo = &quot;z4V1sjrXqjvFdnCUbxPFqd5p4DtH5&quot;; # radicle-explorer
+  revision = &quot;d97d872386c70607beda2fb3fc2e60449e0f4ce4&quot;; # patch: d77e064
+  hash = &quot;sha256-ttnNqj0lhlSP6BGzEhhUOejKkkPruM9yMwA5p9Di4bk=&quot;;
+}
+</code></pre>
+<h2 id='requirefile'><a href='build-helpers/fetchers/#requirefile'>
+<code>requireFile</code>
+</a></h2>
+<p><code>requireFile</code> allows requesting files that cannot be fetched automatically, but whose content is known.
+This is a useful last-resort workaround for license restrictions that prohibit redistribution, or for downloads that are only accessible after authenticating interactively in a browser.
+If the requested file is present in the Nix store, the resulting derivation will not be built, because its expected output is already available.
+Otherwise, the builder will run, but fail with a message explaining to the user how to provide the file. The following code, for example:</p>
+<pre><code class="language-nix">requireFile {
+  name = &quot;jdk-${version}_linux-x64_bin.tar.gz&quot;;
+  url = &quot;https://www.oracle.com/java/technologies/javase-jdk11-downloads.html&quot;;
+  hash = &quot;sha256-lL00+F7jjT71nlKJ7HRQuUQ7kkxVYlZh//5msD8sjeI=&quot;;
+}
+</code></pre>
+<p>results in this error message:</p>
+<pre><code>***
+Unfortunately, we cannot download file jdk-11.0.10_linux-x64_bin.tar.gz automatically.
+Please go to https://www.oracle.com/java/technologies/javase-jdk11-downloads.html to download it yourself, and add it to the Nix store
+using either
+  nix-store --add-fixed sha256 jdk-11.0.10_linux-x64_bin.tar.gz
+or
+  nix-prefetch-url --type sha256 file:///path/to/jdk-11.0.10_linux-x64_bin.tar.gz
+
+***
+</code></pre>
+<p>This function should only be used by non-redistributable software with an unfree license that we need to require the user to download manually.
+It produces packages that cannot be built automatically.</p>
+<h2 id='fetchtorrent'><a href='build-helpers/fetchers/#fetchtorrent'>
+<code>fetchtorrent</code>
+</a></h2>
+<p><code>fetchtorrent</code> expects two arguments. <code>url</code> which can either be a Magnet URI (Magnet Link) such as <code>magnet:?xt=urn:btih:dd8255ecdc7ca55fb0bbf81323d87062db1f6d1c</code> or an HTTP URL pointing to a <code>.torrent</code> file. It can also take a <code>config</code> argument which will craft a <code>settings.json</code> configuration file and give it to <code>transmission</code>, the underlying program that is performing the fetch. The available config options for <code>transmission</code> can be found <a href="https://github.com/transmission/transmission/blob/main/docs/Editing-Configuration-Files.md#options">here</a></p>
+<pre><code class="language-nix">{ fetchtorrent }:
+
+fetchtorrent {
+  config = {
+    peer-limit-global = 100;
+  };
+  url = &quot;magnet:?xt=urn:btih:dd8255ecdc7ca55fb0bbf81323d87062db1f6d1c&quot;;
+  hash = &quot;&quot;;
+}
+</code></pre>
+<h3 id='fetchtorrent-parameters'><a href='build-helpers/fetchers/#fetchtorrent-parameters'>
+Parameters
+</a></h3>
+<ul>
+<li>
+<p><code>url</code>: Magnet URI (Magnet Link) such as <code>magnet:?xt=urn:btih:dd8255ecdc7ca55fb0bbf81323d87062db1f6d1c</code> or an HTTP URL pointing to a <code>.torrent</code> file.</p>
+</li>
+<li>
+<p><code>backend</code>: Which bittorrent program to use. Default: <code>&quot;transmission&quot;</code>. Valid values are <code>&quot;rqbit&quot;</code> or <code>&quot;transmission&quot;</code>. These are the two most suitable torrent clients for fetching in a fixed-output derivation at the time of writing, as they can be easily exited after usage. <code>rqbit</code> is written in Rust and has a smaller closure size than <code>transmission</code>, and the performance and peer discovery properties differs between these clients, requiring experimentation to decide upon which is the best.</p>
+</li>
+<li>
+<p><code>config</code>: When using <code>transmission</code> as the <code>backend</code>, a json configuration can
+be supplied to transmission. Refer to the <a href="https://github.com/transmission/transmission/blob/main/docs/Editing-Configuration-Files.md">upstream documentation</a> for information on how to configure.</p>
+</li>
+</ul>
+<h2 id='fetchitchio'><a href='build-helpers/fetchers/#fetchitchio'>
+<code>fetchItchIo</code>
+</a></h2>
+<p><code>fetchItchIo</code> is a fetcher for downloading game assets from <a href="https://itch.io/">itch.io</a>. It accepts these arguments:</p>
+<ul>
+<li><code>gameUrl</code>: The store page URL of the game.</li>
+<li><code>upload</code>: The numerical ID of the asset to download. To find the upload ID of an asset, check the basename of the request URL when you download the asset using a browser.</li>
+<li><code>hash</code>.</li>
+<li><code>name</code> (optional): The derivation name, often the filename of the asset.</li>
+<li><code>extraMessage</code> (optional): Extra message printed if the API key is not provided or if the account did not purchase the game.</li>
+</ul>
+<p>For this fetcher to work, the environment variable <code>NIX_ITCHIO_API_KEY</code> must be set for the nix building process (which is nix-daemon in multi-user mode), and it must belong to an account that has bought the game if it is behind a paywall.
+To get your API key, go to the <a href="https://itch.io/user/settings/api-keys">&quot;API key&quot; section</a> of your account settings on itch.io.</p>
+<pre><code class="language-nix">{ fetchItchIo }:
+
+fetchItchIo {
+  name = &quot;DungeonDuelMonsters-linux-x64.zip&quot;;
+  hash = &quot;sha256-gq2nGwpaStqaVI1pL63xygxOI/z53o+zLwiKizG98Ks=&quot;;
+  gameUrl = &quot;https://mikaygo.itch.io/ddm&quot;;
+  upload = &quot;13371354&quot;;
+}
+</code></pre>
+        </main>
+      </div>
+    </section>
+<script defer src='highlight.pack.cf986678470772f7.js'></script>
+<script defer src='mmdoc.367f3e8986e40416.js'></script>
+<script defer src='mmdoc_search.a5b6fc7d7512cdc1.js' data-search-index='search_index.b3afff10081eb0bd.js' data-fuse='fuse.basic.min.bb997c989fa0a28e.js'></script>
+  </div>
+  </body>
+</html>

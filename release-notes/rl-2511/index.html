@@ -1,0 +1,1033 @@
+<!doctype html>
+<html lang='en'>
+  <head>
+    <base href='../../'>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <script>
+      (() => {
+        let theme = null
+        try { theme = localStorage.getItem('theme') } catch (error) {}
+        if (theme !== 'light' && theme !== 'dark')
+          theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+        document.documentElement.classList.add(theme + '-theme')
+      })()
+    </script>
+    <meta name='description' content='Nixpkgs 25.11 ("Xantusia", 2025.11/30)'>
+    <link rel='icon' href='favicon.svg'>
+    <link rel='stylesheet' href='a11y-dark.1fcafc9d9a306955.css'>
+    <link rel='stylesheet' href='a11y-light.b466309a7fa86b1f.css'>
+    <link rel='stylesheet' href='mmdoc.e4286053b6471af4.css'>
+    <title>Nixpkgs 25.11 ("Xantusia", 2025.11/30) | nixpkgs</title>
+  </head>
+  <body>
+  <a class='skip-link' href='release-notes/rl-2511/#main-content'>Skip to main content</a>
+  <input type='checkbox' id='sidebar-checkbox' aria-hidden='true' tabindex='-1' style='display: none;'>
+  <div class='body'>
+    <div class='nav-top-container'>
+    <nav class='nav-top' aria-label='Documentation controls'>
+      <button type='button' class='sidebar-toggle' aria-label='Toggle table of contents' aria-controls='sidebar' aria-expanded='true'></button>    <button type='button' class='search-toggle' aria-label='Open search' aria-controls='search-panel' aria-expanded='false'></button>    <button type='button' class='theme-toggle' aria-label='Switch to dark theme' aria-pressed='false'></button>    <a id='chapter-previous-button' class='chapter-previous' href='release-notes/rl-2605/#sec-nixpkgs-release-26.05' title='Nixpkgs 26.05 ("Yarara", 2026.05/30)' aria-label='Previous: Nixpkgs 26.05 ("Yarara", 2026.05/30)'>&lt;</a>
+    <a id='chapter-next-button' class='chapter-next' href='release-notes/rl-2505/#sec-nixpkgs-release-25.05' title='Nixpkgs 25.05 (2025.05/23)' aria-label='Next: Nixpkgs 25.05 (2025.05/23)'>&gt;</a>
+    </nav>
+    </div>
+    <nav id='sidebar' class='sidebar' aria-label='Table of contents'>
+<h1>Nixpkgs Manual</h1>
+<p>Version 26.11pre</p>
+<ul>
+<li><a href="./#preface">Preface</a>
+<ul>
+<li><a href="preface/#overview-of-nixpkgs">Overview of Nixpkgs</a></li>
+</ul>
+</li>
+<li><a href="first-package/#chap-first-package">Package your first application</a></li>
+</ul>
+<h2>Using Nixpkgs</h2>
+<ul>
+<li><a href="using/platform-support/#chap-platform-support">Platform Support</a></li>
+<li><a href="using/configuration/#chap-packageconfig">Global configuration</a></li>
+<li><a href="using/overlays/#chap-overlays">Overlays</a></li>
+<li><a href="using/overrides/#chap-overrides">Overriding</a></li>
+</ul>
+<h2>Nixpkgs Lib</h2>
+<ul>
+<li><a href="functions/#chap-functions">Functions reference</a>
+<ul>
+<li>Library Functions
+<ul>
+<li><a href="functions/library/asserts/#sec-functions-library-asserts">lib.asserts: assertion functions</a></li>
+<li><a href="functions/library/attrsets/#sec-functions-library-attrsets">lib.attrsets: attribute set functions</a></li>
+<li><a href="functions/library/strings/#sec-functions-library-strings">lib.strings: string manipulation functions</a></li>
+<li><a href="functions/library/versions/#sec-functions-library-versions">lib.versions: version string functions</a></li>
+<li><a href="functions/library/trivial/#sec-functions-library-trivial">lib.trivial: miscellaneous functions</a></li>
+<li><a href="functions/library/fixedPoints/#sec-functions-library-fixedPoints">lib.fixedPoints: explicit recursion functions</a></li>
+<li><a href="functions/library/lists/#sec-functions-library-lists">lib.lists: list manipulation functions</a></li>
+<li><a href="functions/library/debug/#sec-functions-library-debug">lib.debug: debugging functions</a></li>
+<li><a href="functions/library/options/#sec-functions-library-options">lib.options: NixOS / nixpkgs option handling</a></li>
+<li><a href="functions/library/path/#sec-functions-library-path">lib.path: path functions</a></li>
+<li><a href="functions/library/filesystem/#sec-functions-library-filesystem">lib.filesystem: filesystem functions</a></li>
+<li><a href="functions/library/fileset/#sec-functions-library-fileset">lib.fileset: file set functions</a></li>
+<li><a href="functions/library/sources/#sec-functions-library-sources">lib.sources: source filtering functions</a></li>
+<li><a href="functions/library/cli/#sec-functions-library-cli">lib.cli: command-line serialization functions</a></li>
+<li><a href="functions/library/gvariant/#sec-functions-library-gvariant">lib.gvariant: GVariant formatted string serialization functions</a></li>
+<li><a href="functions/library/fetchers/#sec-functions-library-fetchers">lib.fetchers: functions which can be reused across fetchers</a></li>
+<li><a href="functions/library/generators/#sec-functions-library-generators">lib.generators: functions that create file formats from nix data structures</a></li>
+<li><a href="functions/library/customisation/#sec-functions-library-customisation">lib.customisation: Functions to customise (derivation-related) functions, derivations, or attribute sets</a></li>
+<li><a href="functions/library/meta/#sec-functions-library-meta">lib.meta: functions for derivation metadata</a></li>
+<li><a href="functions/library/derivations/#sec-functions-library-derivations">lib.derivations: miscellaneous derivation-specific functions</a></li>
+<li><a href="functions/generators/#sec-generators">Generators</a></li>
+<li><a href="functions/debug/#sec-debug">Debugging Nix Expressions</a></li>
+<li><a href="functions/prefer-remote-fetch/#sec-prefer-remote-fetch">prefer-remote-fetch overlay</a></li>
+<li><a href="functions/nix-gitignore/#sec-pkgs-nix-gitignore">pkgs.nix-gitignore</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="module-system/module-system/#module-system">Module System</a></li>
+</ul>
+<h2>Standard Environment</h2>
+<ul>
+<li><a href="stdenv/#part-stdenv">Standard environment</a></li>
+<li><a href="stdenv/stdenv/#chap-stdenv">The Standard Environment</a></li>
+<li><a href="stdenv/meta/#chap-meta">Meta-attributes</a></li>
+<li><a href="stdenv/passthru/#chap-passthru">Passthru-attributes</a></li>
+<li><a href="stdenv/multiple-output/#chap-multiple-output">Multiple-output packages</a></li>
+<li><a href="stdenv/cross-compilation/#chap-cross">Cross-compilation</a></li>
+<li><a href="stdenv/platform-notes/#chap-platform-notes">Platform Notes</a></li>
+</ul>
+<h2>Toolchains</h2>
+<ul>
+<li><a href="toolchains/llvm/#chap-toolchains">The LLVM Toolchain</a></li>
+</ul>
+<h2>Builders</h2>
+<ul>
+<li><a href="build-helpers/#part-builders">Build helpers</a></li>
+<li><a href="build-helpers/fetchers/#chap-pkgs-fetchers">Fetchers</a></li>
+<li><a href="build-helpers/trivial-build-helpers/#chap-trivial-builders">Trivial build helpers</a></li>
+<li><a href="build-helpers/fixed-point-arguments/#chap-build-helpers-finalAttrs">Fixed-point arguments of build helpers</a></li>
+<li><a href="build-helpers/dev-shell-tools/#chap-devShellTools">Development Shell helpers</a></li>
+<li><a href="build-helpers/testers/#chap-testers">Testers</a></li>
+<li>Special build helpers
+<ul>
+<li><a href="build-helpers/special/fhs-environments/#sec-fhs-environments">buildFHSEnv</a></li>
+<li><a href="build-helpers/special/fakenss/#sec-fakeNss">fakeNss</a></li>
+<li><a href="build-helpers/special/makesetuphook/#sec-pkgs.makeSetupHook">pkgs.makeSetupHook</a></li>
+<li><a href="build-helpers/special/mkshell/#sec-pkgs-mkShell">pkgs.mkShell</a></li>
+<li><a href="packages/darwin-builder/#sec-darwin-builder">darwin.linux-builder</a></li>
+<li><a href="build-helpers/special/vm-tools/#sec-vm-tools">vmTools</a></li>
+</ul>
+</li>
+<li>Images
+<ul>
+<li><a href="build-helpers/images/appimagetools/#sec-pkgs-appimageTools">pkgs.appimageTools</a></li>
+<li><a href="build-helpers/images/dockertools/#sec-pkgs-dockerTools">pkgs.dockerTools</a></li>
+<li><a href="build-helpers/images/ocitools/#sec-pkgs-ociTools">pkgs.ociTools</a></li>
+<li><a href="build-helpers/images/portableservice/#sec-pkgs-portableService">pkgs.portableService</a></li>
+<li><a href="build-helpers/images/makediskimage/#sec-make-disk-image">&lt;nixpkgs/nixos/lib/make-disk-image.nix&gt;</a></li>
+<li><a href="build-helpers/images/binarycache/#sec-pkgs-binary-cache">pkgs.mkBinaryCache</a></li>
+</ul>
+</li>
+<li><a href="hooks/index/#chap-hooks">Hooks reference</a>
+<ul>
+<li><a href="hooks/autoconf/#setup-hook-autoconf">Autoconf</a></li>
+<li><a href="hooks/automake/#setup-hook-automake">Automake</a></li>
+<li><a href="hooks/autopatchelf/#setup-hook-autopatchelfhook">autoPatchelfHook</a></li>
+<li><a href="hooks/breakpoint/#breakpointhook">breakpointHook</a></li>
+<li><a href="hooks/cmake/#cmake">cmake</a></li>
+<li><a href="hooks/gdk-pixbuf/#setup-hook-gdk-pixbuf">gdk-pixbuf</a></li>
+<li><a href="hooks/ghc/#ghc">GHC</a></li>
+<li><a href="hooks/gnome/#gnome-platform">GNOME platform</a></li>
+<li><a href="hooks/installShellFiles/#installshellfiles">installShellFiles</a></li>
+<li><a href="hooks/libglycin/#libglycin-hooks">libglycin</a></li>
+<li><a href="hooks/libiconv/#libiconv-libintl">libiconv, libintl</a></li>
+<li><a href="hooks/libxml2/#setup-hook-libxml2">libxml2</a></li>
+<li><a href="hooks/meson/#meson">Meson</a></li>
+<li><a href="hooks/mpi-check-hook/#setup-hook-mpi-check">mpiCheckPhaseHook</a></li>
+<li><a href="hooks/ninja/#ninja">ninja</a></li>
+<li><a href="hooks/patch-rc-path-hooks/#sec-patchRcPathHooks">patchRcPath hooks</a></li>
+<li><a href="hooks/perl/#setup-hook-perl">Perl</a></li>
+<li><a href="hooks/pkg-config/#setup-hook-pkg-config">pkg-config</a></li>
+<li><a href="hooks/pnpm/#pnpm-build-hook">pnpmBuildHook</a></li>
+<li><a href="hooks/postgresql-test-hook/#sec-postgresqlTestHook">postgresqlTestHook</a></li>
+<li><a href="hooks/python/#setup-hook-python">Python</a></li>
+<li><a href="hooks/scons/#scons">scons</a></li>
+<li><a href="hooks/tetex-tex-live/#tetex-tex-live">teTeX / TeX Live</a></li>
+<li><a href="hooks/unzip/#unzip">unzip</a></li>
+<li><a href="hooks/validatePkgConfig/#validatepkgconfig">validatePkgConfig</a></li>
+<li><a href="hooks/versionCheckHook/#versioncheckhook">versionCheckHook</a></li>
+<li><a href="hooks/waf/#waf-hook">wafHook</a></li>
+<li><a href="hooks/xcbuild/#xcbuildhook">xcbuildHook</a></li>
+</ul>
+</li>
+<li><a href="languages-frameworks/index/#chap-language-support">Languages and frameworks</a>
+<ul>
+<li><a href="languages-frameworks/agda/#agda">Agda</a></li>
+<li><a href="languages-frameworks/android/#android">Android</a></li>
+<li><a href="languages-frameworks/astal/#astal">Astal</a></li>
+<li><a href="languages-frameworks/beam/#sec-beam">BEAM Languages (Erlang, Elixir &amp; LFE)</a></li>
+<li><a href="languages-frameworks/chicken/#sec-chicken">CHICKEN</a></li>
+<li><a href="languages-frameworks/cosmic/#sec-language-cosmic">COSMIC</a></li>
+<li><a href="languages-frameworks/crystal/#crystal">Crystal</a></li>
+<li><a href="languages-frameworks/cuda/#cuda">CUDA</a></li>
+<li><a href="languages-frameworks/cuelang/#cuelang">Cue (Cuelang)</a></li>
+<li><a href="languages-frameworks/dlang/#dlang">D (Dlang)</a></li>
+<li><a href="languages-frameworks/dart/#sec-language-dart">Dart</a></li>
+<li><a href="languages-frameworks/dhall/#sec-language-dhall">Dhall</a></li>
+<li><a href="languages-frameworks/dotnet/#dotnet">Dotnet</a></li>
+<li><a href="languages-frameworks/emscripten/#emscripten">Emscripten</a></li>
+<li><a href="languages-frameworks/factor/#sec-language-factor">Factor</a></li>
+<li><a href="languages-frameworks/gnome/#sec-language-gnome">GNOME</a></li>
+<li><a href="languages-frameworks/go/#sec-language-go">Go</a></li>
+<li><a href="languages-frameworks/gradle/#gradle">Gradle</a></li>
+<li><a href="languages-frameworks/hare/#sec-language-hare">Hare</a></li>
+<li><a href="languages-frameworks/haskell/#haskell">Haskell</a></li>
+<li><a href="languages-frameworks/hy/#sec-language-hy">Hy</a></li>
+<li><a href="languages-frameworks/idris/#idris">Idris</a></li>
+<li><a href="languages-frameworks/idris2/#sec-idris2">Idris2</a></li>
+<li><a href="languages-frameworks/ios/#ios">iOS</a></li>
+<li><a href="languages-frameworks/java/#sec-language-java">Java</a></li>
+<li><a href="languages-frameworks/javascript/#language-javascript">Javascript</a></li>
+<li><a href="languages-frameworks/julia/#language-julia">Julia</a></li>
+<li><a href="languages-frameworks/lean4/#sec-language-lean4">Lean 4</a></li>
+<li><a href="languages-frameworks/lisp/#lisp">lisp-modules</a></li>
+<li><a href="languages-frameworks/lua/#lua">Lua</a></li>
+<li><a href="languages-frameworks/maven/#maven">Maven</a></li>
+<li><a href="languages-frameworks/neovim/#neovim">Neovim</a></li>
+<li><a href="languages-frameworks/nim/#sec-language-nim">Nim</a></li>
+<li><a href="languages-frameworks/ocaml/#sec-language-ocaml">OCaml</a></li>
+<li><a href="languages-frameworks/octave/#sec-octave">Octave</a></li>
+<li><a href="languages-frameworks/perl/#sec-language-perl">Perl</a></li>
+<li><a href="languages-frameworks/php/#sec-php">PHP</a></li>
+<li><a href="languages-frameworks/pkg-config/#sec-pkg-config">pkg-config</a></li>
+<li><a href="languages-frameworks/python/#python">Python</a></li>
+<li><a href="languages-frameworks/qt/#sec-language-qt">Qt</a></li>
+<li><a href="languages-frameworks/r/#r">R</a></li>
+<li><a href="languages-frameworks/rocq/#sec-language-rocq">Rocq and rocq packages</a></li>
+<li><a href="languages-frameworks/ruby/#sec-language-ruby">Ruby</a></li>
+<li><a href="languages-frameworks/rust/#rust">Rust</a></li>
+<li><a href="languages-frameworks/scheme/#sec-scheme">Scheme</a></li>
+<li><a href="languages-frameworks/swift/#swift">Swift</a></li>
+<li><a href="languages-frameworks/tcl/#sec-language-tcl">Tcl</a></li>
+<li><a href="languages-frameworks/texlive/#sec-language-texlive">TeX Live</a></li>
+<li><a href="languages-frameworks/typst/#typst">Typst</a></li>
+<li><a href="languages-frameworks/vim/#vim">Vim</a></li>
+</ul>
+</li>
+<li><a href="packages/index/#chap-packages">Packages</a>
+<ul>
+<li><a href="packages/build-support/#sec-build-support">Build Support</a></li>
+<li><a href="packages/cataclysm-dda/#cataclysm-dark-days-ahead">Cataclysm: Dark Days Ahead</a></li>
+<li><a href="packages/citrix/#sec-citrix">Citrix Workspace</a></li>
+<li><a href="packages/dlib/#dlib">DLib</a></li>
+<li><a href="packages/eclipse/#sec-eclipse">Eclipse</a></li>
+<li><a href="packages/elm/#sec-elm">Elm</a></li>
+<li><a href="packages/emacs/#sec-emacs">Emacs</a></li>
+<li><a href="packages/firefox/#sec-firefox">Firefox</a></li>
+<li><a href="packages/fish/#sec-fish">Fish</a></li>
+<li><a href="packages/friction-graphics/#friction-graphics">Friction</a></li>
+<li><a href="packages/fuse/#sec-fuse">FUSE</a></li>
+<li><a href="packages/geant4/#geant4">Geant4</a></li>
+<li><a href="packages/ibus/#sec-ibus-typing-booster">ibus-engines.typing-booster</a></li>
+<li><a href="packages/inkscape/#sec-inkscape">Inkscape</a></li>
+<li><a href="packages/kakoune/#sec-kakoune">Kakoune</a></li>
+<li><a href="packages/krita/#sec-krita">Krita</a></li>
+<li><a href="packages/lhapdf/#lhapdf">LHAPDF</a></li>
+<li><a href="packages/linux/#sec-linux-kernel">Linux kernel</a></li>
+<li><a href="packages/locales/#locales">Locales</a></li>
+<li><a href="packages/etc-files/#etc">/etc files</a></li>
+<li><a href="packages/nginx/#sec-nginx">Nginx</a></li>
+<li><a href="packages/nrfutil/#sec-nrfutil">nrfutil</a></li>
+<li><a href="packages/opengl/#sec-opengl">OpenGL</a></li>
+<li><a href="packages/python-tree-sitter/#python-tree-sitter">Python Tree Sitter</a></li>
+<li><a href="packages/shell-helpers/#sec-shell-helpers">Interactive shell helpers</a></li>
+<li><a href="packages/steam/#sec-steam">Steam</a></li>
+<li><a href="packages/treefmt/#treefmt">treefmt</a></li>
+<li><a href="packages/urxvt/#sec-urxvt">Urxvt</a></li>
+<li><a href="packages/uv/#sec-uv">uv</a></li>
+<li><a href="packages/vcpkg/#sec-vcpkg">VCPKG</a></li>
+<li><a href="packages/weechat/#sec-weechat">WeeChat</a></li>
+</ul>
+</li>
+</ul>
+<h2>Modules</h2>
+<ul>
+<li><a href="modules/index/#modules">Modules</a>
+<ul>
+<li><a href="modules/generic/#modules-generic">Generic</a>
+<ul>
+<li><a href="modules/generic/#modules-generic-meta-maintainers">meta-maintainers.nix</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2>Development of Nixpkgs</h2>
+<ul>
+<li><a href="development/opening-issues/#sec-opening-issues">Opening issues</a></li>
+<li><a href="contributing/coding-conventions/#chap-conventions">Coding conventions</a></li>
+</ul>
+<h2>Interoperability Standards</h2>
+<ul>
+<li><a href="interoperability/cyclonedx/#chap-interop-cyclonedx">CycloneDX</a>
+<ul>
+<li><a href="interoperability/cyclonedx/#sec-interop.cylonedx-nix"><code>nix</code> namespace</a></li>
+<li><a href="interoperability/cyclonedx/#sec-interop.cylonedx-narinfo"><code>nix:narinfo</code></a></li>
+<li><a href="interoperability/cyclonedx/#sec-interop.cylonedx-fod"><code>nix:fod</code></a></li>
+</ul>
+</li>
+</ul>
+<h2>Release Notes</h2>
+<ul>
+<li><a href="release-notes/release-notes/#chap-release-notes">Release Notes</a>
+<ul>
+<li><a href="release-notes/rl-2611/#sec-nixpkgs-release-26.11">Nixpkgs 26.11 (&quot;Zokor&quot;, 2026.11/??)</a></li>
+<li><a href="release-notes/rl-2605/#sec-nixpkgs-release-26.05">Nixpkgs 26.05 (&quot;Yarara&quot;, 2026.05/30)</a></li>
+<li><a href="release-notes/rl-2511/#sec-nixpkgs-release-25.11">Nixpkgs 25.11 (&quot;Xantusia&quot;, 2025.11/30)</a></li>
+<li><a href="release-notes/rl-2505/#sec-nixpkgs-release-25.05">Nixpkgs 25.05 (2025.05/23)</a></li>
+</ul>
+</li>
+</ul>
+    </nav>
+    <section id='main'>
+      <div id='search-panel' class='nav-search' role='search' hidden>
+        <label class='visually-hidden' for='search'>Search documentation</label>
+        <input type='search' id='search' placeholder='Search' autocomplete='off' aria-controls='search-results'>
+        <p id='search-status' class='visually-hidden' role='status' aria-live='polite'></p>
+        <div id='search-results'></div>
+      </div>
+      <div class='main-scroll'>
+        <main id='main-content' tabindex='-1'>
+<h1 id='sec-nixpkgs-release-25.11'><a href='release-notes/rl-2511/#sec-nixpkgs-release-25.11'>
+Nixpkgs 25.11 (&quot;Xantusia&quot;, 2025.11/30)
+</a></h1>
+<h2 id='sec-nixpkgs-release-25.11-highlights'><a href='release-notes/rl-2511/#sec-nixpkgs-release-25.11-highlights'>
+Highlights
+</a></h2>
+<!-- To avoid merge conflicts, consider adding your item at an arbitrary place in the list instead. -->
+<ul>
+<li>
+<p>The initial work to support native compilation on LoongArch64 has completed, with further changes currently
+in preparation. In accordance with the <a href="https://github.com/loongson/la-softdev-convention">Software Development and Build Convention for LoongArch Architectures</a>,
+this release sets the default march level to <code>la64v1.0</code>, covering the desktop and server processors of 3X5000
+and newer series. However, embedded chips without LSX (Loongson SIMD eXtension), such as 2K0300 SoC, are not
+supported. <code>pkgsCross.loongarch64-linux-embedded</code> can be used to build software and systems for these platforms.</p>
+</li>
+<li>
+<p>The official Nix formatter <code>nixfmt</code> is now stable and available as <code>pkgs.nixfmt</code>, deprecating the temporary <code>pkgs.nixfmt-rfc-style</code> attribute. The classic <code>nixfmt</code> will stay available for some more time as <code>pkgs.nixfmt-classic</code>.</p>
+</li>
+<li>
+<p>The default GHC version has been updated from 9.8 to 9.10.
+<code>haskellPackages</code> correspondingly uses Stackage LTS 24 (instead of LTS 23) as a baseline.</p>
+</li>
+<li>
+<p><strong>This release of Nixpkgs requires macOS Sonoma 14.0 or newer, as announced in the 25.05 release notes.</strong>
+The default SDK is now 14.4, but the minimum version is 14.0.
+<code>cc-wrapper</code> will enforce that availability annotations are used or an appropriate deployment target is set.
+See the Darwin platform notes for details.</p>
+</li>
+<li>
+<p><strong>We expect to drop support for <code>x86_64-darwin</code> by Nixpkgs 26.11,</strong> in light of Apple’s announcement that macOS 26 will be the final version to support Intel Macs.
+When support is fully removed, we will no longer build packages for the platform or guarantee that it can build at all.
+This may happen in stages, depending on our available build and maintenance resources and decisions made by projects we rely on.</p>
+<p>By the time of 26.11’s release, Homebrew will offer only limited <a href="https://docs.brew.sh/Support-Tiers#tier-3">Tier 3</a> support for the platform, but MacPorts will likely continue to support it for a long time.
+We also recommend users consider installing NixOS, which should continue to run on essentially all Intel Macs, especially after Apple stops security support for macOS 26 in 2028.</p>
+</li>
+<li>
+<p>Darwin has switched to using the system libc++. This was done for improved compatibility and to avoid ODR violations.
+If a newer C++ library feature is not available on the default deployment target, you will need to increase the deployment target.
+See the Darwin platform documentation for more details.</p>
+</li>
+<li>
+<p>LLVM has been updated from 19 to 21.</p>
+</li>
+</ul>
+<h2 id='sec-nixpkgs-release-25.11-incompatibilities'><a href='release-notes/rl-2511/#sec-nixpkgs-release-25.11-incompatibilities'>
+Backward Incompatibilities
+</a></h2>
+<!-- To avoid merge conflicts, consider adding your item at an arbitrary place in the list instead. -->
+<ul>
+<li>
+<p><code>adminneo</code> has been updated to version 5.1.1. Version 5 breaks compatibility with <code>adminer</code> and changes how plugins and configuration work. See the <a href="https://www.adminneo.org/upgrade#v5.0.0">Upgrade Guide</a> for details. Those changes also led to changes in the arguments of the package.</p>
+</li>
+<li>
+<p><code>android-udev-rules</code> has been removed, as it is effectively superseded by built-in uaccess rules in systemd.</p>
+</li>
+<li>
+<p><code>ansible-later</code> has been removed because it was discontinued by the author.</p>
+</li>
+<li>
+<p><code>asciidoctor-with-extension</code> had its <code>asciidoctor-mathematical</code> extension removed, because it fails to build, and it is not maintained properly.</p>
+</li>
+<li>
+<p><code>base16-builder</code> node package has been removed due to lack of upstream maintenance.</p>
+</li>
+<li>
+<p><code>budgie-desktop</code> has been updated to <a href="https://github.com/BuddiesOfBudgie/budgie-desktop/releases/tag/v10.9.4">10.9.4</a>. This changes <code>XDG_CURRENT_DESKTOP</code> from <code>Budgie:GNOME</code> to <code>Budgie</code> and contains ABI bumps for libpeas2 migration.</p>
+</li>
+<li>
+<p><code>buildGoModule</code> removes the compatibility layer of <code>CGO_ENABLED</code> not specified via <code>env</code>.
+Specifying <code>CGO_ENABLED</code> directly now results in an error.</p>
+</li>
+<li>
+<p><code>buildGoModule</code> now warns if <code>&lt;pkg&gt;.passthru.overrideModAttrs</code> is lost during the overriding of its result packages.</p>
+</li>
+<li>
+<p><code>cardboard</code> has been removed due to the package having been broken since at least November 2024.</p>
+</li>
+<li>
+<p><code>carla</code> no longer supports <code>gtk2</code> override.</p>
+</li>
+<li>
+<p><code>chatgpt-retrieval-plugin</code> has been removed due to the package having been broken since at least November 2024.</p>
+</li>
+<li>
+<p><code>conduwuit</code> was removed due to upstream ceasing development and deleting their repository. For existing data, a migration to <code>matrix-conduit</code>, <code>matrix-continuwuity</code> or <code>matrix-tuwunel</code> may be possible.</p>
+</li>
+<li>
+<p><code>conftest</code> since <code>0.60.0</code> has moved to use rego <code>v1</code> as default. To continue using <code>v0</code> use <code>--rego-version v0</code>. For more information about upgrading to Rego v1 syntax, see the <a href="https://www.openpolicyagent.org/docs/latest/v0-upgrade/">upstream docs</a>.</p>
+</li>
+<li>
+<p>CUDA versions below 12.6 have been removed, as they are unmaintained upstream and depend on end‐of‐life compilers.</p>
+</li>
+<li>
+<p><code>cudaPackages.cudatoolkit-legacy-runfile</code> has been removed.</p>
+</li>
+<li>
+<p><code>ddccontrol</code> service now enables <code>hardware.i2c</code> by default, and adds <code>ddcci_backlight</code> to the kernel modules, based on <a href="https://discourse.nixos.org/t/brightness-control-of-external-monitors-with-ddcci-backlight/8639/">experiences reported on discourse</a>.</p>
+</li>
+<li>
+<p><code>deadbeef</code> no longer supports <code>gtk2</code>.</p>
+</li>
+<li>
+<p>Derivations setting both <code>separateDebugInfo</code> and one of <code>allowedReferences</code>, <code>allowedRequisites</code>, <code>disallowedReferences</code> or <code>disallowedRequisites</code> must now set <code>__structuredAttrs</code> to <code>true</code>. The effect of reference whitelisting or blacklisting will be disabled on the <code>debug</code> output created by <code>separateDebugInfo</code>.</p>
+</li>
+<li>
+<p><code>emacs-macport</code> has been moved to a fork of Mitsuharu Yamamoto's patched source code starting with Emacs v30 as the original project seems to be currently dormant. All older versions of this package have been dropped.
+This introduces some backwards‐incompatible changes; see the NEWS for details.
+NEWS can be viewed from Emacs by typing <code>C-h n</code>, or by clicking <code>Help-&gt;Emacs News</code> from the menu bar.
+It can also be browsed <a href="https://git.savannah.gnu.org/cgit/emacs.git/tree/etc/NEWS?h=emacs-30">online</a>.</p>
+</li>
+<li>
+<p>Everything related to <code>bower</code> was removed, as it is deprecated and not used by anything in nixpkgs.</p>
+</li>
+<li>
+<p><code>fetchFromBitBucket</code> has gained a <code>fetchgit</code> backend when passing in git-related arguments similar to <code>fetchFromGitHub</code>.</p>
+</li>
+<li>
+<p><code>fetchtorrent</code>, when using the &quot;rqbit&quot; backend, erroneously started fetching files into a subdirectory in Nixpkgs 24.11.  The original behaviour – which matches the behaviour using the &quot;transmission&quot; backend – has now been restored. Users reliant on the erroneous behaviour can temporarily maintain it by adding <code>flatten = false</code> to the <code>fetchtorrent</code> arguments; Nix will produce an evaluation warning for anyone using <code>backend = &quot;rqbit&quot;</code> without <code>flatten = true</code>.</p>
+</li>
+<li>
+<p><code>floorp</code> has been replaced with a binary build, available as <code>floorp-bin</code>. Due to major changes in the upstream project structure and build system, building Floorp from source has become unfeasible. No configuration or state migration is necessary.</p>
+</li>
+<li>
+<p><code>forgejo</code> main program has been renamed to <code>bin/forgejo</code> from the previous <code>bin/gitea</code>.</p>
+</li>
+<li>
+<p>GCC 9, 10, 11, and 12 have been removed, as they have reached end‐of‐life upstream and are no longer supported.</p>
+</li>
+<li>
+<p><code>gentium</code> package now provides <code>Gentium-*.ttf</code> files, and not <code>GentiumPlus-*.ttf</code> files like before. The font identifiers <code>Gentium Plus*</code> are available in the <code>gentium-plus</code> package. If you want to use the more recently updated package <code>gentium</code> <a href="https://software.sil.org/gentium/">by SIL</a>, you should update your configuration files to use the <code>Gentium</code> font identifier.</p>
+</li>
+<li>
+<p>GHCJS 8.10, exposed via <code>haskell.compiler.ghcjs</code> and <code>haskell.compiler.ghcjs810</code>, has been removed. Downstream users should migrate their projects to the new JavaScript backend of GHC proper which can be used via <code>pkgsCross.ghcjs</code> from Nixpkgs. Haskell packaging code, like <code>haskellPackages.mkDerivation</code>, <code>ghcWithPackages</code> and <code>hoogleWithPackages</code>, also no longer supports GHCJS.</p>
+</li>
+<li>
+<p>GHC 8.6, 8.10, 9.0, 9.2, and their package sets have been removed.</p>
+</li>
+<li>
+<p><code>gnome-keyring</code> no longer ships with an SSH agent anymore because it has been deprecated upstream. You should use <code>gcr_4</code> instead, which provides the same features. More information on why this was done can be found on <a href="https://gitlab.gnome.org/GNOME/gcr/-/merge_requests/67">the relevant GCR upstream PR</a>.</p>
+</li>
+<li>
+<p><code>go-mockery</code> has been updated to v3. For migration instructions see the <a href="https://vektra.github.io/mockery/latest/v3/">upstream documentation</a>. If v2 is still required <code>go-mockery_v2</code> has been added but will be removed on or before 2029-12-31 in-line with its <a href="https://vektra.github.io/mockery/">upstream support lifecycle</a>.</p>
+</li>
+<li>
+<p><code>gradience</code> has been removed because it was archived upstream.</p>
+</li>
+<li>
+<p>Greetd and its original greeters (<code>tuigreet</code>, <code>gtkgreet</code>, <code>qtgreet</code>, <code>regreet</code>, <code>wlgreet</code>) were moved from <code>greetd</code> namespace to top level (<code>greetd.tuigreet</code> -&gt; <code>tuigreet</code>, <code>greetd.greetd</code> -&gt; <code>greetd</code>, etc). The original attrs are available for compatibility as passthrus of <code>greetd</code>, but will emit a warning. They will be removed in future releases.</p>
+</li>
+<li>
+<p><code>haskellPackages</code> and the package sets under <code>haskell.packages</code> no longer expose an <code>llvmPackages</code> attribute,
+though it can still be accessed via <code>ghc.llvmPackages</code> (from the same package set).
+Haskell packages usually only need to depend on an LLVM version matching GHC if they force the use the LLVM
+backend even if NCG is available. In this case, it is best to use the <code>forceLlvmCodegenBackend</code> helper.
+In all other cases, like linking against <code>libLLVM</code>, Haskell packages should use the appropriate version of <code>llvmPackages</code> from <code>pkgs</code>.</p>
+</li>
+<li>
+<p><code>hiawata</code> has been removed, due to lack of active development upstream, lack of maintainership downstream and upcoming security issues.</p>
+</li>
+<li>
+<p><code>hsd</code> has been upgraded to version 8. See <a href="https://github.com/handshake-org/hsd/blob/v8.0.0/docs/release-notes/release-notes-8.x.md">their changelog</a> for important instructions before upgrading.</p>
+</li>
+<li>
+<p><code>inspircd</code> has been updated to the v4 release series. Please refer to the upstream documentation for <a href="https://docs.inspircd.org/4/overview/#v4-overview">general information</a> and a list of <a href="https://docs.inspircd.org/4/breaking-changes/">breaking changes</a>.</p>
+</li>
+<li>
+<p><code>installShellFiles</code> now allows <code>installManPage</code> to take a piped input, add the <code>--name</code> flag for renaming the file when installed. You can also append <code>--</code> to opt-out of all subsequent parsing.</p>
+</li>
+<li>
+<p><code>kbd</code> package's <code>outputs</code> now include a <code>man</code> and <code>scripts</code> outputs. The <code>unicode_start</code> and <code>unicode_stop</code> Bash scripts are now part of the <code>scripts</code> output, allowing most usages of the <code>kbd</code> package to not pull in <code>bash</code>.</p>
+</li>
+<li>
+<p><code>k2pdfopt</code> has been removed, as it's broken.</p>
+</li>
+<li>
+<p><code>k3s</code> airgap images <code>passthru</code> attributes have changed:</p>
+<ul>
+<li><code>imagesList</code> was removed</li>
+<li><code>airgapImages</code> was renamed to <code>airgap-images</code></li>
+<li><code>airgapImagesAmd64</code> was renamed to <code>airgap-images-amd64-tar-zst</code></li>
+<li><code>airgapImagesArm64</code> was renamed to <code>airgap-images-arm64-tar-zst</code></li>
+<li><code>airgapImagesArm</code> was renamed to <code>airgap-images-arm-tar-zst</code></li>
+</ul>
+</li>
+<li>
+<p>LLVM 12, 13, 14, 15, 16, and 17 have been removed, as they have reached end‐of‐life upstream and are no longer supported.</p>
+</li>
+<li>
+<p><code>lima</code> package now only includes the guest agent for the host's architecture by default. If your guest VM's architecture differs from your Lima host's, you'll need to enable the <code>lima-additional-guestagents</code> package by setting <code>withAdditionalGuestAgents = true</code> when overriding lima with this input.</p>
+</li>
+<li>
+<p><code>libpinyin</code>, which is used for Chinese character input, has migrated from the unmaintained BDB database format to the newer KyotoCabinet database format. If you want to migrate your user input statistics, you can consider using <a href="https://codeberg.org/raboof/bdbtokyotodb">bdbtokyotodb</a>.</p>
+</li>
+<li>
+<p><code>linux</code> and all other Linux kernel packages have moved all in-tree kernel modules into a new <code>modules</code> output.</p>
+</li>
+<li>
+<p><code>lxde</code> scope has been removed, and its packages have been moved to the top-level.</p>
+</li>
+<li>
+<p><code>mariadb</code> now defaults to <code>mariadb_114</code> instead of <code>mariadb_1011</code>, meaning the default version was upgraded from 10.11.x to 11.4.x. See the <a href="https://mariadb.com/kb/en/upgrading-from-mariadb-10-11-to-mariadb-11-4/">upgrade notes</a> for potential issues.</p>
+</li>
+<li>
+<p><code>mealie</code> has been updated to 3.0.2: This update introduces breaking changes in some API endpoints (see the <a href="https://github.com/mealie-recipes/mealie/releases/tag/v3.0.0">release changelog</a>).</p>
+</li>
+<li>
+<p><code>meilisearch_1_11</code> has been removed, as it is no longer supported.</p>
+</li>
+<li>
+<p><code>moar</code> has been updated from <code>1.33.0</code> to <code>2.0.0</code>, and renamed to <code>moor</code> following an upstream decision. See the <a href="https://github.com/walles/moor/releases/tag/v2.0.0">release notes</a> for more.</p>
+</li>
+<li>
+<p><code>mongodb-6_0</code> was removed as it is end of life as of 2025-07-31.</p>
+</li>
+<li>
+<p><code>mono4</code> and <code>mono5</code> have been removed. Use <code>mono6</code> or <code>mono</code> instead.</p>
+</li>
+<li>
+<p><code>mx-puppet-discord</code> was removed from Nixpkgs along with its NixOS module as it was unmaintained and was the only user of sha1 hashes in tree.</p>
+</li>
+<li>
+<p><code>navidrome</code> 0.58.0 introduces <a href="https://www.navidrome.org/docs/usage/multi-library/">multi-library support</a>
+and backwards incompatible database migrations. Ensure backups are valid and run a Full Scan after
+starting the new version.</p>
+</li>
+<li>
+<p>NetBox was updated to <code>&gt;= 4.4.0</code>. You should review the breaking changes
+of the <a href="https://github.com/netbox-community/netbox/releases/tag/v4.3.0">4.3 release</a>
+the <a href="https://github.com/netbox-community/netbox/releases/tag/v4.4.0">4.4 release</a>,
+make the required changes to your database (if needed), and then upgrade by setting <code>services.netbox.package = pkgs.netbox_4_4;</code> in your configuration.</p>
+</li>
+<li>
+<p><code>neovimUtils.makeNeovimConfig</code> now uses <code>customLuaRC</code> parameter instead of accepting <code>luaRcContent</code>. The old usage is deprecated but still works with a warning.</p>
+</li>
+<li>
+<p><code>nixVersions.nix_2_3</code> has been dropped because it was insecure and unmaintained.</p>
+</li>
+<li>
+<p><code>nodePackages.rimraf</code> has been removed, as it is a Javascript library, and packages that want to use it should depend directly on it instead.</p>
+</li>
+<li>
+<p><code>notary</code> has been removed because it was <a href="https://github.com/notaryproject/.github/issues/70">archived upstream</a>. Upstream recommends <a href="https://github.com/notaryproject/notation/"><code>notation</code></a> instead.</p>
+</li>
+<li>
+<p><code>nuget-to-nix</code> has been removed as it was deprecated in favor of <code>nuget-to-json</code>. Out-of-tree packages that were using <code>nuget-to-nix</code> should migrate to use <code>nuget-to-json</code> instead for generating .NET dependency lock files.</p>
+</li>
+<li>
+<p><code>odoo16</code> has been dropped due to end of support by upstream, consider upgrading supported version.</p>
+</li>
+<li>
+<p><code>oink</code> service no longer accepts <code>settings.apiKey</code> and <code>settings.secretApiKey</code> options as these have been replaced by <code>apiKeyFile</code> and <code>secretApiKeyFile</code>.</p>
+</li>
+<li>
+<p><code>opensoldat</code> binaries and user configuration directory names have been prefixed by 'open', becoming opensoldat and opensoldatserver. Configuration will be moved automatically before launch when possible.</p>
+</li>
+<li>
+<p><code>orjail</code> package has been removed as it is broken by the latest firejail release and seems unmaintained.</p>
+</li>
+<li>
+<p><code>python3Packages.bugwarrior</code> has been updated to major version 2.0.0 which will likely require manual intervention. See <a href="https://github.com/GothenburgBitFactory/bugwarrior/releases/tag/2.0.0">release notes</a>.</p>
+</li>
+<li>
+<p><code>pcp</code> has been removed because the upstream repo was archived and it hasn't been updated since 2021.</p>
+</li>
+<li>
+<p><code>podofo</code> has been updated from <code>0.9.8</code> to <code>1.0.0</code>. These releases are by nature very incompatible due to major API changes. The legacy versions can be found under <code>podofo_0_10</code> and <code>podofo_0_9</code>.
+Changelog: <a href="https://github.com/podofo/podofo/blob/1.0.0/CHANGELOG.md">https://github.com/podofo/podofo/blob/1.0.0/CHANGELOG.md</a>, API-Migration-Guide: <a href="https://github.com/podofo/podofo/blob/1.0.0/API-MIGRATION.md">https://github.com/podofo/podofo/blob/1.0.0/API-MIGRATION.md</a>.</p>
+</li>
+<li>
+<p><code>privatebin</code> has been updated to <code>2.0.0</code>. This release changes configuration defaults including switching the template and removing legacy features. See the <a href="https://github.com/PrivateBin/PrivateBin/releases/tag/2.0.0">v2.0.0 changelog entry</a> for details on how to upgrade.</p>
+</li>
+<li>
+<p><a href="https://github.com/zylon-ai/private-gpt">private-gpt</a> service has been removed by lack of maintenance upstream.</p>
+</li>
+<li>
+<p><code>proton-caller</code> has been removed due to lack of upstream maintenance.</p>
+</li>
+<li>
+<p><code>prometheus-script-exporter</code> has been updated to use a new maintained alternative. This release updates from <code>1.2.0 -&gt; 3.0.1</code> and largely changes configuration options formats from json to yaml, among other changes.</p>
+</li>
+<li>
+<p><code>pulsemeeter</code> has been updated to <code>2.0.0</code>. The configuration file from older versions has to be deleted. For more information and instructions see the <a href="https://github.com/theRealCarneiro/pulsemeeter/releases/tag/v2.0.0">v2.0.0 changelog entry</a>.</p>
+</li>
+<li>
+<p><code>purple-matrix</code> has been removed, since it has been unmaintained since April 2022 and upstream does not recommend using it anymore.</p>
+</li>
+<li>
+<p><code>python3Full</code> and its versioned attributes (python3xxFull) have been removed. Bluetooth support is now enabled in the default python3 attributes. The X11 support built the tkinter module, which is available as a dedicated attribute on the package set.</p>
+</li>
+<li>
+<p><code>python3Packages.bjoern</code> has been removed, as the upstream is unmaintained and it depends on a 14-year-old version of http-parser with numerous vulnerabilities.</p>
+</li>
+<li>
+<p><code>python3Packages.duckduckgo-search</code> has been updated to v9+ and renamed to <code>python3Packages.ddgs</code>.
+See <a href="https://github.com/deedy5/ddgs/releases/tag/v9.0.0">release note for v9.0.0</a>.</p>
+</li>
+<li>
+<p><code>python3Packages.heif-image-plugin</code> has been dropped due to lack of upstream maintenance and breakage. Use <code>python3Packages.pillow-heif</code> instead.</p>
+</li>
+<li>
+<p><code>python3Packages.triton</code> no longer takes an <code>enableRocm</code> argument and supports ROCm in all build configurations via runtime binding. In most cases no action will be needed. If triton is unable to find the HIP SDK add <code>rocmPackages.clr</code> as a build input or set the environment variable <code>HIP_PATH=&quot;${rocmPackages.clr}&quot;</code>.</p>
+</li>
+<li>
+<p><code>python3Packages.pyheif</code> has been dropped due to lack of upstream maintenance and breakage. Use <code>python3Packages.pillow-heif</code> instead.</p>
+</li>
+<li>
+<p><code>python3Packages.pyocr</code> no longer supports <code>cuneiform</code> on Linux by default. It is still possible to enable it using <code>withCuneiformSupport</code> override.</p>
+</li>
+<li>
+<p><code>qt5.full</code> and <code>qt6.full</code> aliases have been removed. Their use has always been discouraged, and downstream projects should use <code>qtN.env</code> with the right set of packages.</p>
+</li>
+<li>
+<p><code>rabbitmq-server</code> has been updated from 4.0.9 to 4.1.4. The 4.1.0 release includes breaking changes. For more information read the <a href="https://github.com/rabbitmq/rabbitmq-server/releases/tag/v4.1.0">changelog of 4.1.0</a>.</p>
+</li>
+<li>
+<p><code>reaction</code> has been updated to version 2, which includes some breaking changes.
+For more information, <a href="https://blog.ppom.me/en-reaction-v2">check the release article</a>.</p>
+</li>
+<li>
+<p><code>renovate</code> was updated to v41. See the upstream release notes for <a href="https://github.com/renovatebot/renovate/releases/tag/40.0.0">v40</a> and <a href="https://github.com/renovatebot/renovate/releases/tag/41.0.0">v41</a> for breaking changes.</p>
+</li>
+<li>
+<p><code>river</code> 0.3.x has been renamed to <code>river-classic</code> following an upstream decision.</p>
+</li>
+<li>
+<p><code>rocmPackages.triton</code> has been removed in favor of <code>python3Packages.triton</code>.</p>
+</li>
+<li>
+<p><code>rofi</code> has been updated to <code>2.0.0</code>. <code>rofi-wayland</code> and <code>rofi-wayland-unwrapped</code> have been merged into <code>rofi</code> and <code>rofi-unwrapped</code> respectively. For more information and instructions see the <a href="https://github.com/davatorium/rofi/releases/tag/2.0.0">v2.0.0 changelog entry</a>.</p>
+</li>
+<li>
+<p><code>rofi-emoji-wayland</code> has been merged into <code>rofi-emoji</code> as <code>rofi</code> has been updated to <code>2.0.0</code> and supports both X11 &amp; Wayland.</p>
+</li>
+<li>
+<p><code>sail-riscv</code> 0.8 follows <a href="https://github.com/riscv/sail-riscv/blob/7cc4620eb1a57bfe04832baccdcf5727e9459bd4/doc/ChangeLog.md">upstream</a> and provides only a single binary, <code>sail_riscv_sim</code>.</p>
+</li>
+<li>
+<p><code>sing-box</code> has been updated to 1.12.3, which includes a number of breaking changes, old configurations may need updating or they will cause the tool to fail to run.
+See the <a href="https://sing-box.sagernet.org/changelog/#1123">change log</a> for details and <a href="https://sing-box.sagernet.org/migration/#1120">migration</a> for how to update old configurations.</p>
+</li>
+<li>
+<p><code>space-orbit</code> package has been removed due to lack of upstream maintenance. Debian upstream stopped tracking it in 2011.</p>
+</li>
+<li>
+<p><code>spidermonkey_91</code> has been removed, as it has been EOL since September 2022.</p>
+</li>
+<li>
+<p><code>stalwart-mail</code> since <code>0.13.0</code> &quot;introduces a significant redesign of the MTA’s delivery and queueing subsystem&quot;. See <a href="https://github.com/stalwartlabs/stalwart/blob/89b561b5ca1c5a11f2a768b4a2cfef0f473b7a01/UPGRADING.md#upgrading-from-v012x-and-v011x-to-v013x">the upgrading announcement for the <code>0.13.0</code> release</a>.</p>
+</li>
+<li>
+<p><code>stdenv.mkDerivation</code> and other derivation builders that use it no longer allow the value of <code>env</code> to be anything but an attribute set, for the purpose of setting environment variables that are available to the <a href="https://nix.dev/manual/nix/latest/store/derivation/#builder">builder</a> process. An environment variable called <code>env</code> can still be provided by means of <code>mkDerivation { env.env = ...; }</code>, though we recommend to use a more specific name than &quot;env&quot;.</p>
+</li>
+<li>
+<p><code>steamcontroller</code> has been removed due to lack of upstream maintenance. Consider using <code>sc-controller</code> instead.</p>
+</li>
+<li>
+<p><code>sublime-music</code> has been removed because upstream has announced it is no longer maintained. Upstream suggests using <code>supersonic</code> instead.</p>
+</li>
+<li>
+<p>Support for bootstrapping native GHC compilers on 32‐bit ARM and little‐endian 64-bit PowerPC has been dropped.
+The latter was probably broken anyway.
+If there is interest in restoring support for these architectures, it should be possible to cross‐compile a bootstrap GHC binary.</p>
+</li>
+<li>
+<p><code>telegram-desktop</code> packages now uses <code>Telegram</code> for its binary. The previous name was <code>telegram-desktop</code>. This is due to <a href="https://github.com/telegramdesktop/tdesktop/commit/56ff5808a3d766f892bc3c3305afb106b629ef6f">an upstream decision</a> to make the name consistent with other platforms.</p>
+</li>
+<li>
+<p><code>teleport</code> has been upgraded from major version 17 to major version 18.
+Refer to <a href="https://goteleport.com/docs/upgrading/overview/">upstream upgrade instructions</a>
+and <a href="https://goteleport.com/docs/changelog/#1800-070325">release notes for v18</a>.</p>
+</li>
+<li>
+<p>The <code>asterisk-lts</code> package was changed to v22 from v18. The default <code>asterisk</code> package was changed to v22 from v20. Asterisk version 18 has been dropped due to being EOL. The <code>asterisk-stable</code> (v20) package was unchanged. You may need to update /var/lib/asterisk to match the template files in <code>${asterisk-...}/var/lib/asterisk</code>.</p>
+</li>
+<li>
+<p>The <code>archipelago-minecraft</code> package was removed, as upstream no longer provides support for the Minecraft APWorld.</p>
+</li>
+<li>
+<p>The default Android NDK version has been raised to 27, and the default SDK version to 35.
+NDK 21–26 have been removed, as they are end‐of‐life.</p>
+</li>
+<li>
+<p>The default glibc ELF ABI for the powerpc64-linux platform has been changed from ELFv2 back to ELFv1, due to the latter having less remaining issues when bootstrapping &amp; building Nixpkgs packages on hardware.
+If glibc ELFv2 is desired, use a fuller target triplet like <code>powerpc64-unknown-linux-gnuabielfv2</code> or the provided <code>ppc64-elfv2</code> platform example.</p>
+</li>
+<li>
+<p>The <code>ghcInfo</code> and <code>controlPhases</code> functions have been removed from <code>haskell.lib.compose</code> and <code>haskell.lib</code>. They were unused and would return incorrect results.</p>
+<ul>
+<li>Instead of using <code>controlPhases</code>, the <code>doCheck</code> attribute of derivations can be accessed which is more accurate. <code>doBenchmark</code> can't be introspected at the moment.</li>
+<li>To detect cross compilation, the relevant platforms exposed by <code>stdenv</code> should be compared instead of using <code>ghcInfo</code>.</li>
+<li>Nixpkgs no longer packages any <code>ghcjs</code> compiler.</li>
+<li>To find a suitable <code>nativeGhc</code>, <code>buildHaskellPackages</code> should be used. <code>ghcInfo</code> would use <code>ghc.bootPkgs.ghc</code> if cross compiling,
+and the given <code>ghc</code> otherwise. This approach is not recommended since it results in mismatched GHC versions.</li>
+</ul>
+</li>
+<li>
+<p>The <code>haskellPackages.mkDerivation</code> builder now converts packages' cabal files to Unix line endings before <code>patchPhase</code>. This behavior can be disabled using <code>dontConvertCabalFileToUnix</code>.</p>
+</li>
+<li>
+<p>The default <code>kops</code> version is now 1.33.0 and versions 1.30 and older have been dropped. See <a href="https://kops.sigs.k8s.io/tutorial/upgrading-kubernetes/">Upgrading Kubernetes</a> for instructions on how to update kOps.</p>
+</li>
+<li>
+<p>The license of duckstation has changed from <code>gpl3Only</code> to <code>cc-by-nc-nd-40</code> making it unfree in newer releases. The <code>duckstation</code> package has been overhauled to support the new releases and <code>duckstation-bin</code> has been aliased to <code>duckstation</code> to support darwin binary builds.</p>
+</li>
+<li>
+<p>The main binary of <code>tomlq</code> has been renamed from <code>tomlq</code> to <code>tq</code>.</p>
+</li>
+<li>
+<p>The minimum version of Nix required to evaluate Nixpkgs has been raised from 2.3 to 2.18.</p>
+</li>
+<li>
+<p>The <code>no-broken-symlink</code> build hook now also fails builds whose output derivation contains links to $TMPDIR (typically /build, which contains the build directory).</p>
+</li>
+<li>
+<p>The non-LTS Forgejo package (<code>forgejo</code>) has been updated to 12.0.0. This release contains breaking changes, see the <a href="https://forgejo.org/2025-07-release-v12-0/">release blog post</a>
+for all the details and how to ensure smooth upgrades.</p>
+</li>
+<li>
+<p>The <code>offrss</code> package was removed due to lack of upstream maintenance since 2012. It's recommended for users to migrate to another RSS reader.</p>
+</li>
+<li>
+<p>The <code>pie</code> hardening flag has been removed. Compilers are expected to enable PIE by default, as has been common practice since 2016 outside of Nixpkgs. If a package needs <code>pie</code> disabled pass <code>-no-pie</code> in <code>CFLAGS</code>. It is unlikely this will be necessary in many cases; due to the prevalence of default PIE toolchains, most packages incompatible with PIE already pass <code>-no-pie</code>.</p>
+</li>
+<li>
+<p>The <code>vlock</code> output from kbd has been removed. Instead a new package <code>kbdVlock</code> has been introduced. Use this package now instead of the output.</p>
+</li>
+<li>
+<p><code>tooling-language-server</code> has been renamed to <code>deputy</code> (both the package and binary), following the rename of the upstream project.</p>
+</li>
+<li>
+<p><code>victoriametrics</code> no longer contains VictoriaLogs components. These have been separated into the new package <code>victorialogs</code>.</p>
+</li>
+<li>
+<p><code>vmware-horizon-client</code> was renamed to <code>omnissa-horizon-client</code>, following <a href="https://www.omnissa.com/insights/introducing-omnissa-the-former-vmware-end-user-computing-business/">VMware's sale of their end-user business to Omnissa</a>. The binary has been renamed from <code>vmware-view</code> to <code>horizon-client</code>.</p>
+</li>
+<li>
+<p><code>uw-ttyp0</code> has been updated to version 2.1. The filenames of the OTB and PSF fonts have been changed to match the upstream naming convention.
+If you were loading a font by path, for example in the <code>console.font</code> NixOS option, remember to update the filename accordingly.</p>
+</li>
+<li>
+<p><code>wayclip</code> now uses the <code>ext-data-control-v1</code> Wayland protocol instead of <code>wlr-data-control-unstable-v1</code>.</p>
+</li>
+<li>
+<p><code>webfontkitgenerator</code> has been renamed to <code>webfont-bundler</code>, following the rename of the upstream project.
+The binary name remains <code>webfontkitgenerator</code>.
+The <code>webfontkitgenerator</code> package is an alias to <code>webfont-bundler</code>.</p>
+</li>
+<li>
+<p><code>webkitgtk_4_0</code> has been removed because it depends on an unmaintained version of security-critical libsoup library (<code>libsoup_2</code>) and the support will be <a href="https://webkitgtk.org/2025/10/07/webkitgtk-soup2-deprecation.html">dropped upstream soon</a>.</p>
+</li>
+<li>
+<p><code>yehawn</code> was removed due to the package being broken and unmaintained upstream.</p>
+</li>
+<li>
+<p><code>yggdrasil-jumper</code> has been updated to v0.4, changing traversal protocol. See <a href="https://github.com/one-d-wide/yggdrasil-jumper/releases/tag/v0.4.0">release notes</a>.</p>
+</li>
+<li>
+<p><code>zig_0_12</code> has been removed.</p>
+</li>
+<li>
+<p><code>zigbee2mqtt</code> was updated to version 2.x, which contains breaking changes. See the <a href="https://github.com/Koenkk/zigbee2mqtt/discussions/24198">discussion</a> for further information.</p>
+</li>
+</ul>
+<h2 id='sec-nixpkgs-release-25.11-notable-changes'><a href='release-notes/rl-2511/#sec-nixpkgs-release-25.11-notable-changes'>
+Other Notable Changes
+</a></h2>
+<!-- To avoid merge conflicts, consider adding your item at an arbitrary place in the list instead. -->
+<ul>
+<li>
+<p><code>buildEnv</code> now takes fixed-point arguments (<code>finalAttrs: { }</code>).
+The custom overrider <code>&lt;env-pkg&gt;.override</code> is deprecated but kept in this release. It will be removed in future releases after tree-wide transition.
+The argument <code>paths</code> is passed as <code>passthru.paths</code> to avoid bringing in unexpected context.</p>
+</li>
+<li>
+<p><code>buildEnv</code> now takes <code>derivationArgs</code> for additional arguments to pass to <code>stdenv.mkDerivation</code>.
+A compatibility layer is added for directly-specified arguments <code>nativeBuildInputs</code> and <code>buildInputs</code>.</p>
+</li>
+<li>
+<p>Added <code>rewriteURL</code> attribute to the nixpkgs <code>config</code>, to allow for rewriting the URLs downloaded by <code>fetchurl</code>.</p>
+</li>
+<li>
+<p>Added <code>hashedMirrors</code> attribute to the nixpkgs <code>config</code>, to allow for customization of the hashed mirrors used by <code>fetchurl</code>.</p>
+</li>
+<li>
+<p>Added <code>gitConfig</code> and <code>gitConfigFile</code> option to the nixpkgs <code>config</code>, to allow for setting a default <code>gitConfigFile</code> for all <code>fetchgit</code> invocations.</p>
+</li>
+<li>
+<p>Added <code>npmRegistryOverrides</code> and <code>npmRegistryOverridesString</code> option to the nixpkgs <code>config</code>, to allow for setting a default <code>npmRegistryOverridesString</code> for all <code>fetchNpmDeps</code> invocations.</p>
+</li>
+<li>
+<p><code>buildPythonPackage</code> and <code>buildPythonApplication</code> now default to <code>nix-update-script</code> as their default <code>updateScript</code>. This should improve automated updates, since nix-update is better maintained than the in-tree update script and has more robust fetcher support.</p>
+</li>
+<li>
+<p><code>cloudflare-ddns</code> has been added.</p>
+</li>
+<li>
+<p>Direct use of <code>pkgs.formats.systemd</code> has been deprecated, and should now be instantiated with <code>pkgs.formats.systemd { }</code> similarly to other items in <code>pkgs.formats</code>.</p>
+</li>
+<li>
+<p><code>dragonflydb</code> has been updated from version 0.1.0 to version 1.34.2.</p>
+</li>
+<li>
+<p><code>emacs</code> now disables the GC mark trace buffer by default. This improves GC performance by 5%, but can make GC issues harder to debug. This is configurable with <code>withGcMarkTrace</code>.</p>
+</li>
+<li>
+<p><code>etcd</code> package was upgraded to 3.6, see <a href="https://etcd.io/docs/v3.6/upgrades/upgrade_3_6/">migration notes</a> for incompatibilities and upgrade procedure.</p>
+</li>
+<li>
+<p><code>fetchgit</code> now accepts a <code>gitConfigFile</code> argument to set a git config (via <code>$GIT_CONFIG_GLOBAL</code>) for the fetcher.</p>
+</li>
+<li>
+<p><code>fetchgit</code> now accepts a <code>rootDir</code> argument to limit the resulting source to one subdirectory of the whole Git repository. Corresponding <code>--root-dir</code> option added to <code>nix-prefetch-git</code>.</p>
+</li>
+<li>
+<p><code>fetchNpmDeps</code> now accepts a <code>npmRegistryOverridesString</code> argument to pass npm registry overrides to the fetcher.</p>
+</li>
+<li>
+<p><code>ffmpeg_8</code>, <code>ffmpeg_8-headless</code>, and <code>ffmpeg_8-full</code> have been added. The default version of FFmpeg is now <code>ffmpeg_8</code>. You can install previous versions from package attributes such as <code>ffmpeg_7</code>.</p>
+</li>
+<li>
+<p><code>forgejo-runner</code> has been upgraded to version 11, which brings a license change from MIT to GPLv3-or-later.</p>
+</li>
+<li>
+<p>GIMP now defaults to version 3. Use <code>gimp2</code> for the old version.</p>
+</li>
+<li>
+<p><code>gitversion</code> was updated to 6.3.0, which includes a number of breaking changes, old configurations may need updating or they will cause the tool to fail to run.
+See the <a href="https://github.com/GitTools/GitVersion/releases/tag/6.0.0">6.0.0 release notes for GitVersion</a> for details on the breaking changes, <a href="https://gitversion.net/docs/reference/configuration">the documentation on the configuration format</a> for the new configuration specification, and <a href="https://gitversion.net/docs/reference/variables">the documentation on version variables</a> for what is now supported.</p>
+</li>
+<li>
+<p><code>gramps</code> has been updated to 6.0.0
+Upstream recommends <a href="https://gramps-project.org/wiki/index.php/Gramps_6.0_Wiki_Manual_-_Manage_Family_Trees#Backing_up_a_Family_Tree">backing up your Family Trees</a> before upgrading.</p>
+</li>
+<li>
+<p><a href="https://github.com/sysadminsmedia/homebox/releases/tag/v0.20.0"><code>homebox</code> 0.20.0</a> changed how assets are stored and hashed. It is recommended to back up your database before this update. In particular, <code>--storage-data</code> was replaced with <code>--storage-conn-string</code> and <code>--storage-prefix-path</code>. If your configuration set <code>HBOX_STORAGE_DATA</code> manually, you must migrate it to <code>HBOX_STORAGE_CONN_STRING</code> and <code>HBOX_STORAGE_PREFIX_PATH</code>.</p>
+</li>
+<li>
+<p>HTTP3 support has been enabled in in <code>nginx</code>, <code>openresty</code>, <code>angie</code> and <code>tengine</code>. The <code>nginxQuic</code> and <code>angieQuic</code> package flavors have been removed.</p>
+</li>
+<li>
+<p><code>idris2</code> supports being instantiated with a package environment with <code>idris.withPackages (p: [ ])</code>.</p>
+</li>
+<li>
+<p><code>installShellCompletion</code> now supports Nushell completion files.</p>
+</li>
+<li>
+<p><code>jellyfin</code> was updated to <code>10.11.x</code>, which includes heavy backend changes.
+Make sure to backup your data and configuration directories
+and read the <a href="https://jellyfin.org/posts/jellyfin-release-10.11.0/">Jellyfin 10.11.0 release announcement</a>.
+<strong>Important:</strong> make sure you're running Jellyfin version <code>10.10.7</code> before upgrading,
+and beware that the migration may take several hours depending on your library size and state.
+The process must not be interrupted.</p>
+</li>
+<li>
+<p><code>lisp-modules</code> were brought in sync with the <a href="http://blog.quicklisp.org/2025/07/june-2025-quicklisp-dist-now-available.html">June 2025 Quicklisp release</a>.</p>
+</li>
+<li>
+<p><code>meta.mainProgram</code> is now used to determine the <code>NIX_MAIN_PROGRAM</code> environment variable. This means that changing it can now lead to a package rebuild.</p>
+</li>
+<li>
+<p><code>neovim</code> now has support for the <code>vim.o.exrc</code> option, the <code>VIMINIT</code> environment variable, and sourcing of <code>sysinit.vim</code>.
+See the neovim help page <a href="https://neovim.io/doc/user/starting.html#startup"><code>:help startup</code></a> for more information, as well as <a href="languages-frameworks/neovim/#neovim-custom-configuration">the nixpkgs neovim wrapper documentation</a>.</p>
+</li>
+<li>
+<p>New hardening flags <code>strictflexarrays1</code>, <code>strictflexarrays3</code>, <code>glibcxxassertions</code>, <code>libcxxhardeningfast</code> and <code>libcxxhardeningextensive</code> were made available.</p>
+</li>
+<li>
+<p><code>nix-prefetch-git</code> now has a <code>--no-add-path</code> argument to disable adding the path to the store. This is useful when working with a <a href="https://nix.dev/manual/nix/2.28/command-ref/new-cli/nix3-help-stores#store-experimental-local-overlay-store-read-only">read-only store</a>.</p>
+</li>
+<li>
+<p>Passing <code>stdenv</code> to <code>buildPythonPackage</code> or <code>buildPythonApplication</code> has been deprecated and will trigger an error in a future release.
+Instead, you should <em>override</em> the python build helper, e.g., <code>(buildPythonPackage.override { stdenv = customStdenv; })</code>.
+See <a href="languages-frameworks/python/#overriding-python-build-helpers">Python</a>.</p>
+</li>
+<li>
+<p><code>php81</code> was removed.</p>
+</li>
+<li>
+<p><code>plasma6</code>: Fixed the <code>ksycoca</code> cache not being re-built when <code>$XDG_CACHE_HOME</code> is set to something that isn't <code>$HOME/.cache</code>.</p>
+</li>
+<li>
+<p><code>prl-tools</code> has been moved out of <code>linuxPackages</code> because Parallels Guest Tools become driverless since 26.1.0.</p>
+</li>
+<li>
+<p><code>sftpman</code> has been updated to version 2, a rewrite in Rust which is mostly backward compatible but does include some changes to the CLI.
+For more information, <a href="https://github.com/spantaleev/sftpman-rs#is-sftpman-v2-compatible-with-sftpman-v1">check the project's README</a>.</p>
+</li>
+<li>
+<p><code>slurm</code> no longer supports gtk2.</p>
+</li>
+<li>
+<p><code>sparkleshare</code> has been removed as it no longer builds and has been abandoned upstream.</p>
+</li>
+<li>
+<p><code>strongSwan</code> has been updated to 6.0. See <a href="https://github.com/strongswan/strongswan/releases/tag/6.0.0">strongSwan 6.0.0 release notes</a> for a complete list of changes.</p>
+</li>
+<li>
+<p><code>simplesamlphp</code> has been removed since the package was severely outdated, unmaintained in Nixpkgs and having known vulnerabilities.</p>
+</li>
+<li>
+<p>The <code>clickhouse</code> package now track the stable upstream version per <a href="https://clickhouse.com/docs/faq/operations/production">upstream's
+recommendation</a>. Users
+can continue to use the <code>clickhouse-lts</code> package if desired.</p>
+</li>
+<li>
+<p>The debug outputs produced by <code>separateDebugInfo = true;</code> now contain symlinks mapping build-ids to the original source and ELF file.
+Specifically, if <code>$out/bin/ninja</code> has build-id <code>483bd7f7229bdb06462222e1e353e4f37e15c293</code>, then</p>
+<ul>
+<li><code>$debug/lib/debug/.build-id/48/3bd7f7229bdb06462222e1e353e4f37e15c293.executable</code> is a symlink to <code>$out/bin/ninja</code></li>
+<li><code>$debug/lib/debug/.build-id/48/3bd7f7229bdb06462222e1e353e4f37e15c293.source</code> is a symlink to the value of <code>$src</code> during build</li>
+<li><code>$debug/lib/debug/.build-id/48/3bd7f7229bdb06462222e1e353e4f37e15c293.sourceoverlay</code> is a symlink to a directory with the same structure as the expanded <code>$sourceRoot</code> but containing only a copy of files which were patched during the build</li>
+<li><code>$debug/lib/debug/.build-id/48/3bd7f7229bdb06462222e1e353e4f37e15c293.debug</code> is the file containing debug symbols (like before).</li>
+</ul>
+</li>
+<li>
+<p>The <code>dockerTools.streamLayeredImage</code> builder now uses a better algorithm for generating layered docker images, such that much more sharing is possible when the number of store paths exceeds the layer limit. It gives each of the largest store paths its own layer and adds dependencies to those layers when they aren't used elsewhere.</p>
+</li>
+<li>
+<p>The <code>open-webui</code> package's postgres support has been moved to optional dependencies to comply with upstream changes in 0.6.26.</p>
+</li>
+<li>
+<p>The systemd initrd will now respect <code>x-systemd.wants</code> and <code>x-systemd.requires</code> for reliably unlocking multi-disk bcachefs volumes.</p>
+</li>
+<li>
+<p>The third-party <code>ant-contrib</code> is no longer included in the <code>ant</code> package.</p>
+</li>
+<li>
+<p>Packages using <code>versionCheckHook</code> that previously relied solely on <code>pname</code> to locate the program used to version check, but have a differing <code>meta.mainProgram</code> entry, might now fail.</p>
+</li>
+<li>
+<p><code>waydroid-nftables</code> is a new variant of <code>waydroid</code> that supports nftables instead of iptables.</p>
+</li>
+<li>
+<p><code>searx</code> was updated to use <code>envsubst</code> instead of <code>sed</code> for parsing secrets from environment variables.
+If your previous configuration included a secret reference like <code>server.secret_key = &quot;@SEARX_SECRET_KEY@&quot;</code>, you must migrate to the new envsubst syntax: <code>server.secret_key = &quot;$SEARX_SECRET_KEY&quot;</code>.</p>
+</li>
+</ul>
+<h2 id='sec-nixpkgs-release-25.11-lib'><a href='release-notes/rl-2511/#sec-nixpkgs-release-25.11-lib'>
+Nixpkgs Library
+</a></h2>
+<!-- To avoid merge conflicts, consider adding your item at an arbitrary place in the list instead. -->
+<h3 id='sec-nixpkgs-release-25.11-lib-breaking'><a href='release-notes/rl-2511/#sec-nixpkgs-release-25.11-lib-breaking'>
+Breaking changes
+</a></h3>
+<ul>
+<li>
+<p><code>haskell.lib.addOptparseApplicativeCompletionScripts</code> has been removed, use <code>haskellPackages.generateOptparseApplicativeCompletions</code> instead.</p>
+</li>
+<li>
+<p><code>lib.attrsets.cartesianProductOfSets</code> has been removed, following its deprecation in NixOS 24.11. Use <code>lib.attrsets.cartesianProduct</code> instead.</p>
+</li>
+<li>
+<p><code>lib.attrsets.zipWithNames</code> has been removed, following its deprecation in 2009. Use <code>lib.attrsets.zipAttrsWithNames</code> instead.</p>
+</li>
+<li>
+<p><code>lib.attrsets.zip</code> has been removed, following its deprecation in 2013. Use <code>lib.attrsets.zipAttrsWith</code> instead.</p>
+</li>
+<li>
+<p><code>lib.literalExample</code> has been removed, use <code>lib.literalExpression</code> instead, or use <code>lib.literalMD</code> for a non-Nix description.</p>
+</li>
+<li>
+<p><code>lib.mapAttrsFlatten</code> has been removed, following its deprecation in NixOS 24.11. Use <code>lib.attrsets.mapAttrsToList</code> instead.</p>
+</li>
+<li>
+<p><code>lib.modules.defaultPriority</code> has been removed, please use <code>lib.modules.defaultOverridePriority</code> instead.</p>
+</li>
+<li>
+<p><code>lib.options.mkPackageOptionMD</code> has been removed, following its deprecation in NixOS 24.11. Use <code>lib.options.mkPackageOption</code> instead.</p>
+</li>
+<li>
+<p><code>lib.readPathsFromFile</code> has been removed, use a list instead.</p>
+</li>
+<li>
+<p><code>lib.replaceChars</code> has been removed, it was a deprecated alias of <code>lib.replaceStrings</code>.</p>
+</li>
+<li>
+<p><code>lib.sources.pathType</code>, <code>lib.sources.pathIsDirectory</code> and <code>lib.sources.pathIsRegularFile</code> have been replaced by <code>lib.filesystem.pathType</code>, <code>lib.filesystem.pathIsDirectory</code> and <code>lib.filesystem.pathIsRegularFile</code> respectively.</p>
+</li>
+<li>
+<p><code>lib.strings.isCoercibleToString</code> has been replaced in favor of either <code>lib.strings.isStringLike</code> or <code>lib.strings.isConvertibleWithToString</code>. Only use the latter if it needs to return true for null, numbers, booleans, or a list of those.</p>
+</li>
+<li>
+<p><code>lib.types.string</code> has been removed. See <a href="https://github.com/NixOS/nixpkgs/pull/66346">this pull request</a> for better alternative types like <code>lib.types.str</code>.</p>
+</li>
+<li>
+<p>The <code>buildPythonPackage</code> and <code>buildPythonApplication</code> functions now require
+an explicit <code>format</code> attribute. Previously the default format used setuptools
+and called <code>setup.py</code> from the source tree, which is deprecated.
+The modern alternative is to configure <code>pyproject = true</code> with <code>build-system = [ setuptools ]</code>.</p>
+</li>
+</ul>
+<h3 id='sec-nixpkgs-release-25.11-lib-deprecations'><a href='release-notes/rl-2511/#sec-nixpkgs-release-25.11-lib-deprecations'>
+Deprecations
+</a></h3>
+<ul>
+<li>
+<p><code>lib.cli.toGNUCommandLine</code> and <code>lib.cli.toGNUCommandLineShell</code> have been deprecated in favor of <code>lib.cli.toCommandLine</code>, <code>lib.cli.toCommandLineShell</code>, <code>lib.cli.toCommandLineGNU</code> and <code>lib.cli.toCommandLineShellGNU</code>.</p>
+</li>
+<li>
+<p><code>lib.options.mkAliasOptionModuleMD</code> is now obsolete; use the identical [<code>lib.options.mkAliasOptionModule</code>] instead.</p>
+</li>
+<li>
+<p><code>types.either</code> silently accepted mismatching types when used in <code>freeformType</code>. Module maintainers should fix the used type
+In most cases wrapping <code>either</code> with <code>attrsOf</code> should be sufficient.</p>
+<p>Since types.either was used to bootstrap other types. This also affects the following types:</p>
+<ul>
+<li><code>oneOf</code></li>
+<li><code>number</code></li>
+<li><code>numbers.*</code></li>
+</ul>
+</li>
+</ul>
+<h3 id='sec-nixpkgs-release-25.11-lib-additions-improvements'><a href='release-notes/rl-2511/#sec-nixpkgs-release-25.11-lib-additions-improvements'>
+Additions and Improvements
+</a></h3>
+<ul>
+<li>
+<p><code>lib.cli.toCommandLine</code>, <code>lib.cli.toCommandLineShell</code>, <code>lib.cli.toCommandLineGNU</code> and <code>lib.cli.toCommandLineShellGNU</code> have been added to address multiple issues in <code>lib.cli.toGNUCommandLine</code> and <code>lib.cli.toGNUCommandLineShell</code>.</p>
+</li>
+<li>
+<p><code>ugrep</code> now has two new override options:</p>
+<ul>
+<li><code>wrapWithFilterUtils</code> for optionally wrapping <code>ugrep+</code> and <code>ug+</code> with filter utilities for grepping other file types.</li>
+<li><code>createGrepReplacementLinks</code> for optionally creating drop-in replacement symlinks for <code>gnugrep</code>.</li>
+</ul>
+</li>
+</ul>
+        </main>
+      </div>
+    </section>
+<script defer src='mmdoc.367f3e8986e40416.js'></script>
+<script defer src='mmdoc_search.a5b6fc7d7512cdc1.js' data-search-index='search_index.b3afff10081eb0bd.js' data-fuse='fuse.basic.min.bb997c989fa0a28e.js'></script>
+  </div>
+  </body>
+</html>

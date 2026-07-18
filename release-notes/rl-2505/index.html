@@ -1,0 +1,1111 @@
+<!doctype html>
+<html lang='en'>
+  <head>
+    <base href='../../'>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <script>
+      (() => {
+        let theme = null
+        try { theme = localStorage.getItem('theme') } catch (error) {}
+        if (theme !== 'light' && theme !== 'dark')
+          theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+        document.documentElement.classList.add(theme + '-theme')
+      })()
+    </script>
+    <meta name='description' content='Nixpkgs 25.05 (2025.05/23)'>
+    <link rel='icon' href='favicon.svg'>
+    <link rel='stylesheet' href='a11y-dark.1fcafc9d9a306955.css'>
+    <link rel='stylesheet' href='a11y-light.b466309a7fa86b1f.css'>
+    <link rel='stylesheet' href='mmdoc.e4286053b6471af4.css'>
+    <title>Nixpkgs 25.05 (2025.05/23) | nixpkgs</title>
+  </head>
+  <body>
+  <a class='skip-link' href='release-notes/rl-2505/#main-content'>Skip to main content</a>
+  <input type='checkbox' id='sidebar-checkbox' aria-hidden='true' tabindex='-1' style='display: none;'>
+  <div class='body'>
+    <div class='nav-top-container'>
+    <nav class='nav-top' aria-label='Documentation controls'>
+      <button type='button' class='sidebar-toggle' aria-label='Toggle table of contents' aria-controls='sidebar' aria-expanded='true'></button>    <button type='button' class='search-toggle' aria-label='Open search' aria-controls='search-panel' aria-expanded='false'></button>    <button type='button' class='theme-toggle' aria-label='Switch to dark theme' aria-pressed='false'></button>    <a id='chapter-previous-button' class='chapter-previous' href='release-notes/rl-2511/#sec-nixpkgs-release-25.11' title='Nixpkgs 25.11 ("Xantusia", 2025.11/30)' aria-label='Previous: Nixpkgs 25.11 ("Xantusia", 2025.11/30)'>&lt;</a>
+   <span aria-hidden='true'>&nbsp;</span>    </nav>
+    </div>
+    <nav id='sidebar' class='sidebar' aria-label='Table of contents'>
+<h1>Nixpkgs Manual</h1>
+<p>Version 26.11pre</p>
+<ul>
+<li><a href="./#preface">Preface</a>
+<ul>
+<li><a href="preface/#overview-of-nixpkgs">Overview of Nixpkgs</a></li>
+</ul>
+</li>
+<li><a href="first-package/#chap-first-package">Package your first application</a></li>
+</ul>
+<h2>Using Nixpkgs</h2>
+<ul>
+<li><a href="using/platform-support/#chap-platform-support">Platform Support</a></li>
+<li><a href="using/configuration/#chap-packageconfig">Global configuration</a></li>
+<li><a href="using/overlays/#chap-overlays">Overlays</a></li>
+<li><a href="using/overrides/#chap-overrides">Overriding</a></li>
+</ul>
+<h2>Nixpkgs Lib</h2>
+<ul>
+<li><a href="functions/#chap-functions">Functions reference</a>
+<ul>
+<li>Library Functions
+<ul>
+<li><a href="functions/library/asserts/#sec-functions-library-asserts">lib.asserts: assertion functions</a></li>
+<li><a href="functions/library/attrsets/#sec-functions-library-attrsets">lib.attrsets: attribute set functions</a></li>
+<li><a href="functions/library/strings/#sec-functions-library-strings">lib.strings: string manipulation functions</a></li>
+<li><a href="functions/library/versions/#sec-functions-library-versions">lib.versions: version string functions</a></li>
+<li><a href="functions/library/trivial/#sec-functions-library-trivial">lib.trivial: miscellaneous functions</a></li>
+<li><a href="functions/library/fixedPoints/#sec-functions-library-fixedPoints">lib.fixedPoints: explicit recursion functions</a></li>
+<li><a href="functions/library/lists/#sec-functions-library-lists">lib.lists: list manipulation functions</a></li>
+<li><a href="functions/library/debug/#sec-functions-library-debug">lib.debug: debugging functions</a></li>
+<li><a href="functions/library/options/#sec-functions-library-options">lib.options: NixOS / nixpkgs option handling</a></li>
+<li><a href="functions/library/path/#sec-functions-library-path">lib.path: path functions</a></li>
+<li><a href="functions/library/filesystem/#sec-functions-library-filesystem">lib.filesystem: filesystem functions</a></li>
+<li><a href="functions/library/fileset/#sec-functions-library-fileset">lib.fileset: file set functions</a></li>
+<li><a href="functions/library/sources/#sec-functions-library-sources">lib.sources: source filtering functions</a></li>
+<li><a href="functions/library/cli/#sec-functions-library-cli">lib.cli: command-line serialization functions</a></li>
+<li><a href="functions/library/gvariant/#sec-functions-library-gvariant">lib.gvariant: GVariant formatted string serialization functions</a></li>
+<li><a href="functions/library/fetchers/#sec-functions-library-fetchers">lib.fetchers: functions which can be reused across fetchers</a></li>
+<li><a href="functions/library/generators/#sec-functions-library-generators">lib.generators: functions that create file formats from nix data structures</a></li>
+<li><a href="functions/library/customisation/#sec-functions-library-customisation">lib.customisation: Functions to customise (derivation-related) functions, derivations, or attribute sets</a></li>
+<li><a href="functions/library/meta/#sec-functions-library-meta">lib.meta: functions for derivation metadata</a></li>
+<li><a href="functions/library/derivations/#sec-functions-library-derivations">lib.derivations: miscellaneous derivation-specific functions</a></li>
+<li><a href="functions/generators/#sec-generators">Generators</a></li>
+<li><a href="functions/debug/#sec-debug">Debugging Nix Expressions</a></li>
+<li><a href="functions/prefer-remote-fetch/#sec-prefer-remote-fetch">prefer-remote-fetch overlay</a></li>
+<li><a href="functions/nix-gitignore/#sec-pkgs-nix-gitignore">pkgs.nix-gitignore</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="module-system/module-system/#module-system">Module System</a></li>
+</ul>
+<h2>Standard Environment</h2>
+<ul>
+<li><a href="stdenv/#part-stdenv">Standard environment</a></li>
+<li><a href="stdenv/stdenv/#chap-stdenv">The Standard Environment</a></li>
+<li><a href="stdenv/meta/#chap-meta">Meta-attributes</a></li>
+<li><a href="stdenv/passthru/#chap-passthru">Passthru-attributes</a></li>
+<li><a href="stdenv/multiple-output/#chap-multiple-output">Multiple-output packages</a></li>
+<li><a href="stdenv/cross-compilation/#chap-cross">Cross-compilation</a></li>
+<li><a href="stdenv/platform-notes/#chap-platform-notes">Platform Notes</a></li>
+</ul>
+<h2>Toolchains</h2>
+<ul>
+<li><a href="toolchains/llvm/#chap-toolchains">The LLVM Toolchain</a></li>
+</ul>
+<h2>Builders</h2>
+<ul>
+<li><a href="build-helpers/#part-builders">Build helpers</a></li>
+<li><a href="build-helpers/fetchers/#chap-pkgs-fetchers">Fetchers</a></li>
+<li><a href="build-helpers/trivial-build-helpers/#chap-trivial-builders">Trivial build helpers</a></li>
+<li><a href="build-helpers/fixed-point-arguments/#chap-build-helpers-finalAttrs">Fixed-point arguments of build helpers</a></li>
+<li><a href="build-helpers/dev-shell-tools/#chap-devShellTools">Development Shell helpers</a></li>
+<li><a href="build-helpers/testers/#chap-testers">Testers</a></li>
+<li>Special build helpers
+<ul>
+<li><a href="build-helpers/special/fhs-environments/#sec-fhs-environments">buildFHSEnv</a></li>
+<li><a href="build-helpers/special/fakenss/#sec-fakeNss">fakeNss</a></li>
+<li><a href="build-helpers/special/makesetuphook/#sec-pkgs.makeSetupHook">pkgs.makeSetupHook</a></li>
+<li><a href="build-helpers/special/mkshell/#sec-pkgs-mkShell">pkgs.mkShell</a></li>
+<li><a href="packages/darwin-builder/#sec-darwin-builder">darwin.linux-builder</a></li>
+<li><a href="build-helpers/special/vm-tools/#sec-vm-tools">vmTools</a></li>
+</ul>
+</li>
+<li>Images
+<ul>
+<li><a href="build-helpers/images/appimagetools/#sec-pkgs-appimageTools">pkgs.appimageTools</a></li>
+<li><a href="build-helpers/images/dockertools/#sec-pkgs-dockerTools">pkgs.dockerTools</a></li>
+<li><a href="build-helpers/images/ocitools/#sec-pkgs-ociTools">pkgs.ociTools</a></li>
+<li><a href="build-helpers/images/portableservice/#sec-pkgs-portableService">pkgs.portableService</a></li>
+<li><a href="build-helpers/images/makediskimage/#sec-make-disk-image">&lt;nixpkgs/nixos/lib/make-disk-image.nix&gt;</a></li>
+<li><a href="build-helpers/images/binarycache/#sec-pkgs-binary-cache">pkgs.mkBinaryCache</a></li>
+</ul>
+</li>
+<li><a href="hooks/index/#chap-hooks">Hooks reference</a>
+<ul>
+<li><a href="hooks/autoconf/#setup-hook-autoconf">Autoconf</a></li>
+<li><a href="hooks/automake/#setup-hook-automake">Automake</a></li>
+<li><a href="hooks/autopatchelf/#setup-hook-autopatchelfhook">autoPatchelfHook</a></li>
+<li><a href="hooks/breakpoint/#breakpointhook">breakpointHook</a></li>
+<li><a href="hooks/cmake/#cmake">cmake</a></li>
+<li><a href="hooks/gdk-pixbuf/#setup-hook-gdk-pixbuf">gdk-pixbuf</a></li>
+<li><a href="hooks/ghc/#ghc">GHC</a></li>
+<li><a href="hooks/gnome/#gnome-platform">GNOME platform</a></li>
+<li><a href="hooks/installShellFiles/#installshellfiles">installShellFiles</a></li>
+<li><a href="hooks/libglycin/#libglycin-hooks">libglycin</a></li>
+<li><a href="hooks/libiconv/#libiconv-libintl">libiconv, libintl</a></li>
+<li><a href="hooks/libxml2/#setup-hook-libxml2">libxml2</a></li>
+<li><a href="hooks/meson/#meson">Meson</a></li>
+<li><a href="hooks/mpi-check-hook/#setup-hook-mpi-check">mpiCheckPhaseHook</a></li>
+<li><a href="hooks/ninja/#ninja">ninja</a></li>
+<li><a href="hooks/patch-rc-path-hooks/#sec-patchRcPathHooks">patchRcPath hooks</a></li>
+<li><a href="hooks/perl/#setup-hook-perl">Perl</a></li>
+<li><a href="hooks/pkg-config/#setup-hook-pkg-config">pkg-config</a></li>
+<li><a href="hooks/pnpm/#pnpm-build-hook">pnpmBuildHook</a></li>
+<li><a href="hooks/postgresql-test-hook/#sec-postgresqlTestHook">postgresqlTestHook</a></li>
+<li><a href="hooks/python/#setup-hook-python">Python</a></li>
+<li><a href="hooks/scons/#scons">scons</a></li>
+<li><a href="hooks/tetex-tex-live/#tetex-tex-live">teTeX / TeX Live</a></li>
+<li><a href="hooks/unzip/#unzip">unzip</a></li>
+<li><a href="hooks/validatePkgConfig/#validatepkgconfig">validatePkgConfig</a></li>
+<li><a href="hooks/versionCheckHook/#versioncheckhook">versionCheckHook</a></li>
+<li><a href="hooks/waf/#waf-hook">wafHook</a></li>
+<li><a href="hooks/xcbuild/#xcbuildhook">xcbuildHook</a></li>
+</ul>
+</li>
+<li><a href="languages-frameworks/index/#chap-language-support">Languages and frameworks</a>
+<ul>
+<li><a href="languages-frameworks/agda/#agda">Agda</a></li>
+<li><a href="languages-frameworks/android/#android">Android</a></li>
+<li><a href="languages-frameworks/astal/#astal">Astal</a></li>
+<li><a href="languages-frameworks/beam/#sec-beam">BEAM Languages (Erlang, Elixir &amp; LFE)</a></li>
+<li><a href="languages-frameworks/chicken/#sec-chicken">CHICKEN</a></li>
+<li><a href="languages-frameworks/cosmic/#sec-language-cosmic">COSMIC</a></li>
+<li><a href="languages-frameworks/crystal/#crystal">Crystal</a></li>
+<li><a href="languages-frameworks/cuda/#cuda">CUDA</a></li>
+<li><a href="languages-frameworks/cuelang/#cuelang">Cue (Cuelang)</a></li>
+<li><a href="languages-frameworks/dlang/#dlang">D (Dlang)</a></li>
+<li><a href="languages-frameworks/dart/#sec-language-dart">Dart</a></li>
+<li><a href="languages-frameworks/dhall/#sec-language-dhall">Dhall</a></li>
+<li><a href="languages-frameworks/dotnet/#dotnet">Dotnet</a></li>
+<li><a href="languages-frameworks/emscripten/#emscripten">Emscripten</a></li>
+<li><a href="languages-frameworks/factor/#sec-language-factor">Factor</a></li>
+<li><a href="languages-frameworks/gnome/#sec-language-gnome">GNOME</a></li>
+<li><a href="languages-frameworks/go/#sec-language-go">Go</a></li>
+<li><a href="languages-frameworks/gradle/#gradle">Gradle</a></li>
+<li><a href="languages-frameworks/hare/#sec-language-hare">Hare</a></li>
+<li><a href="languages-frameworks/haskell/#haskell">Haskell</a></li>
+<li><a href="languages-frameworks/hy/#sec-language-hy">Hy</a></li>
+<li><a href="languages-frameworks/idris/#idris">Idris</a></li>
+<li><a href="languages-frameworks/idris2/#sec-idris2">Idris2</a></li>
+<li><a href="languages-frameworks/ios/#ios">iOS</a></li>
+<li><a href="languages-frameworks/java/#sec-language-java">Java</a></li>
+<li><a href="languages-frameworks/javascript/#language-javascript">Javascript</a></li>
+<li><a href="languages-frameworks/julia/#language-julia">Julia</a></li>
+<li><a href="languages-frameworks/lean4/#sec-language-lean4">Lean 4</a></li>
+<li><a href="languages-frameworks/lisp/#lisp">lisp-modules</a></li>
+<li><a href="languages-frameworks/lua/#lua">Lua</a></li>
+<li><a href="languages-frameworks/maven/#maven">Maven</a></li>
+<li><a href="languages-frameworks/neovim/#neovim">Neovim</a></li>
+<li><a href="languages-frameworks/nim/#sec-language-nim">Nim</a></li>
+<li><a href="languages-frameworks/ocaml/#sec-language-ocaml">OCaml</a></li>
+<li><a href="languages-frameworks/octave/#sec-octave">Octave</a></li>
+<li><a href="languages-frameworks/perl/#sec-language-perl">Perl</a></li>
+<li><a href="languages-frameworks/php/#sec-php">PHP</a></li>
+<li><a href="languages-frameworks/pkg-config/#sec-pkg-config">pkg-config</a></li>
+<li><a href="languages-frameworks/python/#python">Python</a></li>
+<li><a href="languages-frameworks/qt/#sec-language-qt">Qt</a></li>
+<li><a href="languages-frameworks/r/#r">R</a></li>
+<li><a href="languages-frameworks/rocq/#sec-language-rocq">Rocq and rocq packages</a></li>
+<li><a href="languages-frameworks/ruby/#sec-language-ruby">Ruby</a></li>
+<li><a href="languages-frameworks/rust/#rust">Rust</a></li>
+<li><a href="languages-frameworks/scheme/#sec-scheme">Scheme</a></li>
+<li><a href="languages-frameworks/swift/#swift">Swift</a></li>
+<li><a href="languages-frameworks/tcl/#sec-language-tcl">Tcl</a></li>
+<li><a href="languages-frameworks/texlive/#sec-language-texlive">TeX Live</a></li>
+<li><a href="languages-frameworks/typst/#typst">Typst</a></li>
+<li><a href="languages-frameworks/vim/#vim">Vim</a></li>
+</ul>
+</li>
+<li><a href="packages/index/#chap-packages">Packages</a>
+<ul>
+<li><a href="packages/build-support/#sec-build-support">Build Support</a></li>
+<li><a href="packages/cataclysm-dda/#cataclysm-dark-days-ahead">Cataclysm: Dark Days Ahead</a></li>
+<li><a href="packages/citrix/#sec-citrix">Citrix Workspace</a></li>
+<li><a href="packages/dlib/#dlib">DLib</a></li>
+<li><a href="packages/eclipse/#sec-eclipse">Eclipse</a></li>
+<li><a href="packages/elm/#sec-elm">Elm</a></li>
+<li><a href="packages/emacs/#sec-emacs">Emacs</a></li>
+<li><a href="packages/firefox/#sec-firefox">Firefox</a></li>
+<li><a href="packages/fish/#sec-fish">Fish</a></li>
+<li><a href="packages/friction-graphics/#friction-graphics">Friction</a></li>
+<li><a href="packages/fuse/#sec-fuse">FUSE</a></li>
+<li><a href="packages/geant4/#geant4">Geant4</a></li>
+<li><a href="packages/ibus/#sec-ibus-typing-booster">ibus-engines.typing-booster</a></li>
+<li><a href="packages/inkscape/#sec-inkscape">Inkscape</a></li>
+<li><a href="packages/kakoune/#sec-kakoune">Kakoune</a></li>
+<li><a href="packages/krita/#sec-krita">Krita</a></li>
+<li><a href="packages/lhapdf/#lhapdf">LHAPDF</a></li>
+<li><a href="packages/linux/#sec-linux-kernel">Linux kernel</a></li>
+<li><a href="packages/locales/#locales">Locales</a></li>
+<li><a href="packages/etc-files/#etc">/etc files</a></li>
+<li><a href="packages/nginx/#sec-nginx">Nginx</a></li>
+<li><a href="packages/nrfutil/#sec-nrfutil">nrfutil</a></li>
+<li><a href="packages/opengl/#sec-opengl">OpenGL</a></li>
+<li><a href="packages/python-tree-sitter/#python-tree-sitter">Python Tree Sitter</a></li>
+<li><a href="packages/shell-helpers/#sec-shell-helpers">Interactive shell helpers</a></li>
+<li><a href="packages/steam/#sec-steam">Steam</a></li>
+<li><a href="packages/treefmt/#treefmt">treefmt</a></li>
+<li><a href="packages/urxvt/#sec-urxvt">Urxvt</a></li>
+<li><a href="packages/uv/#sec-uv">uv</a></li>
+<li><a href="packages/vcpkg/#sec-vcpkg">VCPKG</a></li>
+<li><a href="packages/weechat/#sec-weechat">WeeChat</a></li>
+</ul>
+</li>
+</ul>
+<h2>Modules</h2>
+<ul>
+<li><a href="modules/index/#modules">Modules</a>
+<ul>
+<li><a href="modules/generic/#modules-generic">Generic</a>
+<ul>
+<li><a href="modules/generic/#modules-generic-meta-maintainers">meta-maintainers.nix</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2>Development of Nixpkgs</h2>
+<ul>
+<li><a href="development/opening-issues/#sec-opening-issues">Opening issues</a></li>
+<li><a href="contributing/coding-conventions/#chap-conventions">Coding conventions</a></li>
+</ul>
+<h2>Interoperability Standards</h2>
+<ul>
+<li><a href="interoperability/cyclonedx/#chap-interop-cyclonedx">CycloneDX</a>
+<ul>
+<li><a href="interoperability/cyclonedx/#sec-interop.cylonedx-nix"><code>nix</code> namespace</a></li>
+<li><a href="interoperability/cyclonedx/#sec-interop.cylonedx-narinfo"><code>nix:narinfo</code></a></li>
+<li><a href="interoperability/cyclonedx/#sec-interop.cylonedx-fod"><code>nix:fod</code></a></li>
+</ul>
+</li>
+</ul>
+<h2>Release Notes</h2>
+<ul>
+<li><a href="release-notes/release-notes/#chap-release-notes">Release Notes</a>
+<ul>
+<li><a href="release-notes/rl-2611/#sec-nixpkgs-release-26.11">Nixpkgs 26.11 (&quot;Zokor&quot;, 2026.11/??)</a></li>
+<li><a href="release-notes/rl-2605/#sec-nixpkgs-release-26.05">Nixpkgs 26.05 (&quot;Yarara&quot;, 2026.05/30)</a></li>
+<li><a href="release-notes/rl-2511/#sec-nixpkgs-release-25.11">Nixpkgs 25.11 (&quot;Xantusia&quot;, 2025.11/30)</a></li>
+<li><a href="release-notes/rl-2505/#sec-nixpkgs-release-25.05">Nixpkgs 25.05 (2025.05/23)</a></li>
+</ul>
+</li>
+</ul>
+    </nav>
+    <section id='main'>
+      <div id='search-panel' class='nav-search' role='search' hidden>
+        <label class='visually-hidden' for='search'>Search documentation</label>
+        <input type='search' id='search' placeholder='Search' autocomplete='off' aria-controls='search-results'>
+        <p id='search-status' class='visually-hidden' role='status' aria-live='polite'></p>
+        <div id='search-results'></div>
+      </div>
+      <div class='main-scroll'>
+        <main id='main-content' tabindex='-1'>
+<h1 id='sec-nixpkgs-release-25.05'><a href='release-notes/rl-2505/#sec-nixpkgs-release-25.05'>
+Nixpkgs 25.05 (2025.05/23)
+</a></h1>
+<h2 id='sec-nixpkgs-release-25.05-highlights'><a href='release-notes/rl-2505/#sec-nixpkgs-release-25.05-highlights'>
+Highlights
+</a></h2>
+<!-- To avoid merge conflicts, consider adding your item at an arbitrary place in the list instead. -->
+<ul>
+<li>
+<p><strong>This release of Nixpkgs requires macOS Big Sur 11.3 or newer, as announced in the 24.11 release notes.</strong>
+We cannot guarantee that packages will continue to work on older versions of macOS.
+Future Nixpkgs releases will only support <a href="https://endoflife.date/macos">macOS versions supported by Apple</a>; this means that <strong>Nixpkgs 25.11 will require macOS Sonoma 14 or newer</strong>.
+Users on old macOS versions should consider upgrading to a supported version (potentially using <a href="https://dortania.github.io/OpenCore-Legacy-Patcher/">OpenCore Legacy Patcher</a> for old hardware) or installing NixOS.
+If neither of those options are viable and you require new versions of software, <a href="https://www.macports.org/">MacPorts</a> supports versions back to Mac OS X Snow Leopard 10.6.</p>
+</li>
+<li>
+<p>The default kernel package has been updated from 6.6 to 6.12. All supported kernels remain available.</p>
+</li>
+<li>
+<p>GCC has been updated from GCC 13 to GCC 14.
+This introduces some backwards‐incompatible changes; see the <a href="https://gcc.gnu.org/gcc-14/porting_to.html">upstream porting guide</a> for details.</p>
+</li>
+<li>
+<p>The default GHC version has been updated from 9.6 to 9.8.
+<code>haskellPackages</code> also uses Stackage LTS 23 (instead of LTS 22) as a baseline.
+We aim to remove the old GHC versions 8.10, 9.0 and 9.2 in the next release in accordance with <a href="https://discourse.nixos.org/t/nixpkgs-ghc-deprecation-policy-user-feedback-necessary/64153">the new GHC deprecation policy</a>.</p>
+</li>
+<li>
+<p>LLVM has been updated from LLVM 16 (on Darwin) and LLVM 18 (on other platforms) to LLVM 19.
+This introduces some backwards‐incompatible changes; see the <a href="https://releases.llvm.org/">upstream release notes</a> for details.</p>
+</li>
+<li>
+<p>The Factor programming language packages were reworked. <code>factor-lang-scope</code> is now named <code>factorPackages</code> and provides a <code>buildFactorApplication</code> function to deploy Factor programs as binaries. It has also received proper documentation in the Nixpkgs manual.</p>
+</li>
+<li>
+<p>The packaging of Mesa graphics drivers has been significantly reworked, in particular:</p>
+<ul>
+<li>Applications linked against different Mesa versions than installed on the system should now work correctly going forward (however, applications against older Mesa, e.g. from Nixpkgs releases before 25.05, remain broken)</li>
+<li>Packages that used to depend on Mesa for libgbm or libdri should use <code>libgbm</code> or <code>dri-pkgconfig-stub</code> as inputs, respectively</li>
+</ul>
+</li>
+<li>
+<p>GNU Taler has been updated to version 1.0.
+This marks a significant milestone as the GNU Taler payment system is now available in Swiss Francs for individuals and businesses in Switzerland.
+For more details, see the <a href="https://www.taler.net/en/news/2025-01.html">upstream release notes</a>.</p>
+</li>
+<li>
+<p>OpenSSH has been updated from 9.9p2 to 10.0p2, dropping support for DSA keys and adding a new <code>ssh-auth</code> binary to handle user authentication in a different address space from unauthenticated sessions. See the <a href="https://www.openwall.com/lists/oss-security/2025/04/09/1">full changelog</a> for more details.</p>
+</li>
+<li>
+<p>Emacs has been updated to 30.1.
+This introduces some backwards‐incompatible changes; see the NEWS for details.
+NEWS can be viewed from Emacs by typing <code>C-h n</code>, or by clicking <code>Help-&gt;Emacs News</code> from the menu bar.
+It can also be browsed <a href="https://git.savannah.gnu.org/cgit/emacs.git/tree/etc/NEWS?h=emacs-30">online</a>.</p>
+</li>
+<li>
+<p>The <code>intel</code> video driver for X.org (from the xf86-video-intel package, which was previously removed because it was non-functional) has been fixed and the driver has been re-introduced.</p>
+</li>
+<li>
+<p>The default openexr version has been updated to 3.2.4.</p>
+</li>
+<li>
+<p>The default PHP version has been updated to 8.4.</p>
+</li>
+<li>
+<p>The default Erlang OTP version has been updated to 27.</p>
+</li>
+<li>
+<p>The default Elixir version has been updated to 1.18.</p>
+</li>
+</ul>
+<!-- To avoid merge conflicts, consider adding your item at an arbitrary place in the list instead. -->
+<h2 id='sec-nixpkgs-release-25.05-incompatibilities'><a href='release-notes/rl-2505/#sec-nixpkgs-release-25.05-incompatibilities'>
+Backward Incompatibilities
+</a></h2>
+<!-- To avoid merge conflicts, consider adding your item at an arbitrary place in the list instead. -->
+<ul>
+<li>
+<p><code>apptainer</code> and <code>singularity</code> deprecate the workaround of overriding <code>vendorHash</code> and related attributes via <code>&lt;pkg&gt;.override</code>,
+in favour of the unified overriding of the same group of attributes via <code>&lt;pkg&gt;.overrideAttrs</code>.
+The compatibility layer will be removed in future releases.</p>
+</li>
+<li>
+<p><code>squid</code> has been updated to version 7, this release includes multiple breaking changes, like ESI removal.
+For more information, <a href="https://github.com/squid-cache/squid/releases/tag/SQUID_7_0_1">check the release notes</a>.</p>
+</li>
+<li>
+<p><code>postgresql</code> and <code>libpq</code> don't provide <code>pg_config</code> by default anymore. Instead, <code>pg_config</code> is available via <code>postgresql.pg_config</code> or <code>libpq.pg_config</code>. This allowed implementing it as a shell script, which can be built for both the build and host systems when cross-compiling. If your build fails to find <code>pg_config</code>, add <code>postgresql.pg_config</code> or <code>libpq.pg_config</code> to <code>nativeBuildInputs</code>.</p>
+</li>
+<li>
+<p><code>postgresql_13</code> has been removed since it reached its end of life.</p>
+</li>
+<li>
+<p>The <a href="https://nixos.org/manual/nixpkgs/unstable/#no-broken-symlinks.sh"><code>no-broken-symlinks</code> hook</a> was added to catch builds containing dangling or reflexive symlinks, as these are indicative of problems with packaging.
+The hook can be disabled by providing <code>dontCheckForBrokenSymlinks = true;</code> as an argument to <code>mkDerivation</code>.
+For more information, <a href="https://nixos.org/manual/nixpkgs/unstable/#no-broken-symlinks.sh">check the docs</a> or <a href="https://github.com/NixOS/nixpkgs/pull/370750">see this PR</a>.</p>
+</li>
+<li>
+<p><code>gkraken</code> has been removed. The recommended alternative is <code>coolercontrol</code>.</p>
+</li>
+<li>
+<p><code>opensmtpd-extras</code> has been deprecated by upstream and is not compatible with
+OpenSMTPD 7.6.0 or later. The package has been removed in favor of a set of new
+<code>opensmtpd-table-*</code> packages.</p>
+</li>
+<li>
+<p><code>postsrsd</code> upgraded to <code>&gt;= 2.0.0</code>, with some different behaviors and
+configuration settings. Notably, it now defaults to listening on a socket
+rather than a port. See <a href="https://github.com/roehling/postsrsd/blob/2.0.10/README.rst#migrating-from-version-1x">Migrating from version 1.x</a> and <a href="https://github.com/roehling/postsrsd?tab=readme-ov-file#postfix-setup">Postfix Setup</a> for details.</p>
+</li>
+<li>
+<p><code>renovate</code> was updated to v39. See the <a href="https://github.com/renovatebot/renovate/releases/tag/39.0.0">upstream release notes</a> for breaking changes.
+Like upstream's Docker images, renovate now runs on NodeJS 22.</p>
+</li>
+<li>
+<p>The handwritten <code>perlPackages.SearchXapian</code> bindings have been dropped in favor of the (mostly compatible)
+<code>perlPackages.Xapian</code>.</p>
+</li>
+<li>
+<p><code>varnish</code> was updated from 7.5.0 to 7.7.0, see <a href="https://varnish-cache.org/docs/7.6/whats-new/upgrading-7.6.html">Varnish 7.6.0 upgrade guide</a> and
+<a href="https://varnish-cache.org/docs/7.7/whats-new/upgrading-7.7.html#whatsnew-upgrading-7-7">Varnish 7.7.0 upgrade guide</a>.</p>
+</li>
+<li>
+<p>The <code>config</code> triple for <code>aarch64-darwin</code> has been changed from <code>aarch64-apple-darwin</code> to <code>arm64-apple-darwin</code> to match the Apple toolchain and LLVM’s expectations.</p>
+</li>
+<li>
+<p>The <code>electron</code> packages will now provide their headers (available via <code>electron.headers</code>) in extracted form instead of in a tarball.</p>
+</li>
+<li>
+<p>The udev rules of the <code>libjaylink</code> package require users to be in the <code>jlink</code> instead of <code>plugdev</code> group now, since the <code>plugdev</code> group is very uncommon for NixOS. Alternatively, access is granted to seat sessions.</p>
+</li>
+<li>
+<p>The <code>ephemeral</code> package was removed due to upstream archival in early 2022.</p>
+</li>
+<li>
+<p>The <code>gotenberg</code> package has been updated to 8.16.0, which brings breaking changes to the configuration from version 8.13.0. See the <a href="https://github.com/gotenberg/gotenberg/releases/tag/v8.13.0">upstream release notes</a> for that release to get all the details.</p>
+</li>
+<li>
+<p><code>zammad</code> has had its support for MySQL removed, since it was never working correctly and is now deprecated upstream. Check the <a href="https://docs.zammad.org/en/latest/appendix/migrate-to-postgresql.html">migration guide</a> for how to convert your database to PostgreSQL.</p>
+</li>
+<li>
+<p>The <code>vocal</code> package was removed due to upstream archival. The upstream developer suggests using <code>gnome-podcasts</code> or <code>kasts</code> instead.</p>
+</li>
+<li>
+<p><code>timescaledb</code> requires manual upgrade steps.
+After you run ALTER EXTENSION, you must run <a href="https://github.com/timescale/timescaledb-extras/blob/master/utils/2.15.X-fix_hypertable_foreign_keys.sql">this SQL script</a>. For more details, see the following pull requests <a href="https://github.com/timescale/timescaledb/pull/6797">#6797</a>.
+PostgreSQL 13 is no longer supported in TimescaleDB v2.16.</p>
+</li>
+<li>
+<p><code>paperless-ngx</code> has been updated to minor version 2.15 which switched the web server from Gunicorn to Granian. If you set Gunicorn specific envs (usually contain GUNICORN) they must be updated.</p>
+</li>
+<li>
+<p><a href="https://nixos.org/manual/nixpkgs/unstable/#tester-shellcheck">testers.shellcheck</a> now warns when <code>name</code> is not provided.
+The <code>name</code> argument will become mandatory in a future release.</p>
+</li>
+<li>
+<p><code>tauon</code> 7.9.0+ when launched for the first time, migrates its database to a new schema that is not backwards compatible. Older versions will refuse to start at all with that database afterwards. If you need to still use older tauon versions, make sure to back up <code>~/.local/share/TauonMusicBox</code>.</p>
+</li>
+<li>
+<p><code>aws-workspaces</code> has dropped support for PCoiP networking.</p>
+</li>
+<li>
+<p><a href="https://www.gimp.org/news/2025/03/16/gimp-3-0-released/">GIMP 3.0</a> available as <code>gimp3</code>.</p>
+</li>
+<li>
+<p><code>grafana-agent</code> and <code>services.grafana-agent</code> have been removed in favor of
+Grafana Alloy (<code>grafana-alloy</code> and <code>services.alloy</code>), as they depend on an EOL compiler version
+and will become EOL during the 25.05 lifecycle.
+Grafana recommends migrating to <code>grafana-alloy</code> (<code>services.alloy</code>).
+See https://grafana.com/docs/alloy/latest/set-up/migrate/ for details.</p>
+</li>
+<li>
+<p><code>slskd</code> has been updated to v0.22.3, which includes breaking changes to <code>script</code> integrations. Please review the <a href="https://github.com/slskd/slskd/releases/tag/0.22.3">changelog</a>
+and the accompanying <a href="https://github.com/slskd/slskd/pull/1292">pull request</a>.</p>
+</li>
+<li>
+<p><code>forgejo</code> and <code>forgejo-lts</code> have been updated to v11.
+See upstreams <a href="https://forgejo.org/2025-04-release-v11-0/">release blog post</a> for more information.</p>
+</li>
+<li>
+<p><code>unifi</code> has been updated to v9.1.
+This version should be backward compatible with v8.x, however as a result, <code>unifi8</code> package has been removed.</p>
+</li>
+<li>
+<p><code>xdragon</code> package has been renamed to <code>dragon-drop</code>.
+<code>xdragon</code> is an alias to <code>dragon-drop</code> and the package still provides <code>bin/xdragon</code>.
+<code>bin/dragon</code> is no longer supplied.</p>
+</li>
+<li>
+<p><code>python3Packages.bpycv</code> has been removed due to being incompatible with Blender 4 and unmaintained.</p>
+</li>
+<li>
+<p><code>python3Packages.jaeger-client</code> was removed because it was deprecated upstream. <a href="https://opentelemetry.io">OpenTelemetry</a> is the recommended replacement.</p>
+</li>
+<li>
+<p><code>rocmPackages_6</code> has been updated to ROCm 6.3.</p>
+</li>
+<li>
+<p><code>rocmPackages_5</code> has been removed.</p>
+</li>
+<li>
+<p><code>rocmPackages.rocm-thunk</code> has been removed and its functionality has been integrated with the ROCm CLR. Use <code>rocmPackages.clr</code> instead.</p>
+</li>
+<li>
+<p><code>rocmPackages.clang-ocl</code> has been removed. <a href="https://github.com/ROCm/clang-ocl">It was deprecated by AMD in 2023.</a></p>
+</li>
+<li>
+<p><code>nodePackages.meshcommander</code> has been removed, as the package was deprecated by Intel.</p>
+</li>
+<li>
+<p>The default version of <code>z3</code> has been updated from 4.8 to 4.13. There are still a few packages that need specific older versions; those will continue to be maintained as long as other packages depend on them but may be removed in the future.</p>
+</li>
+<li>
+<p>The <code>nixLog*</code> family of functions made available through the standard environment have been rewritten to prefix messages with both the debug level and the function name of the caller.
+The <code>nixLog</code> function, which logs unconditionally, was also re-introduced and modified to prefix messages with the function name of the caller.
+For more information, <a href="https://github.com/NixOS/nixpkgs/pull/370742">see this PR</a>.</p>
+</li>
+<li>
+<p><code>postgresql</code>'s <code>pythonSupport</code> argument has been changed. It is now enabled by default, but to use PL/Python the extension needs to be added explicitly with <code>postgresql.withPackages</code>. If you were using <code>postgresql.override { pythonSupport = true; }</code> before, change it to <code>postgresql.withPackages (ps: [ ps.plpython3 ])</code>. The same applies to <code>perlSupport</code>/<code>plperl</code> and <code>tclSupport</code>/<code>pltcl</code> respectively.</p>
+</li>
+<li>
+<p>Rust packages will need to regenerate their <code>cargoHash</code>.
+Cargo 1.84.0 changed the format of <code>cargo vendor</code> output, which invalidated all existing <code>rustPlatform.fetchCargoTarball</code> hashes.
+To preserve Nix’s invariants, it has been replaced with <code>rustPlatform.fetchCargoVendor</code>, an independent implementation prioritizing format stability.
+<code>rustPlatform.buildRustPackage</code> now uses <code>rustPlatform.fetchCargoVendor</code> by default; a hash mismatch error is expected in third‐party Rust packages when updating to Nixpkgs 25.05.
+Packages wishing to maintain compatibility with Nixpkgs 24.11 must explicitly set <code>useFetchCargoVendor</code> to <code>true</code>.
+<code>rustPlatform.importCargoLock</code> may also be appropriate in some circumstances.</p>
+</li>
+<li>
+<p><code>cassandra_3_0</code> and <code>cassandra_3_11</code> have been removed as they have reached end-of-life. Please update to <code>cassandra_4</code>. See the <a href="https://github.com/apache/cassandra/blob/cassandra-4.0.17/NEWS.txt">changelog</a> for more information about the upgrade process.</p>
+</li>
+<li>
+<p><code>mariadb_105</code> has been removed as it has reached end-of-life in 2025-06. Please update to <code>mariadb_106</code>.</p>
+</li>
+<li>
+<p>NetBox was updated to <code>&gt;= 4.2.0</code>. Have a look at the breaking changes
+of the <a href="https://github.com/netbox-community/netbox/releases/tag/v4.1.0">4.1 release</a>
+and the <a href="https://github.com/netbox-community/netbox/releases/tag/v4.2.0">4.2 release</a>,
+make the required changes to your database, if needed, then upgrade by setting <code>services.netbox.package = pkgs.netbox_4_2;</code> in your configuration.</p>
+</li>
+<li>
+<p><code>nodePackages.expo-cli</code> has been removed, as it was deprecated by upstream. The suggested replacement is the <code>npx expo</code> command.</p>
+</li>
+<li>
+<p>The <code>conduwuit</code> matrix server implementation has officially been discontinued by upstream and the package has thus been marked as vulnerable, as it is a security-sensitive package that has reached EOL.</p>
+</li>
+<li>
+<p>NetBox version 4.0.X available as <code>netbox_4_0</code> was removed. Please upgrade to <code>4.2</code>.</p>
+</li>
+<li>
+<p><code>golangci-lint</code> has reached <code>v2</code>. Please read the changes and view the migration guide <a href="https://golangci-lint.run/product/changelog/#200">here</a>.</p>
+</li>
+<li>
+<p><code>i3status-rust</code>-package no longer enables <code>notmuch</code> by default. It can be enabled via <code>withNotmuch</code>.</p>
+</li>
+<li>
+<p><code>ocis-bin</code> has been renamed to <code>ocis_5-bin</code>. Future versions will have the major version suffix.</p>
+</li>
+<li>
+<p>All support for 32‐bit Darwin systems has been dropped.</p>
+</li>
+<li>
+<p><code>substituteAll</code> and <code>substituteAllFiles</code> have been deprecated in favor of <code>replaceVars</code> and will be removed in the next release.</p>
+</li>
+<li>
+<p>Default ICU version updated from 74 to 76</p>
+</li>
+<li>
+<p>The packages <code>signald</code>, <code>signaldctl</code> and <code>purple-signald</code> have been dropped as they are unmaintained upstream and have been incompatible with the official Signal servers for a long while.</p>
+</li>
+<li>
+<p>Apache Kafka was updated to <code>&gt;= 4.0.0</code>. Please note that this is the first release which operates
+entirely without Apache ZooKeeper support, and all clusters need to be migrated to KRaft mode. See
+the <a href="https://kafka.apache.org/blog#apache_kafka_400_release_announcement">release announcement</a>
+for more details.</p>
+</li>
+<li>
+<p><code>ast-grep</code> removes the <code>sg</code> command to prevent conflict with the <code>sg</code> command from shadow-utils. If you need legacy sg command compatibility with old code, you can use <code>ast-grep.override { enableLegacySg = true; }</code></p>
+</li>
+<li>
+<p>rename package <code>wtf</code> to <code>wtfutil</code>.</p>
+</li>
+<li>
+<p><code>python3Packages.beancount</code> was updated to 3.1.0. Previous major version remains available as <code>python3Packages.beancount_2</code>.</p>
+</li>
+<li>
+<p><code>wastebin</code> has been updated to 3.0.0. See the <a href="https://github.com/matze/wastebin/blob/master/CHANGELOG.md#300">Changelog</a> for breaking changes to the configuration.</p>
+</li>
+<li>
+<p><code>binwalk</code> was updated to 3.1.0, which has been rewritten in Rust. The Python module is no longer available.
+See the release notes of <a href="https://github.com/ReFirmLabs/binwalk/releases/tag/v3.1.0">3.1.0</a> for more information.</p>
+</li>
+<li>
+<p><code>pkgs.nextcloud28</code> and <code>pkgs.nextcloud29</code> have been removed since they are out of support upstream.</p>
+</li>
+<li>
+<p><code>centrifugo</code> was updated to v6, which uses a new config format. See <a href="https://centrifugal.dev/docs/getting-started/migration_v6">upstream documentation</a> for migration.</p>
+</li>
+<li>
+<p><code>teleport</code> has been upgraded from major version 16 to major version 17.
+Refer to <a href="https://goteleport.com/docs/upgrading/overview/">upstream upgrade instructions</a>
+and <a href="https://goteleport.com/docs/changelog/#1701-11152024">release notes for v17</a>.</p>
+</li>
+<li>
+<p>Emacs lisp build helpers, such as <code>emacs.pkgs.melpaBuild</code>, now enables <code>__structuredAttrs</code> by default.
+Environment variables have to be passed via the <code>env</code> attribute.</p>
+</li>
+<li>
+<p><code>buildGoModule</code> now passes environment variables via the <code>env</code> attribute. <code>CGO_ENABLED</code> should now be specified with <code>env.CGO_ENABLED</code> when passing to buildGoModule. Direct specification of <code>CGO_ENABLED</code> is now redirected by a compatibility layer with a warning, but will become an error in future releases.</p>
+<p>Go-related environment variables previously shadowed by <code>buildGoModule</code> now results in errors when specified directly. Such variables include <code>GOOS</code> and <code>GOARCH</code>.</p>
+<p>Third-party projects supporting both stable and unstable channels could detect this change through the absence of the <code>CGO_ENABLED</code> function argument in <code>buildGoModule</code> (<code>!((lib.functionArgs buildGoModule) ? CGO_ENABLED)</code>).</p>
+</li>
+<li>
+<p><code>buildGoPackage</code> has been removed. Use <code>buildGoModule</code> instead. See the <a href="https://nixos.org/manual/nixpkgs/unstable/#sec-language-go">Go section in the nixpkgs manual</a> for details.</p>
+</li>
+<li>
+<p><code>buildGoModule</code> now supports a <code>goSum</code> attribute (<code>null</code> by default) to optionally provide a path to <code>go.sum</code> and correctly enabling rebuilds when the file changes.</p>
+</li>
+<li>
+<p>The newly added aliases <code>go_latest</code> and <code>buildGoLatestModule</code> are now available and can be used to prevent packages like <code>gopls</code> from breaking whenever the default toolchain minor version is lagging behind.
+It can also be used <em>outside of Nixpkgs</em> to get fast access to new Go minor versions without having to wait for a staging cycle that will update the default builder/toolchain.</p>
+</li>
+<li>
+<p>A <a href="https://github.com/NixOS/nixpkgs/blob/master/pkgs/build-support/go/README.md#go-toolchainbuilder-upgrade-policy">policy documenting the details of Go toolchain and builder upgrades</a> in Nixpkgs, as well as rules related to using non-default builders like <code>buildGo1xxModule</code> and <code>buildGoLatestModule</code> has been added in-tree.</p>
+</li>
+<li>
+<p>top-level <code>playwright</code> now refers to the github Microsoft/playwright package
+instead of the python tester launcher. You can still refer to the python
+launcher via <code>python3Packages.toPythonApplication python3Packages.playwright</code></p>
+</li>
+<li>
+<p>The representation of the flags attributes as shell/environment variables for most Python building setup hooks are now the same as <code>stdenv.mkDerivation</code> and other build helpers -- they are space-separated environment variables when <code>__structuredAttrs = false</code> and Bash arrays when <code>__structuredAttrs = true</code>, and are concatenated to the command without Bash-evaluation. The following behaviour changes are introduced during the conversion:</p>
+<ul>
+<li>
+<p>The following flags are no longer Bash-expanded before concatenated to the command:</p>
+<ul>
+<li><code>disabledTests</code> and <code>disabledTestPaths</code> for <code>pytestCheckHook</code>. (<code>disabledTestPaths</code> used to be expanded twice before concatenation.)</li>
+<li><code>setupPyBuildFlags</code> and <code>setupPyGlobalFlags</code> for <code>setuptoolsBuildHook</code>.</li>
+</ul>
+</li>
+<li>
+<p><code>pytestFlags</code> and <code>unittestFlags</code> replace <code>pytestFlagsArray</code> and <code>unittestFlagsArray</code> and become the new and conforming interface.</p>
+</li>
+<li>
+<p><code>pytestFlagsArray</code> and <code>unittestFlagsArray</code> are kept for compatibility purposes. They continue to be Bash-expanded before concatenated. This compatibility layer will be removed in future releases.</p>
+</li>
+</ul>
+</li>
+<li>
+<p>The <code>haka</code> package and module has been removed because the package was broken and unmaintained for 9 years.</p>
+</li>
+<li>
+<p>The <code>gsignond</code> package, plugins and module have been removed because they were unmaintained for 6 years.</p>
+</li>
+<li>
+<p><code>strawberry</code> has been updated to 1.2, which drops support for the VLC backend and Qt 5. The <code>strawberry-qt5</code> package
+and <code>withGstreamer</code>/<code>withVlc</code> override options have been removed due to this.</p>
+</li>
+<li>
+<p><code>nexusmods-app</code> has been upgraded from version 0.6.3. If you were running a version older than 0.7.0, then before upgrading, you <strong>must reset all app state</strong> (mods, games, settings, etc). Otherwise, NexusMods.App will crash due to app state files incompatibility.</p>
+<ul>
+<li>Typically, you can reset to a clean state by running <code>NexusMods.App uninstall-app</code>. See Nexus Mod's <a href="https://nexus-mods.github.io/NexusMods.App/users/Uninstall">how to uninstall the app</a> documentation for more detail and alternative methods.</li>
+<li>This should not be necessary going forward, because loading app state from 0.7.0 or newer is now supported. This is documented in the <a href="https://github.com/Nexus-Mods/NexusMods.App/releases/tag/v0.7.1">0.7.1 changelog</a>.</li>
+</ul>
+</li>
+<li>
+<p><code>nezha</code> and its agent <code>nezha-agent</code> have been updated to v1, which contains breaking changes. See the <a href="https://nezha.wiki/en_US/">official wiki</a> for more details.</p>
+</li>
+<li>
+<p><code>ps3-disc-dumper</code> was updated to 4.2.5, which removed the CLI project and now exclusively offers the GUI</p>
+</li>
+<li>
+<p><code>kmonad</code> is now hardened by default using common <code>systemd</code> settings.
+If KMonad is used to execute shell commands, hardening may make some of them fail.  In that case, you can disable hardening using the {option}<code>services.kmonad.keyboards.&lt;name&gt;.enableHardening</code> option.</p>
+</li>
+<li>
+<p><code>isd</code> was updated from 0.2.0 to 0.5.1, the new version may crash with a previously generated config, try moving or deleting <code>~/.config/isd/schema.json</code>.</p>
+</li>
+<li>
+<p><code>uwsgi</code> no longer supports Python 2 plugins.</p>
+</li>
+<li>
+<p>Support for CUDA 10 has been dropped, as announced in the 24.11 release notes.</p>
+</li>
+<li>
+<p><code>mepo</code> was updated to version 1.3.3.  The manual page was removed,
+a new JSON API was introduced to replace Mepolang for configuration,
+and a few default key bindings were changed.
+See the <a href="https://git.sr.ht/~mil/mepo/refs/1.3.0">1.3.0 changelog</a>
+for more details.</p>
+</li>
+<li>
+<p><code>mkBinaryCache</code> now defaults to using <code>zstd</code> compression for the binary caches it creates. The previous <code>xz</code> compression method can be used by passing <code>compression = &quot;xz&quot;;</code>.</p>
+</li>
+<li>
+<p><code>nodejs_latest</code> was updated from 23.x to 24.x. <code>nodejs_23</code> has been removed in favor of <code>nodejs_24</code>.</p>
+</li>
+<li>
+<p><code>nodejs_18</code> package was removed due to upstream End-of-Life in April 2025.</p>
+</li>
+<li>
+<p><code>nodePackages.&quot;@commitlint/config-conventional&quot;</code> has been removed, as it is a library, and projects should depend on it instead.</p>
+</li>
+<li>
+<p>zigbee2mqtt is now available in version 2.x as <code>zigbee2mqtt_2</code>. In NixOS 25.11 we'll remove <code>zigbee2mqtt_1</code> and default to <code>zigbee2mqtt_2</code>. See the <a href="https://github.com/Koenkk/zigbee2mqtt/discussions/24198">breaking changes</a> announcement for 2.0.0.</p>
+</li>
+<li>
+<p><code>nodePackages.vls</code> has been deprecated, as the upstream consumer of it, vetur, has been deprecated by upstream. Upstream suggests migrating to Volar for Vue LSP tooling instead.</p>
+</li>
+<li>
+<p><code>nodePackages.create-react-native-app</code> has been removed, as it is deprecated. Upstream suggests using a framework for React Native apps instead.</p>
+</li>
+<li>
+<p><code>nodePackages.insect</code> has been removed, as it's deprecated by upstream. The suggested replacement is <code>numbat</code>.</p>
+</li>
+<li>
+<p><code>nodePackages.webpack-dev-server</code> has been removed, as it should be installed in projects that use it instead.</p>
+</li>
+<li>
+<p><code>nodePackages.copy-webpack-plugin</code> has been removed, as it should be installed in projects that use it instead.</p>
+</li>
+<li>
+<p><code>himalaya</code> has been updated from <code>v1.0.0-beta.4</code> to <code>v1.1.0</code>, which introduces breaking changes. Check out the <a href="https://github.com/pimalaya/himalaya/releases">release notes</a> for details.</p>
+</li>
+<li>
+<p><code>linuxPackages.nvidiaPackages.dc_520</code> has been removed since it is marked broken and there are better newer alternatives.</p>
+</li>
+<li>
+<p><code>pnpm</code> was updated to version 10. If your project is incompatible, you can install the previous version from the package attribute <code>pnpm_9</code>.</p>
+</li>
+<li>
+<p><code>dwarf-fortress-packages</code> now only contains one minor version for each major version since version 0.44. Saves should still be compatible, but you may have to change which minor version you were using if it was one other than the newest.</p>
+</li>
+<li>
+<p><code>tpm2-pkcs11</code> now is compiled without <code>abrmd</code> (Access Broker and Resource Manager Daemon) support by default, preferring the kernel resource manager. Use <code>tpm2-pkcs11.abrmd</code> if you would like a version with <code>abrmd</code> support. Note that the NixOS module picks the correct one automatically based on <code>security.tpm2.abrmd</code>.</p>
+</li>
+<li>
+<p><code>zig_0_9</code> and <code>zig_0_10</code> have been removed, you should upgrade to <code>zig_0_13</code> (also available as just <code>zig</code>), <code>zig_0_12</code> or <code>zig_0_11</code> instead.</p>
+</li>
+<li>
+<p><code>webpack-cli</code> was updated to major version 6, which has breaking changes from the previous version 5.1.4. See the <a href="https://github.com/webpack/webpack-cli/releases/tag/webpack-cli%406.0.0">upstream release notes</a> for details on these changes.</p>
+</li>
+<li>
+<p><code>minetest</code> has been renamed to <code>luanti</code> to match the upstream name change but aliases have been added. The new name hasn't resulted in many changes as of yet but older references to minetest should be sunset. See the <a href="https://blog.minetest.net/2024/10/13/Introducing-Our-New-Name/">new name announcement</a> for more details.</p>
+</li>
+<li>
+<p><code>poac</code> has been renamed to <code>cabinpkg</code> to match the upstream name change but an alias has been added. See the <a href="https://github.com/orgs/cabinpkg/discussions/1052">new name announcement</a> for more details.</p>
+</li>
+<li>
+<p><code>serious-sans</code> has been removed because upstream changed its name to Serious Shanns, which is not currently packaged.</p>
+</li>
+<li>
+<p><code>racket_7_9</code> has been removed, as it is insecure. It is recommended to use Racket 8 instead.</p>
+</li>
+<li>
+<p><code>rofi</code> has been updated from 1.7.5 to 1.7.6 which introduces some breaking changes to binary plugins, and also contains a lot of new features and bug fixes. This is highlighted because the patch version bump does not indicate the volume of changes by itself. See the <a href="https://github.com/davatorium/rofi/releases/tag/1.7.6">upstream release notes</a> for the full list of changes.</p>
+</li>
+<li>
+<p><code>ente-auth</code> now uses the name <code>enteauth</code> for its binary. The previous name was <code>ente_auth</code>.</p>
+</li>
+<li>
+<p><code>foundationdb</code> was upgraded to 7.3.</p>
+</li>
+<li>
+<p><code>fluxus</code> has been removed, as it depends on <code>racket_7_9</code> and had no updates in 9 years.</p>
+</li>
+<li>
+<p><code>meilisearch</code> has been upgraded from 1.11.3 to 1.14.0, which requires manually dumping and importing the data.
+See Meilisearch's <a href="https://www.meilisearch.com/docs/learn/update_and_migration/updating">upgrade guide</a> for more information.</p>
+</li>
+<li>
+<p><code>sm64ex-coop</code> has been removed as it was archived upstream. Consider migrating to <code>sm64coopdx</code>.</p>
+</li>
+<li>
+<p><code>tldr</code> now uses <a href="https://github.com/tldr-pages/tldr-python-client"><code>tldr-python-client</code></a> instead of <a href="https://github.com/tldr-pages/tldr-c-client"><code>tldr-c-client</code></a> which is unmaintained.</p>
+</li>
+<li>
+<p>The behavior of the <code>networking.nat.externalIP</code> and <code>networking.nat.externalIPv6</code> options has been changed. <code>networking.nat.forwardPorts</code> now only forwards packets destined for the specified IP addresses.</p>
+</li>
+<li>
+<p><code>python3Packages.bpycv</code> has been removed due to being incompatible with Blender 4 and unmaintained.</p>
+</li>
+<li>
+<p><code>python3Packages.jaeger-client</code> was removed because it was deprecated upstream. <a href="https://opentelemetry.io">OpenTelemetry</a> is the recommended replacement.</p>
+</li>
+<li>
+<p><code>nodePackages.meshcommander</code> has been removed, as the package was deprecated by Intel.</p>
+</li>
+<li>
+<p>The default version of <code>z3</code> has been updated from 4.8 to 4.15, and all old versions have been dropped. Note that <code>fstar</code> still depends on specific versions, and maintains them as overrides.</p>
+</li>
+<li>
+<p><code>prometheus</code> has been updated from 2.55.0 to 3.1.0.
+Read the <a href="https://prometheus.io/blog/2024/11/14/prometheus-3-0/">release blog post</a> and
+<a href="https://prometheus.io/docs/prometheus/3.1/migration/">migration guide</a>.</p>
+</li>
+<li>
+<p><code>kanata</code> was updated to v1.8.0, which introduces several breaking changes.
+See the release notes of
+<a href="https://github.com/jtroo/kanata/releases/tag/v1.7.0">v1.7.0</a> and
+<a href="https://github.com/jtroo/kanata/releases/tag/v1.8.0">v1.8.0</a>
+for more information.</p>
+</li>
+<li>
+<p><code>authelia</code> version 4.39.0 has made changes on the default claims for ID Tokens, to mirror the standard claims from the specification.
+This change may affect some clients in unexpected ways, so manual intervention may be required.
+Read the <a href="https://www.authelia.com/blog/4.39-release-notes/">release notes</a>, along with <a href="https://www.authelia.com/integration/openid-connect/openid-connect-1.0-claims/#restore-functionality-prior-to-claims-parameter">the guide</a> to work around issues that may be encountered.</p>
+</li>
+<li>
+<p><code>ags</code> was updated to v2, which is just a CLI for Astal now. Components are available as a different package set <code>astal.*</code>.
+If you want to use v1, it is available as <code>ags_1</code> package.</p>
+<p>See the release notes of
+<a href="https://github.com/Aylur/ags/releases/tag/v2.0.0">v2.0.0</a>
+for more information.</p>
+</li>
+<li>
+<p><code>nodePackages.expo-cli</code> has been removed, as it was deprecated by upstream. The suggested replacement is the <code>npx expo</code> command.</p>
+</li>
+<li>
+<p><code>open-policy-agent</code> has been updated to 1.0.0+.
+This major release makes the <code>rego.v1</code> syntax the default.
+This is a breaking change for those using v0 Rego.
+See the <a href="https://www.openpolicyagent.org/docs/v1.0.1/v0-upgrade/">upgrade documentation</a> for more details.
+For those unable to upgrade yet, there is a <a href="https://www.openpolicyagent.org/docs/v1.0.1/v0-compatibility/">v0 compatibility mode</a>
+available too.</p>
+</li>
+<li>
+<p><code>helmfile</code> was updated to v1.0.0, which introduces several breaking changes.
+See the release notes of
+<a href="https://github.com/helmfile/helmfile/releases/v1.0.0">v1.0.0</a> for more
+information.</p>
+</li>
+<li>
+<p><code>vscode-utils.buildVscodeExtension</code> now requires pname as an argument</p>
+</li>
+<li>
+<p><code>nerdfonts</code> has been separated into individual font packages under the namespace <code>nerd-fonts</code>. The directories for font
+files have changed from <code>$out/share/fonts/{opentype,truetype}/NerdFonts</code> to
+<code>$out/share/fonts/{opentype,truetype}/NerdFonts/&lt;fontDirName&gt;</code>, where <code>&lt;fontDirName&gt;</code> can be found in the
+<a href="https://www.nerdfonts.com/font-downloads">official website</a> as the titles in preview images, with the &quot;Nerd Font&quot;
+suffix and any whitespaces trimmed. Configuration changes are required, see build output.</p>
+</li>
+<li>
+<p><code>retroarch</code> has been refactored and the older <code>retroarch.override { cores = [ ... ]; }</code> to create a RetroArch derivation with custom cores doesn't work anymore, use <code>retroarch.withCores (cores: [ ... ])</code> instead. If you need more customization (e.g.: custom settings), use <code>wrapRetroArch</code> instead.</p>
+</li>
+<li>
+<p><code>borgmatic</code> has been updated from 1.8.14 to 1.9.5, please check the <a href="https://projects.torsion.org/borgmatic-collective/borgmatic/releases">upstream changelog</a> for more details, especially for a few possibly breaking changes noted in the <a href="https://projects.torsion.org/borgmatic-collective/borgmatic/releases/tag/1.9.0">1.9.0 changelog</a>.</p>
+</li>
+<li>
+<p><code>nodePackages.ganache</code> has been removed, as the package has been deprecated by upstream.</p>
+</li>
+<li>
+<p><code>matomo</code> now defaults to version 5 (previously available as <code>matomo_5</code>). Version 4 has been removed as it reached EOL on December 19, 2024.</p>
+</li>
+<li>
+<p><code>matomo-beta</code> has been removed as the version of the <code>matomo</code> package can now be easily overridden through <code>overrideAttrs</code> (see <a href="https://github.com/NixOS/nixpkgs/pull/374022">PR #374022</a>)</p>
+</li>
+<li>
+<p><code>docker_24</code> has been removed, as it was EOL with vulnerabilities since June 08, 2024.</p>
+</li>
+<li>
+<p>Emacs 28 and 29 have been removed.</p>
+</li>
+<li>
+<p>Emacs 28 Macport has been removed, while CVEs of Emacs 29 Macport are patched.</p>
+</li>
+<li>
+<p><code>containerd</code> has been updated to v2, which contains breaking changes. See the <a href="https://github.com/containerd/containerd/blob/main/docs/containerd-2.0.md">containerd
+2.0</a> documentation for more
+details.</p>
+</li>
+<li>
+<p>The <code>tinycc</code> package now has the <code>dev</code>, <code>doc</code> and <code>lib</code> outputs, thus,
+<code>tinycc.out</code> may now only provide the tcc and cross compilers binaries.</p>
+</li>
+<li>
+<p>The <code>testTarget</code> argument of <code>haskellPackages.mkDerivation</code> has been deprecated in favour of <code>testTargets</code>.
+<code>testTarget</code> took a space separated string of targets, whereas the new <code>testTargets</code> argument takes a list of targets.
+For instance, <code>testTarget = &quot;foo bar baz&quot;</code> should become <code>testTargets = [ &quot;foo&quot; &quot;bar&quot; &quot;baz&quot; ]</code>.</p>
+</li>
+<li>
+<p><code>rustPlatform.buildRustPackage</code> stops handling the deprecated argument <code>cargoSha256</code>. Out-of-tree packages that haven't migrated from <code>cargoSha256</code> to <code>cargoHash</code> now receive errors.</p>
+</li>
+<li>
+<p><code>nodePackages.stackdriver-statsd-backend</code> has been removed, as the StackDriver service has been discontinued by Google, and therefore the package no longer works.</p>
+</li>
+<li>
+<p><code>python3Packages.opentracing</code> has been removed due to being unmaintained upstream. <a href="https://opentelemetry.io/">OpenTelemetry</a> is the recommended replacement.</p>
+</li>
+<li>
+<p>the notmuch vim plugin now lives in a separate output of the <code>notmuch</code>
+package. Installing <code>notmuch</code> will not bring the notmuch vim package anymore,
+add <code>vimPlugins.notmuch-vim</code> to your (Neo)vim configuration if you want the
+vim plugin.</p>
+</li>
+<li>
+<p>The fileSystems (e.g., <code>fileSystems.&quot;/&quot;</code>) are now set by NixOS-implemented modules using <code>lib.mkDefault</code>, allowing wholesale overrides, but this means that overriding individual attributes (like <code>fsType</code> or <code>options</code>) without explicitly specifying <code>device</code> may result in missing required fields and errors such as <code>No device specified for mount point '/'</code> (https://github.com/NixOS/nixpkgs/pull/377406).</p>
+</li>
+<li>
+<p><code>prisma</code> and <code>prisma-engines</code> have been updated to version 6.7.0, which
+introduces several breaking changes. See the
+<a href="https://www.prisma.io/docs/orm/more/upgrade-guides/upgrading-versions/upgrading-to-prisma-6">Prisma ORM upgrade guide</a>
+for more information.</p>
+</li>
+<li>
+<p><code>dependency-track</code> no longer bundles the UI inside the jar. This bundling
+functionality is deprecated by upstream and causes UI assets not being served
+after weeks of runtime.</p>
+</li>
+<li>
+<p><code>nq</code> was updated to 1.0, which renames the <code>fq</code> and <code>tq</code> utilities to <code>nqtail</code> and <code>nqterm</code> respectively.</p>
+</li>
+<li>
+<p><code>zf</code> was updated to 0.10.2, which includes breaking changes from the <a href="https://github.com/natecraddock/zf/releases/tag/0.10.0">0.10.0 release</a>.
+<code>zf</code> no longer does Unicode normalization of the input and no longer supports terminal escape sequences in the <code>ZF_PROMPT</code> environment variable.</p>
+</li>
+<li>
+<p><code>confluent-cli</code> was updated from 3.60.0 to 4.16.0, which includes several breaking changes as detailed in <a href="https://docs.confluent.io/confluent-cli/current/release-notes.html">Confluent's release notes</a>.</p>
+</li>
+<li>
+<p><code>siduck76-st</code> has been renamed to <code>st-snazzy</code>, like the project's <a href="https://github.com/siduck/st/blob/main/flake.nix">flake</a>. An alias for the old name has been added.</p>
+</li>
+<li>
+<p><code>python3Packages.jax</code> now directly depends on <code>python3Packages.jaxlib</code>.
+As a result, packages that depend on jax no longer need to include jaxlib to their dependencies.
+There is also a breaking change in the handling of CUDA. Instead of using a CUDA-compatible jaxlib
+as before, you can use plugins like <code>python3Packages.jax-cuda12-plugin</code>.</p>
+</li>
+<li>
+<p>Added <code>allowVariants</code> to gate availability of package sets like <code>pkgsLLVM</code>, <code>pkgsMusl</code>, <code>pkgsZig</code>, etc. This was done in an effort to
+decrease evaluation times by limiting the number of instances of nixpkgs to evaluate. The option will be removed in the future as a
+new mechanism is in the works for handling cross compilation.</p>
+</li>
+</ul>
+<!-- To avoid merge conflicts, consider adding your item at an arbitrary place in the list instead. -->
+<h2 id='sec-nixpkgs-release-25.05-notable-changes'><a href='release-notes/rl-2505/#sec-nixpkgs-release-25.05-notable-changes'>
+Other Notable Changes
+</a></h2>
+<ul>
+<li>
+<p><code>i18n</code> module improvements:</p>
+<ul>
+<li><code>i18n.extraLocales</code> should now be the preferred way to install additional locales.</li>
+<li><code>i18n.supportedLocales</code> is now considered an implementation detail and will be hidden from the documentation. But the option will still continue to work.</li>
+<li><code>i18n.supportedLocales</code> will now trigger a warning when it omits any locale set in <code>i18n.defaultLocale</code>, <code>i18n.extraLocales</code> or <code>i18n.extraLocaleSettings</code>.</li>
+<li>The options <code>i18n.defaultCharset</code> &amp; <code>i18n.localeCharsets</code> were added, and they complement <code>i18n.defaultLocale</code> &amp; <code>i18n.extraLocaleSettings</code> respectively - allowing to control the character set used per locale setting.</li>
+</ul>
+</li>
+<li>
+<p>Plasma 5 and Qt 5 based versions of associated software are deprecated in NixOS 25.05, and will be removed in NixOS 25.11. Users are encouraged to upgrade to Plasma 6.</p>
+</li>
+<li>
+<p><code>titaniumenv</code>, <code>titanium</code>, and <code>titanium-alloy</code> have been removed due to lack of maintenance in Nixpkgs <span id='sec-nixpkgs-release-25.05-incompatibilities-titanium-removed'></span>.</p>
+</li>
+<li>
+<p><a href="https://cursor.com/">Cursor</a> — a vscode-based editor that uses AI to help you write code faster — has been packaged as <code>cursor</code>.</p>
+</li>
+<li>
+<p><code>octave</code> (and <code>octaveFull</code>) was updated to version <code>10.x</code>. The update broke a few <code>octavePackages</code>, and <code>librsb</code>. See <a href="https://github.com/NixOS/nixpkgs/pull/394495/commits">the PR's commits</a> for more details.</p>
+</li>
+<li>
+<p>androidenv has been improved:</p>
+<ul>
+<li>All versions specified in composeAndroidPackages now track the latest. Android packages are automatically updated on unstable, and run the androidenv test suite on every update.</li>
+<li>Many androidenv packages are now searchable on <a href="https://search.nixos.org">search.nixos.org</a>.</li>
+<li>We now use the latest Google repositories, which should improve aarch64-darwin compatibility. The SDK now additionally evaluates on aarch64-linux, though not all packages are functional.</li>
+</ul>
+</li>
+<li>
+<p><code>dwarf-fortress</code> audio now works again. Additionally, the <code>dfhack</code> and <code>dwarf-fortress-full</code> packages are now exposed at toplevel, making it easier to install and play Dwarf Fortress. Note that <code>dwarf-fortress-full</code> is the Nixpkgs equivalent of the Dwarf Fortress Lazy Pack.</p>
+</li>
+<li>
+<p><code>gerbera</code> now has wavpack support.</p>
+</li>
+<li>
+<p><code>buildPythonPackage</code>, <code>buildPythonApplication</code> and the Python building setup hooks now support both <code>__structuredAttrs = true</code> and <code>__structuredAttrs = false</code>.</p>
+</li>
+<li>
+<p><code>buildGoModule</code> now supports a self-referencing <code>finalAttrs:</code> parameter
+containing the final arguments including overrides.
+This allows packaging configuration to be overridden in a consistent manner by
+providing an alternative to <code>rec {}</code> syntax.</p>
+</li>
+<li>
+<p>Caddy can now be built with plugins by using <code>caddy.withPlugins</code>, a <code>passthru</code> function that accepts an attribute set as a parameter. The <code>plugins</code> argument represents a list of Caddy plugins, with each Caddy plugin being a versioned module. The <code>hash</code> argument represents the <code>vendorHash</code> of the resulting Caddy source code with the plugins added.</p>
+<p>Example:</p>
+<pre><code class="language-nix">let
+  pkgs = import &lt;nixpkgs&gt; { };
+
+in
+pkgs.caddy.withPlugins {
+  plugins = [
+    # tagged upstream
+    &quot;github.com/caddy-dns/powerdns@v1.0.1&quot;
+    # pseudo-version number generated by Go
+    &quot;github.com/caddy-dns/cloudflare@v0.0.0-20240703190432-89f16b99c18e&quot;
+    &quot;github.com/mholt/caddy-webdav@v0.0.0-20241008162340-42168ba04c9d&quot;
+  ];
+  hash = &quot;sha256-wqXSd1Ep9TVpQi570TTb96LwzNYvWL5EBJXMJfYWCAk=&quot;;
+}
+</code></pre>
+<p>To get the necessary hash of the vendored dependencies, omit <code>hash</code>. The build will fail and tell you the correct value.</p>
+<p>Note that all provided plugins must have versions/tags (string after <code>@</code>), even if upstream repo does not tag each release. For untagged plugins, you can either create an empty Go project and run <code>go get &lt;plugin&gt;</code> and see changes in <code>go.mod</code> to get the pseudo-version number, or provide a commit hash in place of version/tag for the first run, and update the plugin string based on the error output.</p>
+</li>
+<li>
+<p>The <code>godot-export-templates</code> package now has its content at <code>share/godot/export_templates/$version</code> instead of the output root. This makes it more convenient for symlinking into <code>~/.local</code>, but scripts expecting the old layout will need to be changed.</p>
+</li>
+<li>
+<p>GOverlay has been updated to 1.2, please check the <a href="https://github.com/benjamimgois/goverlay/releases">upstream changelog</a> for more details.</p>
+</li>
+<li>
+<p><code>tpm2-pkcs11</code> now has the variant <code>tpm2-pkcs11-fapi</code>, which has been patched to default to the Feature API backend. It has also been split into <code>tpm2-pkcs11-esapi</code>, which <em>only</em> supports the older Enhanced System API backend. Note the <a href="https://github.com/tpm2-software/tpm2-pkcs11/blob/1.9.1/docs/FAPI.md">differences</a>, and that <code>tpm2-pkcs11</code> itself still needs <code>TPM2_PKCS11_BACKEND=fapi</code> exported in order to use the Feature API, whereas <code>tpm2-pkcs11-fapi</code> does not, and <code>tpm2-pkcs11-esapi</code> just does not support fapi entirely.</p>
+</li>
+<li>
+<p>For matrix homeserver Synapse we are now following the upstream recommendation to enable jemalloc as the memory allocator by default.</p>
+</li>
+<li>
+<p>Mattermost, a self-hosted chat collaboration platform supporting calls, playbooks, and boards, has been updated. It now has multiple versions, disabled telemetry, and a native frontend build in nixpkgs, removing all upstream prebuilt blobs.</p>
+<ul>
+<li>A new <code>pkgs.mattermost.buildPlugin</code> function has been added, which allows plugins to be built from source, including webapp frontends with a supported package-lock.json. See the Mattermost NixOS test and <a href="https://nixos.org/manual/nixos/unstable#sec-mattermost-plugins-build">manual</a> for an example.</li>
+<li>The Mattermost frontend is now built from source and can be overridden. Note that the Mattermost derivation containing both the webapp and server is now wrapped to allow them to be built independently, so overrides to both webapp and server look like <code>mattermost.overrideAttrs (prev: { webapp = prev.webapp.override { ... }; server = prev.server.override { ... }; })</code> now.</li>
+<li><code>pkgs.mattermost</code> has been updated from 9.11 to 10.5 to track the latest extended support release, since 9.11 will become end-of-life during the lifetime of NixOS 25.05.</li>
+<li><code>pkgs.mattermostLatest</code> is now an option to track the latest (non-prerelease) Mattermost release. We test upgrade migrations from ESR releases (<code>pkgs.mattermost</code>) to <code>pkgs.mattermostLatest</code>.</li>
+</ul>
+</li>
+<li>
+<p>A new hardening flag, <code>nostrictaliasing</code> was made available, corresponding to the gcc/clang option <code>-fno-strict-aliasing</code>.</p>
+</li>
+<li>
+<p>The <code>stackclashprotection</code> hardening flag has been enabled by default on compilers that support it.</p>
+</li>
+<li>
+<p>In <code>dovecot</code> package, the hardcoded path to the module directory has been removed.</p>
+</li>
+<li>
+<p><code>authelia</code> version 4.39.0 has made some changes which deprecate older configurations.
+They are still expected to be working until future version 5.0.0, but will generate warnings in logs.
+Read the <a href="https://www.authelia.com/blog/4.39-release-notes/">release notes</a> for human readable summaries of the changes.</p>
+</li>
+<li>
+<p><code>hddfancontrol</code> has been updated to major release 2. See the <a href="https://github.com/desbma/hddfancontrol/tree/master?tab=readme-ov-file#migrating-from-v1x">migration guide</a>, as there are breaking changes.</p>
+</li>
+<li>
+<p><code>nextcloud-news-updater</code> is unmaintained and was removed from Nixpkgs.</p>
+</li>
+<li>
+<p>KDE Partition Manager <code>partitionmanager</code>'s support for ReiserFS is removed.
+ReiserFS has not been actively maintained for many years. It has been marked as obsolete since Linux 6.6, and
+<a href="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=c01f664e4ca210823b7594b50669bbd9b0a3c3b0">is removed</a>
+in Linux 6.13.</p>
+</li>
+<li>
+<p><code>gerbera</code> now has wavpack support.</p>
+</li>
+<li>
+<p><code>signal-desktop</code> has been migrated to a from source build. No state migration is necessary. In case there's no working source build available (like on Darwin), the binary build is still available at <code>signal-desktop-bin</code>.</p>
+</li>
+<li>
+<p><code>ddclient</code> was updated from 3.11.2 to 4.0.0 <a href="https://github.com/ddclient/ddclient/releases/tag/v4.0.0">Release notes</a></p>
+</li>
+</ul>
+<h2 id='sec-nixpkgs-release-25.05-lib'><a href='release-notes/rl-2505/#sec-nixpkgs-release-25.05-lib'>
+Nixpkgs Library
+</a></h2>
+<h3 id='sec-nixpkgs-release-25.05-lib-breaking'><a href='release-notes/rl-2505/#sec-nixpkgs-release-25.05-lib-breaking'>
+Breaking changes
+</a></h3>
+<ul>
+<li>
+<p>Structure of the <code>functor</code> of some types has changed. <code>functor</code> is an implementation detail and should not be relied upon. If you did rely on it let us know in this <a href="https://github.com/NixOS/nixpkgs/pull/363565">PR</a>.</p>
+<ul>
+<li><a href="https://nixos.org/manual/nixos/unstable/#sec-option-types-basic"><code>lib.types.enum</code></a>: Previously the <code>functor.payload</code> was the list of enum values directly. Now it is an attribute set containing the values in the <code>values</code> attribute.</li>
+<li><a href="https://nixos.org/manual/nixos/unstable/#sec-option-types-string"><code>lib.types.separatedString</code></a>: Previously the <code>functor.payload</code> was the separator directly. Now it is an attribute set containing the separator in the <code>sep</code> attribute.</li>
+</ul>
+</li>
+<li>
+<p><a href="https://nixos.org/manual/nixpkgs/unstable/#function-library-lib.filesystem.packagesFromDirectoryRecursive"><code>lib.packagesFromDirectoryRecursive</code></a> now rejects unknown arguments.</p>
+</li>
+</ul>
+<h3 id='sec-nixpkgs-release-25.05-lib-deprecations'><a href='release-notes/rl-2505/#sec-nixpkgs-release-25.05-lib-deprecations'>
+Deprecations
+</a></h3>
+<ul>
+<li><code>functor</code> is an implementation detail and should not be relied upon, but since its status wasn't clear and it has had some use cases without alternatives, changes are being handled as gracefully as possible. Deprecations within functor:
+<ul>
+<li><code>functor.wrapped</code> is now deprecated for some types and using it will give a warning with migration instructions. It is deprecated for these types:
+<ul>
+<li><code>lib.types.attrsWith</code></li>
+<li><code>lib.types.listOf</code></li>
+<li><code>lib.types.unique</code> and <code>lib.types.uniq</code></li>
+<li><code>lib.types.nullOr</code></li>
+<li><code>lib.types.functionTo</code></li>
+<li><code>lib.types.coercedTo</code></li>
+<li><code>lib.types.either</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id='sec-nixpkgs-release-25.05-lib-additions-improvements'><a href='release-notes/rl-2505/#sec-nixpkgs-release-25.05-lib-additions-improvements'>
+Additions and Improvements
+</a></h3>
+<ul>
+<li><a href="https://nixos.org/manual/nixpkgs/unstable/#function-library-lib.filesystem.packagesFromDirectoryRecursive"><code>lib.packagesFromDirectoryRecursive</code></a> can now construct nested scopes matching the directory tree passed as input.</li>
+</ul>
+        </main>
+      </div>
+    </section>
+<script defer src='highlight.pack.cf986678470772f7.js'></script>
+<script defer src='mmdoc.367f3e8986e40416.js'></script>
+<script defer src='mmdoc_search.a5b6fc7d7512cdc1.js' data-search-index='search_index.b3afff10081eb0bd.js' data-fuse='fuse.basic.min.bb997c989fa0a28e.js'></script>
+  </div>
+  </body>
+</html>

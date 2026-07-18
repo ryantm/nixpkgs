@@ -1,0 +1,2867 @@
+<!doctype html>
+<html lang='en'>
+  <head>
+    <base href='../../../'>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <script>
+      (() => {
+        let theme = null
+        try { theme = localStorage.getItem('theme') } catch (error) {}
+        if (theme !== 'light' && theme !== 'dark')
+          theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+        document.documentElement.classList.add(theme + '-theme')
+      })()
+    </script>
+    <meta name='description' content='lib.strings: string manipulation functions'>
+    <link rel='icon' href='favicon.svg'>
+    <link rel='stylesheet' href='a11y-dark.1fcafc9d9a306955.css'>
+    <link rel='stylesheet' href='a11y-light.b466309a7fa86b1f.css'>
+    <link rel='stylesheet' href='mmdoc.e4286053b6471af4.css'>
+    <title>lib.strings: string manipulation functions | nixpkgs</title>
+  </head>
+  <body>
+  <a class='skip-link' href='functions/library/strings/#main-content'>Skip to main content</a>
+  <input type='checkbox' id='sidebar-checkbox' aria-hidden='true' tabindex='-1' style='display: none;'>
+  <div class='body'>
+    <div class='nav-top-container'>
+    <nav class='nav-top' aria-label='Documentation controls'>
+      <button type='button' class='sidebar-toggle' aria-label='Toggle table of contents' aria-controls='sidebar' aria-expanded='true'></button>    <button type='button' class='search-toggle' aria-label='Open search' aria-controls='search-panel' aria-expanded='false'></button>    <button type='button' class='theme-toggle' aria-label='Switch to dark theme' aria-pressed='false'></button>    <a id='chapter-previous-button' class='chapter-previous' href='functions/library/attrsets/#sec-functions-library-attrsets' title='lib.attrsets: attribute set functions' aria-label='Previous: lib.attrsets: attribute set functions'>&lt;</a>
+    <a id='chapter-next-button' class='chapter-next' href='functions/library/versions/#sec-functions-library-versions' title='lib.versions: version string functions' aria-label='Next: lib.versions: version string functions'>&gt;</a>
+    </nav>
+    </div>
+    <nav id='sidebar' class='sidebar' aria-label='Table of contents'>
+<h1>Nixpkgs Manual</h1>
+<p>Version 26.11pre</p>
+<ul>
+<li><a href="./#preface">Preface</a>
+<ul>
+<li><a href="preface/#overview-of-nixpkgs">Overview of Nixpkgs</a></li>
+</ul>
+</li>
+<li><a href="first-package/#chap-first-package">Package your first application</a></li>
+</ul>
+<h2>Using Nixpkgs</h2>
+<ul>
+<li><a href="using/platform-support/#chap-platform-support">Platform Support</a></li>
+<li><a href="using/configuration/#chap-packageconfig">Global configuration</a></li>
+<li><a href="using/overlays/#chap-overlays">Overlays</a></li>
+<li><a href="using/overrides/#chap-overrides">Overriding</a></li>
+</ul>
+<h2>Nixpkgs Lib</h2>
+<ul>
+<li><a href="functions/#chap-functions">Functions reference</a>
+<ul>
+<li>Library Functions
+<ul>
+<li><a href="functions/library/asserts/#sec-functions-library-asserts">lib.asserts: assertion functions</a></li>
+<li><a href="functions/library/attrsets/#sec-functions-library-attrsets">lib.attrsets: attribute set functions</a></li>
+<li><a href="functions/library/strings/#sec-functions-library-strings">lib.strings: string manipulation functions</a></li>
+<li><a href="functions/library/versions/#sec-functions-library-versions">lib.versions: version string functions</a></li>
+<li><a href="functions/library/trivial/#sec-functions-library-trivial">lib.trivial: miscellaneous functions</a></li>
+<li><a href="functions/library/fixedPoints/#sec-functions-library-fixedPoints">lib.fixedPoints: explicit recursion functions</a></li>
+<li><a href="functions/library/lists/#sec-functions-library-lists">lib.lists: list manipulation functions</a></li>
+<li><a href="functions/library/debug/#sec-functions-library-debug">lib.debug: debugging functions</a></li>
+<li><a href="functions/library/options/#sec-functions-library-options">lib.options: NixOS / nixpkgs option handling</a></li>
+<li><a href="functions/library/path/#sec-functions-library-path">lib.path: path functions</a></li>
+<li><a href="functions/library/filesystem/#sec-functions-library-filesystem">lib.filesystem: filesystem functions</a></li>
+<li><a href="functions/library/fileset/#sec-functions-library-fileset">lib.fileset: file set functions</a></li>
+<li><a href="functions/library/sources/#sec-functions-library-sources">lib.sources: source filtering functions</a></li>
+<li><a href="functions/library/cli/#sec-functions-library-cli">lib.cli: command-line serialization functions</a></li>
+<li><a href="functions/library/gvariant/#sec-functions-library-gvariant">lib.gvariant: GVariant formatted string serialization functions</a></li>
+<li><a href="functions/library/fetchers/#sec-functions-library-fetchers">lib.fetchers: functions which can be reused across fetchers</a></li>
+<li><a href="functions/library/generators/#sec-functions-library-generators">lib.generators: functions that create file formats from nix data structures</a></li>
+<li><a href="functions/library/customisation/#sec-functions-library-customisation">lib.customisation: Functions to customise (derivation-related) functions, derivations, or attribute sets</a></li>
+<li><a href="functions/library/meta/#sec-functions-library-meta">lib.meta: functions for derivation metadata</a></li>
+<li><a href="functions/library/derivations/#sec-functions-library-derivations">lib.derivations: miscellaneous derivation-specific functions</a></li>
+<li><a href="functions/generators/#sec-generators">Generators</a></li>
+<li><a href="functions/debug/#sec-debug">Debugging Nix Expressions</a></li>
+<li><a href="functions/prefer-remote-fetch/#sec-prefer-remote-fetch">prefer-remote-fetch overlay</a></li>
+<li><a href="functions/nix-gitignore/#sec-pkgs-nix-gitignore">pkgs.nix-gitignore</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="module-system/module-system/#module-system">Module System</a></li>
+</ul>
+<h2>Standard Environment</h2>
+<ul>
+<li><a href="stdenv/#part-stdenv">Standard environment</a></li>
+<li><a href="stdenv/stdenv/#chap-stdenv">The Standard Environment</a></li>
+<li><a href="stdenv/meta/#chap-meta">Meta-attributes</a></li>
+<li><a href="stdenv/passthru/#chap-passthru">Passthru-attributes</a></li>
+<li><a href="stdenv/multiple-output/#chap-multiple-output">Multiple-output packages</a></li>
+<li><a href="stdenv/cross-compilation/#chap-cross">Cross-compilation</a></li>
+<li><a href="stdenv/platform-notes/#chap-platform-notes">Platform Notes</a></li>
+</ul>
+<h2>Toolchains</h2>
+<ul>
+<li><a href="toolchains/llvm/#chap-toolchains">The LLVM Toolchain</a></li>
+</ul>
+<h2>Builders</h2>
+<ul>
+<li><a href="build-helpers/#part-builders">Build helpers</a></li>
+<li><a href="build-helpers/fetchers/#chap-pkgs-fetchers">Fetchers</a></li>
+<li><a href="build-helpers/trivial-build-helpers/#chap-trivial-builders">Trivial build helpers</a></li>
+<li><a href="build-helpers/fixed-point-arguments/#chap-build-helpers-finalAttrs">Fixed-point arguments of build helpers</a></li>
+<li><a href="build-helpers/dev-shell-tools/#chap-devShellTools">Development Shell helpers</a></li>
+<li><a href="build-helpers/testers/#chap-testers">Testers</a></li>
+<li>Special build helpers
+<ul>
+<li><a href="build-helpers/special/fhs-environments/#sec-fhs-environments">buildFHSEnv</a></li>
+<li><a href="build-helpers/special/fakenss/#sec-fakeNss">fakeNss</a></li>
+<li><a href="build-helpers/special/makesetuphook/#sec-pkgs.makeSetupHook">pkgs.makeSetupHook</a></li>
+<li><a href="build-helpers/special/mkshell/#sec-pkgs-mkShell">pkgs.mkShell</a></li>
+<li><a href="packages/darwin-builder/#sec-darwin-builder">darwin.linux-builder</a></li>
+<li><a href="build-helpers/special/vm-tools/#sec-vm-tools">vmTools</a></li>
+</ul>
+</li>
+<li>Images
+<ul>
+<li><a href="build-helpers/images/appimagetools/#sec-pkgs-appimageTools">pkgs.appimageTools</a></li>
+<li><a href="build-helpers/images/dockertools/#sec-pkgs-dockerTools">pkgs.dockerTools</a></li>
+<li><a href="build-helpers/images/ocitools/#sec-pkgs-ociTools">pkgs.ociTools</a></li>
+<li><a href="build-helpers/images/portableservice/#sec-pkgs-portableService">pkgs.portableService</a></li>
+<li><a href="build-helpers/images/makediskimage/#sec-make-disk-image">&lt;nixpkgs/nixos/lib/make-disk-image.nix&gt;</a></li>
+<li><a href="build-helpers/images/binarycache/#sec-pkgs-binary-cache">pkgs.mkBinaryCache</a></li>
+</ul>
+</li>
+<li><a href="hooks/index/#chap-hooks">Hooks reference</a>
+<ul>
+<li><a href="hooks/autoconf/#setup-hook-autoconf">Autoconf</a></li>
+<li><a href="hooks/automake/#setup-hook-automake">Automake</a></li>
+<li><a href="hooks/autopatchelf/#setup-hook-autopatchelfhook">autoPatchelfHook</a></li>
+<li><a href="hooks/breakpoint/#breakpointhook">breakpointHook</a></li>
+<li><a href="hooks/cmake/#cmake">cmake</a></li>
+<li><a href="hooks/gdk-pixbuf/#setup-hook-gdk-pixbuf">gdk-pixbuf</a></li>
+<li><a href="hooks/ghc/#ghc">GHC</a></li>
+<li><a href="hooks/gnome/#gnome-platform">GNOME platform</a></li>
+<li><a href="hooks/installShellFiles/#installshellfiles">installShellFiles</a></li>
+<li><a href="hooks/libglycin/#libglycin-hooks">libglycin</a></li>
+<li><a href="hooks/libiconv/#libiconv-libintl">libiconv, libintl</a></li>
+<li><a href="hooks/libxml2/#setup-hook-libxml2">libxml2</a></li>
+<li><a href="hooks/meson/#meson">Meson</a></li>
+<li><a href="hooks/mpi-check-hook/#setup-hook-mpi-check">mpiCheckPhaseHook</a></li>
+<li><a href="hooks/ninja/#ninja">ninja</a></li>
+<li><a href="hooks/patch-rc-path-hooks/#sec-patchRcPathHooks">patchRcPath hooks</a></li>
+<li><a href="hooks/perl/#setup-hook-perl">Perl</a></li>
+<li><a href="hooks/pkg-config/#setup-hook-pkg-config">pkg-config</a></li>
+<li><a href="hooks/pnpm/#pnpm-build-hook">pnpmBuildHook</a></li>
+<li><a href="hooks/postgresql-test-hook/#sec-postgresqlTestHook">postgresqlTestHook</a></li>
+<li><a href="hooks/python/#setup-hook-python">Python</a></li>
+<li><a href="hooks/scons/#scons">scons</a></li>
+<li><a href="hooks/tetex-tex-live/#tetex-tex-live">teTeX / TeX Live</a></li>
+<li><a href="hooks/unzip/#unzip">unzip</a></li>
+<li><a href="hooks/validatePkgConfig/#validatepkgconfig">validatePkgConfig</a></li>
+<li><a href="hooks/versionCheckHook/#versioncheckhook">versionCheckHook</a></li>
+<li><a href="hooks/waf/#waf-hook">wafHook</a></li>
+<li><a href="hooks/xcbuild/#xcbuildhook">xcbuildHook</a></li>
+</ul>
+</li>
+<li><a href="languages-frameworks/index/#chap-language-support">Languages and frameworks</a>
+<ul>
+<li><a href="languages-frameworks/agda/#agda">Agda</a></li>
+<li><a href="languages-frameworks/android/#android">Android</a></li>
+<li><a href="languages-frameworks/astal/#astal">Astal</a></li>
+<li><a href="languages-frameworks/beam/#sec-beam">BEAM Languages (Erlang, Elixir &amp; LFE)</a></li>
+<li><a href="languages-frameworks/chicken/#sec-chicken">CHICKEN</a></li>
+<li><a href="languages-frameworks/cosmic/#sec-language-cosmic">COSMIC</a></li>
+<li><a href="languages-frameworks/crystal/#crystal">Crystal</a></li>
+<li><a href="languages-frameworks/cuda/#cuda">CUDA</a></li>
+<li><a href="languages-frameworks/cuelang/#cuelang">Cue (Cuelang)</a></li>
+<li><a href="languages-frameworks/dlang/#dlang">D (Dlang)</a></li>
+<li><a href="languages-frameworks/dart/#sec-language-dart">Dart</a></li>
+<li><a href="languages-frameworks/dhall/#sec-language-dhall">Dhall</a></li>
+<li><a href="languages-frameworks/dotnet/#dotnet">Dotnet</a></li>
+<li><a href="languages-frameworks/emscripten/#emscripten">Emscripten</a></li>
+<li><a href="languages-frameworks/factor/#sec-language-factor">Factor</a></li>
+<li><a href="languages-frameworks/gnome/#sec-language-gnome">GNOME</a></li>
+<li><a href="languages-frameworks/go/#sec-language-go">Go</a></li>
+<li><a href="languages-frameworks/gradle/#gradle">Gradle</a></li>
+<li><a href="languages-frameworks/hare/#sec-language-hare">Hare</a></li>
+<li><a href="languages-frameworks/haskell/#haskell">Haskell</a></li>
+<li><a href="languages-frameworks/hy/#sec-language-hy">Hy</a></li>
+<li><a href="languages-frameworks/idris/#idris">Idris</a></li>
+<li><a href="languages-frameworks/idris2/#sec-idris2">Idris2</a></li>
+<li><a href="languages-frameworks/ios/#ios">iOS</a></li>
+<li><a href="languages-frameworks/java/#sec-language-java">Java</a></li>
+<li><a href="languages-frameworks/javascript/#language-javascript">Javascript</a></li>
+<li><a href="languages-frameworks/julia/#language-julia">Julia</a></li>
+<li><a href="languages-frameworks/lean4/#sec-language-lean4">Lean 4</a></li>
+<li><a href="languages-frameworks/lisp/#lisp">lisp-modules</a></li>
+<li><a href="languages-frameworks/lua/#lua">Lua</a></li>
+<li><a href="languages-frameworks/maven/#maven">Maven</a></li>
+<li><a href="languages-frameworks/neovim/#neovim">Neovim</a></li>
+<li><a href="languages-frameworks/nim/#sec-language-nim">Nim</a></li>
+<li><a href="languages-frameworks/ocaml/#sec-language-ocaml">OCaml</a></li>
+<li><a href="languages-frameworks/octave/#sec-octave">Octave</a></li>
+<li><a href="languages-frameworks/perl/#sec-language-perl">Perl</a></li>
+<li><a href="languages-frameworks/php/#sec-php">PHP</a></li>
+<li><a href="languages-frameworks/pkg-config/#sec-pkg-config">pkg-config</a></li>
+<li><a href="languages-frameworks/python/#python">Python</a></li>
+<li><a href="languages-frameworks/qt/#sec-language-qt">Qt</a></li>
+<li><a href="languages-frameworks/r/#r">R</a></li>
+<li><a href="languages-frameworks/rocq/#sec-language-rocq">Rocq and rocq packages</a></li>
+<li><a href="languages-frameworks/ruby/#sec-language-ruby">Ruby</a></li>
+<li><a href="languages-frameworks/rust/#rust">Rust</a></li>
+<li><a href="languages-frameworks/scheme/#sec-scheme">Scheme</a></li>
+<li><a href="languages-frameworks/swift/#swift">Swift</a></li>
+<li><a href="languages-frameworks/tcl/#sec-language-tcl">Tcl</a></li>
+<li><a href="languages-frameworks/texlive/#sec-language-texlive">TeX Live</a></li>
+<li><a href="languages-frameworks/typst/#typst">Typst</a></li>
+<li><a href="languages-frameworks/vim/#vim">Vim</a></li>
+</ul>
+</li>
+<li><a href="packages/index/#chap-packages">Packages</a>
+<ul>
+<li><a href="packages/build-support/#sec-build-support">Build Support</a></li>
+<li><a href="packages/cataclysm-dda/#cataclysm-dark-days-ahead">Cataclysm: Dark Days Ahead</a></li>
+<li><a href="packages/citrix/#sec-citrix">Citrix Workspace</a></li>
+<li><a href="packages/dlib/#dlib">DLib</a></li>
+<li><a href="packages/eclipse/#sec-eclipse">Eclipse</a></li>
+<li><a href="packages/elm/#sec-elm">Elm</a></li>
+<li><a href="packages/emacs/#sec-emacs">Emacs</a></li>
+<li><a href="packages/firefox/#sec-firefox">Firefox</a></li>
+<li><a href="packages/fish/#sec-fish">Fish</a></li>
+<li><a href="packages/friction-graphics/#friction-graphics">Friction</a></li>
+<li><a href="packages/fuse/#sec-fuse">FUSE</a></li>
+<li><a href="packages/geant4/#geant4">Geant4</a></li>
+<li><a href="packages/ibus/#sec-ibus-typing-booster">ibus-engines.typing-booster</a></li>
+<li><a href="packages/inkscape/#sec-inkscape">Inkscape</a></li>
+<li><a href="packages/kakoune/#sec-kakoune">Kakoune</a></li>
+<li><a href="packages/krita/#sec-krita">Krita</a></li>
+<li><a href="packages/lhapdf/#lhapdf">LHAPDF</a></li>
+<li><a href="packages/linux/#sec-linux-kernel">Linux kernel</a></li>
+<li><a href="packages/locales/#locales">Locales</a></li>
+<li><a href="packages/etc-files/#etc">/etc files</a></li>
+<li><a href="packages/nginx/#sec-nginx">Nginx</a></li>
+<li><a href="packages/nrfutil/#sec-nrfutil">nrfutil</a></li>
+<li><a href="packages/opengl/#sec-opengl">OpenGL</a></li>
+<li><a href="packages/python-tree-sitter/#python-tree-sitter">Python Tree Sitter</a></li>
+<li><a href="packages/shell-helpers/#sec-shell-helpers">Interactive shell helpers</a></li>
+<li><a href="packages/steam/#sec-steam">Steam</a></li>
+<li><a href="packages/treefmt/#treefmt">treefmt</a></li>
+<li><a href="packages/urxvt/#sec-urxvt">Urxvt</a></li>
+<li><a href="packages/uv/#sec-uv">uv</a></li>
+<li><a href="packages/vcpkg/#sec-vcpkg">VCPKG</a></li>
+<li><a href="packages/weechat/#sec-weechat">WeeChat</a></li>
+</ul>
+</li>
+</ul>
+<h2>Modules</h2>
+<ul>
+<li><a href="modules/index/#modules">Modules</a>
+<ul>
+<li><a href="modules/generic/#modules-generic">Generic</a>
+<ul>
+<li><a href="modules/generic/#modules-generic-meta-maintainers">meta-maintainers.nix</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2>Development of Nixpkgs</h2>
+<ul>
+<li><a href="development/opening-issues/#sec-opening-issues">Opening issues</a></li>
+<li><a href="contributing/coding-conventions/#chap-conventions">Coding conventions</a></li>
+</ul>
+<h2>Interoperability Standards</h2>
+<ul>
+<li><a href="interoperability/cyclonedx/#chap-interop-cyclonedx">CycloneDX</a>
+<ul>
+<li><a href="interoperability/cyclonedx/#sec-interop.cylonedx-nix"><code>nix</code> namespace</a></li>
+<li><a href="interoperability/cyclonedx/#sec-interop.cylonedx-narinfo"><code>nix:narinfo</code></a></li>
+<li><a href="interoperability/cyclonedx/#sec-interop.cylonedx-fod"><code>nix:fod</code></a></li>
+</ul>
+</li>
+</ul>
+<h2>Release Notes</h2>
+<ul>
+<li><a href="release-notes/release-notes/#chap-release-notes">Release Notes</a>
+<ul>
+<li><a href="release-notes/rl-2611/#sec-nixpkgs-release-26.11">Nixpkgs 26.11 (&quot;Zokor&quot;, 2026.11/??)</a></li>
+<li><a href="release-notes/rl-2605/#sec-nixpkgs-release-26.05">Nixpkgs 26.05 (&quot;Yarara&quot;, 2026.05/30)</a></li>
+<li><a href="release-notes/rl-2511/#sec-nixpkgs-release-25.11">Nixpkgs 25.11 (&quot;Xantusia&quot;, 2025.11/30)</a></li>
+<li><a href="release-notes/rl-2505/#sec-nixpkgs-release-25.05">Nixpkgs 25.05 (2025.05/23)</a></li>
+</ul>
+</li>
+</ul>
+    </nav>
+    <section id='main'>
+      <div id='search-panel' class='nav-search' role='search' hidden>
+        <label class='visually-hidden' for='search'>Search documentation</label>
+        <input type='search' id='search' placeholder='Search' autocomplete='off' aria-controls='search-results'>
+        <p id='search-status' class='visually-hidden' role='status' aria-live='polite'></p>
+        <div id='search-results'></div>
+      </div>
+      <div class='main-scroll'>
+        <main id='main-content' tabindex='-1'>
+<h1 id='sec-functions-library-strings'><a href='functions/library/strings/#sec-functions-library-strings'>
+lib.strings: string manipulation functions
+</a></h1>
+<p>String manipulation functions.</p>
+<h2 id='function-library-lib.strings.join'><a href='functions/library/strings/#function-library-lib.strings.join'>
+<code>lib.strings.join</code>
+</a></h2>
+<p>Concatenates a list of strings with a separator between each element.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>sep</code></p>
+</dt>
+<dd>
+<p>Separator to add between elements</p>
+</dd>
+<dt>
+<p><code>list</code></p>
+</dt>
+<dd>
+<p>List of strings that will be joined</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>join :: String -&gt; [String] -&gt; String
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.strings.join</code> usage example</h4>
+<pre><code class="language-nix">join &quot;, &quot; [&quot;foo&quot; &quot;bar&quot;]
+=&gt; &quot;foo, bar&quot;
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L72">lib/strings.nix:72</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.concatStrings'><a href='functions/library/strings/#function-library-lib.strings.concatStrings'>
+<code>lib.strings.concatStrings</code>
+</a></h2>
+<p>Concatenate a list of strings.</p>
+<h3>Type</h3>
+<pre><code>concatStrings :: [String] -&gt; String
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.strings.concatStrings</code> usage example</h4>
+<pre><code class="language-nix">concatStrings [&quot;foo&quot; &quot;bar&quot;]
+=&gt; &quot;foobar&quot;
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L94">lib/strings.nix:94</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.concatMapStrings'><a href='functions/library/strings/#function-library-lib.strings.concatMapStrings'>
+<code>lib.strings.concatMapStrings</code>
+</a></h2>
+<p>Map a function over a list and concatenate the resulting strings.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>f</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+<dt>
+<p><code>list</code></p>
+</dt>
+<dd>
+<p>2. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>concatMapStrings :: (a -&gt; String) -&gt; [a] -&gt; String
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.strings.concatMapStrings</code> usage example</h4>
+<pre><code class="language-nix">concatMapStrings (x: &quot;a&quot; + x) [&quot;foo&quot; &quot;bar&quot;]
+=&gt; &quot;afooabar&quot;
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L124">lib/strings.nix:124</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.concatImapStrings'><a href='functions/library/strings/#function-library-lib.strings.concatImapStrings'>
+<code>lib.strings.concatImapStrings</code>
+</a></h2>
+<p>Like <code>concatMapStrings</code> except that the function <code>f</code> also gets the
+position as a parameter.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>f</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+<dt>
+<p><code>list</code></p>
+</dt>
+<dd>
+<p>2. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>concatImapStrings :: (Int -&gt; a -&gt; String) -&gt; [a] -&gt; String
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.strings.concatImapStrings</code> usage example</h4>
+<pre><code class="language-nix">concatImapStrings (pos: x: &quot;${toString pos}-${x}&quot;) [&quot;foo&quot; &quot;bar&quot;]
+=&gt; &quot;1-foo2-bar&quot;
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L155">lib/strings.nix:155</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.intersperse'><a href='functions/library/strings/#function-library-lib.strings.intersperse'>
+<code>lib.strings.intersperse</code>
+</a></h2>
+<p>Place an element between each element of a list</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>separator</code></p>
+</dt>
+<dd>
+<p>Separator to add between elements</p>
+</dd>
+<dt>
+<p><code>list</code></p>
+</dt>
+<dd>
+<p>Input list</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>intersperse :: a -&gt; [a] -&gt; [a]
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.strings.intersperse</code> usage example</h4>
+<pre><code class="language-nix">intersperse &quot;/&quot; [&quot;usr&quot; &quot;local&quot; &quot;bin&quot;]
+=&gt; [&quot;usr&quot; &quot;/&quot; &quot;local&quot; &quot;/&quot; &quot;bin&quot;].
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L185">lib/strings.nix:185</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.concatStringsSep'><a href='functions/library/strings/#function-library-lib.strings.concatStringsSep'>
+<code>lib.strings.concatStringsSep</code>
+</a></h2>
+<p>Concatenate a list of strings with a separator between each element</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>sep</code></p>
+</dt>
+<dd>
+<p>Separator to add between elements</p>
+</dd>
+<dt>
+<p><code>list</code></p>
+</dt>
+<dd>
+<p>List of input strings</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>concatStringsSep :: String -&gt; [String] -&gt; String
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.strings.concatStringsSep</code> usage example</h4>
+<pre><code class="language-nix">concatStringsSep &quot;/&quot; [&quot;usr&quot; &quot;local&quot; &quot;bin&quot;]
+=&gt; &quot;usr/local/bin&quot;
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L225">lib/strings.nix:225</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.concatMapStringsSep'><a href='functions/library/strings/#function-library-lib.strings.concatMapStringsSep'>
+<code>lib.strings.concatMapStringsSep</code>
+</a></h2>
+<p>Maps a function over a list of strings and then concatenates the
+result with the specified separator interspersed between
+elements.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>sep</code></p>
+</dt>
+<dd>
+<p>Separator to add between elements</p>
+</dd>
+<dt>
+<p><code>f</code></p>
+</dt>
+<dd>
+<p>Function to map over the list</p>
+</dd>
+<dt>
+<p><code>list</code></p>
+</dt>
+<dd>
+<p>List of input strings</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>concatMapStringsSep :: String -&gt; (a -&gt; String) -&gt; [a] -&gt; String
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.strings.concatMapStringsSep</code> usage example</h4>
+<pre><code class="language-nix">concatMapStringsSep &quot;-&quot; (x: toUpper x)  [&quot;foo&quot; &quot;bar&quot; &quot;baz&quot;]
+=&gt; &quot;FOO-BAR-BAZ&quot;
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L260">lib/strings.nix:260</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.concatImapStringsSep'><a href='functions/library/strings/#function-library-lib.strings.concatImapStringsSep'>
+<code>lib.strings.concatImapStringsSep</code>
+</a></h2>
+<p>Same as <code>concatMapStringsSep</code>, but the mapping function
+additionally receives the position of its argument.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>sep</code></p>
+</dt>
+<dd>
+<p>Separator to add between elements</p>
+</dd>
+<dt>
+<p><code>f</code></p>
+</dt>
+<dd>
+<p>Function that receives elements and their positions</p>
+</dd>
+<dt>
+<p><code>list</code></p>
+</dt>
+<dd>
+<p>List of input strings</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>concatIMapStringsSep :: String -&gt; (Int -&gt; a -&gt; String) -&gt; [a] -&gt; String
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.strings.concatImapStringsSep</code> usage example</h4>
+<pre><code class="language-nix">concatImapStringsSep &quot;-&quot; (pos: x: toString (x / pos)) [ 6 6 6 ]
+=&gt; &quot;6-3-2&quot;
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L296">lib/strings.nix:296</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.concatMapAttrsStringSep'><a href='functions/library/strings/#function-library-lib.strings.concatMapAttrsStringSep'>
+<code>lib.strings.concatMapAttrsStringSep</code>
+</a></h2>
+<p>Like <a href="functions/library/strings/#function-library-lib.strings.concatMapStringsSep"><code>concatMapStringsSep</code></a>
+but takes an attribute set instead of a list.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>sep</code></p>
+</dt>
+<dd>
+<p>Separator to add between item strings</p>
+</dd>
+<dt>
+<p><code>f</code></p>
+</dt>
+<dd>
+<p>Function that takes each key and value and return a string</p>
+</dd>
+<dt>
+<p><code>attrs</code></p>
+</dt>
+<dd>
+<p>Attribute set to map from</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>concatMapAttrsStringSep :: String -&gt; (String -&gt; a -&gt; String) -&gt; { [String] :: a } -&gt; String
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.strings.concatMapAttrsStringSep</code> usage example</h4>
+<pre><code class="language-nix">concatMapAttrsStringSep &quot;\n&quot; (name: value: &quot;${name}: foo-${value}&quot;) { a = &quot;0.1.0&quot;; b = &quot;0.2.0&quot;; }
+=&gt; &quot;a: foo-0.1.0\nb: foo-0.2.0&quot;
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L333">lib/strings.nix:333</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.concatLines'><a href='functions/library/strings/#function-library-lib.strings.concatLines'>
+<code>lib.strings.concatLines</code>
+</a></h2>
+<p>Concatenate a list of strings, adding a newline at the end of each one.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>list</code></p>
+</dt>
+<dd>
+<p>List of strings. Any element that is not a string will be implicitly converted to a string.</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>concatLines :: [String] -&gt; String
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.strings.concatLines</code> usage example</h4>
+<pre><code class="language-nix">concatLines [ &quot;foo&quot; &quot;bar&quot; ]
+=&gt; &quot;foo\nbar\n&quot;
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L362">lib/strings.nix:362</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.replaceString'><a href='functions/library/strings/#function-library-lib.strings.replaceString'>
+<code>lib.strings.replaceString</code>
+</a></h2>
+<p>Given string <code>s</code>, replace every occurrence of the string <code>from</code> with the string <code>to</code>.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>from</code></p>
+</dt>
+<dd>
+<p>The string to be replaced</p>
+</dd>
+<dt>
+<p><code>to</code></p>
+</dt>
+<dd>
+<p>The string to replace with</p>
+</dd>
+<dt>
+<p><code>s</code></p>
+</dt>
+<dd>
+<p>The original string where replacements will be made</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>replaceString :: String -&gt; String -&gt; String -&gt; String
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.strings.replaceString</code> usage example</h4>
+<pre><code class="language-nix">replaceString &quot;world&quot; &quot;Nix&quot; &quot;Hello, world!&quot;
+=&gt; &quot;Hello, Nix!&quot;
+replaceString &quot;.&quot; &quot;_&quot; &quot;v1.2.3&quot;
+=&gt; &quot;v1_2_3&quot;
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L397">lib/strings.nix:397</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.replicate'><a href='functions/library/strings/#function-library-lib.strings.replicate'>
+<code>lib.strings.replicate</code>
+</a></h2>
+<p>Repeat a string <code>n</code> times,
+and concatenate the parts into a new string.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>n</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+<dt>
+<p><code>s</code></p>
+</dt>
+<dd>
+<p>2. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>replicate :: Int -&gt; String -&gt; String
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.strings.replicate</code> usage example</h4>
+<pre><code class="language-nix">replicate 3 &quot;v&quot;
+=&gt; &quot;vvv&quot;
+replicate 5 &quot;hello&quot;
+=&gt; &quot;hellohellohellohellohello&quot;
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L430">lib/strings.nix:430</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.trim'><a href='functions/library/strings/#function-library-lib.strings.trim'>
+<code>lib.strings.trim</code>
+</a></h2>
+<p>Remove leading and trailing whitespace from a string <code>s</code>.</p>
+<p>Whitespace is defined as any of the following characters:
+&quot; &quot;, &quot;\t&quot; &quot;\r&quot; &quot;\n&quot;</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>s</code></p>
+</dt>
+<dd>
+<p>The string to trim</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>trim :: String -&gt; String
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.strings.trim</code> usage example</h4>
+<pre><code class="language-nix">trim &quot;   hello, world!   &quot;
+=&gt; &quot;hello, world!&quot;
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L460">lib/strings.nix:460</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.trimWith'><a href='functions/library/strings/#function-library-lib.strings.trimWith'>
+<code>lib.strings.trimWith</code>
+</a></h2>
+<p>Remove leading and/or trailing whitespace from a string <code>s</code>.</p>
+<p>To remove both leading and trailing whitespace, you can also use <a href="functions/library/strings/#function-library-lib.strings.trim"><code>trim</code></a></p>
+<p>Whitespace is defined as any of the following characters:
+&quot; &quot;, &quot;\t&quot; &quot;\r&quot; &quot;\n&quot;</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>config</code> (Attribute set)</p>
+</dt>
+<dd>
+<p><code>start</code></p>
+</dd>
+<dd>
+<p>Whether to trim leading whitespace (<code>false</code> by default)</p>
+</dd>
+<dd>
+<p><code>end</code></p>
+</dd>
+<dd>
+<p>Whether to trim trailing whitespace (<code>false</code> by default)</p>
+</dd>
+<dt>
+<p><code>s</code></p>
+</dt>
+<dd>
+<p>The string to trim</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>trimWith :: { start :: Bool; end :: Bool; } -&gt; String -&gt; String
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.strings.trimWith</code> usage example</h4>
+<pre><code class="language-nix">trimWith { start = true; } &quot;   hello, world!   &quot;}
+=&gt; &quot;hello, world!   &quot;
+
+trimWith { end = true; } &quot;   hello, world!   &quot;}
+=&gt; &quot;   hello, world!&quot;
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L504">lib/strings.nix:504</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.makeSearchPath'><a href='functions/library/strings/#function-library-lib.strings.makeSearchPath'>
+<code>lib.strings.makeSearchPath</code>
+</a></h2>
+<p>Construct a Unix-style, colon-separated search path consisting of
+the given <code>subDir</code> appended to each of the given paths.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>subDir</code></p>
+</dt>
+<dd>
+<p>Directory name to append</p>
+</dd>
+<dt>
+<p><code>paths</code></p>
+</dt>
+<dd>
+<p>List of base paths</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>makeSearchPath :: String -&gt; [String] -&gt; String
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.strings.makeSearchPath</code> usage example</h4>
+<pre><code class="language-nix">makeSearchPath &quot;bin&quot; [&quot;/root&quot; &quot;/usr&quot; &quot;/usr/local&quot;]
+=&gt; &quot;/root/bin:/usr/bin:/usr/local/bin&quot;
+makeSearchPath &quot;bin&quot; [&quot;&quot;]
+=&gt; &quot;/bin&quot;
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L565">lib/strings.nix:565</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.makeSearchPathOutput'><a href='functions/library/strings/#function-library-lib.strings.makeSearchPathOutput'>
+<code>lib.strings.makeSearchPathOutput</code>
+</a></h2>
+<p>Construct a Unix-style search path by appending the given
+<code>subDir</code> to the specified <code>output</code> of each of the packages.</p>
+<p>If no output by the given name is found, fallback to <code>.out</code> and then to
+the default.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>output</code></p>
+</dt>
+<dd>
+<p>Package output to use</p>
+</dd>
+<dt>
+<p><code>subDir</code></p>
+</dt>
+<dd>
+<p>Directory name to append</p>
+</dd>
+<dt>
+<p><code>pkgs</code></p>
+</dt>
+<dd>
+<p>List of packages</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>makeSearchPathOutput :: String -&gt; String -&gt; [Derivation] -&gt; String
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.strings.makeSearchPathOutput</code> usage example</h4>
+<pre><code class="language-nix">makeSearchPathOutput &quot;dev&quot; &quot;bin&quot; [ pkgs.openssl pkgs.zlib ]
+=&gt; &quot;/nix/store/9rz8gxhzf8sw4kf2j2f1grr49w8zx5vj-openssl-1.0.1r-dev/bin:/nix/store/wwh7mhwh269sfjkm6k5665b5kgp7jrk2-zlib-1.2.8/bin&quot;
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L606">lib/strings.nix:606</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.makeLibraryPath'><a href='functions/library/strings/#function-library-lib.strings.makeLibraryPath'>
+<code>lib.strings.makeLibraryPath</code>
+</a></h2>
+<p>Construct a library search path (such as RPATH) containing the
+libraries for a set of packages</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>packages</code></p>
+</dt>
+<dd>
+<p>List of packages</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>makeLibraryPath :: [Derivation] -&gt; String
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.strings.makeLibraryPath</code> usage example</h4>
+<pre><code class="language-nix">makeLibraryPath [ &quot;/usr&quot; &quot;/usr/local&quot; ]
+=&gt; &quot;/usr/lib:/usr/local/lib&quot;
+pkgs = import &lt;nixpkgs&gt; { }
+makeLibraryPath [ pkgs.openssl pkgs.zlib ]
+=&gt; &quot;/nix/store/9rz8gxhzf8sw4kf2j2f1grr49w8zx5vj-openssl-1.0.1r/lib:/nix/store/wwh7mhwh269sfjkm6k5665b5kgp7jrk2-zlib-1.2.8/lib&quot;
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L645">lib/strings.nix:645</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.makeIncludePath'><a href='functions/library/strings/#function-library-lib.strings.makeIncludePath'>
+<code>lib.strings.makeIncludePath</code>
+</a></h2>
+<p>Construct an include search path (such as C_INCLUDE_PATH) containing the
+header files for a set of packages or paths.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>packages</code></p>
+</dt>
+<dd>
+<p>List of packages</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>makeIncludePath :: [Derivation] -&gt; String
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.strings.makeIncludePath</code> usage example</h4>
+<pre><code class="language-nix">makeIncludePath [ &quot;/usr&quot; &quot;/usr/local&quot; ]
+=&gt; &quot;/usr/include:/usr/local/include&quot;
+pkgs = import &lt;nixpkgs&gt; { }
+makeIncludePath [ pkgs.openssl pkgs.zlib ]
+=&gt; &quot;/nix/store/9rz8gxhzf8sw4kf2j2f1grr49w8zx5vj-openssl-1.0.1r-dev/include:/nix/store/wwh7mhwh269sfjkm6k5665b5kgp7jrk2-zlib-1.2.8-dev/include&quot;
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L676">lib/strings.nix:676</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.makeBinPath'><a href='functions/library/strings/#function-library-lib.strings.makeBinPath'>
+<code>lib.strings.makeBinPath</code>
+</a></h2>
+<p>Construct a binary search path (such as $PATH) containing the
+binaries for a set of packages.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>packages</code></p>
+</dt>
+<dd>
+<p>List of packages</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>makeBinPath :: [Derivation] -&gt; String
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.strings.makeBinPath</code> usage example</h4>
+<pre><code class="language-nix">makeBinPath [&quot;/root&quot; &quot;/usr&quot; &quot;/usr/local&quot;]
+=&gt; &quot;/root/bin:/usr/bin:/usr/local/bin&quot;
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L704">lib/strings.nix:704</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.normalizePath'><a href='functions/library/strings/#function-library-lib.strings.normalizePath'>
+<code>lib.strings.normalizePath</code>
+</a></h2>
+<p>Normalize path, removing extraneous /s</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>s</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>normalizePath :: String -&gt; String
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.strings.normalizePath</code> usage example</h4>
+<pre><code class="language-nix">normalizePath &quot;/a//b///c/&quot;
+=&gt; &quot;/a/b/c/&quot;
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L731">lib/strings.nix:731</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.optionalString'><a href='functions/library/strings/#function-library-lib.strings.optionalString'>
+<code>lib.strings.optionalString</code>
+</a></h2>
+<p>Depending on the boolean <code>cond</code>, return either the given string
+or the empty string. Useful to concatenate against a bigger string.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>cond</code></p>
+</dt>
+<dd>
+<p>Condition</p>
+</dd>
+<dt>
+<p><code>string</code></p>
+</dt>
+<dd>
+<p>String to return if condition is true</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>optionalString :: Bool -&gt; String -&gt; String
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.strings.optionalString</code> usage example</h4>
+<pre><code class="language-nix">optionalString true &quot;some-string&quot;
+=&gt; &quot;some-string&quot;
+optionalString false &quot;some-string&quot;
+=&gt; &quot;&quot;
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L776">lib/strings.nix:776</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.hasPrefix'><a href='functions/library/strings/#function-library-lib.strings.hasPrefix'>
+<code>lib.strings.hasPrefix</code>
+</a></h2>
+<p>Determine whether a string has given prefix.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>pref</code></p>
+</dt>
+<dd>
+<p>Prefix to check for</p>
+</dd>
+<dt>
+<p><code>str</code></p>
+</dt>
+<dd>
+<p>Input string</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>hasPrefix :: String -&gt; String -&gt; Bool
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.strings.hasPrefix</code> usage example</h4>
+<pre><code class="language-nix">hasPrefix &quot;foo&quot; &quot;foobar&quot;
+=&gt; true
+hasPrefix &quot;foo&quot; &quot;barfoo&quot;
+=&gt; false
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L808">lib/strings.nix:808</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.hasSuffix'><a href='functions/library/strings/#function-library-lib.strings.hasSuffix'>
+<code>lib.strings.hasSuffix</code>
+</a></h2>
+<p>Determine whether a string has given suffix.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>suffix</code></p>
+</dt>
+<dd>
+<p>Suffix to check for</p>
+</dd>
+<dt>
+<p><code>content</code></p>
+</dt>
+<dd>
+<p>Input string</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>hasSuffix :: String -&gt; String -&gt; Bool
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.strings.hasSuffix</code> usage example</h4>
+<pre><code class="language-nix">hasSuffix &quot;foo&quot; &quot;foobar&quot;
+=&gt; false
+hasSuffix &quot;foo&quot; &quot;barfoo&quot;
+=&gt; true
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L852">lib/strings.nix:852</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.hasInfix'><a href='functions/library/strings/#function-library-lib.strings.hasInfix'>
+<code>lib.strings.hasInfix</code>
+</a></h2>
+<p>Determine whether a string contains the given infix</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>infix</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+<dt>
+<p><code>content</code></p>
+</dt>
+<dd>
+<p>2. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>hasInfix :: String -&gt; String -&gt; Bool
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.strings.hasInfix</code> usage example</h4>
+<pre><code class="language-nix">hasInfix &quot;bc&quot; &quot;abcd&quot;
+=&gt; true
+hasInfix &quot;ab&quot; &quot;abcd&quot;
+=&gt; true
+hasInfix &quot;cd&quot; &quot;abcd&quot;
+=&gt; true
+hasInfix &quot;foo&quot; &quot;abcd&quot;
+=&gt; false
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L905">lib/strings.nix:905</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.stringToCharacters'><a href='functions/library/strings/#function-library-lib.strings.stringToCharacters'>
+<code>lib.strings.stringToCharacters</code>
+</a></h2>
+<p>Convert a string <code>s</code> to a list of characters (i.e. singleton strings).
+This allows you to, e.g., map a function over each character.  However,
+note that this will likely be horribly inefficient; Nix is not a
+general purpose programming language. Complex string manipulations
+should, if appropriate, be done in a derivation.
+Also note that Nix treats strings as a list of bytes and thus doesn't
+handle unicode.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>s</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>stringToCharacters :: String -&gt; [String]
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.strings.stringToCharacters</code> usage example</h4>
+<pre><code class="language-nix">stringToCharacters &quot;&quot;
+=&gt; [ ]
+stringToCharacters &quot;abc&quot;
+=&gt; [ &quot;a&quot; &quot;b&quot; &quot;c&quot; ]
+stringToCharacters &quot;🦄&quot;
+=&gt; [ &quot;�&quot; &quot;�&quot; &quot;�&quot; &quot;�&quot; ]
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L955">lib/strings.nix:955</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.stringAsChars'><a href='functions/library/strings/#function-library-lib.strings.stringAsChars'>
+<code>lib.strings.stringAsChars</code>
+</a></h2>
+<p>Manipulate a string character by character and replace them by
+strings before concatenating the results.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>f</code></p>
+</dt>
+<dd>
+<p>Function to map over each individual character</p>
+</dd>
+<dt>
+<p><code>s</code></p>
+</dt>
+<dd>
+<p>Input string</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>stringAsChars :: (String -&gt; String) -&gt; String -&gt; String
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.strings.stringAsChars</code> usage example</h4>
+<pre><code class="language-nix">stringAsChars (x: if x == &quot;a&quot; then &quot;i&quot; else x) &quot;nax&quot;
+=&gt; &quot;nix&quot;
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L986">lib/strings.nix:986</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.charToInt'><a href='functions/library/strings/#function-library-lib.strings.charToInt'>
+<code>lib.strings.charToInt</code>
+</a></h2>
+<p>Convert char to ascii value, must be in printable range</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>c</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>charToInt :: String -&gt; Int
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.strings.charToInt</code> usage example</h4>
+<pre><code class="language-nix">charToInt &quot;A&quot;
+=&gt; 65
+charToInt &quot;(&quot;
+=&gt; 40
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L1020">lib/strings.nix:1020</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.escape'><a href='functions/library/strings/#function-library-lib.strings.escape'>
+<code>lib.strings.escape</code>
+</a></h2>
+<p>Escape occurrence of the elements of <code>list</code> in <code>string</code> by
+prefixing it with a backslash.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>list</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+<dt>
+<p><code>string</code></p>
+</dt>
+<dd>
+<p>2. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>escape :: [String] -&gt; String -&gt; String
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.strings.escape</code> usage example</h4>
+<pre><code class="language-nix">escape [&quot;(&quot; &quot;)&quot;] &quot;(foo)&quot;
+=&gt; &quot;\\(foo\\)&quot;
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L1051">lib/strings.nix:1051</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.escapeC'><a href='functions/library/strings/#function-library-lib.strings.escapeC'>
+<code>lib.strings.escapeC</code>
+</a></h2>
+<p>Escape occurrence of the element of <code>list</code> in <code>string</code> by
+converting to its ASCII value and prefixing it with \x.
+Only works for printable ascii characters.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>list</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+<dt>
+<p><code>string</code></p>
+</dt>
+<dd>
+<p>2. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>escapeC :: [String] -&gt; String -&gt; String
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.strings.escapeC</code> usage example</h4>
+<pre><code class="language-nix">escapeC [&quot; &quot;] &quot;foo bar&quot;
+=&gt; &quot;foo\\x20bar&quot;
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L1083">lib/strings.nix:1083</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.escapeURL'><a href='functions/library/strings/#function-library-lib.strings.escapeURL'>
+<code>lib.strings.escapeURL</code>
+</a></h2>
+<p>Escape the <code>string</code> so it can be safely placed inside a URL
+query.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>string</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>escapeURL :: String -&gt; String
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.strings.escapeURL</code> usage example</h4>
+<pre><code class="language-nix">escapeURL &quot;foo/bar baz&quot;
+=&gt; &quot;foo%2Fbar%20baz&quot;
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L1115">lib/strings.nix:1115</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.escapeShellArg'><a href='functions/library/strings/#function-library-lib.strings.escapeShellArg'>
+<code>lib.strings.escapeShellArg</code>
+</a></h2>
+<p>Quote <code>string</code> to be used safely within the Bourne shell if it has any
+special characters.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>string</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>escapeShellArg :: String -&gt; String
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.strings.escapeShellArg</code> usage example</h4>
+<pre><code class="language-nix">escapeShellArg &quot;esc'ape\nme&quot;
+=&gt; &quot;'esc'\\''ape\nme'&quot;
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L1217">lib/strings.nix:1217</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.escapeShellArgs'><a href='functions/library/strings/#function-library-lib.strings.escapeShellArgs'>
+<code>lib.strings.escapeShellArgs</code>
+</a></h2>
+<p>Quote all arguments that have special characters to be safely passed to the
+Bourne shell.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>args</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>escapeShellArgs :: [String] -&gt; String
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.strings.escapeShellArgs</code> usage example</h4>
+<pre><code class="language-nix">escapeShellArgs [&quot;one&quot; &quot;two three&quot; &quot;four'five&quot;]
+=&gt; &quot;one 'two three' 'four'\\''five'&quot;
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L1253">lib/strings.nix:1253</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.isValidPosixName'><a href='functions/library/strings/#function-library-lib.strings.isValidPosixName'>
+<code>lib.strings.isValidPosixName</code>
+</a></h2>
+<p>Test whether the given <code>name</code> is a valid POSIX shell variable name.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>name</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>isValidPosixName :: String -&gt; Bool
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.strings.isValidPosixName</code> usage example</h4>
+<pre><code class="language-nix">isValidPosixName &quot;foo_bar000&quot;
+=&gt; true
+isValidPosixName &quot;0-bad.jpg&quot;
+=&gt; false
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L1282">lib/strings.nix:1282</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.toShellVar'><a href='functions/library/strings/#function-library-lib.strings.toShellVar'>
+<code>lib.strings.toShellVar</code>
+</a></h2>
+<p>Translate a Nix value into a shell variable declaration, with proper escaping.</p>
+<p>The value can be a string (mapped to a regular variable), a list of strings
+(mapped to a Bash-style array) or an attribute set of strings (mapped to a
+Bash-style associative array). Note that &quot;string&quot; includes string-coercible
+values like paths or derivations.</p>
+<p>Strings are translated into POSIX sh-compatible code; lists and attribute sets
+assume a shell that understands Bash syntax (e.g. Bash or ZSH).</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>name</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+<dt>
+<p><code>value</code></p>
+</dt>
+<dd>
+<p>2. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>toShellVar :: String -&gt; (String | [String] | { [String] :: String }) -&gt; String
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.strings.toShellVar</code> usage example</h4>
+<pre><code class="language-nix">''
+  ${toShellVar &quot;foo&quot; &quot;some string&quot;}
+  [[ &quot;$foo&quot; == &quot;some string&quot; ]]
+''
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L1322">lib/strings.nix:1322</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.toShellVars'><a href='functions/library/strings/#function-library-lib.strings.toShellVars'>
+<code>lib.strings.toShellVars</code>
+</a></h2>
+<p>Translate an attribute set <code>vars</code> into corresponding shell variable declarations
+using <code>toShellVar</code>.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>vars</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>toShellVars :: {
+  [String] :: String | [String] | { [String] :: String };
+} -&gt; String
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.strings.toShellVars</code> usage example</h4>
+<pre><code class="language-nix">let
+  foo = &quot;value&quot;;
+  bar = foo;
+in ''
+  ${toShellVars { inherit foo bar; }}
+  [[ &quot;$foo&quot; == &quot;$bar&quot; ]]
+''
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L1370">lib/strings.nix:1370</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.escapeNixString'><a href='functions/library/strings/#function-library-lib.strings.escapeNixString'>
+<code>lib.strings.escapeNixString</code>
+</a></h2>
+<p>Turn a string <code>s</code> into a Nix expression representing that string</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>s</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>escapeNixString :: String -&gt; String
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.strings.escapeNixString</code> usage example</h4>
+<pre><code class="language-nix">escapeNixString &quot;hello\${}\n&quot;
+=&gt; &quot;\&quot;hello\\\${}\\n\&quot;&quot;
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L1397">lib/strings.nix:1397</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.escapeRegex'><a href='functions/library/strings/#function-library-lib.strings.escapeRegex'>
+<code>lib.strings.escapeRegex</code>
+</a></h2>
+<p>Turn a string <code>s</code> into an exact regular expression</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>s</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>escapeRegex :: String -&gt; String
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.strings.escapeRegex</code> usage example</h4>
+<pre><code class="language-nix">escapeRegex &quot;[^a-z]*&quot;
+=&gt; &quot;\\[\\^a-z]\\*&quot;
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L1424">lib/strings.nix:1424</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.escapeNixIdentifier'><a href='functions/library/strings/#function-library-lib.strings.escapeNixIdentifier'>
+<code>lib.strings.escapeNixIdentifier</code>
+</a></h2>
+<p>Quotes a string <code>s</code> if it can't be used as an identifier directly.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>s</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>escapeNixIdentifier :: String -&gt; String
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.strings.escapeNixIdentifier</code> usage example</h4>
+<pre><code class="language-nix">escapeNixIdentifier &quot;hello&quot;
+=&gt; &quot;hello&quot;
+escapeNixIdentifier &quot;0abc&quot;
+=&gt; &quot;\&quot;0abc\&quot;&quot;
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L1453">lib/strings.nix:1453</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.escapeXML'><a href='functions/library/strings/#function-library-lib.strings.escapeXML'>
+<code>lib.strings.escapeXML</code>
+</a></h2>
+<p>Escapes a string <code>s</code> such that it is safe to include verbatim in an XML
+document.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>s</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>escapeXML :: String -&gt; String
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.strings.escapeXML</code> usage example</h4>
+<pre><code class="language-nix">escapeXML ''&quot;test&quot; 'test' &lt; &amp; &gt;''
+=&gt; &quot;&amp;quot;test&amp;quot; &amp;apos;test&amp;apos; &amp;lt; &amp;amp; &amp;gt;&quot;
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L1502">lib/strings.nix:1502</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.toLower'><a href='functions/library/strings/#function-library-lib.strings.toLower'>
+<code>lib.strings.toLower</code>
+</a></h2>
+<p>Converts an ASCII string <code>s</code> to lower-case.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>s</code></p>
+</dt>
+<dd>
+<p>The string to convert to lower-case.</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>toLower :: String -&gt; String
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.strings.toLower</code> usage example</h4>
+<pre><code class="language-nix">toLower &quot;HOME&quot;
+=&gt; &quot;home&quot;
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L1536">lib/strings.nix:1536</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.toUpper'><a href='functions/library/strings/#function-library-lib.strings.toUpper'>
+<code>lib.strings.toUpper</code>
+</a></h2>
+<p>Converts an ASCII string <code>s</code> to upper-case.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>s</code></p>
+</dt>
+<dd>
+<p>The string to convert to upper-case.</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>toUpper :: String -&gt; String
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.strings.toUpper</code> usage example</h4>
+<pre><code class="language-nix">toUpper &quot;home&quot;
+=&gt; &quot;HOME&quot;
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L1563">lib/strings.nix:1563</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.toSentenceCase'><a href='functions/library/strings/#function-library-lib.strings.toSentenceCase'>
+<code>lib.strings.toSentenceCase</code>
+</a></h2>
+<p>Converts the first character of a string <code>s</code> to upper-case.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>str</code></p>
+</dt>
+<dd>
+<p>The string to convert to sentence case.</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>toSentenceCase :: String -&gt; String
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.strings.toSentenceCase</code> usage example</h4>
+<pre><code class="language-nix">toSentenceCase &quot;home&quot;
+=&gt; &quot;Home&quot;
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L1590">lib/strings.nix:1590</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.toCamelCase'><a href='functions/library/strings/#function-library-lib.strings.toCamelCase'>
+<code>lib.strings.toCamelCase</code>
+</a></h2>
+<p>Converts a string to camelCase. Handles snake_case, PascalCase,
+kebab-case strings as well as strings delimited by spaces.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>string</code></p>
+</dt>
+<dd>
+<p>The string to convert to camelCase</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>toCamelCase :: String -&gt; String
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.strings.toCamelCase</code> usage example</h4>
+<pre><code class="language-nix">toCamelCase &quot;hello-world&quot;
+=&gt; &quot;helloWorld&quot;
+toCamelCase &quot;hello_world&quot;
+=&gt; &quot;helloWorld&quot;
+toCamelCase &quot;hello world&quot;
+=&gt; &quot;helloWorld&quot;
+toCamelCase &quot;HelloWorld&quot;
+=&gt; &quot;helloWorld&quot;
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L1633">lib/strings.nix:1633</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.addContextFrom'><a href='functions/library/strings/#function-library-lib.strings.addContextFrom'>
+<code>lib.strings.addContextFrom</code>
+</a></h2>
+<p>Appends string context from string like object <code>src</code> to <code>target</code>.</p>
+<div class='admonition warning'><h3 class='title'>Warning</h3>
+<p>
+This is an implementation
+detail of Nix and should be used carefully.
+</p>
+</div>
+<p>Strings in Nix carry an invisible <code>context</code> which is a list of strings
+representing store paths. If the string is later used in a derivation
+attribute, the derivation will properly populate the inputDrvs and
+inputSrcs.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>src</code></p>
+</dt>
+<dd>
+<p>The string to take the context from. If the argument is not a string,
+it will be implicitly converted to a string.</p>
+</dd>
+<dt>
+<p><code>target</code></p>
+</dt>
+<dd>
+<p>The string to append the context to. If the argument is not a string,
+it will be implicitly converted to a string.</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>addContextFrom :: String -&gt; String -&gt; String
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.strings.addContextFrom</code> usage example</h4>
+<pre><code class="language-nix">pkgs = import &lt;nixpkgs&gt; { };
+addContextFrom pkgs.coreutils &quot;bar&quot;
+=&gt; &quot;bar&quot;
+</code></pre>
+<p>The context can be displayed using the <code>toString</code> function:</p>
+<pre><code class="language-nix">nix-repl&gt; builtins.getContext (lib.strings.addContextFrom pkgs.coreutils &quot;bar&quot;)
+{
+  &quot;/nix/store/m1s1d2dk2dqqlw3j90jl3cjy2cykbdxz-coreutils-9.5.drv&quot; = { ... };
+}
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L1709">lib/strings.nix:1709</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.splitString'><a href='functions/library/strings/#function-library-lib.strings.splitString'>
+<code>lib.strings.splitString</code>
+</a></h2>
+<p>Cut a string with a separator and produces a list of strings which
+were separated by this separator.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>sep</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+<dt>
+<p><code>s</code></p>
+</dt>
+<dd>
+<p>2. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>splitString :: String -&gt; String -&gt; [String]
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.strings.splitString</code> usage example</h4>
+<pre><code class="language-nix">splitString &quot;.&quot; &quot;foo.bar.baz&quot;
+=&gt; [ &quot;foo&quot; &quot;bar&quot; &quot;baz&quot; ]
+splitString &quot;/&quot; &quot;/usr/local/bin&quot;
+=&gt; [ &quot;&quot; &quot;usr&quot; &quot;local&quot; &quot;bin&quot; ]
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L1742">lib/strings.nix:1742</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.splitStringBy'><a href='functions/library/strings/#function-library-lib.strings.splitStringBy'>
+<code>lib.strings.splitStringBy</code>
+</a></h2>
+<p>Splits a string into substrings based on a predicate that examines adjacent characters.</p>
+<p>This function provides a flexible way to split strings by checking pairs of characters
+against a custom predicate function. Unlike simpler splitting functions, this allows
+for context-aware splitting based on character transitions and patterns.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>predicate</code></p>
+</dt>
+<dd>
+<p>Function that takes two arguments (previous character and current character)
+and returns true when the string should be split at the current position.
+For the first character, previous will be &quot;&quot; (empty string).</p>
+</dd>
+<dt>
+<p><code>keepSplit</code></p>
+</dt>
+<dd>
+<p>Boolean that determines whether the splitting character should be kept as
+part of the result. If true, the character will be included at the beginning
+of the next substring; if false, it will be discarded.</p>
+</dd>
+<dt>
+<p><code>str</code></p>
+</dt>
+<dd>
+<p>The input string to split.</p>
+</dd>
+</dl>
+<h3>Return</h3>
+<p>A list of substrings from the original string, split according to the predicate.</p>
+<h3>Type</h3>
+<pre><code>splitStringBy :: (String -&gt; String -&gt; Bool) -&gt; Bool -&gt; String -&gt; [String]
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.strings.splitStringBy</code> usage example</h4>
+<p>Split on periods and hyphens, discarding the separators:</p>
+<pre><code class="language-nix">splitStringBy (prev: curr: builtins.elem curr [ &quot;.&quot; &quot;-&quot; ]) false &quot;foo.bar-baz&quot;
+=&gt; [ &quot;foo&quot; &quot;bar&quot; &quot;baz&quot; ]
+</code></pre>
+<p>Split on transitions from lowercase to uppercase, keeping the uppercase characters:</p>
+<pre><code class="language-nix">splitStringBy (prev: curr: builtins.match &quot;[a-z]&quot; prev != null &amp;&amp; builtins.match &quot;[A-Z]&quot; curr != null) true &quot;fooBarBaz&quot;
+=&gt; [ &quot;foo&quot; &quot;Bar&quot; &quot;Baz&quot; ]
+</code></pre>
+<p>Handle leading separators correctly:</p>
+<pre><code class="language-nix">splitStringBy (prev: curr: builtins.elem curr [ &quot;.&quot; ]) false &quot;.foo.bar.baz&quot;
+=&gt; [ &quot;&quot; &quot;foo&quot; &quot;bar&quot; &quot;baz&quot; ]
+</code></pre>
+<p>Handle trailing separators correctly:</p>
+<pre><code class="language-nix">splitStringBy (prev: curr: builtins.elem curr [ &quot;.&quot; ]) false &quot;foo.bar.baz.&quot;
+=&gt; [ &quot;foo&quot; &quot;bar&quot; &quot;baz&quot; &quot;&quot; ]
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L1810">lib/strings.nix:1810</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.removePrefix'><a href='functions/library/strings/#function-library-lib.strings.removePrefix'>
+<code>lib.strings.removePrefix</code>
+</a></h2>
+<p>Returns a string without the specified prefix, if the prefix matches.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>prefix</code></p>
+</dt>
+<dd>
+<p>Prefix to remove if it matches</p>
+</dd>
+<dt>
+<p><code>str</code></p>
+</dt>
+<dd>
+<p>Input string</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>removePrefix :: String -&gt; String -&gt; String
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.strings.removePrefix</code> usage example</h4>
+<pre><code class="language-nix">removePrefix &quot;foo.&quot; &quot;foo.bar.baz&quot;
+=&gt; &quot;bar.baz&quot;
+removePrefix &quot;xxx&quot; &quot;foo.bar.baz&quot;
+=&gt; &quot;foo.bar.baz&quot;
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L1866">lib/strings.nix:1866</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.removeSuffix'><a href='functions/library/strings/#function-library-lib.strings.removeSuffix'>
+<code>lib.strings.removeSuffix</code>
+</a></h2>
+<p>Returns a string without the specified suffix, if the suffix matches.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>suffix</code></p>
+</dt>
+<dd>
+<p>Suffix to remove if it matches</p>
+</dd>
+<dt>
+<p><code>str</code></p>
+</dt>
+<dd>
+<p>Input string</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>removeSuffix :: String -&gt; String -&gt; String
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.strings.removeSuffix</code> usage example</h4>
+<pre><code class="language-nix">removeSuffix &quot;front&quot; &quot;homefront&quot;
+=&gt; &quot;home&quot;
+removeSuffix &quot;xxx&quot; &quot;homefront&quot;
+=&gt; &quot;homefront&quot;
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L1916">lib/strings.nix:1916</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.versionOlder'><a href='functions/library/strings/#function-library-lib.strings.versionOlder'>
+<code>lib.strings.versionOlder</code>
+</a></h2>
+<p>Returns true if string <code>v1</code> denotes a version older than <code>v2</code>.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>v1</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+<dt>
+<p><code>v2</code></p>
+</dt>
+<dd>
+<p>2. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>versionOlder :: String -&gt; String -&gt; Bool
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.strings.versionOlder</code> usage example</h4>
+<pre><code class="language-nix">versionOlder &quot;1.1&quot; &quot;1.2&quot;
+=&gt; true
+versionOlder &quot;1.1&quot; &quot;1.1&quot;
+=&gt; false
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L1968">lib/strings.nix:1968</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.versionAtLeast'><a href='functions/library/strings/#function-library-lib.strings.versionAtLeast'>
+<code>lib.strings.versionAtLeast</code>
+</a></h2>
+<p>Returns true if string <code>v1</code> denotes a version equal to or newer than <code>v2</code>.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>v1</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+<dt>
+<p><code>v2</code></p>
+</dt>
+<dd>
+<p>2. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>versionAtLeast :: String -&gt; String -&gt; Bool
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.strings.versionAtLeast</code> usage example</h4>
+<pre><code class="language-nix">versionAtLeast &quot;1.1&quot; &quot;1.0&quot;
+=&gt; true
+versionAtLeast &quot;1.1&quot; &quot;1.1&quot;
+=&gt; true
+versionAtLeast &quot;1.1&quot; &quot;1.2&quot;
+=&gt; false
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L2002">lib/strings.nix:2002</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.getName'><a href='functions/library/strings/#function-library-lib.strings.getName'>
+<code>lib.strings.getName</code>
+</a></h2>
+<p>This function takes an argument <code>x</code> that's either a derivation or a
+derivation's &quot;name&quot; attribute and extracts the name part from that
+argument.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>x</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>getName :: String | Derivation -&gt; String
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.strings.getName</code> usage example</h4>
+<pre><code class="language-nix">getName &quot;youtube-dl-2016.01.01&quot;
+=&gt; &quot;youtube-dl&quot;
+getName pkgs.youtube-dl
+=&gt; &quot;youtube-dl&quot;
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L2033">lib/strings.nix:2033</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.getVersion'><a href='functions/library/strings/#function-library-lib.strings.getVersion'>
+<code>lib.strings.getVersion</code>
+</a></h2>
+<p>This function takes an argument <code>x</code> that's either a derivation or a
+derivation's &quot;name&quot; attribute and extracts the version part from that
+argument.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>x</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>getVersion :: String | Derivation -&gt; String
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.strings.getVersion</code> usage example</h4>
+<pre><code class="language-nix">getVersion &quot;youtube-dl-2016.01.01&quot;
+=&gt; &quot;2016.01.01&quot;
+getVersion pkgs.youtube-dl
+=&gt; &quot;2016.01.01&quot;
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L2068">lib/strings.nix:2068</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.nameFromURL'><a href='functions/library/strings/#function-library-lib.strings.nameFromURL'>
+<code>lib.strings.nameFromURL</code>
+</a></h2>
+<p>Extract name and version from a URL as shown in the examples.</p>
+<p>Separator <code>sep</code> is used to determine the end of the extension.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>url</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+<dt>
+<p><code>sep</code></p>
+</dt>
+<dd>
+<p>2. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>nameFromURL :: String -&gt; String
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.strings.nameFromURL</code> usage example</h4>
+<pre><code class="language-nix">nameFromURL &quot;https://nixos.org/releases/nix/nix-1.7/nix-1.7-x86_64-linux.tar.bz2&quot; &quot;-&quot;
+=&gt; &quot;nix&quot;
+nameFromURL &quot;https://nixos.org/releases/nix/nix-1.7/nix-1.7-x86_64-linux.tar.bz2&quot; &quot;_&quot;
+=&gt; &quot;nix-1.7-x86&quot;
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L2106">lib/strings.nix:2106</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.cmakeOptionType'><a href='functions/library/strings/#function-library-lib.strings.cmakeOptionType'>
+<code>lib.strings.cmakeOptionType</code>
+</a></h2>
+<p>Create a <code>&quot;-D&lt;feature&gt;:&lt;type&gt;=&lt;value&gt;&quot;</code> string that can be passed to typical
+CMake invocations.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>type</code></p>
+</dt>
+<dd>
+<p>The type of the feature to be set, as described in
+<a href="https://cmake.org/cmake/help/latest/command/set.html">the CMake set documentation</a>
+the possible values (case insensitive) are:
+BOOL FILEPATH PATH STRING INTERNAL LIST</p>
+</dd>
+<dt>
+<p><code>feature</code></p>
+</dt>
+<dd>
+<p>The feature to be set</p>
+</dd>
+<dt>
+<p><code>feature</code></p>
+</dt>
+<dd>
+<p>The feature to be set</p>
+</dd>
+<dt>
+<p><code>value</code></p>
+</dt>
+<dd>
+<p>The desired value</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>cmakeOptionType :: String -&gt; String -&gt; String -&gt; String
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.strings.cmakeOptionType</code> usage example</h4>
+<pre><code class="language-nix">cmakeOptionType &quot;string&quot; &quot;ENGINE&quot; &quot;sdl2&quot;
+=&gt; &quot;-DENGINE:STRING=sdl2&quot;
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L2154">lib/strings.nix:2154</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.cmakeBool'><a href='functions/library/strings/#function-library-lib.strings.cmakeBool'>
+<code>lib.strings.cmakeBool</code>
+</a></h2>
+<p>Create a <code>&quot;-D&lt;condition&gt;={TRUE,FALSE}&quot;</code> string that can be passed to typical
+CMake invocations.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>condition</code></p>
+</dt>
+<dd>
+<p>The condition to be made true or false</p>
+</dd>
+<dt>
+<p><code>flag</code></p>
+</dt>
+<dd>
+<p>The controlling flag of the condition</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>cmakeBool :: String -&gt; Bool -&gt; String
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.strings.cmakeBool</code> usage example</h4>
+<pre><code class="language-nix">cmakeBool &quot;ENABLE_STATIC_LIBS&quot; false
+=&gt; &quot;-DENABLESTATIC_LIBS:BOOL=FALSE&quot;
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L2201">lib/strings.nix:2201</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.cmakeFeature'><a href='functions/library/strings/#function-library-lib.strings.cmakeFeature'>
+<code>lib.strings.cmakeFeature</code>
+</a></h2>
+<p>Create a <code>&quot;-D&lt;feature&gt;:STRING=&lt;value&gt;&quot;</code> string that can be passed to typical
+CMake invocations.
+This is the most typical usage, so it deserves a special case.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>feature</code></p>
+</dt>
+<dd>
+<p>The feature to be set</p>
+</dd>
+<dt>
+<p><code>value</code></p>
+</dt>
+<dd>
+<p>The desired value</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>cmakeFeature :: String -&gt; String -&gt; String
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.strings.cmakeFeature</code> usage example</h4>
+<pre><code class="language-nix">cmakeFeature &quot;MODULES&quot; &quot;badblock&quot;
+=&gt; &quot;-DMODULES:STRING=badblock&quot;
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L2236">lib/strings.nix:2236</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.mesonOption'><a href='functions/library/strings/#function-library-lib.strings.mesonOption'>
+<code>lib.strings.mesonOption</code>
+</a></h2>
+<p>Create a <code>&quot;-D&lt;feature&gt;=&lt;value&gt;&quot;</code> string that can be passed to typical Meson
+invocations.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>feature</code></p>
+</dt>
+<dd>
+<p>The feature to be set</p>
+</dd>
+<dt>
+<p><code>value</code></p>
+</dt>
+<dd>
+<p>The desired value</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>mesonOption :: String -&gt; String -&gt; String
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.strings.mesonOption</code> usage example</h4>
+<pre><code class="language-nix">mesonOption &quot;engine&quot; &quot;opengl&quot;
+=&gt; &quot;-Dengine=opengl&quot;
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L2267">lib/strings.nix:2267</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.mesonBool'><a href='functions/library/strings/#function-library-lib.strings.mesonBool'>
+<code>lib.strings.mesonBool</code>
+</a></h2>
+<p>Create a <code>&quot;-D&lt;condition&gt;={true,false}&quot;</code> string that can be passed to typical
+Meson invocations.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>condition</code></p>
+</dt>
+<dd>
+<p>The condition to be made true or false</p>
+</dd>
+<dt>
+<p><code>flag</code></p>
+</dt>
+<dd>
+<p>The controlling flag of the condition</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>mesonBool :: String -&gt; Bool -&gt; String
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.strings.mesonBool</code> usage example</h4>
+<pre><code class="language-nix">mesonBool &quot;hardened&quot; true
+=&gt; &quot;-Dhardened=true&quot;
+mesonBool &quot;static&quot; false
+=&gt; &quot;-Dstatic=false&quot;
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L2304">lib/strings.nix:2304</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.mesonEnable'><a href='functions/library/strings/#function-library-lib.strings.mesonEnable'>
+<code>lib.strings.mesonEnable</code>
+</a></h2>
+<p>Create a <code>&quot;-D&lt;feature&gt;={enabled,disabled}&quot;</code> string that can be passed to
+typical Meson invocations.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>feature</code></p>
+</dt>
+<dd>
+<p>The feature to be enabled or disabled</p>
+</dd>
+<dt>
+<p><code>flag</code></p>
+</dt>
+<dd>
+<p>The controlling flag</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>mesonEnable :: String -&gt; Bool -&gt; String
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.strings.mesonEnable</code> usage example</h4>
+<pre><code class="language-nix">mesonEnable &quot;docs&quot; true
+=&gt; &quot;-Ddocs=enabled&quot;
+mesonEnable &quot;savage&quot; false
+=&gt; &quot;-Dsavage=disabled&quot;
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L2340">lib/strings.nix:2340</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.enableFeature'><a href='functions/library/strings/#function-library-lib.strings.enableFeature'>
+<code>lib.strings.enableFeature</code>
+</a></h2>
+<p>Create an <code>&quot;--{enable,disable}-&lt;feature&gt;&quot;</code> string that can be passed to
+standard GNU Autoconf scripts.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>flag</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+<dt>
+<p><code>feature</code></p>
+</dt>
+<dd>
+<p>2. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>enableFeature :: Bool -&gt; String -&gt; String
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.strings.enableFeature</code> usage example</h4>
+<pre><code class="language-nix">enableFeature true &quot;shared&quot;
+=&gt; &quot;--enable-shared&quot;
+enableFeature false &quot;shared&quot;
+=&gt; &quot;--disable-shared&quot;
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L2376">lib/strings.nix:2376</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.enableFeatureAs'><a href='functions/library/strings/#function-library-lib.strings.enableFeatureAs'>
+<code>lib.strings.enableFeatureAs</code>
+</a></h2>
+<p>Create an <code>&quot;--{enable-&lt;feature&gt;=&lt;value&gt;,disable-&lt;feature&gt;}&quot;</code> string that
+can be passed to standard GNU Autoconf scripts.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>flag</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+<dt>
+<p><code>feature</code></p>
+</dt>
+<dd>
+<p>2. Function argument</p>
+</dd>
+<dt>
+<p><code>value</code></p>
+</dt>
+<dd>
+<p>3. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>enableFeatureAs :: Bool -&gt; String -&gt; String -&gt; String
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.strings.enableFeatureAs</code> usage example</h4>
+<pre><code class="language-nix">enableFeatureAs true &quot;shared&quot; &quot;foo&quot;
+=&gt; &quot;--enable-shared=foo&quot;
+enableFeatureAs false &quot;shared&quot; (throw &quot;ignored&quot;)
+=&gt; &quot;--disable-shared&quot;
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L2416">lib/strings.nix:2416</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.withFeature'><a href='functions/library/strings/#function-library-lib.strings.withFeature'>
+<code>lib.strings.withFeature</code>
+</a></h2>
+<p>Create an <code>&quot;--{with,without}-&lt;feature&gt;&quot;</code> string that can be passed to
+standard GNU Autoconf scripts.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>flag</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+<dt>
+<p><code>feature</code></p>
+</dt>
+<dd>
+<p>2. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>withFeature :: Bool -&gt; String -&gt; String
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.strings.withFeature</code> usage example</h4>
+<pre><code class="language-nix">withFeature true &quot;shared&quot;
+=&gt; &quot;--with-shared&quot;
+withFeature false &quot;shared&quot;
+=&gt; &quot;--without-shared&quot;
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L2451">lib/strings.nix:2451</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.withFeatureAs'><a href='functions/library/strings/#function-library-lib.strings.withFeatureAs'>
+<code>lib.strings.withFeatureAs</code>
+</a></h2>
+<p>Create an <code>&quot;--{with-&lt;feature&gt;=&lt;value&gt;,without-&lt;feature&gt;}&quot;</code> string that can be passed to
+standard GNU Autoconf scripts.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>flag</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+<dt>
+<p><code>feature</code></p>
+</dt>
+<dd>
+<p>2. Function argument</p>
+</dd>
+<dt>
+<p><code>value</code></p>
+</dt>
+<dd>
+<p>3. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>withFeatureAs :: Bool -&gt; String -&gt; String -&gt; String
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.strings.withFeatureAs</code> usage example</h4>
+<pre><code class="language-nix">withFeatureAs true &quot;shared&quot; &quot;foo&quot;
+=&gt; &quot;--with-shared=foo&quot;
+withFeatureAs false &quot;shared&quot; (throw &quot;ignored&quot;)
+=&gt; &quot;--without-shared&quot;
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L2490">lib/strings.nix:2490</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.fixedWidthString'><a href='functions/library/strings/#function-library-lib.strings.fixedWidthString'>
+<code>lib.strings.fixedWidthString</code>
+</a></h2>
+<p>Create a fixed width string with additional prefix to match
+required width.</p>
+<p>This function will fail if the input string is longer than the
+requested length.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>width</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+<dt>
+<p><code>filler</code></p>
+</dt>
+<dd>
+<p>2. Function argument</p>
+</dd>
+<dt>
+<p><code>str</code></p>
+</dt>
+<dd>
+<p>3. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>fixedWidthString :: Int -&gt; String -&gt; String -&gt; String
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.strings.fixedWidthString</code> usage example</h4>
+<pre><code class="language-nix">fixedWidthString 5 &quot;0&quot; (toString 15)
+=&gt; &quot;00015&quot;
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L2529">lib/strings.nix:2529</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.fixedWidthNumber'><a href='functions/library/strings/#function-library-lib.strings.fixedWidthNumber'>
+<code>lib.strings.fixedWidthNumber</code>
+</a></h2>
+<p>Format a number adding leading zeroes up to fixed width.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>width</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+<dt>
+<p><code>n</code></p>
+</dt>
+<dd>
+<p>2. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>fixedWidthNumber :: Int -&gt; Int -&gt; String
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.strings.fixedWidthNumber</code> usage example</h4>
+<pre><code class="language-nix">fixedWidthNumber 5 15
+=&gt; &quot;00015&quot;
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L2568">lib/strings.nix:2568</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.floatToString'><a href='functions/library/strings/#function-library-lib.strings.floatToString'>
+<code>lib.strings.floatToString</code>
+</a></h2>
+<p>Convert a float to a string, but emit a warning when precision is lost
+during the conversion</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>float</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>floatToString :: Float -&gt; String
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.strings.floatToString</code> usage example</h4>
+<pre><code class="language-nix">floatToString 0.000001
+=&gt; &quot;0.000001&quot;
+floatToString 0.0000001
+=&gt; trace: warning: Imprecise conversion from float to string 0.000000
+   &quot;0.000000&quot;
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L2599">lib/strings.nix:2599</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.isConvertibleWithToString'><a href='functions/library/strings/#function-library-lib.strings.isConvertibleWithToString'>
+<code>lib.strings.isConvertibleWithToString</code>
+</a></h2>
+<p>Check whether a list or other value <code>x</code> can be passed to <code>toString</code>.</p>
+<p>Many types of value are coercible to string this way, including <code>int</code>, <code>float</code>,
+<code>null</code>, <code>bool</code>, <code>list</code> of similarly coercible values.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>val</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>isConvertibleWithToString :: Any -&gt; Bool
+</code></pre>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L2624">lib/strings.nix:2624</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.isStringLike'><a href='functions/library/strings/#function-library-lib.strings.isStringLike'>
+<code>lib.strings.isStringLike</code>
+</a></h2>
+<p>Check whether a value can be coerced to a string.
+The value must be a string, path, or attribute set.</p>
+<p>String-like values can be used without explicit conversion in
+string interpolations and in most functions that expect a string.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>x</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>isStringLike :: Any -&gt; Bool
+</code></pre>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L2653">lib/strings.nix:2653</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.isStorePath'><a href='functions/library/strings/#function-library-lib.strings.isStorePath'>
+<code>lib.strings.isStorePath</code>
+</a></h2>
+<p>Check whether a value <code>x</code> is a store path.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>x</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>isStorePath :: Any -&gt; Bool
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.strings.isStorePath</code> usage example</h4>
+<pre><code class="language-nix">isStorePath &quot;/nix/store/d945ibfx9x185xf04b890y4f9g3cbb63-python-2.7.11/bin/python&quot;
+=&gt; false
+isStorePath &quot;/nix/store/d945ibfx9x185xf04b890y4f9g3cbb63-python-2.7.11&quot;
+=&gt; true
+isStorePath pkgs.python
+=&gt; true
+isStorePath [] || isStorePath 42 || isStorePath {} || …
+=&gt; false
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L2686">lib/strings.nix:2686</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.toInt'><a href='functions/library/strings/#function-library-lib.strings.toInt'>
+<code>lib.strings.toInt</code>
+</a></h2>
+<p>Parse a string as an int. Does not support parsing of integers with preceding zero due to
+ambiguity between zero-padded and octal numbers. See <code>toIntBase10</code>.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>str</code></p>
+</dt>
+<dd>
+<p>A string to be interpreted as an int.</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>toInt :: String -&gt; Int
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.strings.toInt</code> usage example</h4>
+<pre><code class="language-nix">toInt &quot;1337&quot;
+=&gt; 1337
+
+toInt &quot;-4&quot;
+=&gt; -4
+
+toInt &quot; 123 &quot;
+=&gt; 123
+
+toInt &quot;00024&quot;
+=&gt; error: Ambiguity in interpretation of 00024 between octal and zero padded integer.
+
+toInt &quot;3.14&quot;
+=&gt; error: floating point JSON numbers are not supported
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L2743">lib/strings.nix:2743</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.toIntBase10'><a href='functions/library/strings/#function-library-lib.strings.toIntBase10'>
+<code>lib.strings.toIntBase10</code>
+</a></h2>
+<p>Parse a string as a base 10 int. This supports parsing of zero-padded integers.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>str</code></p>
+</dt>
+<dd>
+<p>A string to be interpreted as an int.</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>toIntBase10 :: String -&gt; Int
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.strings.toIntBase10</code> usage example</h4>
+<pre><code class="language-nix">toIntBase10 &quot;1337&quot;
+=&gt; 1337
+
+toIntBase10 &quot;-4&quot;
+=&gt; -4
+
+toIntBase10 &quot; 123 &quot;
+=&gt; 123
+
+toIntBase10 &quot;00024&quot;
+=&gt; 24
+
+toIntBase10 &quot;3.14&quot;
+=&gt; error: floating point JSON numbers are not supported
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L2813">lib/strings.nix:2813</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.fileContents'><a href='functions/library/strings/#function-library-lib.strings.fileContents'>
+<code>lib.strings.fileContents</code>
+</a></h2>
+<p>Read the contents of a file removing the trailing \n</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>file</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>fileContents :: Path -&gt; String
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.strings.fileContents</code> usage example</h4>
+<pre><code class="language-nix">$ echo &quot;1.0&quot; &gt; ./version
+
+fileContents ./version
+=&gt; &quot;1.0&quot;
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L2874">lib/strings.nix:2874</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.sanitizeDerivationName'><a href='functions/library/strings/#function-library-lib.strings.sanitizeDerivationName'>
+<code>lib.strings.sanitizeDerivationName</code>
+</a></h2>
+<p>Creates a valid derivation name from a potentially invalid one.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>string</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>sanitizeDerivationName :: String -&gt; String
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.strings.sanitizeDerivationName</code> usage example</h4>
+<pre><code class="language-nix">sanitizeDerivationName &quot;../hello.bar # foo&quot;
+=&gt; &quot;-hello.bar-foo&quot;
+sanitizeDerivationName &quot;&quot;
+=&gt; &quot;unknown&quot;
+sanitizeDerivationName pkgs.hello
+=&gt; &quot;-nix-store-2g75chlbpxlrqn15zlby2dfh8hr9qwbk-hello-2.10&quot;
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L2905">lib/strings.nix:2905</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.levenshtein'><a href='functions/library/strings/#function-library-lib.strings.levenshtein'>
+<code>lib.strings.levenshtein</code>
+</a></h2>
+<p>Computes the Levenshtein distance between two strings <code>a</code> and <code>b</code>.</p>
+<p>Complexity O(n*m) where n and m are the lengths of the strings.
+Algorithm adjusted from <a href="https://stackoverflow.com/a/9750974/6605742">this stackoverflow comment</a></p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>a</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+<dt>
+<p><code>b</code></p>
+</dt>
+<dd>
+<p>2. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>levenshtein :: String -&gt; String -&gt; Int
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.strings.levenshtein</code> usage example</h4>
+<pre><code class="language-nix">levenshtein &quot;foo&quot; &quot;foo&quot;
+=&gt; 0
+levenshtein &quot;book&quot; &quot;hook&quot;
+=&gt; 1
+levenshtein &quot;hello&quot; &quot;Heyo&quot;
+=&gt; 3
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L2967">lib/strings.nix:2967</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.commonPrefixLength'><a href='functions/library/strings/#function-library-lib.strings.commonPrefixLength'>
+<code>lib.strings.commonPrefixLength</code>
+</a></h2>
+<p>Returns the length of the prefix that appears in both strings <code>a</code> and <code>b</code>.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>a</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+<dt>
+<p><code>b</code></p>
+</dt>
+<dd>
+<p>2. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>commonPrefixLength :: String -&gt; String -&gt; Int
+</code></pre>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L3004">lib/strings.nix:3004</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.commonSuffixLength'><a href='functions/library/strings/#function-library-lib.strings.commonSuffixLength'>
+<code>lib.strings.commonSuffixLength</code>
+</a></h2>
+<p>Returns the length of the suffix common to both strings <code>a</code> and <code>b</code>.</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>a</code></p>
+</dt>
+<dd>
+<p>1. Function argument</p>
+</dd>
+<dt>
+<p><code>b</code></p>
+</dt>
+<dd>
+<p>2. Function argument</p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>commonSuffixLength :: String -&gt; String -&gt; Int
+</code></pre>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L3036">lib/strings.nix:3036</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+<h2 id='function-library-lib.strings.levenshteinAtMost'><a href='functions/library/strings/#function-library-lib.strings.levenshteinAtMost'>
+<code>lib.strings.levenshteinAtMost</code>
+</a></h2>
+<p>Returns whether the levenshtein distance between two strings <code>a</code> and <code>b</code> is at most some value <code>k</code>.</p>
+<p>Complexity is O(min(n,m)) for k &lt;= 2 and O(n*m) otherwise</p>
+<h3>Inputs</h3>
+<dl>
+<dt>
+<p><code>k</code></p>
+</dt>
+<dd>
+<p>Distance threshold</p>
+</dd>
+<dt>
+<p><code>a</code></p>
+</dt>
+<dd>
+<p>String <code>a</code></p>
+</dd>
+<dt>
+<p><code>b</code></p>
+</dt>
+<dd>
+<p>String <code>b</code></p>
+</dd>
+</dl>
+<h3>Type</h3>
+<pre><code>levenshteinAtMost :: Int -&gt; String -&gt; String -&gt; Bool
+</code></pre>
+<h3>Examples</h3>
+<div class='admonition example'><h3 class='title'>Example</h3>
+<p></p>
+<h4><code>lib.strings.levenshteinAtMost</code> usage example</h4>
+<pre><code class="language-nix">levenshteinAtMost 0 &quot;foo&quot; &quot;foo&quot;
+=&gt; true
+levenshteinAtMost 1 &quot;foo&quot; &quot;boa&quot;
+=&gt; false
+levenshteinAtMost 2 &quot;foo&quot; &quot;boa&quot;
+=&gt; true
+levenshteinAtMost 2 &quot;This is a sentence&quot; &quot;this is a sentense.&quot;
+=&gt; false
+levenshteinAtMost 3 &quot;This is a sentence&quot; &quot;this is a sentense.&quot;
+=&gt; true
+</code></pre>
+<p></p>
+</div>
+<p>Located at <a href="https://github.com/NixOS/nixpkgs/blob/master/lib/strings.nix#L3092">lib/strings.nix:3092</a> in <code>&lt;nixpkgs&gt;</code>.</p>
+        </main>
+      </div>
+    </section>
+<script defer src='highlight.pack.cf986678470772f7.js'></script>
+<script defer src='mmdoc.367f3e8986e40416.js'></script>
+<script defer src='mmdoc_search.a5b6fc7d7512cdc1.js' data-search-index='search_index.b3afff10081eb0bd.js' data-fuse='fuse.basic.min.bb997c989fa0a28e.js'></script>
+  </div>
+  </body>
+</html>
