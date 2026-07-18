@@ -1,0 +1,23 @@
+name: docs
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@main
+        with:
+          ref: "minman"
+      - uses: cachix/install-nix-action@master
+      - run: |
+          nix build .#nixpkgs-manual-mmdoc
+      - if: success()
+        uses: crazy-max/ghaction-github-pages@v2
+        with:
+          target_branch: gh-pages
+          build_dir: result/multi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
