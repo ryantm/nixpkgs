@@ -19,7 +19,7 @@ writeScriptBin "nixos-manual-mmdoc-watch" ''
   pids+=($!)
   trap exit SIGINT
 
-  while ${inotify-tools}/bin/inotifywait -e modify -e create doc pkgs/by-name/ni/nixos-manual-mmdoc
+  while ${inotify-tools}/bin/inotifywait -e modify -e create nixos/doc/manual pkgs/by-name/ni/nixos-manual-mmdoc
   do
     nix-build . -A nixos-manual-mmdoc
   done
