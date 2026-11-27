@@ -10,13 +10,13 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "mmdoc";
-  version = "0.30.1";
+  version = "0.30.2";
 
   src = fetchFromGitHub {
     owner = "ryantm";
     repo = "mmdoc";
     tag = finalAttrs.version;
-    hash = "sha256-heDVrYGOuc/LBm3wzLeUrAe0qe042LZ5DGGJyNskyGc=";
+    hash = "sha256-8/4UbqOggeA8900VMAisFxXtbztDMJxj9A6k1d0a3+0=";
   };
 
   nativeBuildInputs = [
