@@ -13,12 +13,16 @@ jobs:
           ref: "minman"
       - uses: cachix/install-nix-action@master
       - run: |
-          nix build .#nixpkgs-manual-mmdoc
+          nix build .#nixpkgs-manual-mmdoc -o result-nixpkgs
+          nix build .#nixos-manual-mmdoc -o result-nixos
+          mkdir -p site/nixos
+          cp -r result-nixpkgs/multi/. site/
+          cp -r result-nixos/multi/. site/nixos/
       - if: success()
         uses: crazy-max/ghaction-github-pages@v5
         with:
           target_branch: gh-pages
-          build_dir: result/multi
+          build_dir: site
           jekyll: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
