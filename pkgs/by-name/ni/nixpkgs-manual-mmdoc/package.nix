@@ -3,6 +3,8 @@
   lib,
   callPackage,
   mmdoc,
+  python3,
+  treefmt,
   nixpkgs-manual-lib-docs,
   nixpkgs-doc-src,
 }:
@@ -28,10 +30,10 @@ stdenvNoCC.mkDerivation rec {
     chmod -R u+w doc
     cp ${./toc.md} doc/toc.md
     cp ${./favicon.svg} doc/favicon.svg
+    cp ${treefmt.functionsDoc.markdown} doc/packages/treefmt-functions.section.md
     substituteInPlace doc/languages-frameworks/python.section.md \
       --subst-var-by python-interpreter-table "$(<${pythonInterpreterTable})"
-    mkdir -p doc/functions/library/
-    cp ${nixpkgs-manual-lib-docs}/*.md doc/functions/library/
+    ${lib.getExe python3} ${./prepare-docs.py} doc ${nixpkgs-manual-lib-docs}/lib-functions.json
     ${mmdoc}/bin/mmdoc nixpkgs doc $out
   '';
 

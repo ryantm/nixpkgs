@@ -1,6 +1,6 @@
 # NixOS Manual
 
-Version 26.11pre
+Version 27.05pre
 
 * [](#preface)
 * Installation
@@ -97,6 +97,7 @@ Version 26.11pre
 * [](#chap-contributing)
 * [](#ch-options)
 * [](#ch-release-notes)
+  * [](#sec-release-27.05)
   * [](#sec-release-26.11)
   * [](#sec-release-26.05)
   * [](#sec-release-25.11)

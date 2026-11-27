@@ -272,7 +272,6 @@ rec {
     traceValSeqFn (v: v // { d = "foo";}) { a.b.c = 3; }
     trace: { a = { b = { c = 3; }; }; d = "foo"; }
     => { a = { ... }; }
-    ```
 
     :::
   */
