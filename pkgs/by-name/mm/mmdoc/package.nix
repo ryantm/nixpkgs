@@ -2,43 +2,42 @@
   lib,
   stdenv,
   fetchFromGitHub,
-  cmark-gfm,
-  xxd,
-  libfastjson,
-  libzip,
-  ninja,
   meson,
-  pkg-config,
+  ninja,
+  xxd,
+  versionCheckHook,
 }:
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "mmdoc";
-  version = "0.29.4";
+  version = "0.30.1";
 
   src = fetchFromGitHub {
     owner = "ryantm";
     repo = "mmdoc";
-    rev = finalAttrs.version;
-    hash = "sha256-AWr09XBGCcJUmzvHSrdf6AjvlmobHP5wPga6rcNwOXw=";
+    tag = finalAttrs.version;
+    hash = "sha256-heDVrYGOuc/LBm3wzLeUrAe0qe042LZ5DGGJyNskyGc=";
   };
 
   nativeBuildInputs = [
-    ninja
     meson
-    pkg-config
+    ninja
     xxd
   ];
 
-  buildInputs = [
-    cmark-gfm
-    libfastjson
-    libzip
+  doCheck = true;
+
+  nativeInstallCheckInputs = [
+    versionCheckHook
   ];
+
+  doInstallCheck = true;
 
   meta = {
     description = "Minimal Markdown Documentation";
     mainProgram = "mmdoc";
     homepage = "https://github.com/ryantm/mmdoc";
+    changelog = "https://github.com/ryantm/mmdoc/releases/tag/${finalAttrs.version}";
     license = lib.licenses.cc0;
     maintainers = with lib.maintainers; [ ryantm ];
     platforms = lib.platforms.unix;
