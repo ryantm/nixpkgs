@@ -2,7 +2,6 @@
   lib,
   stdenv,
   fetchFromGitHub,
-  fetchpatch,
   pkg-config,
   glib,
   expat,
@@ -22,8 +21,9 @@
   docbook_xml_dtd_412,
   gtk-doc,
   coreutils,
-  useSystemd ? lib.meta.availableOn stdenv.hostPlatform systemdMinimal,
-  systemdMinimal,
+  useConsoleKit ? false,
+  useSystemd ? lib.meta.availableOn stdenv.hostPlatform systemdLibs,
+  systemdLibs,
   elogind,
   buildPackages,
   withIntrospection ?
@@ -40,9 +40,11 @@ let
   system = "/run/current-system/sw";
   setuid = "/run/wrappers/bin";
 in
-stdenv.mkDerivation rec {
+stdenv.mkDerivation (finalAttrs: {
   pname = "polkit";
-  version = "127";
+  version = "128";
+
+  disallowedReferences = lib.optional useConsoleKit systemdLibs;
 
   outputs = [
     "bin"
@@ -54,8 +56,8 @@ stdenv.mkDerivation rec {
   src = fetchFromGitHub {
     owner = "polkit-org";
     repo = "polkit";
-    rev = version;
-    hash = "sha256-YTugETy0rqu/bv53jV1UeGqSK79bRXR52EJNcTblvzo=";
+    rev = finalAttrs.version;
+    hash = "sha256-v9Um2o9/JQQ1LBa/1mtCoiZS3fv8Dif9mdVSwK22EKE=";
   };
 
   patches = [
@@ -95,9 +97,9 @@ stdenv.mkDerivation rec {
     dbus
     duktape
   ]
-  ++ lib.optionals stdenv.hostPlatform.isLinux [
+  ++ lib.optionals (stdenv.hostPlatform.isLinux && !useConsoleKit) [
     # On Linux, fall back to elogind when systemd support is off.
-    (if useSystemd then systemdMinimal else elogind)
+    (if useSystemd then systemdLibs else elogind)
   ];
 
   propagatedBuildInputs = [
@@ -146,7 +148,14 @@ stdenv.mkDerivation rec {
     "-Dsystemdsystemunitdir=${placeholder "out"}/lib/systemd/system"
   ]
   ++ lib.optionals stdenv.hostPlatform.isLinux [
-    "-Dsession_tracking=${if useSystemd then "logind" else "elogind"}"
+    "-Dsession_tracking=${
+      if useSystemd then
+        "logind"
+      else if useConsoleKit then
+        "ConsoleKit"
+      else
+        "elogind"
+    }"
   ];
 
   inherit doCheck;
@@ -160,9 +169,6 @@ stdenv.mkDerivation rec {
     # call through $PATH, but that might have security implications.
     substituteInPlace src/polkitagent/polkitagentsession.c \
       --replace-fail 'PACKAGE_PREFIX "/lib/polkit-1/'   '"${setuid}/'
-    substituteInPlace test/data/etc/polkit-1/rules.d/10-testing.rules \
-      --replace-fail /bin/true ${coreutils}/bin/true \
-      --replace-fail /bin/false ${coreutils}/bin/false
   '';
 
   postInstall = ''
@@ -193,4 +199,4 @@ stdenv.mkDerivation rec {
     ];
     teams = [ lib.teams.freedesktop ];
   };
-}
+})

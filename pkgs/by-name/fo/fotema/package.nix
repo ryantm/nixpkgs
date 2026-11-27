@@ -19,12 +19,13 @@
 
   libadwaita,
   openssl,
-  ffmpeg,
+  ffmpeg_8,
   onnxruntime,
   libshumate,
   opencv,
   libseccomp,
   glycin-loaders,
+  sqlite,
 
   nix-update-script,
 }:
@@ -73,13 +74,14 @@ clangStdenv.mkDerivation (finalAttrs: {
   buildInputs = [
     libadwaita
     openssl
-    ffmpeg
+    ffmpeg_8
     onnxruntime
     libshumate
     opencv
     libseccomp
     libglycin.setupHook
     glycin-loaders
+    sqlite
   ];
 
   strictDeps = true;
@@ -102,7 +104,7 @@ clangStdenv.mkDerivation (finalAttrs: {
   meta = {
     description = "Photo gallery for Linux";
     homepage = "https://github.com/blissd/fotema";
-    license = with lib.licenses; [ gpl3Plus ];
+    license = lib.licenses.gpl3Plus;
     platforms = lib.platforms.linux;
     maintainers = with lib.maintainers; [ pluiedev ];
     mainProgram = "fotema";

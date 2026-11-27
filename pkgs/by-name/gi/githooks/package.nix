@@ -25,10 +25,8 @@ buildGoModule (finalAttrs: {
 
   buildInputs = [ git ];
 
-  strictDeps = true;
-
   ldflags = [
-    "-s" # Disable symbole table.
+    "-s" # Disable symbol table.
     "-w" # Disable DWARF generation.
   ];
 
@@ -79,7 +77,7 @@ buildGoModule (finalAttrs: {
   meta = {
     description = "Git hooks manager with per-repo and shared Git hooks including version control";
     homepage = "https://github.com/gabyx/Githooks";
-    license = lib.licenses.mpl20;
+    license = lib.licenses.mit;
     maintainers = with lib.maintainers; [ gabyx ];
     mainProgram = "githooks-cli";
   };

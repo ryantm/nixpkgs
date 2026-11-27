@@ -1,48 +1,45 @@
 {
   lib,
   stdenv,
-  attrs,
   buildPythonPackage,
   clang-tools,
   cmake,
   fetchFromGitHub,
+  fonttools,
   hypothesis,
   jbig2dec,
-  deprecated,
+  jsonschema,
   lxml,
   withMupdf ? false,
   mupdf-headless,
   nanobind,
   ninja,
-  numpy,
   packaging,
   pillow,
-  psutil,
   pytest-xdist,
   pytestCheckHook,
-  python-dateutil,
-  python-xmp-toolkit,
   qpdf,
+  referencing,
   replaceVars,
   scikit-build-core,
 }:
 
-buildPythonPackage rec {
+buildPythonPackage (finalAttrs: {
   pname = "pikepdf";
-  version = "10.8.0";
+  version = "10.18.0";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "pikepdf";
     repo = "pikepdf";
-    tag = "v${version}";
+    tag = "v${finalAttrs.version}";
     # The content of .git_archival.txt is substituted upon tarball creation,
     # which creates indeterminism if master no longer points to the tag.
     # See https://github.com/jbarlow83/OCRmyPDF/issues/841
     postFetch = ''
       rm "$out/.git_archival.txt"
     '';
-    hash = "sha256-ih5QC6VVl7dGvamp3FRzahnpEDjdO8gGFNVX19Bu8LE=";
+    hash = "sha256-QhjsuXTO28SNFSneqwOXGdjqRuFQWoSHhbvZeMlFR3g=";
   };
 
   patches = [
@@ -77,30 +74,41 @@ buildPythonPackage rec {
   dontUseCmakeConfigure = true;
 
   nativeCheckInputs = [
-    attrs
     hypothesis
-    numpy
     pytest-xdist
-    psutil
     pytestCheckHook
-    python-dateutil
-    python-xmp-toolkit
-  ];
+  ]
+  ++ lib.concatAttrValues finalAttrs.passthru.optional-dependencies;
 
   dependencies = [
-    deprecated
     lxml
     packaging
     pillow
   ];
 
+  optional-dependencies = {
+    pdfa = [
+      fonttools
+      jsonschema
+      referencing
+    ];
+  };
+
   pythonImportsCheck = [ "pikepdf" ];
+
+  disabledTests = [
+    # timezone issues in sandbox
+    "test_assume_local_time_zone_for_dates"
+    "test_declare_docinfo_agrees_and_validates"
+    "test_declare_properties"
+    "test_prepare_keeps_partial_docinfo_dates"
+  ];
 
   meta = {
     homepage = "https://github.com/pikepdf/pikepdf";
     description = "Read and write PDFs with Python, powered by qpdf";
     license = lib.licenses.mpl20;
     maintainers = with lib.maintainers; [ dotlambda ];
-    changelog = "https://github.com/pikepdf/pikepdf/blob/${src.tag}/docs/releasenotes/version${lib.versions.major version}.md";
+    changelog = "https://github.com/pikepdf/pikepdf/blob/${finalAttrs.src.tag}/docs/releasenotes/version${lib.versions.major finalAttrs.version}.md";
   };
-}
+})

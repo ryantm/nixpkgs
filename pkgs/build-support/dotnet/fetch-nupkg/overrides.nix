@@ -6,8 +6,14 @@
   libice,
   libsm,
   libx11,
+  libxcursor,
+  libxext,
+  libxfixes,
+  libxi,
+  libxrandr,
   stdenv,
   writeText,
+  allowSdkPackages ? false,
 }:
 {
   # e.g.
@@ -58,7 +64,12 @@
           prependToVar dotnetRuntimeDeps \
             "${lib.getLib libice}" \
             "${lib.getLib libsm}" \
-            "${lib.getLib libx11}"
+            "${lib.getLib libx11}" \
+            "${lib.getLib libxcursor}" \
+            "${lib.getLib libxext}" \
+            "${lib.getLib libxfixes}" \
+            "${lib.getLib libxi}" \
+            "${lib.getLib libxrandr}"
         '';
       }
     );
@@ -79,7 +90,10 @@
       lib.optionalAttrs stdenv.hostPlatform.isLinux {
         nativeBuildInputs = old.nativeBuildInputs or [ ] ++ [ autoPatchelfHook ];
 
-        buildInputs = old.buildInputs or [ ] ++ [ fontconfig ];
+        buildInputs =
+          old.buildInputs or [ ]
+          ++ [ fontconfig ]
+          ++ lib.optional (lib.versionAtLeast old.version "4") (lib.getLib stdenv.cc.cc);
 
         preInstall = old.preInstall or "" + ''
           cd runtimes
@@ -92,3 +106,18 @@
       }
     );
 }
+// lib.optionalAttrs (!allowSdkPackages) (
+  let
+    banned =
+      package:
+      # some packages still use e.g. Microsoft.AspNetCore.App.Ref 6.0.36
+      if (lib.versionAtLeast package.version "8") then
+        lib.warn "${package} is not allowed without 'allowSdkPackages'" package
+      else
+        package;
+  in
+  lib.genAttrs' [ "NETCore" "AspNetCore" "WindowsDesktop" ] (runtime: {
+    name = "Microsoft.${runtime}.App.Ref";
+    value = banned;
+  })
+)

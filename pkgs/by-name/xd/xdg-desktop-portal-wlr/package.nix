@@ -18,20 +18,23 @@
   slurp,
   systemdLibs,
   wayland,
+  nix-update-script,
 }:
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "xdg-desktop-portal-wlr";
-  version = "0.8.3";
+  version = "0.9.0";
 
   src = fetchFromGitHub {
     owner = "emersion";
     repo = "xdg-desktop-portal-wlr";
-    rev = "v${finalAttrs.version}";
-    sha256 = "sha256-MBPHRVw1J+z8V8V9v06L9QJl2jM6P3GxXuQ8XDOdah0=";
+    tag = "v${finalAttrs.version}";
+    hash = "sha256-ZfqItKmh/z1LK8XdfdQxxV4FsKdyGGFZb33iuCLogPE=";
   };
 
   strictDeps = true;
+  __structuredAttrs = true;
+
   depsBuildBuild = [ pkg-config ];
   nativeBuildInputs = [
     meson
@@ -65,10 +68,12 @@ stdenv.mkDerivation (finalAttrs: {
     }
   '';
 
+  passthru.updateScript = nix-update-script { };
+
   meta = {
     homepage = "https://github.com/emersion/xdg-desktop-portal-wlr";
     description = "xdg-desktop-portal backend for wlroots";
-    maintainers = with lib.maintainers; [ minijackson ];
+    maintainers = [ lib.maintainers.quantenzitrone ];
     platforms = lib.platforms.linux;
     license = lib.licenses.mit;
   };

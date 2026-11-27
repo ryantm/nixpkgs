@@ -9,10 +9,8 @@
 
   # dependencies
   numpy,
-  types-pytz,
 
   # tests
-  pytestCheckHook,
   beautifulsoup4,
   html5lib,
   jinja2,
@@ -22,7 +20,9 @@
   openpyxl,
   pandas,
   pyarrow,
+  pyiceberg,
   pyreadstat,
+  pytestCheckHook,
   python-calamine,
   scipy,
   sqlalchemy,
@@ -33,27 +33,25 @@
   xlsxwriter,
 }:
 
-buildPythonPackage rec {
+buildPythonPackage (finalAttrs: {
   pname = "pandas-stubs";
-  version = "3.0.3.260530";
+  version = "3.0.5.260914";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "pandas-dev";
     repo = "pandas-stubs";
-    tag = "v${version}";
-    hash = "sha256-vPXz4ibNbFE2B14pkGPN5EDAwhA92VgFXzMLR9da6WQ=";
+    tag = "v${finalAttrs.version}";
+    hash = "sha256-5SSqxYzTUszIDB+1OIDYR5rdxD8GI8ubuhe/kfoNvoc=";
   };
 
   build-system = [ poetry-core ];
 
   dependencies = [
     numpy
-    types-pytz
   ];
 
   nativeCheckInputs = [
-    pytestCheckHook
     beautifulsoup4
     html5lib
     jinja2
@@ -63,7 +61,10 @@ buildPythonPackage rec {
     openpyxl
     pandas
     pyarrow
+    pyiceberg
     pyreadstat
+    pytestCheckHook
+    python-calamine
     scipy
     sqlalchemy
     tables
@@ -71,7 +72,12 @@ buildPythonPackage rec {
     typing-extensions
     xarray
     xlsxwriter
-    python-calamine
+  ];
+
+  pytestFlags = [
+    # DeprecationWarning: The 'generic' unit for NumPy timedelta is deprecated, and will raise an error in the future.
+    # This includes implicit conversion of bare integers (e.g. `+ 1`).Please use a specific unit instead.
+    "-Wignore::DeprecationWarning"
   ];
 
   disabledTests = [
@@ -95,7 +101,7 @@ buildPythonPackage rec {
   ++ lib.optionals stdenv.hostPlatform.isDarwin [
     "test_clipboard" # FileNotFoundError: [Errno 2] No such file or directory: 'pbcopy'
   ]
-  ++ lib.optionals (stdenv.hostPlatform.isDarwin && stdenv.hostPlatform.isAarch64) [
+  ++ lib.optionals stdenv.hostPlatform.isDarwin [
     # Disable tests for types that are not supported on aarch64 in `numpy` < 2.0
     "test_astype_float" # `f16` and `float128`
     "test_astype_complex" # `c32` and `complex256`
@@ -106,7 +112,7 @@ buildPythonPackage rec {
   meta = {
     description = "Type annotations for Pandas";
     homepage = "https://github.com/pandas-dev/pandas-stubs";
-    license = lib.licenses.mit;
+    license = lib.licenses.bsd3;
     maintainers = with lib.maintainers; [ malo ];
   };
-}
+})

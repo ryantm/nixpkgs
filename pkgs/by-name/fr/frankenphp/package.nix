@@ -1,7 +1,7 @@
 {
   lib,
   stdenv,
-  buildGoModule,
+  buildGo127Module,
   fetchFromGitHub,
   php,
   brotli,
@@ -28,15 +28,15 @@ let
   phpConfig = "${phpUnwrapped.dev}/bin/php-config";
   pieBuild = stdenv.hostPlatform.isMusl;
 in
-buildGoModule (finalAttrs: {
+buildGo127Module (finalAttrs: {
   pname = "frankenphp";
-  version = "1.12.4";
+  version = "1.13.6";
 
   src = fetchFromGitHub {
     owner = "php";
     repo = "frankenphp";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-DzncOAhdDyc5qOipMI8OPss0WciAQIam6GmaUoe8mR8=";
+    hash = "sha256-8V/yfi4z8rqe+8MARDLkwGVZ+mT6DcH2KaDRJeuWzpM=";
   };
 
   sourceRoot = "${finalAttrs.src.name}/caddy";
@@ -44,7 +44,7 @@ buildGoModule (finalAttrs: {
   # frankenphp requires C code that would be removed with `go mod tidy`
   # https://github.com/golang/go/issues/26366
   proxyVendor = true;
-  vendorHash = "sha256-XY5a8pd5vJ/ouZMASzVqPoeXVfPbnEVDJFKkVNQF+2M=";
+  vendorHash = "sha256-Kzntw2a7YnkKFP9xe/mSG6v5LwisiAWKwSurSvPdbkw=";
 
   buildInputs = [
     phpUnwrapped
@@ -54,9 +54,9 @@ buildGoModule (finalAttrs: {
   ++ phpUnwrapped.buildInputs;
   nativeBuildInputs = [
     makeBinaryWrapper
+    pkg-config
   ]
   ++ lib.optionals stdenv.hostPlatform.isDarwin [
-    pkg-config
     cctools
     darwin.autoSignDarwinBinariesHook
     libiconv
@@ -80,7 +80,7 @@ buildGoModule (finalAttrs: {
     "-X 'github.com/caddyserver/caddy/v2.CustomVersion=FrankenPHP ${finalAttrs.version} PHP ${phpUnwrapped.version} Caddy'"
     # pie mode is only available with pkgsMusl, it also automatically add -buildmode=pie to $GOFLAGS
   ]
-  ++ (lib.optional pieBuild [ "-static-pie" ]);
+  ++ (lib.optionals pieBuild [ "-static-pie" ]);
 
   preBuild = ''
     export CGO_CFLAGS="$(${phpConfig} --includes)"
@@ -125,7 +125,10 @@ buildGoModule (finalAttrs: {
     homepage = "https://github.com/php/frankenphp";
     license = lib.licenses.mit;
     mainProgram = "frankenphp";
-    maintainers = [ lib.maintainers.piotrkwiecinski ];
+    maintainers = with lib.maintainers; [
+      piotrkwiecinski
+      mykiwi
+    ];
     platforms = lib.platforms.linux ++ lib.platforms.darwin;
   };
 })

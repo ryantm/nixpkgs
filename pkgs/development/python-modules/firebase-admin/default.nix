@@ -22,14 +22,14 @@
 
 buildPythonPackage (finalAttrs: {
   pname = "firebase-admin";
-  version = "7.5.0";
+  version = "7.7.0";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "firebase";
     repo = "firebase-admin-python";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-jjCUk20RWB2Qc2qBh4CIGtUGsdCSqsbtmKKamSLCwQw=";
+    hash = "sha256-epAACgTYIe4hgWXgXgKGjDwpMrhxVS3Kml8s/Ij4P5Y=";
   };
 
   build-system = [ setuptools ];
@@ -61,6 +61,9 @@ buildPythonPackage (finalAttrs: {
     # >       assert delta <= timedelta(seconds=15)
     # E       assert datetime.timedelta(seconds=17, microseconds=28239) <= datetime.timedelta(seconds=15)
     "test_task_options"
+
+    # Expects the RNG to be seeded by the test environment
+    "test_evaluate_less_or_equal_to_approx"
 
     # Flaky / timing sensitive
     "test_expired_cookie_with_tolerance"

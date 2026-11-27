@@ -2,25 +2,25 @@
   lib,
   rustPlatform,
   fetchFromGitHub,
-  withJson ? true,
+  gitMinimal,
   nix-update-script,
 }:
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "statix";
-  version = "0.5.8-unstable-2026-07-10";
+  version = "0.6.0-unstable-2026-11-20";
   __structuredAttrs = true;
 
   src = fetchFromGitHub {
     owner = "molybdenumsoftware";
     repo = "statix";
-    rev = "7cbd82249a0154836db6118bec97da06ab447013";
-    hash = "sha256-3n3hDc52+hAj1TWr3TFAeWzyDkaprsHafZVAlcS2WAM=";
+    rev = "c31c2cb294a60de6eeb6ef6e15c814b0960b06cd";
+    hash = "sha256-Hy9iwiAPmIbuCOY6CwgOPIeFpyQGw35ky3IMF79UqEU=";
   };
 
-  cargoHash = "sha256-Ed0eSGhx0D1oZS44ObS3j1TuM3A1HnDKzDjDVYlX1jM=";
+  cargoHash = "sha256-VkxBhBv0GtRZ3YMctYBQ3194+HXukfdRv9bEqdvsFz8=";
 
-  buildFeatures = lib.optional withJson "json";
+  nativeCheckInputs = [ gitMinimal ];
 
   passthru.updateScript = nix-update-script {
     extraArgs = [ "--version=branch" ];

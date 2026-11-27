@@ -12,14 +12,14 @@
 
 buildGoModule (finalAttrs: {
   pname = "symfony-cli";
-  version = "5.18.1";
-  vendorHash = "sha256-xAOp03sbtJv31nikkWHhBEHNQkDJ0RtPTPVPpw/6Eho=";
+  version = "5.23.0";
+  vendorHash = "sha256-YFcv+lmD8TZUsN2zYK1usfuLVqzGYdsJ+ScDRcpSORs=";
 
   src = fetchFromGitHub {
     owner = "symfony-cli";
     repo = "symfony-cli";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-sd1C33n0Eo/lV9Uas+EcEojIYLRosuzcZn9se5dwukU=";
+    hash = "sha256-FettFb7/xJHtS/FsHGp6DoVi9topar8Q7YA2BYlAAuo=";
     leaveDotGit = true;
     postFetch = ''
       git --git-dir $out/.git log -1 --pretty=%cd --date=format:'%Y-%m-%dT%H:%M:%SZ' > $out/SOURCE_DATE
@@ -73,6 +73,9 @@ buildGoModule (finalAttrs: {
     homepage = "https://github.com/symfony-cli/symfony-cli";
     license = lib.licenses.agpl3Plus;
     mainProgram = "symfony";
-    maintainers = with lib.maintainers; [ patka ];
+    maintainers = with lib.maintainers; [
+      patka
+      mykiwi
+    ];
   };
 })

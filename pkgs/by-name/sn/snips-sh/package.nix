@@ -3,25 +3,23 @@
   buildGoModule,
   fetchFromGitHub,
   sqlite,
-  libtensorflow,
-  withTensorflow ? false,
   nixosTests,
 }:
 buildGoModule (finalAttrs: {
   pname = "snips-sh";
-  version = "0.10.1";
-  vendorHash = "sha256-OjcYz7RdCCWur8y+AhGVlQx3UeW+u6rmB73lDUYBsnM=";
+  version = "0.12.0";
+  vendorHash = "sha256-BSPvvVH0nalkHZUJ0iLfHI00nJ4teJ9f+Qr4oKaoLSg=";
 
   src = fetchFromGitHub {
     owner = "robherley";
     repo = "snips.sh";
     rev = "v${finalAttrs.version}";
-    hash = "sha256-KPIit7U+630EQ8SeFArCR2qcXVdsjaO1LKZmDO86c0Y=";
+    hash = "sha256-71YEkCUZqX/Hyq8wzj5Lf+ydDO708F+44ILLKrTpHF0=";
   };
 
-  tags = (lib.optional (!withTensorflow) "noguesser");
+  tags = [ "noguesser" ];
 
-  buildInputs = [ sqlite ] ++ (lib.optional withTensorflow libtensorflow);
+  buildInputs = [ sqlite ];
 
   passthru.tests = nixosTests.snips-sh;
 

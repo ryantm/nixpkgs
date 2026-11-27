@@ -38,13 +38,13 @@ let
 in
 stdenv.mkDerivation rec {
   pname = "monero-cli";
-  version = "0.18.5.0";
+  version = "0.18.5.4"; # update monero-gui as well
 
   src = fetchFromGitHub {
     owner = "monero-project";
     repo = "monero";
     rev = "v${version}";
-    hash = "sha256-clw+7mZenWp58iA7fuEp4BPFH3KUwL53cC4IChIVh7w=";
+    hash = "sha256-tJs55DvYwrp0e4T84eilBccntRPcns1aLYK3wLIrX7A=";
   };
 
   patches = [
@@ -92,7 +92,7 @@ stdenv.mkDerivation rec {
     "-Wno-dev"
   ]
   ++ lib.optional stdenv.hostPlatform.isDarwin "-DBoost_USE_MULTITHREADED=OFF"
-  ++ lib.optional trezorSupport [
+  ++ lib.optionals trezorSupport [
     "-DUSE_DEVICE_TREZOR=ON"
   ];
 

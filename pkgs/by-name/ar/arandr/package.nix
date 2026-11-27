@@ -48,10 +48,6 @@ buildPythonApplication (finalAttrs: {
     wrapGAppsHook3
   ];
 
-  propagatedBuildInputs = [
-    xrandr
-  ];
-
   buildInputs = [
     gsettings-desktop-schemas
     gtk3
@@ -74,7 +70,13 @@ buildPythonApplication (finalAttrs: {
   dontWrapGApps = true;
 
   preFixup = ''
-    makeWrapperArgs+=("''${gappsWrapperArgs[@]}")
+    makeWrapperArgs+=(
+      "--prefix"
+      "PATH"
+      ":"
+      "${lib.makeBinPath [ xrandr ]}"
+      "''${gappsWrapperArgs[@]}"
+    )
   '';
 
   passthru.updateScript = nix-update-script {

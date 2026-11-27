@@ -46,11 +46,11 @@ assert (ch4backend.pname == "ucx" || ch4backend.pname == "libfabric");
 
 stdenv.mkDerivation rec {
   pname = "mpich";
-  version = "5.0.1";
+  version = "5.0.2";
 
   src = fetchurl {
     url = "https://www.mpich.org/static/downloads/${version}/mpich-${version}.tar.gz";
-    hash = "sha256-jBgyoT3azwcWhQafX639Hyh3op4aYoZSiSxlIRsfMyc=";
+    hash = "sha256-kowvGNNQqRRD/oAkrQHOLGAJ6cVR4Kc+eX/FZ/EZE30=";
   };
 
   patches = [
@@ -119,6 +119,10 @@ stdenv.mkDerivation rec {
       sed -i 's:CC="gcc":CC=${stdenv.cc}/bin/gcc:' "$dev"/bin/mpicc
       sed -i 's:CXX="g++":CXX=${stdenv.cc}/bin/g++:' "$dev"/bin/mpicxx
       sed -i 's:FC="gfortran":FC=${gfortran}/bin/gfortran:' "$dev"/bin/mpifort
+    ''
+    # Create mpi.pc symlinks
+    + ''
+      ln -s $dev/lib/pkgconfig/mpich.pc $dev/lib/pkgconfig/mpi.pc
     '';
 
   # The entire configure line is embedded into some binaries, so we can end up with cycles between

@@ -2,10 +2,14 @@
   lib,
   aioconsole,
   aiohttp,
+  aiointercept,
   aioresponses,
   async-timeout,
   buildPythonPackage,
   fetchFromGitHub,
+  paho-mqtt,
+  pythonOlder,
+  pyprojectVersionPatchHook,
   pytest-asyncio,
   pytest-mock,
   pytestCheckHook,
@@ -15,33 +19,41 @@
 
 buildPythonPackage (finalAttrs: {
   pname = "whirlpool-sixth-sense";
-  version = "1.2.0";
+  version = "2.2.0";
   pyproject = true;
+
+  disabled = pythonOlder "3.14";
 
   src = fetchFromGitHub {
     owner = "abmantis";
     repo = "whirlpool-sixth-sense";
     tag = finalAttrs.version;
-    hash = "sha256-uX1Q4F6pcc/mPdopPgyU63p4yeo9YPmUGbn0sxW09Yo=";
+    hash = "sha256-Tw+Denbgr1poQ8btQdvE34Flb7kpwfON8MZeqf9A1BQ=";
   };
 
   build-system = [ setuptools ];
+
+  nativeBuildInputs = [ pyprojectVersionPatchHook ];
 
   dependencies = [
     aioconsole
     aiohttp
     async-timeout
+    paho-mqtt
     websockets
   ];
 
   nativeCheckInputs = [
     aioresponses
+    aiointercept
     pytest-asyncio
     pytest-mock
     pytestCheckHook
   ];
 
   pythonImportsCheck = [ "whirlpool" ];
+
+  __darwinAllowLocalNetworking = true;
 
   meta = {
     description = "Python library for Whirlpool 6th Sense appliances";

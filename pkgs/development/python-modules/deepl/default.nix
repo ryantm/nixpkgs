@@ -7,19 +7,19 @@
   keyring,
 }:
 
-buildPythonPackage rec {
+buildPythonPackage (finalAttrs: {
   pname = "deepl";
-  version = "1.27.0";
+  version = "1.33.0";
   pyproject = true;
 
   src = fetchPypi {
-    inherit pname version;
-    hash = "sha256-jYOlPZWP+pY4j17NZCWp2dkxFEwWwFx6hOzrmhRUu5I=";
+    inherit (finalAttrs) pname version;
+    hash = "sha256-3ewzD8e2F0BhMf7YETf9O7Q9G64D7L1IyLjpy1hR4wM=";
   };
 
-  nativeBuildInputs = [ poetry-core ];
+  build-system = [ poetry-core ];
 
-  propagatedBuildInputs = [
+  dependencies = [
     requests
     keyring
   ];
@@ -33,8 +33,8 @@ buildPythonPackage rec {
     description = "Language translation API that allows other computer programs to send texts and documents to DeepL's servers and receive high-quality translations";
     mainProgram = "deepl";
     homepage = "https://github.com/DeepLcom/deepl-python";
-    changelog = "https://github.com/DeepLcom/deepl-python/blob/v${version}/CHANGELOG.md";
+    changelog = "https://github.com/DeepLcom/deepl-python/blob/v${finalAttrs.version}/CHANGELOG.md";
     license = lib.licenses.mit;
     maintainers = with lib.maintainers; [ MaskedBelgian ];
   };
-}
+})

@@ -27,9 +27,10 @@ let
       manifestDir = "/var/lib/rancher/${name}/server/manifests";
       imageDir = "/var/lib/rancher/${name}/agent/images";
       containerdConfigTemplateFile = "/var/lib/rancher/${name}/agent/etc/containerd/config.toml.tmpl";
+      containerdConfigTemplateV3File = "/var/lib/rancher/${name}/agent/etc/containerd/config-v3.toml.tmpl";
       staticContentChartDir = "/var/lib/rancher/${name}/server/static/charts";
 
-      manifestFormat = if jsonManifests then pkgs.formats.json { } else pkgs.formats.yaml { };
+      manifestFormat = if jsonManifests then pkgs.formats.json { } else pkgs.formats.yaml_1_2 { };
       # Manifests need a valid suffix to be respected
       mkManifestTarget =
         name:
@@ -61,17 +62,6 @@ let
       duplicateCharts = lib.intersectLists (builtins.attrNames cfg.autoDeployCharts) (
         builtins.attrNames cfg.charts
       );
-
-      # Converts YAML -> JSON -> Nix
-      fromYaml =
-        path:
-        builtins.fromJSON (
-          builtins.readFile (
-            pkgs.runCommand "${path}-converted.json" { nativeBuildInputs = [ pkgs.yq-go ]; } ''
-              yq --no-colors --output-format json ${path} > $out
-            ''
-          )
-        );
 
       # Replace prefixes and characters that are problematic in file names
       cleanHelmChartName =
@@ -136,9 +126,12 @@ let
       mkHelmChartCR =
         name: value:
         let
-          chartValues = if (lib.isPath value.values) then fromYaml value.values else value.values;
-          # use JSON for values as it's a subset of YAML and understood by the rancher Helm controller
-          valuesContent = builtins.toJSON chartValues;
+          # file values are inlined as YAML; attrs are converted to JSON (a YAML subset)
+          valuesContent =
+            if builtins.isAttrs value.values then
+              builtins.toJSON value.values
+            else
+              builtins.readFile (toString value.values);
         in
         # merge with extraFieldDefinitions to allow setting advanced values and overwrite generated
         # values
@@ -162,15 +155,24 @@ let
         } value.extraFieldDefinitions;
 
       # Generate a HelmChart custom resource together with extraDeploy manifests.
+      # Assembled at build time to avoid IFD.
       mkAutoDeployChartManifest = name: value: {
         # target is the final name of the link created for the manifest file
         target = mkManifestTarget name;
         inherit (value) enable package;
         # source is a store path containing the complete manifest file
-        source = mkManifestSource "auto-deploy-chart-${name}" (
-          lib.singleton (mkHelmChartCR name value)
-          ++ map (x: fromYaml (mkExtraDeployManifest x)) value.extraDeploy
-        );
+        source =
+          let
+            crFile = pkgs.writers.writeJSON "auto-deploy-chart-${name}-cr" (mkHelmChartCR name value);
+            allFiles = [ crFile ] ++ map mkExtraDeployManifest value.extraDeploy;
+            docs = lib.concatStringsSep "\necho ---\n" (map (f: "yq -o json '.' ${f}") allFiles);
+          in
+          pkgs.runCommand "auto-deploy-chart-${name}" { nativeBuildInputs = [ pkgs.yq-go ]; } ''
+            {
+              ${docs}
+            } | yq eval-all -o json '[.] | {"apiVersion": "v1", "kind": "List", "items": .}' - \
+              ${lib.optionalString (!jsonManifests) "| yq -o yaml -P '.'"} > $out
+          '';
       };
 
       autoDeployChartsModule = lib.types.submodule (
@@ -399,6 +401,7 @@ let
           manifestDir
           imageDir
           containerdConfigTemplateFile
+          containerdConfigTemplateV3File
           staticContentChartDir
           ;
       };
@@ -641,6 +644,30 @@ let
           description = ''
             Config template for containerd, to be placed at
             `/var/lib/rancher/${name}/agent/etc/containerd/config.toml.tmpl`.
+            ${name} renders this template as containerd's legacy version 2 configuration and ignores
+            it when [](#opt-services.${name}.containerdConfigTemplateV3) is set.
+            See the docs on [configuring containerd](https://docs.${name}.io/advanced#configuring-containerd).
+          '';
+        };
+
+        containerdConfigTemplateV3 = lib.mkOption {
+          type = lib.types.nullOr lib.types.str;
+          default = null;
+          example = lib.literalExpression ''
+            # Base config
+            {{ template "base" . }}
+
+            # Add a custom runtime
+            [plugins.'io.containerd.cri.v1.runtime'.containerd.runtimes.custom]
+              runtime_type = "io.containerd.runc.v2"
+            [plugins.'io.containerd.cri.v1.runtime'.containerd.runtimes.custom.options]
+              BinaryName = "/path/to/custom-container-runtime"
+          '';
+          description = ''
+            Config template for containerd in its version 3 configuration format, to be placed at
+            `/var/lib/rancher/${name}/agent/etc/containerd/config-v3.toml.tmpl`.
+            ${name} uses this template instead of [](#opt-services.${name}.containerdConfigTemplate)
+            when both are set.
             See the docs on [configuring containerd](https://docs.${name}.io/advanced#configuring-containerd).
           '';
         };
@@ -821,6 +848,12 @@ let
           ++ (lib.optional (duplicateCharts != [ ])
             "${name}: The following auto deploying charts are overriden by charts of the same name: ${toString duplicateCharts}."
           )
+          ++ (lib.optional (
+            cfg.containerdConfigTemplate != null && cfg.containerdConfigTemplateV3 != null
+          ) "${name}: containerdConfigTemplate is ignored because containerdConfigTemplateV3 is set.")
+          ++ (lib.optional (cfg.containerdConfigTemplate != null && cfg.containerdConfigTemplateV3 == null)
+            "${name}: containerdConfigTemplate renders containerd's legacy version 2 configuration, but the containerd 2 shipped with ${name} prefers version 3. Consider moving the template to containerdConfigTemplateV3."
+          )
           ++ (lib.optional (cfg.role != "server" && cfg.charts != { })
             "${name}: Helm charts are only made available to the cluster on server nodes (role == server), they will be ignored by this node."
           )
@@ -849,13 +882,22 @@ let
                 "L+".argument = "${manifest.source}";
               };
             };
-            # Make a systemd-tmpfiles rule for a container image
-            mkImageRule = image: {
-              name = "${imageDir}/${image.name}";
-              value = {
-                "L+".argument = "${image}";
-              };
-            };
+            # Build a single store directory containing symlinks to all
+            # container images declared in the NixOS configuration. The
+            # directory's store path changes whenever any image changes, so
+            # k3s/rke2 re-imports images on every generation switch. It is
+            # exposed under ${imageDir}/nixos so that ${imageDir} itself
+            # remains a normal directory that users can still populate manually.
+            agentImagesDir = pkgs.linkFarm "${name}-agent-images" (
+              map (image: {
+                # The store-path hash is included in the link name so that two
+                # different images with the same tarball base name do not
+                # collide. The context is discarded because tmpfiles link names
+                # must not carry store-path references.
+                name = builtins.unsafeDiscardStringContext (builtins.baseNameOf image);
+                path = image;
+              }) cfg.images
+            );
             # Merge charts with charts contained in enabled auto deploying charts
             helmCharts =
               (lib.concatMapAttrs (n: v: { ${n} = v.package; }) (
@@ -873,10 +915,19 @@ let
             };
           in
           (lib.mapAttrs' (_: v: mkManifestRule v) enabledManifests)
-          // (builtins.listToAttrs (map mkImageRule cfg.images))
+          // (lib.optionalAttrs (cfg.images != [ ]) {
+            "${imageDir}/nixos" = {
+              "L+".argument = "${agentImagesDir}";
+            };
+          })
           // (lib.optionalAttrs (cfg.containerdConfigTemplate != null) {
             ${containerdConfigTemplateFile} = {
               "L+".argument = "${pkgs.writeText "config.toml.tmpl" cfg.containerdConfigTemplate}";
+            };
+          })
+          // (lib.optionalAttrs (cfg.containerdConfigTemplateV3 != null) {
+            ${containerdConfigTemplateV3File} = {
+              "L+".argument = "${pkgs.writeText "config-v3.toml.tmpl" cfg.containerdConfigTemplateV3}";
             };
           })
           // (lib.mapAttrs' mkChartRule helmCharts);

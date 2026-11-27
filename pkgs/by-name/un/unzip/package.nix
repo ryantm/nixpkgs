@@ -3,17 +3,18 @@
   stdenv,
   fetchurl,
   bzip2,
+  bashNonInteractive,
   enableNLS ? false,
   libnatspec,
 }:
 
-stdenv.mkDerivation rec {
+stdenv.mkDerivation (finalAttrs: {
   pname = "unzip";
   version = "6.0";
 
   src = fetchurl {
-    url = "mirror://sourceforge/infozip/unzip${lib.replaceStrings [ "." ] [ "" ] version}.tar.gz";
-    sha256 = "0dxx11knh3nk95p2gg2ak777dd11pr7jx5das2g49l262scrcv83";
+    url = "mirror://sourceforge/infozip/unzip${lib.replaceString "." "" finalAttrs.version}.tar.gz";
+    hash = "sha256-A22WmRZG0ESe0KqVLk++IbR2zplKvCduSdMOaGcIvTc=";
   };
 
   hardeningDisable = [
@@ -37,6 +38,11 @@ stdenv.mkDerivation rec {
     ./CVE-2016-9844.patch
     ./CVE-2018-18384.patch
     ./dont-hardcode-cc.patch
+    (fetchurl {
+      url = "https://sources.debian.org/data/main/u/unzip/6.0-31/debian/patches/cve-2018-1000035-unzip-buffer-overflow.patch";
+      name = "CVE-2018-1000035-unzip-buffer-overflow.patch";
+      hash = "sha256-TqvD+u3dVuvD1QU0hrYfh1jYQJAnJf1VXTRyz/sJRDc=";
+    })
     (fetchurl {
       url = "https://github.com/madler/unzip/commit/41beb477c5744bc396fa1162ee0c14218ec12213.patch";
       name = "CVE-2019-13232-1.patch";
@@ -71,7 +77,13 @@ stdenv.mkDerivation rec {
   '';
 
   nativeBuildInputs = [ bzip2 ];
-  buildInputs = [ bzip2 ] ++ lib.optional enableNLS libnatspec;
+  buildInputs = [
+    bashNonInteractive # for zipgrep shebang
+    bzip2
+  ]
+  ++ lib.optional enableNLS libnatspec;
+
+  strictDeps = true;
 
   makefile = "unix/Makefile";
 
@@ -105,6 +117,8 @@ stdenv.mkDerivation rec {
 
   setupHook = ./setup-hook.sh;
 
+  __structuredAttrs = true;
+
   meta = {
     homepage = "http://www.info-zip.org";
     description = "Extraction utility for archives compressed in .zip format";
@@ -113,4 +127,4 @@ stdenv.mkDerivation rec {
     maintainers = with lib.maintainers; [ RossComputerGuy ];
     mainProgram = "unzip";
   };
-}
+})

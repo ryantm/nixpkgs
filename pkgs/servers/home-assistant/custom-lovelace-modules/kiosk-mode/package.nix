@@ -4,28 +4,28 @@
   fetchFromGitHub,
   fetchPnpmDeps,
   pnpmConfigHook,
-  pnpm_10,
+  pnpm_12,
   nodejs,
 }:
 let
-  pnpm = pnpm_10;
+  pnpm = pnpm_12;
 in
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "kiosk-mode";
-  version = "14.0.1";
+  version = "16.0.0";
 
   src = fetchFromGitHub {
     owner = "nemesisre";
     repo = "kiosk-mode";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-eQ2dYXmx4nnk/1bbTayPezPyghBo5UbNWf3USY20ePg=";
+    hash = "sha256-s+P1WL/tPZY6+I04NNV37VPhOVBrlS+QN+eRXbbXkFc=";
   };
 
   pnpmDeps = fetchPnpmDeps {
     inherit (finalAttrs) pname version src;
     inherit pnpm;
-    fetcherVersion = 3;
-    hash = "sha256-bCtk+cqWnYvPo4VsvLaN+m0LIlP8jgb951aIf1emGZg=";
+    fetcherVersion = 5;
+    hash = "sha256-t/p33sHSC6Fe7wF7PDipuucjCQzfLUDHGsWa9NJ42C8=";
   };
 
   nativeBuildInputs = [

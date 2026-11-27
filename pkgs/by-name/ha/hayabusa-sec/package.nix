@@ -3,26 +3,27 @@
   rustPlatform,
   fetchFromGitHub,
   makeWrapper,
-  unstableGitUpdater,
+  nix-update-script,
   pkg-config,
+  libgit2,
   openssl,
   rust-jemalloc-sys,
 }:
 
-rustPlatform.buildRustPackage {
+rustPlatform.buildRustPackage (finalAttrs: {
   pname = "hayabusa-sec";
-  version = "3.7.0-unstable-2025-12-02";
+  version = "4.4.0";
 
   src = fetchFromGitHub {
     owner = "Yamato-Security";
     repo = "hayabusa";
-    rev = "1c4f332b446f20af154257b2e9b581f7bcb4b1a2";
-    hash = "sha256-JWb54yudfB6pOMZca8sFeoRqNA7M//xJ3IBKfIcGBnM=";
+    tag = "v${finalAttrs.version}";
+    hash = "sha256-C5gVxNb5Jn1Eq+5JmzHjGWyAM8jy+ap037dRaIhrVQ4=";
     # Include the hayabusa-rules
     fetchSubmodules = true;
   };
 
-  cargoHash = "sha256-JIHkFokaZ+nt1hW+gRxFrb1DVZcm4jsZKT12gx/BRCA=";
+  cargoHash = "sha256-yoDi/W1+0ayIpYuJKfzl83abQgqGPCC39VXwoR9+YHY=";
 
   nativeBuildInputs = [
     makeWrapper
@@ -30,6 +31,7 @@ rustPlatform.buildRustPackage {
   ];
 
   buildInputs = [
+    libgit2
     openssl
     rust-jemalloc-sys # transitive dependency via the hayabusa-evtx crate
   ];
@@ -49,15 +51,17 @@ rustPlatform.buildRustPackage {
     makeWrapper $out/share/hayabusa-sec/hayabusa $out/bin/hayabusa
   '';
 
-  passthru.updateScript = unstableGitUpdater { };
+  passthru.updateScript = nix-update-script { };
 
   meta = {
     description = "Sigma-based threat hunting and fast forensics timeline generator for Windows event logs";
     homepage = "https://github.com/Yamato-Security/hayabusa";
+    changelog = "https://github.com/Yamato-Security/hayabusa/releases/tag/v${finalAttrs.version}";
     license = lib.licenses.agpl3Plus;
     maintainers = with lib.maintainers; [
       jk
+      d3vil0p3r
     ];
     mainProgram = "hayabusa";
   };
-}
+})

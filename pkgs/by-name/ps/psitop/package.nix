@@ -26,7 +26,8 @@ buildGoModule (finalAttrs: {
     description = "Top for /proc/pressure";
     homepage = "https://github.com/jamespwilliams/psitop";
     license = lib.licenses.mit;
-    maintainers = [ ];
+    maintainers = with lib.maintainers; [ ravi-arnan ];
     mainProgram = "psitop";
+    platforms = lib.platforms.linux;
   };
 })

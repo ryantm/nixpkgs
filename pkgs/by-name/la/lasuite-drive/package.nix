@@ -29,7 +29,12 @@ let
 
   python = python3.override {
     self = python;
-    packageOverrides = (self: super: { django = super.django_5; });
+    packageOverrides = (
+      self: super: {
+        django = self.django_5;
+        mcp = self.mcp_1;
+      }
+    );
   };
 
 in
@@ -41,7 +46,7 @@ python.pkgs.buildPythonApplication (finalAttrs: {
   sourceRoot = "${finalAttrs.src.name}/src/backend";
 
   patches = [
-    # Support configuration throught environment variables for SECURE_*
+    # Support configuration through environment variables for SECURE_*
     ./secure_settings.patch
     # Fix some build fields on pyproject
     ./pyproject_build.patch
@@ -94,6 +99,7 @@ python.pkgs.buildPythonApplication (finalAttrs: {
       sentry-sdk
       url-normalize
       whitenoise
+      zipstream-ng
     ]
     ++ celery.optional-dependencies.redis
     ++ django-storages.optional-dependencies.s3;
@@ -146,8 +152,6 @@ python.pkgs.buildPythonApplication (finalAttrs: {
       login-upload-and-download-file = nixosTests.lasuite-drive;
     };
   };
-
-  __structuredAttrs = true;
 
   meta = meta // {
     description = "A collaborative file sharing and document management platform that scales. Built with Django and React. Opensource alternative to Sharepoint or Google Drive";

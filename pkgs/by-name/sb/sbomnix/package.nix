@@ -10,14 +10,14 @@
 }:
 python3.pkgs.buildPythonApplication (finalAttrs: {
   pname = "sbomnix";
-  version = "1.8.0";
+  version = "1.10.0";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "tiiuae";
     repo = "sbomnix";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-oMIFcfjbt+lgAcdJbA64opu1qCwUVUIEukotqQEox3Q=";
+    hash = "sha256-DBWFzLwe87GxTOsHt2ypvy2p7D2HpZMe3pbW5taK5kQ=";
 
     # Remove documentation as it contains references to nix store
     postFetch = ''
@@ -27,16 +27,17 @@ python3.pkgs.buildPythonApplication (finalAttrs: {
   };
 
   makeWrapperArgs = [
-    "--prefix PATH : ${
-      lib.makeBinPath [
-        git
-        nix
-        python3.pkgs.graphviz
-        nix-visualize
-        vulnix
-        grype
-      ]
-    }"
+    "--prefix"
+    "PATH"
+    ":"
+    (lib.makeBinPath [
+      git
+      nix
+      python3.pkgs.graphviz
+      nix-visualize
+      vulnix
+      grype
+    ])
   ];
 
   build-system = [ python3.pkgs.setuptools ];
@@ -47,11 +48,11 @@ python3.pkgs.buildPythonApplication (finalAttrs: {
     dfdiskcache
     graphviz
     filelock
+    license-expression
     numpy
     packageurl-python
     packaging
     pandas
-    pyrate-limiter
     requests
     requests-cache
     requests-ratelimiter

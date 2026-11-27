@@ -31,13 +31,13 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "labwc";
-  version = "0.20.1";
+  version = "0.20.2";
 
   src = fetchFromGitHub {
     owner = "labwc";
     repo = "labwc";
     tag = finalAttrs.version;
-    hash = "sha256-1LINOZsdN5btT0VQvUwYXbSjuKdQdbkaI062OYAJSiE=";
+    hash = "sha256-gKix9UW4np6fMoMZgHN9G4opwbPkT6ax5G5ZWQCzYio=";
   };
 
   postPatch = ''
@@ -99,7 +99,7 @@ stdenv.mkDerivation (finalAttrs: {
     homepage = "https://github.com/labwc/labwc";
     description = "Wayland stacking compositor, inspired by Openbox";
     changelog = "https://github.com/labwc/labwc/blob/master/NEWS.md";
-    license = with lib.licenses; [ gpl2Plus ];
+    license = lib.licenses.gpl2Plus;
     mainProgram = "labwc";
     maintainers = [ ];
     inherit (wayland.meta) platforms;

@@ -9,6 +9,9 @@
   ripgrep,
   zip,
   fzf,
+  pkg-config,
+  zstd,
+  sqlite,
 }:
 
 let
@@ -37,9 +40,15 @@ rustPlatform.buildRustPackage (finalAttrs: {
   # override debug=true set in Cargo.toml upstream
   env.RUSTFLAGS = "-C debuginfo=none";
 
+  buildInputs = [
+    zstd
+    sqlite
+  ];
+
   nativeBuildInputs = [
     makeWrapper
     poppler-utils
+    pkg-config
   ];
 
   nativeCheckInputs = path;
@@ -62,7 +71,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
       to search in pdf, docx, sqlite, jpg, movie subtitles (mkv, mp4), etc.
     '';
     homepage = "https://github.com/phiresky/ripgrep-all";
-    license = with lib.licenses; [ agpl3Plus ];
+    license = lib.licenses.agpl3Plus;
     maintainers = with lib.maintainers; [
       zaninime
       ma27

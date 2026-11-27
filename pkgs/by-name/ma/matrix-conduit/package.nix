@@ -4,24 +4,24 @@
   fetchFromGitLab,
   pkg-config,
   sqlite,
-  stdenv,
   nixosTests,
   rocksdb,
   rust-jemalloc-sys,
+  nix-update-script,
 }:
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "matrix-conduit";
-  version = "0.10.12";
+  version = "0.10.17";
 
   src = fetchFromGitLab {
     owner = "famedly";
     repo = "conduit";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-OBrbZlrhh8QqAlaC38Y9g2PH5503CzZAf7Kg7Wflgds=";
+    hash = "sha256-PAMElavwXxI7XJoqTIrT2OFy3W9DS8Z5XoA0rFNzpUw=";
   };
 
-  cargoHash = "sha256-JN3Vs3Epv1P66EdsFMY5ojVV+a9rrPcW0/7NrEepo78=";
+  cargoHash = "sha256-QSDqJSctJCpQ2HLe69IJBcXPum4CptIDJjgRkgTN8Og=";
 
   # Conduit enables rusqlite's bundled feature by default, but we'd rather use our copy of SQLite.
   preBuild = ''
@@ -45,11 +45,14 @@ rustPlatform.buildRustPackage (finalAttrs: {
     ROCKSDB_LIB_DIR = "${rocksdb}/lib";
   };
 
-  # tests failed on x86_64-darwin with SIGILL: illegal instruction
-  doCheck = !(stdenv.hostPlatform.isx86_64 && stdenv.hostPlatform.isDarwin);
+  doCheck = true;
 
-  passthru.tests = {
-    inherit (nixosTests) matrix-conduit;
+  passthru = {
+    updateScript = nix-update-script { };
+
+    tests = {
+      inherit (nixosTests) matrix-conduit;
+    };
   };
 
   meta = {

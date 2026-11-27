@@ -1,6 +1,5 @@
 {
   lib,
-  stdenv,
   buildPythonPackage,
   fetchFromGitHub,
 
@@ -12,7 +11,6 @@
   torch,
 
   # tests
-  llvmPackages,
   pytestCheckHook,
 }:
 
@@ -20,7 +18,6 @@ buildPythonPackage (finalAttrs: {
   pname = "hoptorch";
   version = "0.1.4";
   pyproject = true;
-  __structuredAttrs = true;
 
   src = fetchFromGitHub {
     owner = "vmoens";

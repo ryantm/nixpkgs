@@ -2,6 +2,8 @@
   lib,
   rustPlatform,
   fetchFromRadicle,
+  pkg-config,
+  libgit2,
   stdenv,
   jq,
   gitMinimal,
@@ -10,18 +12,19 @@
   writableTmpDirAsHomeHook,
   versionCheckHook,
   nixosTests,
+  nix-update-script,
 }:
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "radicle-ci-broker";
-  version = "0.30.0";
+  version = "0.32.1";
 
   src = fetchFromRadicle {
     seed = "seed.radicle.dev";
     repo = "zwTxygwuz5LDGBq255RA2CbNGrz8";
     node = "z6MkgEMYod7Hxfy9qCvDv5hYHkZ4ciWmLFgfvm3Wn1b2w2FV";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-30+s//C9uMpGgA976RRduHmnmF6YEYmmG+V5P/1TYhA=";
+    hash = "sha256-+NPlpDGrHjCB1ny81wbaM3f/b3wLFaH5ldINeTuV5hI=";
     leaveDotGit = true;
     postFetch = ''
       git -C $out rev-parse --short HEAD > $out/.git_head
@@ -29,7 +32,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
     '';
   };
 
-  cargoHash = "sha256-9DzdeJcjl8IpmDR+kXdbEHrGi/5e9P26HsZJ9OPZRSA=";
+  cargoHash = "sha256-o0s6za+IxeJQkwHKuMPJk+uDcMp7VRq+mMqpX3bcWVY=";
 
   postPatch = ''
     substituteInPlace build.rs \
@@ -40,8 +43,12 @@ rustPlatform.buildRustPackage (finalAttrs: {
       --replace-fail '"PATH": "/bin"' ""
   '';
 
+  nativeBuildInputs = [ pkg-config ];
+
+  buildInputs = [ libgit2 ];
+
   preCheck = ''
-    ln -s "$PWD/target/${stdenv.hostPlatform.rust.rustcTarget}/$cargoBuildType" target/debug
+    export SUBPLOT_DIR="$PWD/target/${stdenv.hostPlatform.rust.rustcTarget}/$cargoBuildType"
 
     rad auth --alias alice --stdin </dev/null
   '';
@@ -61,7 +68,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
 
   passthru = {
     tests = { inherit (nixosTests) radicle-ci-broker; };
-    updateScript = ./update.sh;
+    updateScript = nix-update-script { };
   };
 
   meta = {

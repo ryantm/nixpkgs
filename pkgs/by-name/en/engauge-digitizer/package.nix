@@ -6,7 +6,6 @@
   libjpeg,
   log4cpp,
   openjpeg,
-  libpng12,
   libsForQt5,
   qt5,
 }:
@@ -31,7 +30,6 @@ stdenv.mkDerivation (finalAttrs: {
     qt5.qtbase
     qt5.qttools
     libsForQt5.poppler
-    libpng12
     openjpeg
     openjpeg.dev
     log4cpp
@@ -68,7 +66,7 @@ stdenv.mkDerivation (finalAttrs: {
     description = "Engauge Digitizer is a tool for recovering graph data from an image file";
     mainProgram = "engauge";
     homepage = "https://markummitchell.github.io/engauge-digitizer";
-    license = with lib.licenses; [ gpl2Only ];
+    license = lib.licenses.gpl2Only;
     platforms = lib.platforms.linux;
     maintainers = [ lib.maintainers.sheepforce ];
   };

@@ -8,13 +8,13 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "postsrsd";
-  version = "2.2.7";
+  version = "2.4.1";
 
   src = fetchFromGitHub {
     owner = "roehling";
     repo = "postsrsd";
     tag = finalAttrs.version;
-    hash = "sha256-xBVkhhnLBzCaMFrYze+MdHDJQPJefQdr6jJDTVmN1dU=";
+    hash = "sha256-wSBTV79lJ4VDUKCGIG1uJm/P3QlviL6zESvo72EA/mw=";
   };
 
   cmakeFlags = [

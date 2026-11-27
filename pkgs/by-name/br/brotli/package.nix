@@ -12,13 +12,13 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "brotli";
-  version = "1.2.0";
+  version = "1.2.1";
 
   src = fetchFromGitHub {
     owner = "google";
     repo = "brotli";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-kl8ZHt71v17QR2bDP+ad/5uixf+GStEPLQ5ooFoC5i8=";
+    hash = "sha256-llY72cYffDv0ugsH0p89xIPEbElV4L8u7U/Fe8hT3gI=";
   };
 
   patches = [
@@ -31,6 +31,8 @@ stdenv.mkDerivation (finalAttrs: {
   ];
 
   nativeBuildInputs = [ cmake ];
+
+  strictDeps = true;
 
   cmakeFlags = lib.optional staticOnly "-DBUILD_SHARED_LIBS=OFF";
 
@@ -59,6 +61,8 @@ stdenv.mkDerivation (finalAttrs: {
     };
     updateScript = nix-update-script { };
   };
+
+  __structuredAttrs = true;
 
   meta = {
     homepage = "https://github.com/google/brotli";

@@ -2,7 +2,7 @@
   lib,
   _7zz,
   alsa-lib,
-  systemd,
+  systemdLibs,
   wrapGAppsHook4,
   autoPatchelfHook,
   blas,
@@ -18,16 +18,21 @@
   patchelf,
   openssl,
   stdenv,
+  unixodbc,
   libxdamage,
   libxcomposite,
   libx11,
   libxkbfile,
   libsecret,
   webkitgtk_4_1,
+  libxtst,
+  libei,
+  libjpeg8,
+  pipewire,
 }:
 let
   pname = "positron-bin";
-  version = "2026.06.1-6";
+  version = "2026.11.1-4";
 in
 stdenv.mkDerivation {
   dontFixup = stdenv.hostPlatform.isDarwin;
@@ -37,17 +42,17 @@ stdenv.mkDerivation {
     if stdenv.hostPlatform.isDarwin then
       fetchurl {
         url = "https://cdn.posit.co/positron/releases/mac/arm64/Positron-${version}-arm64.dmg";
-        hash = "sha256-v5FaquIX7zYHvU6FddR4dDyt9uLheHr0+IpxLVpuKMg=";
+        hash = "sha256-UGF/E5BoDyqfEhBEYwLfMlJ5+jE/81Wv5mRCFwtiVH0=";
       }
     else if stdenv.hostPlatform.system == "aarch64-linux" then
       fetchurl {
         url = "https://cdn.posit.co/positron/releases/deb/arm64/Positron-${version}-arm64.deb";
-        hash = "sha256-Xc+ZlYPqKkiZgTvpfKo79LXGhD0voanEj98aJOsfjo0=";
+        hash = "sha256-5rjkfF3UOEmezcRMGqmPlst7RM+OeaMazpF8jQoHiGc=";
       }
     else
       fetchurl {
         url = "https://cdn.posit.co/positron/releases/deb/x86_64/Positron-${version}-x64.deb";
-        hash = "sha256-kTVHMNRbPoLg2Ua+Fo6UaUiUA6OqPwNAXXpgtqaBjls=";
+        hash = "sha256-NWmBXtVAg63YGnhW+BszotZLPI40nisM/4FU2PvykQY=";
       };
 
   buildInputs = [
@@ -69,6 +74,11 @@ stdenv.mkDerivation {
     libxkbfile
     libsecret
     webkitgtk_4_1
+    libei
+    libjpeg8
+    pipewire
+    libxtst
+    unixodbc
   ]
   ++ lib.optionals stdenv.hostPlatform.isDarwin [
     blas
@@ -85,9 +95,21 @@ stdenv.mkDerivation {
       _7zz
     ];
 
+  # Don't patch ONNX Runtime providers.
+  autoPatchelfIgnoreMissingDeps = lib.optionals stdenv.hostPlatform.isLinux [
+    "libcublas.so.12"
+    "libcublasLt.so.12"
+    "libcudart.so.12"
+    "libcudnn.so.9"
+    "libcufft.so.11"
+    "libcurand.so.10"
+    "libnvinfer.so.10"
+    "libnvonnxparser.so.10"
+  ];
+
   runtimeDependencies = lib.optionals stdenv.hostPlatform.isLinux [
-    # Needed to fix the "Zygote could not fork" error.
-    (lib.getLib systemd)
+    (lib.getLib systemdLibs) # Needed to fix the "Zygote could not fork" error.
+    (lib.getLib libsecret) # Undeclared `dlopen`, buildInputs can't see it.
   ];
 
   installPhase =
@@ -119,19 +141,19 @@ stdenv.mkDerivation {
           "Icon=$out/share/pixmaps/co.posit.positron.png" \
           --replace-fail \
           "Exec=/usr/share/positron/positron %F" \
-          "Exec=$out/share/positron/.positron-wrapped %F" \
+          "Exec=$out/bin/positron %F" \
           --replace-fail \
           "/usr/share/positron/positron --new-window %F" \
-          "$out/share/positron/.positron-wrapped --new-window %F"
+          "$out/bin/positron --new-window %F"
 
         # Fix libGL.so not found errors.
         wrapProgram "$out/share/positron/positron" \
           --prefix LD_LIBRARY_PATH : "${lib.makeLibraryPath [ libglvnd ]}" \
-          --add-flags "--disable-updates"
+          --append-flags "--disable-updates"
 
 
         mkdir -p "$out/bin"
-        ln -s "$out/share/positron/positron" "$out/bin/positron"
+        ln -s "$out/share/positron/bin/positron" "$out/bin/positron"
         runHook postInstall
       '';
 
@@ -144,6 +166,7 @@ stdenv.mkDerivation {
     maintainers = with lib.maintainers; [
       b-rodrigues
       detroyejr
+      hectorgray
     ];
     mainProgram = "positron";
     platforms = [

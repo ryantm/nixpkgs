@@ -9,7 +9,7 @@
   uutf,
   cmdliner,
   cmdlinerSupport ? lib.versionAtLeast cmdliner.version "1.1",
-  version ? if lib.versionAtLeast ocaml.version "4.14" then "17.0.0" else "15.0.0",
+  version ? if lib.versionAtLeast ocaml.version "4.14" then "18.0.0" else "15.0.0",
 }:
 
 let
@@ -18,12 +18,12 @@ let
   hash =
     {
       "15.0.0" = "sha256-B/prPAwfqS8ZPS3fyDDIzXWRbKofwOCyCfwvh9veuug=";
-      "17.0.0" = "sha256-5XYZU8Ros2aiCy04xzLiwhN+v5kM9Y3twdVPQ8IY1GA=";
+      "18.0.0" = "sha256-PigyC3vjIFWo2pNa3yUJBv3qgcpZXWf6ytGIOoaiHiM=";
     }
     ."${version}";
 in
-stdenv.mkDerivation (finallAttrs: {
-  name = "ocaml${ocaml.version}-${finallAttrs.pname}-${finallAttrs.version}";
+stdenv.mkDerivation (finalAttrs: {
+  name = "ocaml${ocaml.version}-${finalAttrs.pname}-${finalAttrs.version}";
   inherit version pname;
 
   src = fetchurl {

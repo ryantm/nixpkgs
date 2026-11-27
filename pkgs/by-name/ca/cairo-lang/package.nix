@@ -4,24 +4,33 @@
   fetchFromGitHub,
   rustfmt,
   perl,
+  pkg-config,
+  aws-lc,
+  openssl,
 }:
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "cairo";
-  version = "2.16.1";
+  version = "2.21.0";
 
   src = fetchFromGitHub {
     owner = "starkware-libs";
     repo = "cairo";
     rev = "v${finalAttrs.version}";
-    hash = "sha256-uWnFj2oMEQvzzpi1UDK7OQ/2bAm7zlEPHhJXV+gj6nU=";
+    hash = "sha256-h5oQbpumzl1oJb5GAaiQhp2Yk4efF+oYTNdeZxrE02Y=";
   };
 
-  cargoHash = "sha256-FrLjo+Zu8OvNZ69jjzqR1uK0hius7nwbwdlJJkkvTKI=";
+  cargoHash = "sha256-SMfqU2DH20CHu/lsYex0F7c9DClMYCL2kgWeqxw1LW0=";
 
   # openssl crate requires perl during build process
   nativeBuildInputs = [
     perl
+    pkg-config
+  ];
+
+  buildInputs = [
+    aws-lc
+    openssl
   ];
 
   nativeCheckInputs = [

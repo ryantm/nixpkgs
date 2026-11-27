@@ -7,11 +7,10 @@
   perl,
   openssl,
   rust-jemalloc-sys,
+  sqlite,
   python3,
   python3Packages,
-  wrapQtAppsHook,
-  qtbase,
-  qtsvg,
+  qt6,
   xdg-utils,
   replaceVars,
   nodejs_22,
@@ -103,21 +102,24 @@ rec {
 
     dependencies = with python3Packages; [
       aw-core
-      qtbase
-      qtsvg # Rendering icons in the trayicon menu
+      qt6.qtbase
+      qt6.qtsvg # Rendering icons in the trayicon menu
       pyqt6
       click
     ];
 
     nativeBuildInputs = [
-      wrapQtAppsHook
+      qt6.wrapQtAppsHook
     ];
 
     # Prevent double wrapping
     dontWrapQtApps = true;
 
     makeWrapperArgs = [
-      "--suffix PATH : ${lib.makeBinPath [ xdg-utils ]}"
+      "--suffix"
+      "PATH"
+      ":"
+      (lib.makeBinPath [ xdg-utils ])
     ];
 
     postInstall = ''
@@ -210,6 +212,7 @@ rec {
     buildInputs = [
       openssl
       rust-jemalloc-sys
+      sqlite
     ];
 
     env.AW_WEBUI_DIR = aw-webui;

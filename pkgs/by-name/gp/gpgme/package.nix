@@ -22,7 +22,7 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "gpgme";
-  version = "2.1.0";
+  version = "2.3.1";
 
   outputs = [
     "out"
@@ -34,7 +34,7 @@ stdenv.mkDerivation (finalAttrs: {
 
   src = fetchurl {
     url = "mirror://gnupg/gpgme/gpgme-${finalAttrs.version}.tar.bz2";
-    hash = "sha256-hBxepT/CYln0+/DovemC3qG4ocoMt35oHIKwUFZr+Ss=";
+    hash = "sha256-K/lODmd+Wo/DH3ndMj+RxUFrNvuFEFi8HovOOfJkJDQ=";
   };
 
   postPatch = ''
@@ -103,7 +103,7 @@ stdenv.mkDerivation (finalAttrs: {
       package = finalAttrs.finalPackage;
       versionCheck = true;
     };
-    python = python3.pkgs.gpgme;
+    python = python3.pkgs.gpg;
     qt5 = libsForQt5.qgpgme;
     qt6 = qt6Packages.qgpgme;
   };

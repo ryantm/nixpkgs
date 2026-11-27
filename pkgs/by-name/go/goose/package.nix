@@ -7,17 +7,17 @@
 
 buildGoModule (finalAttrs: {
   pname = "goose";
-  version = "3.27.2";
+  version = "3.30.0";
 
   src = fetchFromGitHub {
     owner = "pressly";
     repo = "goose";
     rev = "v${finalAttrs.version}";
-    hash = "sha256-4m/YYyQtz/Nj94vIUxChgmDsJVZqtzmp7qsSiuZVB38=";
+    hash = "sha256-pWpvqXcWo5syU4eoMoJ34s+oBX+3qafjG1bUGYI6XuM=";
   };
 
   proxyVendor = true;
-  vendorHash = "sha256-8riGHomL3wKqBOPOzgE13jWYjJT03tqz1UMWR/01pcE=";
+  vendorHash = "sha256-nphSQeak6TkYLZiwIB/iJMUvtm+gJEcqUG6gteWIcTs=";
 
   # skipping: end-to-end tests require a docker daemon
   postPatch = ''
@@ -46,7 +46,7 @@ buildGoModule (finalAttrs: {
   meta = {
     description = "Database migration tool which supports SQL migrations and Go functions";
     homepage = "https://pressly.github.io/goose/";
-    license = lib.licenses.bsd3;
+    license = lib.licenses.mit;
     maintainers = [ ];
     mainProgram = "goose";
   };

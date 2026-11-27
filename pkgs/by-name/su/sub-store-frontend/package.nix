@@ -3,24 +3,24 @@
   buildNpmPackage,
   fetchFromGitHub,
 
-  pnpm_10,
+  pnpm_11,
   fetchPnpmDeps,
   pnpmConfigHook,
   nix-update-script,
   nodejs,
 }:
 let
-  pnpm = pnpm_10;
+  pnpm = pnpm_11;
 in
 buildNpmPackage (finalAttrs: {
   pname = "sub-store-frontend";
-  version = "2.28.6";
+  version = "2.34.3";
 
   src = fetchFromGitHub {
     owner = "sub-store-org";
     repo = "Sub-Store-Front-End";
     tag = finalAttrs.version;
-    hash = "sha256-dCby4fKCx9lzlSdn9TZwOsQWPFf36ZcL5bEg3XgipjY=";
+    hash = "sha256-iTK36/28XftnJLzhrN7rMLeuYr0rHXkY15fI0xx2Yvg=";
   };
 
   nativeBuildInputs = [
@@ -32,8 +32,8 @@ buildNpmPackage (finalAttrs: {
   pnpmDeps = fetchPnpmDeps {
     inherit (finalAttrs) pname version src;
     inherit pnpm;
-    fetcherVersion = 3;
-    hash = "sha256-lj93WF3mqvgaD0qnZC+X4ubw8ohz8E5ICWYWbEITYnk=";
+    fetcherVersion = 4;
+    hash = "sha256-FF3DaiYyPmdSRxT6iA+In+AeMswt0BUkVqAzTqYQ92Q=";
   };
 
   npmConfigHook = pnpmConfigHook;

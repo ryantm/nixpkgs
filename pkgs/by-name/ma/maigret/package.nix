@@ -7,14 +7,14 @@
 
 python3.pkgs.buildPythonApplication (finalAttrs: {
   pname = "maigret";
-  version = "0.6.2";
+  version = "0.6.7";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "soxoj";
     repo = "maigret";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-KgSf0lM8euahWRYT+acuoH6C+NN08IzkVGzytfnvHEg=";
+    hash = "sha256-ZQEKTrGWhcMPc7maNTMPQ9LIqqc993trcZKprJomywQ=";
   };
 
   pythonRelaxDeps = true;

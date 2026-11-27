@@ -1,17 +1,17 @@
 {
   lib,
-  swiftPackages,
   fetchFromGitHub,
   actool,
   lld,
+  stdenv,
+  swift,
   makeWrapper,
   nix-update-script,
   rcodesign,
+  python3,
 }:
 
 let
-  inherit (swiftPackages) stdenv swift;
-
   toPlist = lib.generators.toPlist { escape = true; };
   deploymentTarget = "14.0";
   sdkVersion = "26.0";
@@ -83,9 +83,6 @@ let
   allFrameworks = lib.catAttrs "name" frameworks;
   objcFrameworks = lib.filter (fw: fw ? objc) frameworks;
 
-  # apple-sdk_26 cannot be used here because swiftPackages compiles its own modules
-  # against apple-sdk_14; adding it to buildInputs redirects SDKROOT and breaks Swift's
-  # foundational modules
   commonSwiftFlags = [
     "-O"
     "-swift-version"
@@ -103,9 +100,11 @@ let
 
   # These are the non-localized files in upstream's PBXResourcesBuildPhase.
   appResources = [
-    "resources/icons/app/app.icns"
+    "resources/icons/app/app.png"
     "resources/icons/menubar/*.pdf"
     "resources/illustrations/*.heic"
+    "resources/l10n/*.lproj"
+    "resources/native-illustrations/"
     "resources/*.otf"
     "docs/contributors.md"
     "docs/acknowledgments.md"
@@ -264,13 +263,13 @@ let
 in
 stdenv.mkDerivation (finalAttrs: {
   pname = "alt-tab-macos";
-  version = "11.4.3";
+  version = "11.10.2";
 
   src = fetchFromGitHub {
     owner = "lwouis";
     repo = "alt-tab-macos";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-izPiRGV8bD67rvOyNWShcpTbUujn6WHnzenPAMAlKoU=";
+    hash = "sha256-Yf9+137rsvfuVwZicTR+tpuaMrOQ5E3x2BC7J1rocwM=";
   };
 
   nativeBuildInputs = [
@@ -279,33 +278,19 @@ stdenv.mkDerivation (finalAttrs: {
     lld
     makeWrapper
     rcodesign
+    python3
   ];
 
   patches = [
-    # Swift 5.10 compatibility: count(where:), .extraLarge, Liquid Glass
-    ./0001-replace-count-where-with-filter-.count-for-Swift-5.1.patch
-    ./0002-replace-.extraLarge-with-.large-for-macOS-14-SDK.patch
-    ./0003-use-runtime-dispatch-for-Liquid-Glass-with-SDK-14.patch
     # Don't offer preferences for services disabled by the source-only stubs.
-    ./0004-hide-settings-for-disabled-services.patch
+    ./0001-hide-settings-for-disabled-services.patch
+    # Avoids error about `CGDisplayStream` initializer being unavailable on macOS when using the 26.x SDK.
+    ./0002-avoid-using-obsolete-api.patch
   ];
 
-  # Remove trailing comma incompatible with Swift 5.10
   postPatch = ''
     substituteInPlace Info.plist \
       ${substitutePlistVariables (infoPlistSubstitutions finalAttrs.version)}
-
-    substituteInPlace src/secondary-windows/permission-window/PermissionsWindow.swift \
-      --replace-fail \
-        '"x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility",' \
-        '"x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility"'
-
-    # Swift 5.10 compat: additional call site using trailing-closure
-    # sugar for count(where:). See 0001-replace-count-where-...patch.
-    substituteInPlace src/util/UsageStats.swift \
-      --replace-fail \
-        'getTimestamps(key).count { $0 >= threshold }' \
-        'getTimestamps(key).filter { $0 >= threshold }.count'
   '';
 
   dontConfigure = true;
@@ -319,6 +304,9 @@ stdenv.mkDerivation (finalAttrs: {
     ${lib.toShellVars { inherit commonSwiftFlags; }}
 
     ${lib.concatMapStringsSep "\n" buildFramework frameworks}
+
+    nixLog "Building native illustrations"
+    python3 scripts/assets/compile_illustrations.py
 
     nixLog "Compiling AppCenterApplication"
     clang -fobjc-arc -fmodules -fmodules-cache-path="$buildDir/module-cache" -O2 \
@@ -370,8 +358,7 @@ stdenv.mkDerivation (finalAttrs: {
     printf 'APPL????' > "$app/Contents/PkgInfo"
 
     # Xcode flattens these PBXGroup resources into Contents/Resources.
-    cp ${lib.concatStringsSep " " appResources} "$app/Contents/Resources/"
-    cp -R resources/l10n/*.lproj "$app/Contents/Resources/"
+    cp -R ${lib.concatStringsSep " " appResources} "$app/Contents/Resources/"
 
     makeWrapper "$app/Contents/MacOS/AltTab" "$out/bin/alt-tab"
 
@@ -399,9 +386,11 @@ stdenv.mkDerivation (finalAttrs: {
       gpl3Plus
       cc-by-40 # ShortcutRecorder
     ];
+    mainDarwinApp = "AltTab.app";
     mainProgram = "alt-tab";
     maintainers = with lib.maintainers; [
       _4evy
+      eclairevoyant
       emilytrau
       Br1ght0ne
     ];

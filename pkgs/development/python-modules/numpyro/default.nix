@@ -25,20 +25,20 @@
   pytest-xdist,
   pytestCheckHook,
   scikit-learn,
+  tensorflow,
   tensorflow-probability,
 }:
 
 buildPythonPackage (finalAttrs: {
   pname = "numpyro";
-  version = "0.21.0";
+  version = "0.22.0";
   pyproject = true;
-  __structuredAttrs = true;
 
   src = fetchFromGitHub {
     owner = "pyro-ppl";
     repo = "numpyro";
     tag = finalAttrs.version;
-    hash = "sha256-4NA1m2N0AZy3ausAZc6+PPw175joGC7WwfZr0Ri0uK8=";
+    hash = "sha256-aUd3u/fEMMSTPFyRJgalVTETG561AgJmGhJl2C3lMSw=";
   };
 
   build-system = [ setuptools ];
@@ -62,6 +62,9 @@ buildPythonPackage (finalAttrs: {
     pytest-xdist
     pytestCheckHook
     scikit-learn
+  ]
+  # tensorflow (required by tensorflow-probability) is not available for all python versions
+  ++ lib.optionals tensorflow.meta.available [
     tensorflow-probability
   ];
 
@@ -98,9 +101,11 @@ buildPythonPackage (finalAttrs: {
 
     # AssertionError due to tolerance issues
     "test_bijective_transforms"
+    "test_constrain_fn_two_batch_dims"
     "test_cpu"
     "test_entropy_categorical"
     "test_gaussian_model"
+    "test_zero_inflated_logits_probs_agree"
 
     # >       with pytest.warns(UserWarning, match="Hessian of log posterior"):
     # E       Failed: DID NOT WARN. No warnings of type (<class 'UserWarning'>,) were emitted.
@@ -116,11 +121,26 @@ buildPythonPackage (finalAttrs: {
   ++ lib.optionals stdenv.hostPlatform.isDarwin [
     # AssertionError: Not equal to tolerance rtol=0.06, atol=0
     "test_functional_map"
+  ]
+  ++ lib.optionals (!tensorflow.meta.available) [
+    # ImportError: Please install `tensorflow_probability>=0.18`
+    "test_cdf_and_icdf"
+    "test_left_truncated_cdf"
+    "test_no_tracer_leak_at_lazy_property_sample"
+    "test_output_is_array"
+    "test_right_truncated_cdf"
+    "test_two_sided_truncated_cdf"
   ];
 
   disabledTestPaths = [
     # Require internet access
     "test/test_example_utils.py"
+  ]
+  ++ lib.optionals (!tensorflow.meta.available) [
+    # Require tensorflow-probability
+    "test/contrib/hsgp/test_approximation.py"
+    "test/contrib/hsgp/test_spectral_densities.py"
+    "test/contrib/test_tfp.py"
   ];
 
   meta = {

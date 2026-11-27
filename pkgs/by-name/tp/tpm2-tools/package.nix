@@ -2,7 +2,6 @@
   stdenv,
   fetchurl,
   lib,
-  pandoc,
   pkg-config,
   makeWrapper,
   curl,
@@ -11,25 +10,20 @@
   libuuid,
   abrmdSupport ? true,
   tpm2-abrmd ? null,
-  buildPackages,
-  enableManpages ? buildPackages.pandoc.compiler.bootstrapAvailable,
 }:
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "tpm2-tools";
-  version = "5.7";
+  version = "5.8";
 
   src = fetchurl {
     url = "https://github.com/tpm2-software/tpm2-tools/releases/download/${finalAttrs.version}/tpm2-tools-${finalAttrs.version}.tar.gz";
-    sha256 = "sha256-OBDTa1B5JW9PL3zlUuIiE9Q7EDHBMVON+KLbw8VwmDo=";
+    sha256 = "sha256-HLcxhcroFLThXHwtCyJkLWQPr0h3X0FWof2S7fhL73M=";
   };
 
   nativeBuildInputs = [
     pkg-config
     makeWrapper
-  ]
-  ++ lib.optionals enableManpages [
-    pandoc
   ];
   buildInputs = [
     curl

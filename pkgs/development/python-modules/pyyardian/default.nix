@@ -9,14 +9,14 @@
 
 buildPythonPackage (finalAttrs: {
   pname = "pyyardian";
-  version = "1.4.1";
+  version = "1.4.2";
   pyproject = true;
 
   src = fetchFromGitHub {
-    owner = "h3l1o5";
+    owner = "aeon-matrix";
     repo = "pyyardian";
     tag = finalAttrs.version;
-    hash = "sha256-xikLOZjoa8XQ9v8odJRJpqM94zAjMPpSVH9uJSFvk68=";
+    hash = "sha256-CL+FbgJqWmxNTPp7methLFMgLXkH2S9hkS2mru55cEI=";
   };
 
   build-system = [ setuptools ];
@@ -30,7 +30,7 @@ buildPythonPackage (finalAttrs: {
 
   meta = {
     description = "Module for interacting with the Yardian irrigation controller";
-    homepage = "https://github.com/h3l1o5/pyyardian";
+    homepage = "https://github.com/aeon-matrix/pyyardian";
     changelog = "https://github.com/aeon-matrix/pyyardian/releases/tag/${finalAttrs.src.tag}";
     license = lib.licenses.mit;
     maintainers = with lib.maintainers; [ fab ];

@@ -8,16 +8,16 @@
 
 buildGoModule (finalAttrs: {
   pname = "qc";
-  version = "0.6.2";
+  version = "0.7.0";
 
   src = fetchFromGitHub {
     owner = "qownnotes";
     repo = "qc";
     rev = "v${finalAttrs.version}";
-    hash = "sha256-Y7SjlVNiZjWDTRPNZfyoFjI5qyo2SHgTPurNJzGmN0k=";
+    hash = "sha256-UaJ6ujKY9os5N8RhyUbj/speRrrJRIbemRQeFtkiijg=";
   };
 
-  vendorHash = "sha256-ad4IuGv2y4L9cS7pf/fEVJ3wXwy9pEIegMTbUoJHPmg=";
+  vendorHash = "sha256-/nRPv6SlvWV8mHlQstV19BLou9iwGt/VvJbrpVwiTCU=";
 
   ldflags = [
     "-s"

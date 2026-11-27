@@ -5,7 +5,6 @@
   dotnetCorePackages,
   fetchFromGitHub,
   fetchNpmDeps,
-  mono,
   nodejs_24,
   slskd,
   testers,
@@ -19,13 +18,13 @@ let
 in
 buildDotnetModule rec {
   pname = "slskd";
-  version = "0.24.5";
+  version = "0.26.2";
 
   src = fetchFromGitHub {
     owner = "slskd";
     repo = "slskd";
     tag = version;
-    hash = "sha256-B0LAd9Fn1E5heGPk5dd7DoHWreHRxe42Xew5PmLId7g=";
+    hash = "sha256-NYJg56/wD1gVm1Pid9H84youkYXmN8WUHrMZa9DrG9s=";
   };
 
   nativeBuildInputs = [
@@ -33,21 +32,20 @@ buildDotnetModule rec {
     npmHooks.npmConfigHook
   ];
 
-  runtimeDeps = [ mono ];
-
   npmRoot = "src/web";
   npmDeps = fetchNpmDeps {
     name = "${pname}-${version}-npm-deps";
     inherit src;
     sourceRoot = "${src.name}/${npmRoot}";
-    hash = "sha256-hmN91Y9ePJ7ZUyQX8jJbOgf0SuhsgmhO1ifi4sWhPUM=";
+    hash = "sha256-nfCT3yBvmRYneuOFD6wx0vUWyTxK0GQ6uOUIfzRT7tE=";
   };
 
-  projectFile = "slskd.sln";
+  projectFile = "src/slskd/slskd.csproj";
   nugetDeps = ./deps.json;
+  executables = [ "slskd" ];
 
-  dotnet-sdk = dotnetCorePackages.sdk_8_0;
-  dotnet-runtime = dotnetCorePackages.aspnetcore_8_0;
+  dotnet-sdk = dotnetCorePackages.sdk_10_0;
+  dotnet-runtime = dotnetCorePackages.aspnetcore_10_0;
 
   testProjectFile = "tests/slskd.Tests.Unit/slskd.Tests.Unit.csproj";
   doCheck = true;

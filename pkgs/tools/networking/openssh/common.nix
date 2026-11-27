@@ -31,7 +31,9 @@
   libredirect,
   etcDir ? null,
   withKerberos ? false,
-  withLdns ? true,
+  withLdns ? false,
+  withSelinux ? false,
+  libselinux,
   krb5,
   libfido2,
   libxcrypt,
@@ -71,36 +73,12 @@ stdenv.mkDerivation (finalAttrs: {
 
     # See discussion in https://github.com/NixOS/nixpkgs/pull/16966
     ./dont_create_privsep_path.patch
-  ]
-  ++ lib.optionals (lib.versionOlder finalAttrs.version "10.3") [
-    # See discussion in https://github.com/NixOS/nixpkgs/issues/466049 and
-    # https://gitlab.archlinux.org/archlinux/packaging/packages/openssh/-/issues/23
-    (fetchpatch {
-      name = "pkcs11-fetchkey-error-to-debug.patch";
-      url = "https://github.com/openssh/openssh-portable/commit/607f337637f2077b34a9f6f96fc24237255fe175.patch";
-      hunks = [ "2-" ];
-      hash = "sha256-rdvKL6/rwrdhGKlcmdy6fxVgJgaaRsmngX0KkShXAhQ=";
-    })
-    (fetchpatch {
-      name = "pkcs11-fix-pinentry.patch";
-      url = "https://github.com/openssh/openssh-portable/commit/434ba7684054c0637ce8f2486aaacafe65d9b8aa.patch";
-      # only applies to Makefile.in (which doesn't have a date header) so no hunks= needed
-      hash = "sha256-3JQ3IJurngXclORrfC2Bx7xvmGA6w2nIh+eZ0zd0bLY=";
-    })
 
-    # See discussion in https://github.com/NixOS/nixpkgs/issues/453782 and
-    # https://github.com/openssh/openssh-portable/pull/602
+    # Fix the build with --without-openssl (linkOpenssl = false) in 10.6p2.
     (fetchpatch {
-      name = "pkcs11-tests-allow-module-path.patch";
-      url = "https://github.com/openssh/openssh-portable/commit/5e7c3f33b2693b668ecfbac84b85f2c0c84410c2.patch";
-      hunks = [ "2-" ];
-      hash = "sha256-mGpRGXurg8K9Wp8qoojG5MQ+3sZW2XKy2z0RDXLHaEc=";
-    })
-    (fetchpatch {
-      name = "ssh-agent-tests-increase-timeout.patch";
-      url = "https://github.com/openssh/openssh-portable/commit/1fdc3c61194819c16063dc430eeb84b81bf42dcf.patch";
-      hunks = [ "2-" ];
-      hash = "sha256-b9YCOav32kY5VEvIG3W1fyD87HaQxof6Zwq9Oo+/Lac=";
+      name = "openssh-auth-passwd-include-stdlib.patch";
+      url = "https://github.com/openssh/openssh-portable/commit/102bee7f3a873b39784c909ba238c90b0b4c395f.patch";
+      hash = "sha256-78EBwPsR5NREMGQYvfFLBeW6p4AyrnMs8rEGwdiTt0g=";
     })
   ]
   ++ extraPatches;
@@ -131,6 +109,7 @@ stdenv.mkDerivation (finalAttrs: {
   ++ lib.optional withKerberos krb5
   ++ lib.optional withLdns ldns
   ++ lib.optional withPAM pam
+  ++ lib.optional withSelinux libselinux
   ++ lib.optionals withAudit [
     audit
     libcap_ng
@@ -183,6 +162,7 @@ stdenv.mkDerivation (finalAttrs: {
   ++ lib.optional stdenv.hostPlatform.isOpenBSD "--with-bsd-auth"
   ++ lib.optional withLinuxMemlock "--with-linux-memlock-onfault"
   ++ lib.optional withAudit "--with-audit=linux"
+  ++ lib.optional withSelinux "--with-selinux"
   ++ extraConfigureFlags;
 
   buildFlags = [ "SSH_KEYSIGN=ssh-keysign" ];
@@ -297,7 +277,7 @@ stdenv.mkDerivation (finalAttrs: {
       {
         borgbackup-integration = withThisSsh nixosTests.borgbackup;
         nixosTest = withThisSsh nixosTests.openssh;
-        initrd-network-openssh = withThisSsh nixosTests.initrd-network-ssh;
+        initrd-network-openssh = withThisSsh nixosTests.systemd-initrd-networkd-ssh;
         openssh = finalAttrs.finalPackage.overrideAttrs (previousAttrs: {
           pname = previousAttrs.pname + "-test";
           doCheck = true;

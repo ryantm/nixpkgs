@@ -27,6 +27,7 @@
   wheel,
   python-xlib,
   qtbase,
+  qtsvg,
   wrapQtAppsHook,
   hidapi,
   xkbcommon,
@@ -51,14 +52,13 @@ let
   '';
 in
 buildPythonPackage (finalAttrs: {
-  __structuredAttrs = true;
 
   pname = "plover";
   version = "5.4.0";
   pyproject = true;
 
   src = fetchFromGitHub {
-    owner = "openstenoproject";
+    owner = "opensteno";
     repo = "plover";
     tag = "v${finalAttrs.version}";
     hash = "sha256-qaEuzPVqh+e3qq778VdUaRufGzOx9HyUnygIbA0+6kw=";
@@ -127,6 +127,7 @@ buildPythonPackage (finalAttrs: {
 
   buildInputs = [
     qtbase
+    qtsvg
   ];
 
   nativeCheckInputs = [
@@ -152,6 +153,11 @@ buildPythonPackage (finalAttrs: {
   dontWrapQtApps = true;
 
   pythonImportsCheck = [ "plover" ];
+
+  passthru = {
+    # bulk updater uses wrong tag
+    skipBulkUpdate = true;
+  };
 
   meta = {
     description = "OpenSteno Plover stenography software";

@@ -9,13 +9,13 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "rpiboot";
-  version = "20250908-162618-bookworm";
+  version = "20261103-150646";
 
   src = fetchFromGitHub {
     owner = "raspberrypi";
     repo = "usbboot";
     tag = finalAttrs.version;
-    hash = "sha256-BJOm8VBEbrUasYwuV8NqwmsolJzmaqIaxYqj9EkU5hc=";
+    hash = "sha256-9h7oqg5QHIWJfp6oUYvJ+y6yzJp+Hd7WVFGerr2a7TM=";
     fetchSubmodules = true;
   };
 
@@ -46,7 +46,6 @@ stdenv.mkDerivation (finalAttrs: {
       "armv7l-linux"
       "armv6l-linux"
       "x86_64-linux"
-      "x86_64-darwin"
     ];
   };
 })

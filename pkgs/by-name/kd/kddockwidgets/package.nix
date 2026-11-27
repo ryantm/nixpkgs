@@ -11,13 +11,13 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "KDDockWidgets";
-  version = "2.4.0";
+  version = "2.5.1";
 
   src = fetchFromGitHub {
     owner = "KDAB";
     repo = "KDDockWidgets";
     rev = "v${finalAttrs.version}";
-    sha256 = "sha256-/ioCX/Txqr84uJJYPhVLrZKug6VdWQDVirmsTg42PXs=";
+    sha256 = "sha256-JGS5++bF7/OFdBX7p6mjVzxzNK86NMqgD8kFTDnbrdU=";
   };
 
   nativeBuildInputs = [ cmake ];
@@ -44,7 +44,7 @@ stdenv.mkDerivation (finalAttrs: {
     ];
     maintainers = with lib.maintainers; [
       sledgehammervampire
-      tmarkus
+      AAAAAASomeThingsFailToEvaluate
     ];
   };
 })

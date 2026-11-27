@@ -8,7 +8,7 @@
   hatch-vcs,
 
   # dependencies
-  feedparser,
+  lxml,
   requests,
 
   # tests
@@ -17,14 +17,14 @@
 }:
 buildPythonPackage rec {
   pname = "arxiv";
-  version = "3.0.0";
+  version = "4.1.0";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "lukasschwab";
     repo = "arxiv.py";
     tag = version;
-    hash = "sha256-o2Vqkr5Tlx7Iv1NEWDSU8X6hvlGUslIl4oHiRQNGdqI=";
+    hash = "sha256-hmGE2unTZoo5R9bTWX6iUwiKphD0a6T6uZLu+Fu/e8Q=";
   };
 
   build-system = [
@@ -33,7 +33,7 @@ buildPythonPackage rec {
   ];
 
   dependencies = [
-    feedparser
+    lxml
     requests
   ];
 

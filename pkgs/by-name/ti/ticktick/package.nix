@@ -12,25 +12,25 @@
   libgbm,
   alsa-lib,
   xdg-utils,
-  systemd,
+  systemdLibs,
 }:
 let
   baseUrl = "https://d2atcrkye2ik4e.cloudfront.net/download";
 in
 stdenv.mkDerivation (finalAttrs: {
   pname = "ticktick";
-  version = "8.0.10";
+  version = "8.0.30";
 
   src =
     if stdenv.hostPlatform.system == "x86_64-linux" then
       fetchurl {
         url = "${baseUrl}/linux/linux_deb_x64/ticktick-${finalAttrs.version}-amd64.deb";
-        hash = "sha256-5zIhLpoqZM8+RC4YBhdDyMq2aEg31O8U6Q5gD8Bo9es=";
+        hash = "sha256-Yt9cAF06xqcur1u/2CklGA8HnDSofNuc6uDh+Tlu+zY=";
       }
     else if stdenv.hostPlatform.system == "aarch64-linux" then
       fetchurl {
         url = "${baseUrl}/linux/linux_deb_arm64/ticktick-${finalAttrs.version}-arm64.deb";
-        hash = "sha256-R9dMGUiSXX/CRfVXoW3w2Gk1UfknfmNWoIqkhL/FRJs=";
+        hash = "sha256-a6yeSEonnPEjXA7b1c02feSsTokGVECSg+Y5NCJCef8=";
       }
     else
       throw "Unsupported system: ${stdenv.hostPlatform.system}";
@@ -52,7 +52,7 @@ stdenv.mkDerivation (finalAttrs: {
   ];
 
   # Needed to make the process get past zygote_linux fork()'ing
-  runtimeDependencies = [ systemd ];
+  runtimeDependencies = [ systemdLibs ];
 
   unpackPhase = ''
     runHook preUnpack
@@ -72,16 +72,19 @@ stdenv.mkDerivation (finalAttrs: {
     ln -sf "$out/opt/ticktick/ticktick" "$out/bin/ticktick"
 
     substituteInPlace "$out/share/applications/ticktick.desktop" \
-      --replace "Exec=/opt/TickTick/ticktick" "Exec=$out/bin/ticktick"
+      --replace-fail "Exec=/opt/TickTick/ticktick" "Exec=ticktick"
 
     runHook postInstall
   '';
+
+  passthru.updateScript = ./update.sh;
 
   meta = {
     description = "Powerful to-do & task management app with seamless cloud synchronization across all your devices";
     homepage = "https://ticktick.com/home/";
     license = lib.licenses.unfree;
     maintainers = with lib.maintainers; [
+      andreszb
       hbjydev
       jonocodes
     ];

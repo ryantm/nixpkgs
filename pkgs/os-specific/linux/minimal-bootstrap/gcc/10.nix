@@ -43,10 +43,10 @@ let
     hash = "sha256-tnugOD736KhWNzTi6InvXsPDuJigHQD6CmhprYHGzgE=";
   };
 
-  mpcVersion = "1.3.1";
+  mpcVersion = "1.4.1";
   mpc = fetchurl {
-    url = "mirror://gnu/mpc/mpc-${mpcVersion}.tar.gz";
-    hash = "sha256-q2QkkvXPiCt0qgy3MM1BCoHtzb7IlRg86TDnBsHHWbg=";
+    url = "mirror://gnu/mpc/mpc-${mpcVersion}.tar.xz";
+    hash = "sha256-kSBM0y8WS9O3yZLUpqjOZRlRGq2rMPeLaYLQv41z6TE=";
   };
 in
 bash.runCommand "${pname}-${version}"
@@ -135,8 +135,11 @@ bash.runCommand "${pname}-${version}"
       --with-sysroot=${musl} \
       --enable-languages=c,c++ \
       --enable-checking=release \
+      --disable-serial-configure \
+      --disable-analyzer \
       --disable-bootstrap \
       --disable-dependency-tracking \
+      --disable-decimal-float \
       --disable-libmpx \
       --disable-libsanitizer \
       --disable-libssp \
@@ -159,4 +162,14 @@ bash.runCommand "${pname}-${version}"
 
     # Install
     make -j $NIX_BUILD_CORES install-strip
+
+    if [ -d "$out/lib64" ]; then
+      shopt -s dotglob
+      for lib in $out/lib64/*; do
+        mv --no-clobber "$lib" "$out/lib/"
+      done
+      shopt -u dotglob
+      rm -rf "$out/lib64"
+      ln -s lib "$out/lib64"
+    fi
   ''

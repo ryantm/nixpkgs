@@ -13,17 +13,18 @@
   jq,
   moreutils,
   nodejs,
-  pnpm_10,
+  pnpm_11,
   fetchPnpmDeps,
   pnpmConfigHook,
   cacert,
   valkey,
+  bash,
   dataDir ? "/var/lib/zammad",
 }:
 
 let
   pname = "zammad";
-  version = "7.1.1";
+  version = "7.2.3";
 
   src = applyPatches {
     src = fetchFromGitHub (lib.importJSON ./source.json);
@@ -74,23 +75,26 @@ stdenvNoCC.mkDerivation {
     valkey
     postgresql
     pnpmConfigHook
-    pnpm_10
+    pnpm_11
     nodejs
     procps
     cacert
+    bash
   ];
 
   env.RAILS_ENV = "production";
 
   pnpmDeps = fetchPnpmDeps {
     inherit pname src;
-    pnpm = pnpm_10;
+    pnpm = pnpm_11;
 
-    fetcherVersion = 3;
-    hash = "sha256-JG1VhG56L1bDyrVOjP4MFB5h//dVchgnrHiqhGNIuw4=";
+    fetcherVersion = 4;
+    hash = "sha256-ZIDcpzfVpb6rh2DVNamk2OEt/bpRQa3FPK5I+mWQ/Js=";
   };
 
   buildPhase = ''
+    runHook preBuild
+
     mkdir redis-work
     pushd redis-work
     redis-server &
@@ -108,9 +112,14 @@ stdenvNoCC.mkDerivation {
     kill $REDIS_PID
     pg_ctl stop -D postgres-work -m immediate
     rm -r redis-work postgres-work
+    bash ./script/build/cleanup.sh
+
+    runHook postBuild
   '';
 
   installPhase = ''
+    runHook preInstall
+
     cp -R . $out
     rm -rf $out/config/database.yml $out/config/secrets.yml $out/tmp $out/log
     # dataDir will be set in the module, and the package gets overridden there
@@ -119,6 +128,8 @@ stdenvNoCC.mkDerivation {
     ln -s ${dataDir}/log $out/log
     ln -s ${dataDir}/storage $out/storage
     ln -s ${dataDir}/tmp $out/tmp
+
+    runHook postInstall
   '';
 
   passthru = {
@@ -134,6 +145,9 @@ stdenvNoCC.mkDerivation {
   };
 
   meta = {
+    changelog = "https://zammad.com/en/product/releases/${
+      lib.replaceString "." "-" (lib.removeSuffix ".0" version)
+    }";
     description = "Web-based, open source user support/ticketing solution";
     homepage = "https://zammad.org";
     license = lib.licenses.agpl3Plus;

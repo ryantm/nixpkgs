@@ -23,7 +23,6 @@ rustPlatform.buildRustPackage (finalAttrs: {
 
   cargoHash = "sha256-iKC6vIT8fVFv/Yx3YJUSCHyTOZ7X860Ak0l/+7lrU9Y=";
 
-  strictDeps = true;
   __structuredAttrs = true;
 
   nativeBuildInputs = [
@@ -56,7 +55,16 @@ rustPlatform.buildRustPackage (finalAttrs: {
   doInstallCheck = true;
   versionCheckProgramArg = "version";
 
-  passthru.updateScript = nix-update-script { };
+  passthru.updateScript = nix-update-script {
+    # Skip "post quantum releases", see:
+    # - https://github.com/NixOS/nixpkgs/pull/589823
+    # - https://gitlab.com/sequoia-pgp/sequoia-sq/-/work_items/605
+    # - https://sequoia-pgp.org/blog/2025/11/15/202511-post-quantum-cryptography/
+    extraArgs = [
+      "--version-regex"
+      "^v([0-9.]+)$"
+    ];
+  };
 
   meta = {
     description = "Implementation of the Stateless OpenPGP Command Line Interface using Sequoia";

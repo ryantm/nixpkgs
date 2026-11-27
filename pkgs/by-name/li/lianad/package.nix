@@ -4,22 +4,26 @@
   rustPlatform,
   fetchFromGitHub,
   udev,
+  sqlite,
 }:
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "lianad";
-  version = "14.0"; # keep in sync with liana
+  version = "16.0"; # keep in sync with liana
 
   src = fetchFromGitHub {
     owner = "wizardsardine";
     repo = "liana";
     rev = "v${finalAttrs.version}";
-    hash = "sha256-1d+icjk1NamlvEx4Xb1Ao4d1hb/t5aBwho+yCtHF9y4=";
+    hash = "sha256-ksY9wzjOrGaxfPqC3JDWS/VRA6PveysAVgKpA1YGNLw=";
   };
 
-  cargoHash = "sha256-9CWJIRby6QWJmkYSHj2lFfEj0plX5iWxsdQs5sYww7Q=";
+  cargoHash = "sha256-zz0hqOrk74FD2ct4LIDJJJRNxwR/6OXk3PUJFBYX0AA=";
 
-  buildInputs = [ udev ];
+  buildInputs = [
+    udev
+    sqlite
+  ];
 
   buildAndTestSubdir = "lianad";
 

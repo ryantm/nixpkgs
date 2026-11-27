@@ -28,16 +28,11 @@ stdenv.mkDerivation (finalAttrs: {
   nativeBuildInputs = [
     installShellFiles
     xxd
-    # TODO: Clean up on `staging`.
-    llvmPackages.lld
   ];
 
   buildInputs = [
     apple-sdk_15
   ];
-
-  # TODO: Clean up on `staging`.
-  env.NIX_CFLAGS_LINK = "-fuse-ld=lld";
 
   # Upstream Makefile races clean-build against linking under parallel make.
   enableParallelBuilding = false;
@@ -58,6 +53,11 @@ stdenv.mkDerivation (finalAttrs: {
   # `xcrun clang`. Collapse it to the host arch and use plain `clang`, since the
   # scripting addition (arm64e) is compiled in preBuild with the unwrapped clang,
   # which needs the SDK/clang/CUPS include paths passed explicitly.
+  #
+  # `-Wl,-no_uuid` is attached to BUILD_FLAGS, which upstream uses only for the
+  # main binary, whose LC_UUID is otherwise non-deterministic. The scripting
+  # addition must keep its LC_UUID, as dyld refuses to dlopen a Mach-O that
+  # lacks one, preventing the scripting addition from injecting.
   postPatch =
     let
       arch = stdenv.hostPlatform.darwinArch;
@@ -70,13 +70,12 @@ stdenv.mkDerivation (finalAttrs: {
         "-isystem ${lib.getDev cups}/include"
         "-F$(SDKROOT)/System/Library/Frameworks"
         "-L$(SDKROOT)/usr/lib"
-        "-Wl,-no_uuid"
       ];
     in
     ''
       substituteInPlace makefile \
         --replace-fail "-arch x86_64 -arch arm64e" "-arch ${archSA}" \
-        --replace-fail "-arch x86_64 -arch arm64" "-arch ${arch}" \
+        --replace-fail "-arch x86_64 -arch arm64" "-arch ${arch} -Wl,-no_uuid" \
         --replace-fail 'xcrun clang' 'clang ${clangFlags}'
     '';
 

@@ -1,13 +1,13 @@
 {
   lib,
   stdenv,
-  callPackage,
   fetchFromCodeberg,
   libGL,
   libx11,
   libevdev,
   libinput,
   libxkbcommon,
+  nix-update-script,
   pixman,
   pkg-config,
   scdoc,
@@ -18,16 +18,17 @@
   wayland-scanner,
   wlroots_0_20,
   xwayland,
-  zig_0_16,
+  zig_0_17,
   withManpages ? true,
   xwaylandSupport ? true,
 }:
 let
-  zig = zig_0_16;
+  zig = zig_0_17;
 in
 stdenv.mkDerivation (finalAttrs: {
   pname = "river";
-  version = "0.4.5";
+  version = "0.5.2";
+  __structuredAttrs = true;
 
   outputs = [ "out" ] ++ lib.optionals withManpages [ "man" ];
 
@@ -35,12 +36,20 @@ stdenv.mkDerivation (finalAttrs: {
     owner = "river";
     repo = "river";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-q4JAlr9/ex+BEgktBmFwOvZzQEAGvxXPD1QyKqyha4g=";
+    hash = "sha256-60ezbC1xntng5tOUzk20J881mGljc9UZIE5EuzwY9mY=";
   };
 
   strictDeps = true;
 
-  deps = callPackage ./build.zig.zon.nix { };
+  zigDeps = zig.fetchDeps {
+    inherit (finalAttrs) src pname version;
+    fetchAll = true;
+    hash = "sha256-m9qXQPqrZzw7N0VjfCFJ3PZKbb3udzR0r8Xys4YEGL4=";
+  };
+
+  postConfigure = ''
+    ln -s ${finalAttrs.zigDeps} "$ZIG_GLOBAL_CACHE_DIR/p"
+  '';
 
   nativeBuildInputs = [
     pkg-config
@@ -66,12 +75,13 @@ stdenv.mkDerivation (finalAttrs: {
     libx11
   ];
 
-  zigBuildFlags = [
-    "--system"
-    "${finalAttrs.deps}"
-  ]
-  ++ lib.optional withManpages "-Dman-pages"
-  ++ lib.optional xwaylandSupport "-Dxwayland";
+  zigBuildFlags =
+    lib.optionals withManpages [
+      "-Dman-pages"
+    ]
+    ++ lib.optionals xwaylandSupport [
+      "-Dxwayland"
+    ];
 
   doInstallCheck = true;
   nativeInstallCheckInputs = [ versionCheckHook ];
@@ -83,7 +93,7 @@ stdenv.mkDerivation (finalAttrs: {
 
   passthru = {
     providedSessions = [ "river" ];
-    updateScript = ./update.sh;
+    updateScript = nix-update-script { };
   };
 
   meta = {
@@ -105,7 +115,6 @@ stdenv.mkDerivation (finalAttrs: {
     ];
     maintainers = with lib.maintainers; [
       GaetanLepage
-      adamcstephens
     ];
     mainProgram = "river";
     platforms = lib.platforms.linux;

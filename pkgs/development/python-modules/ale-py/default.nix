@@ -32,15 +32,14 @@
 
 buildPythonPackage (finalAttrs: {
   pname = "ale-py";
-  version = "0.12.0";
+  version = "0.12.1";
   pyproject = true;
-  __structuredAttrs = true;
 
   src = fetchFromGitHub {
     owner = "Farama-Foundation";
     repo = "Arcade-Learning-Environment";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-hFbreHk0i4h+JOyvDYcNX3TmwgvxNC5U0l5Xrqqz1zQ=";
+    hash = "sha256-1oIF45+GZFWuRzXR5Hqh60yc1DZYAlXpsGgf3WiouQE=";
   };
 
   # disable lto on darwin, cmake cannot find llvm-ar

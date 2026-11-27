@@ -25,7 +25,6 @@ buildPythonPackage.override { inherit (torch) stdenv; } (finalAttrs: {
   pname = "torch-cluster";
   version = "1.6.3-unstable-2026-06-05";
   pyproject = true;
-  __structuredAttrs = true;
 
   # Last stable release is from 2023
   # Development is still active, but nothing was properly tagged on GitHub or Pypi
@@ -57,7 +56,7 @@ buildPythonPackage.override { inherit (torch) stdenv; } (finalAttrs: {
   ];
 
   # Otherwise python imports torch_cluster from /build/source instead of $out/..., which fails when
-  # trying to load the inexistant .so artifacts.
+  # trying to load the nonexistent .so artifacts.
   preCheck = ''
     rm -rf torch_cluster
   '';

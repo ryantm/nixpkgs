@@ -38,13 +38,14 @@
   gpuTargets ? clr.localGpuTargets or clr.gpuTargets,
   buildDocs ? false, # Needs internet because of rocm-docs-core
   buildTests ? false,
-  withComposableKernel ? true,
+  # composable_kernel only works with gfx9* targets
+  withComposableKernel ? !composable_kernel.meta.broken,
 }:
 
 let
   # FIXME: cmake files need patched to include this properly
   cFlags = "-Wno-documentation-pedantic --offload-compress -I${hipblas-common}/include -I${hipblas}/include -I${roctracer}/include -I${nlohmann_json}/include -I${sqlite.dev}/include -I${rocrand}/include";
-  version = "7.2.3";
+  version = "7.2.4";
 
   # Targets outside this list will get
   # error: use of undeclared identifier 'CK_BUFFER_RESOURCE_3RD_DWORD'
@@ -124,7 +125,7 @@ stdenv.mkDerivation (finalAttrs: {
   src = fetchFromGitHub {
     owner = "ROCm";
     repo = "rocm-libraries";
-    rev = "rocm-${finalAttrs.version}";
+    tag = "rocm-${finalAttrs.version}";
     sparseCheckout = [
       "projects/miopen"
       "shared"
@@ -215,7 +216,6 @@ stdenv.mkDerivation (finalAttrs: {
     "-DGPU_ARCHS=${lib.concatStringsSep ";" supportedTargets}"
     "-DCMAKE_VERBOSE_MAKEFILE=ON"
     "-DCMAKE_MODULE_PATH=${clr}/hip/cmake"
-    "-DCMAKE_BUILD_TYPE=Release"
 
     # needs to stream to stdout so bzcat rather than bunzip2
     "-DUNZIPPER=${bzip2}/bin/bzcat"
@@ -332,7 +332,7 @@ stdenv.mkDerivation (finalAttrs: {
   meta = {
     description = "Machine intelligence library for ROCm";
     homepage = "https://github.com/ROCm/rocm-libraries/tree/develop/projects/miopen";
-    license = with lib.licenses; [ mit ];
+    license = lib.licenses.mit;
     teams = [ lib.teams.rocm ];
     platforms = lib.platforms.linux;
   };

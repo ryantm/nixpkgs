@@ -5,6 +5,7 @@
 
   bison,
   flex,
+  re2c,
   cmake, # for resolving toml11 dep
 
   nix-util,
@@ -14,6 +15,7 @@
   boehmgc,
   libcpuid,
   nlohmann_json,
+  sqlite,
   toml11,
 
   # Configuration Options
@@ -44,13 +46,14 @@ mkMesonLibrary (finalAttrs: {
 
   nativeBuildInputs = [
     bison
-    flex
+    (if lib.versionAtLeast version "2.37pre" then re2c else flex)
     cmake
   ];
 
   buildInputs = [
     toml11
   ]
+  ++ lib.optional (lib.versionAtLeast version "2.36pre") sqlite
   ++ lib.optional ((lib.versionAtLeast version "2.35pre") && stdenv.hostPlatform.isx86_64) libcpuid;
 
   propagatedBuildInputs = [

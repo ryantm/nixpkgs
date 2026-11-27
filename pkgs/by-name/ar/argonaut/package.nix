@@ -4,20 +4,22 @@
   fetchFromGitHub,
   testers,
   versionCheckHook,
+  git,
+  writableTmpDirAsHomeHook,
 }:
 
 buildGoModule (finalAttrs: {
   pname = "argonaut";
-  version = "2.16.0";
+  version = "2.20.0";
 
   src = fetchFromGitHub {
     owner = "darksworm";
     repo = "argonaut";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-F67DyH0aJ4SmlCIj1i65yB5rFXZB0j5BREssS3V3WZQ=";
+    hash = "sha256-RW3GoIwlySQixarsFy5jVejzl7WP7oB9lRmH+OD6SAQ=";
   };
 
-  vendorHash = "sha256-4AmciHL4CGtEwDAs7eAtjfWlzjoCLXAN2HEatev8gZg=";
+  vendorHash = "sha256-b9Xq7CTEvdwtNtgF9PRKp2HkVNzxm6z+yCmH5ny9Hfc=";
   proxyVendor = true;
   subPackages = [ "cmd/app" ];
   ldflags = [
@@ -29,6 +31,11 @@ buildGoModule (finalAttrs: {
   ];
 
   doCheck = true;
+
+  nativeCheckInputs = [
+    git
+    writableTmpDirAsHomeHook
+  ];
 
   nativeInstallCheckInputs = [
     versionCheckHook

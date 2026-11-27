@@ -9,19 +9,19 @@
 }:
 
 buildGoModule (finalAttrs: {
-  version = "0.9.2";
+  version = "0.10.0";
   pname = "scrutiny-collector";
 
   src = fetchFromGitHub {
     owner = "AnalogJ";
     repo = "scrutiny";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-ZQHTwJZBOYJ2De0CmyxXc4Fb2Vt+jKg+YpDDZhSt+cg=";
+    hash = "sha256-cJpn2FPbv/sEuleU9GUZiYl3mi6r6TuVJb117PJv1lo=";
   };
 
   subPackages = "collector/cmd/collector-metrics";
 
-  vendorHash = "sha256-Em8k2AFoZv4TD4HFkkNIdyPj7IBOFiUIKffkifWfZFY=";
+  vendorHash = "sha256-d9DHXbvEOpg7Igae25v88DNXOrEI7dRVl+I84R7eve4=";
 
   nativeBuildInputs = [ makeWrapper ];
 

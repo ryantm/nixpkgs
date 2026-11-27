@@ -2,7 +2,8 @@
   lib,
   stdenv,
   fetchFromGitHub,
-  gitMinimal,
+  substitute,
+  dart-sass,
   yarn-berry_4,
   nodejs,
   npmHooks,
@@ -10,23 +11,30 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "advanced-camera-card";
-  version = "7.27.4";
+  version = "8.2.0";
 
   src = fetchFromGitHub {
     owner = "dermotduffy";
     repo = "advanced-camera-card";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-NdWP2nYzDEzmO4DpwVUpn3/KsungKNOzOQf8FxZ4fGw=";
-  };
+    hash = "sha256-3zrcxnTfBoqe+njExg41MlrQigamyVkxM+5RqgjilPY=";
 
-  patches = [
-    # Remove after upstream updates to Yarn 4.14
+    # Remove after upstream updates to Yarn 4.15
     # https://github.com/dermotduffy/advanced-camera-card/blob/main/package.json#L201
-    ./yarn-4.14-support.patch
-
-    # Drop hard dependency on .git repo during build
-    ./gitinfo.patch
-  ];
+    postFetch = ''
+      cd $out
+      patch -p1 < ${
+        (substitute {
+          src = ./yarn-fix.patch;
+          substitutions = [
+            "--replace-fail"
+            "YARN_LOCKFILE_VERSION_PLACEHOLDER"
+            yarn-berry_4.lockfileVersion
+          ];
+        })
+      }
+    '';
+  };
 
   postPatch = ''
     substituteInPlace package.json \
@@ -37,12 +45,12 @@ stdenv.mkDerivation (finalAttrs: {
 
   offlineCache = yarn-berry_4.fetchYarnBerryDeps {
     name = "${finalAttrs.pname}-yarn-deps";
-    inherit (finalAttrs) src missingHashes patches;
-    hash = "sha256-4fdSeSxSjd8EjPmu7U3ftxB+OJJc2uuvM3Umr5iY/a8=";
+    inherit (finalAttrs) src missingHashes;
+    hash = "sha256-hlsc+iE7EZxJHA2XJka50+2DRGRv2IvQNg5BFk0uM3U=";
   };
 
   nativeBuildInputs = [
-    gitMinimal
+    dart-sass
     nodejs
     npmHooks.npmBuildHook
     yarn-berry_4
@@ -50,6 +58,13 @@ stdenv.mkDerivation (finalAttrs: {
   ];
 
   npmBuildScript = "build";
+
+  preBuild = ''
+    substituteInPlace node_modules/sass-embedded/dist/lib/src/compiler-path.js \
+      --replace-fail \
+        'exports.compilerCommand = (() => {' \
+        'exports.compilerCommand = (() => { return ["${lib.getExe dart-sass}"];'
+  '';
 
   installPhase = ''
     runHook preInstall

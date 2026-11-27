@@ -37,16 +37,14 @@
 
 buildPythonPackage (finalAttrs: {
   pname = "fireworks-ai";
-  version = "1.2.0-alpha.71";
+  version = "1.2.36";
   pyproject = true;
-  __structuredAttrs = true;
-  strictDeps = true;
 
   src = fetchFromGitHub {
     owner = "fw-ai-external";
     repo = "python-sdk";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-N5JjcYa3dRh1JTRjOIDpC8wykYzdj1rrMcU49UvWF7w=";
+    hash = "sha256-VzrPCFZHTuNvyigok1LyJWMOQ0W5HIO9BrUEytDfZ18=";
   };
 
   postPatch = ''
@@ -97,6 +95,16 @@ buildPythonPackage (finalAttrs: {
   ]
   ++ lib.concatAttrValues finalAttrs.passthru.optional-dependencies;
 
+  pytestFlags = [
+    # ResourceWarning: Unclosed client session <aiohttp.client.ClientSession object at 0x7ffff1d48ec0>
+    "-Wignore::ResourceWarning"
+  ];
+
+  disabledTests = [
+    # httpx.TimeoutException: Test timeout error
+    "test_retrying_timeout_errors_doesnt_leak"
+  ];
+
   pythonImportsCheck = [
     "fireworks"
   ];
@@ -105,7 +113,7 @@ buildPythonPackage (finalAttrs: {
     description = "Client library for Fireworks.ai";
     homepage = "https://github.com/fw-ai-external/python-sdk";
     changelog = "https://github.com/fw-ai-external/python-sdk/blob/${finalAttrs.src.tag}/CHANGELOG.md";
-    license = lib.licenses.mit;
+    license = lib.licenses.asl20;
     maintainers = with lib.maintainers; [ sarahec ];
   };
 })

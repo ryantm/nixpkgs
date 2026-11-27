@@ -5,6 +5,7 @@
   rustPlatform,
   pkg-config,
   openssl,
+  libgit2,
   installShellFiles,
   curl,
 }:
@@ -24,6 +25,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
 
   buildInputs = [
     openssl
+    libgit2
   ]
   ++ lib.optionals stdenv.hostPlatform.isDarwin [
     curl
@@ -67,7 +69,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
   meta = {
     description = "Fast and configurable shell plugin manager";
     homepage = "https://github.com/rossmacarthur/sheldon";
-    license = with lib.licenses; [ mit ];
+    license = lib.licenses.mit;
     maintainers = with lib.maintainers; [ seqizz ];
     platforms = lib.platforms.unix;
     mainProgram = "sheldon";

@@ -14,13 +14,13 @@
 }:
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "raspberrypi-eeprom";
-  version = "2026.05.17-2711-0138c0";
+  version = "2026.10.30-2712";
 
   src = fetchFromGitHub {
     owner = "raspberrypi";
     repo = "rpi-eeprom";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-duzftioXXrLizQVLwAS285n6ve4Y3rCt/ERjcGQG+Dc=";
+    hash = "sha256-ZxOZRNi9zYQA/zbM1i8qphl3PkucDvwoMwHfgsBEwTk=";
   };
 
   buildInputs = [ python3 ];
@@ -77,10 +77,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
       bsd3
       unfreeRedistributableFirmware
     ];
-    maintainers = with lib.maintainers; [
-      das_j
-      Luflosi
-    ];
+    maintainers = with lib.maintainers; [ Luflosi ];
     platforms = lib.platforms.linux;
   };
 })

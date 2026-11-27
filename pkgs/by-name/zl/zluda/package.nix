@@ -2,12 +2,15 @@
   lib,
   fetchFromGitHub,
   rocmPackages,
+  pkg-config,
   python3,
   cargo,
   rustc,
   cmake,
   clang,
+  sqlite,
   zlib,
+  zstd,
   libxml2,
   libedit,
   rustPlatform,
@@ -16,13 +19,13 @@
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "zluda";
-  version = "6-preview.63";
+  version = "6";
 
   src = fetchFromGitHub {
     owner = "vosen";
     repo = "ZLUDA";
     rev = "v${finalAttrs.version}";
-    hash = "sha256-AZGSO6aV1T3elsVDJxFylhzYjkhkIy1QFtTdH4u4Lrw=";
+    hash = "sha256-5+ip6YGIgGH892UzcP/3vHoxRD0YpUNTkryNDg9gojs=";
     fetchSubmodules = true;
     fetchLFS = true;
   };
@@ -38,12 +41,15 @@ rustPlatform.buildRustPackage (finalAttrs: {
     rocmPackages.hipblaslt
     rocmPackages.rocm-cmake
     rocmPackages.hipfft
+    sqlite
     zlib
+    zstd
     libxml2
     libedit
   ];
 
   nativeBuildInputs = [
+    pkg-config
     python3
     cargo
     rustc
@@ -51,18 +57,13 @@ rustPlatform.buildRustPackage (finalAttrs: {
     clang
   ];
 
-  cargoHash = "sha256-2YAlc8HW+aqfRzLSXw/I++DM4/JneE7UNmV6BVZb4VM=";
+  cargoHash = "sha256-q5DagH0USWZNni0UrwHzeHe4LpaOCHU0ffOek7PUz50=";
 
   # Tests require a GPU and segfault in the sandbox
   doCheck = false;
 
   # xtask doesn't support passing --target, but nix hooks expect the folder structure from when it's set
   env.CARGO_BUILD_TARGET = stdenv.hostPlatform.rust.cargoShortTarget;
-  # Future packagers:
-  # This is a fix for https://github.com/NixOS/nixpkgs/issues/390469. Ideally
-  # ZLUDA should configure this automatically. Therefore, on every new update,
-  # please try removing this line and see if ZLUDA builds.
-  env.CMAKE_BUILD_TYPE = "Release";
 
   preConfigure = ''
     # disable test written for windows only: https://github.com/vosen/ZLUDA/blob/774f4bcb37c39f876caf80ae0d39420fa4bc1c8b/zluda_inject/tests/inject.rs#L55

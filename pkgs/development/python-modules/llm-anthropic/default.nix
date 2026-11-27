@@ -3,10 +3,10 @@
   buildPythonPackage,
   fetchFromGitHub,
   setuptools,
-  json-schema-to-pydantic,
   llm,
   llm-anthropic,
   anthropic,
+  inline-snapshot,
   pytestCheckHook,
   pytest-asyncio,
   pytest-recording,
@@ -15,27 +15,32 @@
 
 buildPythonPackage (finalAttrs: {
   pname = "llm-anthropic";
-  version = "0.25.1";
+  version = "0.31";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "simonw";
     repo = "llm-anthropic";
     tag = finalAttrs.version;
-    hash = "sha256-b9XnPxKDGsiy20Me70sYrkMVO36OF3EwWOHLyEd5z4E=";
+    hash = "sha256-ELp5wsrCKfMA2YAdm6L5o380HNcjSq2OSxUIxeyMcWE=";
   };
 
   build-system = [
     setuptools
   ];
 
+  pythonRelaxDeps = [
+    "anthropic"
+    "llm"
+  ];
+
   dependencies = [
     anthropic
-    json-schema-to-pydantic
     llm
   ];
 
   nativeCheckInputs = [
+    inline-snapshot
     pytestCheckHook
     pytest-asyncio
     pytest-recording
@@ -49,6 +54,18 @@ buildPythonPackage (finalAttrs: {
     "test_prompt"
     "test_schema_prompt"
     "test_thinking_prompt"
+    "test_mcp_server_side_tool"
+
+    # TypeError: Messages.stream() got an unexpected keyword argument 'temperature'
+    "test_image_with_no_prompt"
+    "test_url_prompt"
+    "test_tools"
+    "test_web_search"
+    "test_opus_46_prompt"
+    "test_sonnet_46_prompt"
+    "test_opus_46_adaptive_thinking"
+    "test_sonnet_46_effort_without_thinking"
+    "test_opus_46_schema"
   ];
 
   pythonImportsCheck = [ "llm_anthropic" ];

@@ -19,21 +19,22 @@
 let
   cutter = stdenv.mkDerivation rec {
     pname = "cutter";
-    version = "2.4.1";
+    version = "2.5.0";
 
     src = fetchFromGitHub {
       owner = "rizinorg";
       repo = "cutter";
       rev = "v${version}";
-      hash = "sha256-fNOznaFzWJ4Dve9U1+E4xPaznnyxae2jHNaBCdJzDyQ=";
+      hash = "sha256-dnVbtAp7TorPQx4qdK43L2pXMcnWvOYjhRC3MJBrAmM=";
       fetchSubmodules = true;
     };
 
     patches = [
+      # Fix uic rejecting AddressableItemList<> with Qt 6.12
+      # https://github.com/rizinorg/cutter/pull/3670
       (fetchpatch2 {
-        name = "fix-shiboken6-type-index-case.patch";
-        url = "https://github.com/rizinorg/cutter/commit/07fea9c772dc573588dc2e5771f0740ee1883738.patch?full_index=1";
-        hash = "sha256-/C/s+Ui5F7MCxbzbChQ5Tv/oUHUQxXmk9xOnNI80xwQ=";
+        url = "https://github.com/rizinorg/cutter/commit/bfb65782c0b3e4df4e2f0e4f5284c51848bb8358.patch?full_index=1";
+        hash = "sha256-JiJdsleg+tJrRMMQA6EEGM354HCb+dQDeImfr/MYUpc=";
       })
     ];
 
@@ -41,6 +42,7 @@ let
       cmake
       pkg-config
       python3
+      python3.pkgs.shiboken6-generator
       qt6.wrapQtAppsHook
     ];
 

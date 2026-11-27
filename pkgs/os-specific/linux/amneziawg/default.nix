@@ -9,14 +9,19 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "amneziawg";
-  version = "1.0.20260611";
+  version = "3.1.20261113-02";
 
   src = fetchFromGitHub {
     owner = "amnezia-vpn";
     repo = "amneziawg-linux-kernel-module";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-eMApc7VHWB1GL8YWdAS7HyEgkV/nkLjwBMOP+gtuHOE=";
+    hash = "sha256-kchxG+8mbXAMxBKo3TZikHuUhJhpNwq5bpPsVKlwsF8=";
   };
+
+  postPatch = ''
+    substituteInPlace Makefile \
+      --replace-fail 'WIREGUARD_VERSION = 1.0.0' 'WIREGUARD_VERSION = ${finalAttrs.version}'
+  '';
 
   sourceRoot = "${finalAttrs.src.name}/src";
   hardeningDisable = [ "pic" ];
@@ -33,7 +38,6 @@ stdenv.mkDerivation (finalAttrs: {
   enableParallelBuilding = true;
 
   installFlags = [
-    "DEPMOD=true"
     "INSTALL_MOD_PATH=${placeholder "out"}"
   ];
 

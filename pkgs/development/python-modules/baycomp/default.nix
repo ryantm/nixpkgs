@@ -14,8 +14,6 @@ buildPythonPackage (finalAttrs: {
   version = "1.0.3";
   pyproject = true;
 
-  __structuredAttrs = true;
-
   src = fetchPypi {
     inherit (finalAttrs) pname version;
     hash = "sha256-MrJa17FtWyUd259hEKMtezlTuYcJbaHSXvJ3k10l2uw=";
@@ -35,7 +33,7 @@ buildPythonPackage (finalAttrs: {
   meta = {
     description = "Library for Bayesian comparison of classifiers";
     homepage = "https://github.com/janezd/baycomp";
-    license = [ lib.licenses.mit ];
+    license = lib.licenses.mit;
     maintainers = [ ];
   };
 })

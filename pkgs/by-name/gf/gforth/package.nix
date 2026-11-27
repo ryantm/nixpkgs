@@ -17,13 +17,13 @@ let
 in
 stdenv.mkDerivation (finalAttrs: {
   pname = "gforth";
-  version = "0.7.9_20260708";
+  version = "0.7.9_20260729";
 
   src = fetchFromGitHub {
     owner = "forthy42";
     repo = "gforth";
     rev = finalAttrs.version;
-    hash = "sha256-3lKd50Rlhk9OlKb5ATHH4vTWlo40h3iCz+VQfuo/6ys=";
+    hash = "sha256-yI1cXsz5k5Uv1mEI9zXNkmag2EOUDJgeuYzwD8Ht6p8=";
   };
 
   patches = [ ./use-nproc-instead-of-fhs.patch ];
@@ -49,9 +49,6 @@ stdenv.mkDerivation (finalAttrs: {
 
   configureFlags = [
     "--with-lispdir=${lispDir}"
-  ]
-  ++ lib.optionals (stdenv.hostPlatform.isDarwin && stdenv.hostPlatform.isx86_64) [
-    "--build=x86_64-apple-darwin"
   ]
   ++ lib.optionals (!stdenv.buildPlatform.canExecute stdenv.hostPlatform) [
     # Tries to run ./engine/gforth-ll

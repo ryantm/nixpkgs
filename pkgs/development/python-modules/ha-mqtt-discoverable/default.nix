@@ -9,16 +9,16 @@
   pydantic,
 }:
 
-buildPythonPackage rec {
+buildPythonPackage (finalAttrs: {
   pname = "ha-mqtt-discoverable";
-  version = "0.24.2";
+  version = "0.27.0";
   pyproject = true;
 
   src = fetchFromGitHub {
-    owner = "unixorn";
+    owner = "Home-Assistant-Tooling";
     repo = "ha-mqtt-discoverable";
-    tag = "v${version}";
-    hash = "sha256-8UgYtWB6CsTF9yCpwwjeYIyjfFH8IM3M0sZpvrSqb3M=";
+    tag = "v${finalAttrs.version}";
+    hash = "sha256-Wbc0o7FjJEO3dseBZrOAWq28a10+YtZG39VL50hNNbY=";
   };
 
   pythonRelaxDeps = [
@@ -26,6 +26,11 @@ buildPythonPackage rec {
     "pyaml"
     "pydantic"
   ];
+
+  postPatch = ''
+    substituteInPlace pyproject.toml \
+      --replace-fail "poetry-core>=2.5.0" "poetry-core"
+  '';
 
   build-system = [ poetry-core ];
 
@@ -43,9 +48,9 @@ buildPythonPackage rec {
 
   meta = {
     description = "Python module to create MQTT entities that are automatically discovered by Home Assistant";
-    homepage = "https://github.com/unixorn/ha-mqtt-discoverable";
-    changelog = "https://github.com/unixorn/ha-mqtt-discoverable/releases/tag/${src.tag}";
+    homepage = "https://github.com/Home-Assistant-Tooling/ha-mqtt-discoverable";
+    changelog = "https://github.com/Home-Assistant-Tooling/ha-mqtt-discoverable/releases/tag/${finalAttrs.src.tag}";
     license = lib.licenses.asl20;
     maintainers = with lib.maintainers; [ fab ];
   };
-}
+})

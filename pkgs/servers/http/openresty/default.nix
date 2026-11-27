@@ -18,12 +18,12 @@
 
 callPackage ../nginx/generic.nix args rec {
   pname = "openresty";
-  version = "1.31.1.1";
+  version = "1.31.9.1";
   nginxVersion = lib.concatStringsSep "." (lib.init (lib.splitString "." version));
 
   src = fetchurl {
     url = "https://openresty.org/download/openresty-${version}.tar.gz";
-    hash = "sha256-ZbeLqt0/CYQFXeib8T9KGTLlv+nDGTIDehNOorGgzkI=";
+    hash = "sha256-cdSZNb3Bhtr8H0sKi6RNuhv0q8jKUtRiHyA57I/cyV8=";
   };
 
   # generic.nix applies fixPatch on top of every patch defined there.
@@ -72,10 +72,17 @@ callPackage ../nginx/generic.nix args rec {
       --replace-fail "'bin/nginx'" "'$out/bin/nginx'"
   '';
 
+  stripDebugList = [
+    "nginx/bin"
+    "luajit/bin"
+    "luajit/lib"
+    "lualib"
+    "modules"
+  ];
+
   passthru = {
-    tests = {
+    tests = nixosTests.openresty // {
       inherit (nixosTests) openresty-lua;
-      inherit (nixosTests.nginx-variants) openresty;
     };
     updateScript = lib.getExe (writeShellApplication {
       name = "openresty-update";

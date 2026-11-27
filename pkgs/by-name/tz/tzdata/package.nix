@@ -3,21 +3,22 @@
   stdenv,
   fetchurl,
   buildPackages,
+  bashNonInteractive,
   postgresql,
 }:
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "tzdata";
-  version = "2026b";
+  version = "2026f";
 
   srcs = [
     (fetchurl {
       url = "https://data.iana.org/time-zones/releases/tzdata${finalAttrs.version}.tar.gz";
-      hash = "sha256-EUVD2fGaa/61vKQ2hq6hc9OHVaPbHy7sESZHrpLG9UQ=";
+      hash = "sha256-AbSpHOxRZ+1IwR6Kt48gSM6teM6UsMr8rQroxaMETT0=";
     })
     (fetchurl {
       url = "https://data.iana.org/time-zones/releases/tzcode${finalAttrs.version}.tar.gz";
-      hash = "sha256-N+nthCf101IcIvxY4pPL+wQ9cO7fEAOHCzPzY/Yco0Q=";
+      hash = "sha256-WhjaATk2ee8lWSFNxodWP389BWkfb1i3+8AWbz55bNY=";
     })
   ];
 
@@ -34,6 +35,14 @@ stdenv.mkDerivation (finalAttrs: {
     "dev"
   ];
   propagatedBuildOutputs = [ ];
+
+  buildInputs =
+    # For `tzselect`'s shebang. Where `bashNonInteractive` is unavailable
+    # (e.g. MinGW), `tzselect` keeps its `#!/bin/bash`, which is fine for now
+    # as we're not going to run it there anyways.
+    lib.optional (lib.meta.availableOn stdenv.hostPlatform bashNonInteractive) bashNonInteractive;
+
+  strictDeps = true;
 
   makeFlags = [
     "TOPDIR=${placeholder "out"}"
@@ -106,12 +115,25 @@ stdenv.mkDerivation (finalAttrs: {
     cp tzfile.h "$dev/include/tzfile.h"
   '';
 
+  preCheck = ''
+    # Releases 2026e and 2026f fail if built on or after 2026-11-01
+    # Mitigate this and potential future issues by testing with the release timestamp
+    # See: https://lists.iana.org/hyperkitty/list/tz@iana.org/message/WCIAEEDCPA5HT3LLJK6YQ6FH7ND5ORIK/
+    release_timestamp=$(awk '/^Release /{print $4, $5, $6; exit}' NEWS)
+    release_time_t=$(date -d"$release_timestamp" +%s)
+    checkFlags+=(
+      "CHECK_NOW_TIMESTAMP=$release_time_t"
+    )
+  '';
+
   setupHook = ./tzdata-setup-hook.sh;
 
   # PostgreSQL is sensitive to tzdata updates, because the test-suite often breaks.
   # Upstream provides patches very quickly, we just need to apply them until the next
   # minor releases.
   passthru.tests = postgresql;
+
+  __structuredAttrs = true;
 
   meta = {
     homepage = "http://www.iana.org/time-zones";

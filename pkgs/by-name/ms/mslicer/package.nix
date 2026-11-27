@@ -4,9 +4,11 @@
   libglvnd,
   libxkbcommon,
   nix-update-script,
+  pkg-config,
   rustPlatform,
   vulkan-loader,
   wayland,
+  zstd,
   libxrandr,
   libxi,
   libxcursor,
@@ -30,11 +32,14 @@ rustPlatform.buildRustPackage (finalAttrs: {
     patchShebangs --build dist/msla_format/generate.sh
   '';
 
+  nativeBuildInputs = [ pkg-config ];
+
   buildInputs = [
     libglvnd
     libxkbcommon
     vulkan-loader
     wayland
+    zstd
     libxcursor
     libxrandr
     libxi
@@ -60,8 +65,6 @@ rustPlatform.buildRustPackage (finalAttrs: {
 
   # Build all binaries (e.g. the cli `slicer`) -- not just the default `mslicer` GUI application:
   cargoBuildFlags = [ "--workspace" ];
-
-  strictDeps = true;
 
   passthru.updateScript = nix-update-script { };
 

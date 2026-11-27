@@ -11,17 +11,17 @@
 
 buildGoModule (finalAttrs: {
   pname = "openlinkhub";
-  version = "0.8.9";
+  version = "0.9.5";
 
   src = fetchFromGitHub {
     owner = "jurkovic-nikola";
     repo = "OpenLinkHub";
     tag = finalAttrs.version;
-    hash = "sha256-g8ZdiBaEelS+LhnOA23mMR+irN1wKD6Rp66sCnSD2tU=";
+    hash = "sha256-bs6AMI5RZ0T/Hf0TSNXJlJVc1X6k19Vop7fbu41xJNo=";
   };
 
   proxyVendor = true;
-  vendorHash = "sha256-/itomxsbTDT7ML52bpUfDZIBZ/Rh/zx4Blg+PP7m7gE=";
+  vendorHash = "sha256-xpkrBPV7RoSGpptvVSFip4Mgb9w2hOQE9y33v9InB+E=";
 
   nativeBuildInputs = [ pkg-config ];
 

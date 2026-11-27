@@ -18,7 +18,6 @@
   vulkan-loader,
   envsubst,
   nix-update-script,
-  cargo-about,
   versionCheckHook,
   cargo-bundle,
   git,
@@ -26,39 +25,35 @@
   writableTmpDirAsHomeHook,
 
   buildRemoteServer ? true,
+  buildExtensionCli ? true,
 }:
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "gram";
-  version = "3.0.1";
+  version = "3.5.2";
 
   outputs = [
     "out"
   ]
   ++ lib.optionals buildRemoteServer [
     "remote_server"
+  ]
+  ++ lib.optionals buildExtensionCli [
+    "extension_cli"
   ];
 
   src = fetchFromCodeberg {
     owner = "GramEditor";
     repo = "gram";
     tag = finalAttrs.version;
-    hash = "sha256-B3RmY1h0+D0aawNzevdt9f+gzozckjInhoz+t9taf8o=";
+    hash = "sha256-OGjHn8F0jdRwGadB/Rnza4uQEKBF4GOsfmUOCIc4xzM=";
   };
 
-  postPatch = ''
-    # The generate-licenses script wants a specific version of cargo-about eventhough
-    # newer versions work just as well.
-    substituteInPlace script/generate-licenses \
-      --replace-fail '$CARGO_ABOUT_VERSION' '${cargo-about.version}'
-  '';
-
-  cargoHash = "sha256-pK0rUuPtWejXitbDQqh9fvdEv3aza0ZEg1XWnCmY4eE=";
+  cargoHash = "sha256-5894jBL/oDkcfnrRyM8s/NZlhWCtrSuAxvad1711uHk=";
 
   __structuredAttrs = true;
 
   nativeBuildInputs = [
-    cargo-about
     cmake
     pkg-config
     protobuf
@@ -80,15 +75,22 @@ rustPlatform.buildRustPackage (finalAttrs: {
     fontconfig
     libxcb
     libxkbcommon
+  ]
+  ++ lib.optionals stdenv.hostPlatform.isDarwin [
+    git
   ];
 
   cargoBuildFlags = [
     "--package=gram"
     "--package=cli"
   ]
-  ++ lib.optionals buildRemoteServer [ "--package=remote_server" ];
+  ++ lib.optionals buildRemoteServer [ "--package=remote_server" ]
+  ++ lib.optionals buildExtensionCli [ "--package=extension_cli" ];
 
   env = {
+    # Installed binaries are stripped during fixup, so delete.
+    CARGO_PROFILE_RELEASE_DEBUG = "false";
+
     ALLOW_MISSING_LICENSES = true;
     OPENSSL_NO_VENDOR = true;
     LIBSQLITE3_SYS_USE_PKG_CONFIG = true;
@@ -96,10 +98,6 @@ rustPlatform.buildRustPackage (finalAttrs: {
     RELEASE_VERSION = finalAttrs.version;
     GRAM_UPDATE_EXPLANATION = "Updates are handled by nixpkgs";
   };
-
-  preBuild = ''
-    bash script/generate-licenses
-  '';
 
   nativeCheckInputs = [
     writableTmpDirAsHomeHook
@@ -118,10 +116,14 @@ rustPlatform.buildRustPackage (finalAttrs: {
     mv $release_target/gram target/release/gram
 
     pushd crates/gram
-    # Note that this is GNU sed, while Gram's bundle-mac uses BSD sed
-    sed -i "s/package.metadata.bundle-stable/package.metadata.bundle/" Cargo.toml
+    # Select the stable bundle and migrate its macOS keys to cargo-bundle 0.12's schema.
+    substituteInPlace Cargo.toml \
+          --replace-fail '[package.metadata.bundle-stable]' '[package.metadata.bundle]' \
+          --replace-fail 'osx_minimum_system_version' 'osx.minimum_system_version' \
+          --replace-fail 'osx_info_plist_exts' 'osx.info_plist_exts' \
+          --replace-fail 'osx_url_schemes' 'osx.url_schemes'
     export CARGO_BUNDLE_SKIP_BUILD=true
-    app_path=$(cargo bundle --release | xargs)
+    app_path=$(cargo bundle --release --format osx | xargs)
     popd
 
     mkdir -p $out/Applications $out/bin
@@ -154,6 +156,9 @@ rustPlatform.buildRustPackage (finalAttrs: {
   ''
   + lib.optionalString buildRemoteServer ''
     install -Dm755 $release_target/remote_server $remote_server/bin/${finalAttrs.remoteServerExecutableName}
+  ''
+  + lib.optionalString buildExtensionCli ''
+    install -Dm755 $release_target/gram-extension $extension_cli/bin/gram-extension
   ''
   + ''
     runHook postInstall
@@ -191,6 +196,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
     license = lib.licenses.gpl3Only;
     maintainers = with lib.maintainers; [
       niklaskorz
+      backspace-phill
     ];
     mainProgram = "gram";
     platforms = lib.platforms.linux ++ lib.platforms.darwin;

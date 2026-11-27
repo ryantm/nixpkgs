@@ -4,9 +4,11 @@
   buildGoModule,
   fetchFromGitHub,
   installShellFiles,
+  makeWrapper,
   testers,
   nix-update-script,
   k9s,
+  kubectl,
   writableTmpDirAsHomeHook,
 }:
 
@@ -35,7 +37,7 @@ buildGoModule (finalAttrs: {
   vendorHash = "sha256-PkYDJK2oGl+siCG9p4R8shC0e5BhGFdJsc+ksL9J5zw=";
 
   # TODO investigate why some config tests are failing
-  doCheck = !(stdenv.hostPlatform.isDarwin && stdenv.hostPlatform.isAarch64);
+  doCheck = !stdenv.hostPlatform.isDarwin;
 
   # For arch != x86
   # {"level":"fatal","error":"could not create any of the following paths: /homeless-shelter/.config, /etc/xdg","time":"2022-06-28T15:52:36Z","message":"Unable to create configuration directory for k9s"}
@@ -48,7 +50,10 @@ buildGoModule (finalAttrs: {
     updateScript = nix-update-script { };
   };
 
-  nativeBuildInputs = [ installShellFiles ];
+  nativeBuildInputs = [
+    installShellFiles
+    makeWrapper
+  ];
   postInstall = ''
     # k9s requires a writeable log directory
     # Otherwise an error message is printed
@@ -59,6 +64,13 @@ buildGoModule (finalAttrs: {
       --bash <($out/bin/k9s completion bash) \
       --fish <($out/bin/k9s completion fish) \
       --zsh <($out/bin/k9s completion zsh)
+
+    wrapProgram $out/bin/k9s \
+      --suffix PATH : "${
+        lib.makeBinPath [
+          kubectl
+        ]
+      }"
 
     mkdir -p $out/share/k9s/skins
     cp -r $src/skins/* $out/share/k9s/skins/

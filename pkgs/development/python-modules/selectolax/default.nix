@@ -5,26 +5,24 @@
   replaceVars,
   setuptools,
   cython,
-  modest,
   lexbor,
   pytestCheckHook,
 }:
 
 buildPythonPackage (finalAttrs: {
   pname = "selectolax";
-  version = "0.4.10";
+  version = "1.0.2";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "rushter";
     repo = "selectolax";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-kLzeAz5dEUnD9zMN2iWt2FOCoF7MFpkjloB35wnB7VU=";
+    hash = "sha256-qhIpnZR+/dC4F9NPale7dqIcRMXuE2C/xGJktD5nFeI=";
   };
 
   patches = [
-    (replaceVars ./0001-setup.py-devendor-modest-and-lexbor.patch {
-      modest = lib.getDev modest;
+    (replaceVars ./0001-setup.py-devendor-lexbor.patch {
       lexbor = lib.getDev lexbor;
     })
   ];
@@ -35,7 +33,6 @@ buildPythonPackage (finalAttrs: {
   ];
 
   buildInputs = [
-    modest
     lexbor
   ];
 
@@ -53,7 +50,7 @@ buildPythonPackage (finalAttrs: {
   ];
 
   meta = {
-    description = "Python binding to Modest and Lexbor engines. Fast HTML5 parser with CSS selectors for Python";
+    description = "Python binding to Lexbor engine. Fast HTML5 parser with CSS selectors for Python";
     homepage = "https://github.com/rushter/selectolax";
     changelog = "https://github.com/rushter/selectolax/blob/${finalAttrs.src.tag}/CHANGES.md";
     license = lib.licenses.mit;

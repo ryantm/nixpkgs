@@ -6,6 +6,8 @@
   qt6,
   qt6Packages,
   alglib,
+  asmjit,
+  blend2d,
   gdal,
   proj,
   routino,
@@ -13,14 +15,20 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "qmapshack";
-  version = "1.20.3";
+  version = "1.22.0";
 
   src = fetchFromGitHub {
     owner = "Maproom";
     repo = "qmapshack";
     tag = "V_${finalAttrs.version}";
-    hash = "sha256-U9sOIcQKE9v5vXsfvloLbfxtrCNliJEYnbc1mlwk9bo=";
+    hash = "sha256-BRLnGX/ri+mCvXHM/TVvzI2/1fBMT+jcHtJT1lXYLSQ=";
   };
+
+  patches = [
+    ./dont_fetch_dependencies.patch
+    # calls `app.setDesktopFileName` - distros that don't wrap the binary apparently don't need this.
+    ./desktop-filename.patch
+  ];
 
   nativeBuildInputs = [
     cmake
@@ -30,6 +38,8 @@ stdenv.mkDerivation (finalAttrs: {
 
   buildInputs = [
     alglib
+    asmjit
+    blend2d
     gdal
     proj
     routino
@@ -44,12 +54,13 @@ stdenv.mkDerivation (finalAttrs: {
   ];
 
   qtWrapperArgs = [
-    "--suffix PATH : ${
-      lib.makeBinPath [
-        gdal
-        routino
-      ]
-    }"
+    "--suffix"
+    "PATH"
+    ":"
+    (lib.makeBinPath [
+      gdal
+      routino
+    ])
   ];
 
   meta = {

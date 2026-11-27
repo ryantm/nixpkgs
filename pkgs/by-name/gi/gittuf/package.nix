@@ -12,21 +12,20 @@
 
 buildGoModule (finalAttrs: {
   pname = "gittuf";
-  version = "0.15.0";
+  version = "0.18.0";
 
   src = fetchFromGitHub {
     owner = "gittuf";
     repo = "gittuf";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-VWbM7y9XCs/pANJtPa3MDbDhuEtVQ97X5Cyo6yY0Rd8=";
+    hash = "sha256-a7vcC6oNcdowM+9J4I66qkFjPktzbwCv3IbsO1Me/dM=";
   };
 
-  vendorHash = "sha256-VTfS0bLq7B037qmFABO5JDrV98zik5ycR4s6NZr3H4s=";
+  vendorHash = "sha256-wydhdcmdrmo9Gezopt+gN1nPRGm/T2yPxjfLwcMGW14=";
 
   ldflags = [ "-X github.com/gittuf/gittuf/internal/version.gitVersion=${finalAttrs.version}" ];
 
   __structuredAttrs = true;
-  strictDeps = true;
 
   nativeCheckInputs = [
     git
@@ -36,7 +35,7 @@ buildGoModule (finalAttrs: {
   ];
   checkFlags = [ "-skip=TestLoadRepository|TestSSH" ];
 
-  postInstall = "rm $out/bin/cli $out/bin/sandbox"; # remove gendoc helper binaries
+  postInstall = "rm $out/bin/cli"; # remove gendoc helper binaries
 
   nativeInstallCheckInputs = [ versionCheckHook ];
   versionCheckProgramArg = "version";

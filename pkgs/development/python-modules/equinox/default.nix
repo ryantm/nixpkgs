@@ -23,7 +23,6 @@ buildPythonPackage (finalAttrs: {
   pname = "equinox";
   version = "0.13.8";
   pyproject = true;
-  __structuredAttrs = true;
 
   src = fetchFromGitHub {
     owner = "patrick-kidger";
@@ -58,6 +57,13 @@ buildPythonPackage (finalAttrs: {
   ];
 
   pythonImportsCheck = [ "equinox" ];
+
+  pytestFlags = [
+    # UserWarning: Explicitly requested dtype int64 requested in ShapeDtypeStruct is not available, and will be truncated to dtype int32.
+    # To enable more dtypes, set the jax_enable_x64 configuration option or the JAX_ENABLE_X64 shell environment variable.
+    # See https://github.com/jax-ml/jax#current-gotchas for more.
+    "-Wignore::UserWarning"
+  ];
 
   disabledTests = [
     # Flaky under heavy load:

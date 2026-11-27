@@ -7,9 +7,9 @@
   ninja,
   python3,
   gtk3,
-  glibmm,
-  cairomm,
-  pangomm,
+  glibmm_2_4,
+  cairomm_1_0,
+  pangomm_1_4,
   atkmm,
   libepoxy,
   gnome,
@@ -19,11 +19,11 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "gtkmm";
-  version = "3.24.10";
+  version = "3.24.11";
 
   src = fetchurl {
     url = "mirror://gnome/sources/gtkmm/${lib.versions.majorMinor finalAttrs.version}/gtkmm-${finalAttrs.version}.tar.xz";
-    sha256 = "erfiJmgIcW4mw5kkrOH7RtqGwX7znZiWJMQjFLMrWnY=";
+    hash = "sha256-GeODyC1d2J2ydeALgoZOkEFNTD+z0QCy+Za8wjOKTMc=";
   };
 
   outputs = [
@@ -42,11 +42,11 @@ stdenv.mkDerivation (finalAttrs: {
   buildInputs = [ libepoxy ];
 
   propagatedBuildInputs = [
-    glibmm
+    glibmm_2_4
     gtk3
     atkmm
-    cairomm
-    pangomm
+    cairomm_1_0
+    pangomm_1_4
   ];
 
   # https://bugzilla.gnome.org/show_bug.cgi?id=764521

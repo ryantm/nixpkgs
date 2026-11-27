@@ -22,17 +22,24 @@ let
 in
 python.pkgs.buildPythonApplication (finalAttrs: {
   pname = "borgbackup";
-  version = "1.4.4";
+  version = "1.4.5";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "borgbackup";
     repo = "borg";
     tag = finalAttrs.version;
-    hash = "sha256-pMZr9cVr84b948b5Iuevpy6AtMeYo/Ma8uFLuagAYy4=";
+    hash = "sha256-jkFF+nNZL8lEXgworFLNoEKTr2LgCat1fOFlTh7AWs4=";
   };
 
   postPatch = ''
+    # Upstream is very sensible about msgpack versions, but the updates to here did not change any relevant code,
+    # so basically backport the essential changes from the bump commits, instead of relaxing the version freely.
+    substituteInPlace src/borg/helpers/msgpack.py \
+      --replace-fail "(1, 2, 1)" "(1, 2, 4)"
+    substituteInPlace pyproject.toml \
+      --replace-fail "<=1.2.1" "<=1.2.4"
+
     # sandbox does not support setuid/setgid/sticky bits
     substituteInPlace src/borg/testsuite/archiver.py \
       --replace-fail "0o4755" "0o0755"
@@ -81,7 +88,10 @@ python.pkgs.buildPythonApplication (finalAttrs: {
     ];
 
   makeWrapperArgs = [
-    ''--prefix PATH ':' "${openssh}/bin"''
+    "--prefix"
+    "PATH"
+    ":"
+    "${openssh}/bin"
   ];
 
   preInstallSphinx = ''
@@ -103,7 +113,7 @@ python.pkgs.buildPythonApplication (finalAttrs: {
     py
     pytest-benchmark
     pytest-xdist
-    pytestCheckHook
+    pytest9_0CheckHook
     versionCheckHook
   ];
 

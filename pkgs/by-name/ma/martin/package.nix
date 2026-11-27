@@ -6,9 +6,15 @@
   buildNpmPackage,
   rustPlatform,
   pkg-config,
+
+  aws-lc,
   curl,
+  libuv,
   libz,
   openssl,
+  sqlite,
+  zstd,
+
   postgresql,
   postgresqlTestHook,
   nix-update-script,
@@ -16,21 +22,21 @@
 
 let
   # check package.metadata.mln in https://github.com/maplibre/maplibre-native-rs/blob/main/Cargo.toml
-  mlnRelease = "core-9b6325a14e2cf1cc29ab28c1855ad376f1ba4903";
+  mlnRelease = "core-fa8a9c8e3261ce64940127aecc1d52f540c21c57";
   mlnHeaders = fetchurl {
     url = "https://github.com/maplibre/maplibre-native/releases/download/${mlnRelease}/maplibre-native-headers.tar.gz";
-    hash = "sha256-VjVEc/+IZTBG9ixP/i7oeel+7gy3+DhSEOi2UDIqeLc=";
+    hash = "sha256-SqZaqePNbqBZoUgMJIsZf0zqKc8EAwInYNRciv/jX1A=";
   };
   mlnLibrary = fetchurl (
     let
       sources = {
         aarch64-linux = {
           url = "https://github.com/maplibre/maplibre-native/releases/download/${mlnRelease}/libmaplibre-native-core-amalgam-linux-arm64-vulkan.a";
-          hash = "sha256-PHFNdzcG3+kngZmziMccCTnwBUbtsS2RAUNkTyNYXmc";
+          hash = "sha256-iug/ZEIoM0LUczPkVbzVelILoc1uzsM519V2em7Va4U=";
         };
         x86_64-linux = {
           url = "https://github.com/maplibre/maplibre-native/releases/download/${mlnRelease}/libmaplibre-native-core-amalgam-linux-x64-vulkan.a";
-          hash = "sha256-T9H7NiXHv+hbMgOd5QetQzxjIX1Ufn6gNmBJJ/7Ha50=";
+          hash = "sha256-FoUFDoUw+eM/aaXMfO7iuoUrv8gUGVdBW1tiqxjYCbI=";
         };
       };
     in
@@ -46,18 +52,20 @@ let
 in
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "martin";
-  version = "1.10.1";
+  version = "1.16.1";
 
   src = fetchFromGitHub {
     owner = "maplibre";
     repo = "martin";
     tag = "martin-v${finalAttrs.version}";
-    hash = "sha256-Zu3vkU7HQcSqzCL7n0uX4M+DxBDMC0Sii7esxM9AtpA=";
+    hash = "sha256-VFBdFTquqTOJQUl3m3pu5sPD8z7kvuQMclKcOhC5qGc=";
   };
 
   patches = [ ./dont-build-webui.patch ];
 
-  cargoHash = "sha256-OPuUvm4ez5TZUWwJ6D6fqy++cCiVt7f1qP6OPdsOEDA=";
+  cargoPatches = [ ./fix-build-gcc15.patch ];
+
+  cargoHash = "sha256-yZFVK6BaaGutxDWu0WFa6HZtdoIhgSADYclz+ULAy0s=";
 
   webui = buildNpmPackage {
     pname = "martin-ui";
@@ -71,7 +79,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
       ln -sf ${finalAttrs.src}/demo/frontend/public/favicon.ico public/_/assets/favicon.ico
     '';
 
-    npmDepsHash = "sha256-lX5FSWAQyy4Sa7OPnNyTYttjHiPuYxgrPsmZpwCnpO8=";
+    npmDepsHash = "sha256-ngYv8qtpUEiseE//tDauzvTzWJxyN2QMYvyV6ObsSvc=";
 
     buildPhase = ''
       runHook preBuild
@@ -98,9 +106,13 @@ rustPlatform.buildRustPackage (finalAttrs: {
   nativeBuildInputs = [ pkg-config ];
 
   buildInputs = [
+    aws-lc
     curl
+    libuv
     libz
     openssl
+    sqlite
+    zstd
   ];
 
   nativeCheckInputs = [
@@ -138,10 +150,12 @@ rustPlatform.buildRustPackage (finalAttrs: {
   meta = {
     description = "Blazing fast and lightweight PostGIS vector tiles server";
     homepage = "https://martin.maplibre.org/";
-    license = with lib.licenses; [
-      mit # or
-      asl20
-    ];
+    license =
+      with lib.licenses;
+      OR [
+        mit
+        asl20
+      ];
     teams = [ lib.teams.geospatial ];
     sourceProvenance = with lib.sourceTypes; [
       binaryNativeCode # maplibre-native

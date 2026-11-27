@@ -2,18 +2,22 @@
   lib,
   buildFishPlugin,
   fetchFromGitHub,
+  bashNonInteractive,
 }:
-
-buildFishPlugin rec {
+buildFishPlugin (finalAttrs: {
   pname = "forgit";
-  version = "26.07.0";
+  version = "26.11.0";
 
   src = fetchFromGitHub {
     owner = "wfxr";
     repo = "forgit";
-    rev = version;
-    hash = "sha256-Ks/kUuQLtzKLjwIDpfkh6pL90aII8Rfh8ijxDmlFvmg=";
+    tag = finalAttrs.version;
+    hash = "sha256-XjGNq7ezjX6xPTS0p/1b0An9fFGn3Xm+4ojuq2EZf1I=";
   };
+
+  buildInputs = [
+    bashNonInteractive
+  ];
 
   postInstall = ''
     cp -r bin $out/share/fish/vendor_conf.d/
@@ -25,4 +29,4 @@ buildFishPlugin rec {
     license = lib.licenses.mit;
     maintainers = with lib.maintainers; [ happysalada ];
   };
-}
+})

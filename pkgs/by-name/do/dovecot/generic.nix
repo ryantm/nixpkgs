@@ -2,6 +2,7 @@
   version,
   hash,
   patches,
+  knownVulnerabilities ? [ ],
 }:
 {
   autoreconfHook,
@@ -13,7 +14,7 @@
   bison,
   perl,
   pkg-config,
-  systemd,
+  systemdLibs,
   openssl,
   bzip2,
   lz4,
@@ -78,9 +79,9 @@ stdenv.mkDerivation (finalAttrs: {
     bison
     perl
     pkg-config
+    autoreconfHook
   ]
   ++ lib.optionals (stdenv.hostPlatform.isLinux && !stdenv.hostPlatform.isDarwin) [ rpcsvc-proto ]
-  ++ lib.optionals (stdenv.hostPlatform.isDarwin) [ autoreconfHook ]
   ++ lib.optional (withMySQL && lib.versionOlder version "2.4") fake_mysql_config;
 
   buildInputs = [
@@ -103,7 +104,7 @@ stdenv.mkDerivation (finalAttrs: {
     xapian
   ]
   ++ lib.optionals (stdenv.hostPlatform.isLinux) [
-    systemd
+    systemdLibs
     pam
     libcap
     inotify-tools
@@ -125,7 +126,10 @@ stdenv.mkDerivation (finalAttrs: {
 
   enableParallelBuilding = true;
 
-  env.NIX_LDFLAGS = lib.optionalString stdenv.hostPlatform.isDarwin "-liconv";
+  env = {
+    NIX_LDFLAGS = lib.optionalString stdenv.hostPlatform.isDarwin "-liconv";
+    LUA_PATH = lib.optionalString withLua "${lua5_3.pkgs.json}/share/lua/${lua5_3.luaversion}/?.lua";
+  };
 
   postPatch = ''
     sed -i -E \
@@ -223,7 +227,7 @@ stdenv.mkDerivation (finalAttrs: {
   ++ lib.optional withPgSQL "--with-pgsql"
   ++ lib.optional withSQLite "--with-sqlite";
 
-  doCheck = !stdenv.hostPlatform.isDarwin;
+  doCheck = !(stdenv.hostPlatform.isDarwin || stdenv.hostPlatform.is32bit);
 
   strictDeps = true;
 
@@ -246,6 +250,7 @@ stdenv.mkDerivation (finalAttrs: {
       prince213
     ];
     platforms = lib.platforms.unix;
+    inherit knownVulnerabilities;
   };
   passthru = {
     inherit dovecot_pigeonhole;

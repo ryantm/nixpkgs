@@ -10,7 +10,6 @@
 {
   lib,
   localSystem,
-  crossSystem,
   config,
   overlays,
   # Allow passing in bootstrap files directly so we can test the stdenv bootstrap process when changing the bootstrap tools
@@ -21,8 +20,6 @@
       throw "Unsupported platform for the Darwin stdenv"
   ),
 }:
-
-assert crossSystem == localSystem;
 
 let
   inherit (localSystem) system;
@@ -199,7 +196,6 @@ let
       ed
       expat
       flex
-      gettext
       groff
       jq
       kyua
@@ -274,6 +270,7 @@ let
   sdkPackages = prevStage: {
     inherit (prevStage)
       bashNonInteractive
+      gettext
       libpng
       libxml2
       libxo
@@ -339,7 +336,7 @@ assert bootstrapTools.passthru.isFromBootstrapFiles or false; # sanity check
   # Create a stage with the bootstrap tools. This will be used to build the subsequent stages and
   # build up the standard environment.
   #
-  # Note: Each stage depends only on the the packages in `prevStage`. If a package is not to be
+  # Note: Each stage depends only on the packages in `prevStage`. If a package is not to be
   # rebuilt, it should be passed through by inheriting it.
   (
     prevStage:
@@ -570,19 +567,17 @@ assert bootstrapTools.passthru.isFromBootstrapFiles or false; # sanity check
         # the bootstrap. Remove this once that’s fixed.
         meson = super.meson.overrideAttrs { doInstallCheck = false; };
 
-        ninja = super.ninja.override { buildDocs = false; };
+        ninja = super.ninja.override {
+          buildDocs = false;
+          re2c = null; # Not needed to build Ninja.
+        };
 
         # pkg-config builds glib, which checks for `arpa/nameser.h` and fails to build if it can’t find it.
         # libresolv is normally propagated by the SDK, but propagation is disabled early in the bootstrap.
         # Trying to add libresolv as a dependency causes an infinite recursion. Use pkgconf instead.
         pkg-config =
           (super.pkg-config.override {
-            pkg-config = self.libpkgconf.override {
-              removeReferencesTo = self.removeReferencesTo.override {
-                # Avoid an infinite recursion by using the previous stage‘s sigtool.
-                signingUtils = prevStage.darwin.signingUtils.override { inherit (prevStage.darwin) sigtool; };
-              };
-            };
+            pkg-config = self.pkgconf-lite;
             baseBinName = "pkgconf";
           }).overrideAttrs
             # Passthru the wrapped pkgconf’s stdenv to make the bootstrap assertions happy.
@@ -600,8 +595,15 @@ assert bootstrapTools.passthru.isFromBootstrapFiles or false; # sanity check
         python3-bootstrap = super.python3.override {
           self = self.python3-bootstrap;
           pythonAttr = "python3-bootstrap";
-          zstd = null; # Avoid infinite recursion due to zstd depending on libiconv, which depends on Python via Meson.
           enableLTO = false;
+          # Avoid including deps that aren’t needed and aren’t already built in the bootstrap.
+          withExpat = false;
+          withGdbm = false;
+          withMpdecimal = false;
+          withZstd = false;
+          # These features aren’t needed. Omitting them further reduces the number of paths built in the bootstrap.
+          includeSiteCustomize = false;
+          mimetypesSupport = false;
         };
 
         scons = super.scons.override { python3Packages = self.python3.pkgs; };
@@ -1095,7 +1097,6 @@ assert bootstrapTools.passthru.isFromBootstrapFiles or false; # sanity check
                 file
                 findutils
                 gawk
-                gettext
                 gnumake
                 gnused
                 gnutar
@@ -1176,9 +1177,6 @@ assert bootstrapTools.passthru.isFromBootstrapFiles or false; # sanity check
     assert isBuiltByNixpkgsCompiler prevStage.binutils-unwrapped;
     assert isFromNixpkgs prevStage.binutils-unwrapped.src;
     assert isBuiltByNixpkgsCompiler prevStage.curl;
-
-    # libiconv should be an alias for darwin.libiconv
-    assert prevStage.libiconv == prevStage.darwin.libiconv;
 
     {
       inherit (prevStage) config overlays stdenv;

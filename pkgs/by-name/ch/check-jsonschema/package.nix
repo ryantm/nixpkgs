@@ -6,17 +6,17 @@
 
 python3Packages.buildPythonApplication (finalAttrs: {
   pname = "check-jsonschema";
-  version = "0.37.4";
+  version = "0.39.0";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "python-jsonschema";
     repo = "check-jsonschema";
     tag = finalAttrs.version;
-    hash = "sha256-MBnjH5lzutoPTyhYqQTa6FnK8fUMkzy15epBUMxO8BY=";
+    hash = "sha256-sm/VOMLnlwUrHeil6FxWuU+aNLwxZGZ45FCp0e4/hHU=";
   };
 
-  build-system = with python3Packages; [ setuptools ];
+  build-system = with python3Packages; [ flit-core ];
 
   dependencies = with python3Packages; [
     ruamel-yaml

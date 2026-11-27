@@ -1,22 +1,24 @@
 {
   lib,
-  buildGo126Module,
+  buildGoModule,
   fetchFromGitHub,
   findutils,
   nix-update-script,
 }:
 
-buildGo126Module (finalAttrs: {
+buildGoModule (finalAttrs: {
   pname = "tsgolint";
-  version = "0.24.0";
+  version = "7.0.2006";
 
   src = fetchFromGitHub {
     owner = "oxc-project";
     repo = "tsgolint";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-6HTVsCz4lh/SM8nlaFT3U+TEOoEajqPr+60fn9PV4+w=";
+    hash = "sha256-SxUqe8H8+SVLZrRFiT3LucpTiolajN19CmMKfLZhoEk=";
     fetchSubmodules = true;
   };
+
+  __structuredAttrs = true;
 
   nativeBuildInputs = [ findutils ];
 
@@ -31,6 +33,7 @@ buildGo126Module (finalAttrs: {
     (finalAttrs.src + "/patches/0003-fix-early-return-from-invalid-tsconfig-for-better-er.patch")
     (finalAttrs.src + "/patches/0004-fix-collections-avoid-internal-json-import-in-ordere.patch")
     (finalAttrs.src + "/patches/0005-perf-vfs-cache-ReadFile-results-in-cachedvfs.patch")
+    (finalAttrs.src + "/patches/0006-perf-add-opt-in-node-count-checker-assignment.patch")
   ];
 
   postPatch =
@@ -41,7 +44,7 @@ buildGo126Module (finalAttrs: {
     '';
 
   proxyVendor = true;
-  vendorHash = "sha256-FVngoARi1ci/h5nE3CVwxkS6XuMvzpZH5j2Nl7suhFg=";
+  vendorHash = "sha256-Xt3Coh+Q2VneVz+PfnT80sN9FAlMZbvPWxYWQUuGXYo=";
 
   subPackages = [ "cmd/tsgolint" ];
 
@@ -52,8 +55,12 @@ buildGo126Module (finalAttrs: {
   meta = {
     description = "Type aware linting for oxlint";
     homepage = "https://github.com/oxc-project/tsgolint";
+    changelog = "https://github.com/oxc-project/tsgolint/releases/tag/v${finalAttrs.version}";
     license = lib.licenses.mit;
-    maintainers = with lib.maintainers; [ jnsgruk ];
+    maintainers = with lib.maintainers; [
+      jnsgruk
+      anish
+    ];
     mainProgram = "tsgolint";
   };
 })

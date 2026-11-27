@@ -12,9 +12,9 @@
   libuv,
   libwebsockets,
   openssl,
-  withSystemd ? lib.meta.availableOn stdenv.hostPlatform systemd,
+  withSystemd ? lib.meta.availableOn stdenv.hostPlatform systemdLibs,
   sqlite,
-  systemd,
+  systemdLibs,
   uthash,
   nixosTests,
 }:
@@ -34,7 +34,7 @@ let
 in
 stdenv.mkDerivation (finalAttrs: {
   pname = "mosquitto";
-  version = "2.1.2";
+  version = "2.1.4";
   # Tests disabled: upstream test suite requires additional Python deps,
   # uses chown() to fixed UIDs, and relies on signal handling that breaks
   # in sandboxed builds. Re-enable once upstream tests are sandbox-friendly.
@@ -44,7 +44,7 @@ stdenv.mkDerivation (finalAttrs: {
     owner = "eclipse-mosquitto";
     repo = "mosquitto";
     rev = "v${finalAttrs.version}";
-    hash = "sha256-Zl55yjuzQY2fyaKs/zLaJ7a3OONKTDQPaT+DpPURdZI=";
+    hash = "sha256-uJF9fBmt13crW1SPuT948xGfSQ+SiN8HKB0rQif4ZUw=";
   };
 
   postPatch = ''
@@ -77,7 +77,7 @@ stdenv.mkDerivation (finalAttrs: {
     sqlite
     uthash
   ]
-  ++ lib.optional withSystemd systemd;
+  ++ lib.optional withSystemd systemdLibs;
 
   propagatedBuildInputs = [ cjson ];
 
@@ -85,7 +85,7 @@ stdenv.mkDerivation (finalAttrs: {
     (lib.cmakeBool "WITH_BUNDLED_DEPS" false)
     (lib.cmakeBool "WITH_WEBSOCKETS" true)
     (lib.cmakeBool "WITH_SYSTEMD" withSystemd)
-    (lib.cmakeBool "WITH_TESTS" finalAttrs.doCheck)
+    (lib.cmakeBool "WITH_TESTS" finalAttrs.finalPackage.doCheck)
   ];
 
   postFixup = ''

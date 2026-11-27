@@ -15,14 +15,14 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "fastdds";
-  version = "3.6.2";
+  version = "3.6.3";
 
   src = fetchFromGitHub {
     owner = "eProsima";
     repo = "Fast-DDS";
     rev = "v${finalAttrs.version}";
     fetchSubmodules = true;
-    hash = "sha256-17AxZwYPBhl+AyehWvNYP/if124GcmNfWJOD/yB+tgk=";
+    hash = "sha256-EiIp2aQLmsp7rq0jtg64p/qhynl+OD8KCWQpQ5Nq4hg=";
   };
 
   nativeBuildInputs = [
@@ -41,7 +41,6 @@ stdenv.mkDerivation (finalAttrs: {
   ];
 
   cmakeFlags = [
-    "-DCMAKE_BUILD_TYPE=Release"
     "-DBUILD_SHARED_LIBS=ON"
     "-DSECURITY=ON"
     "-DCOMPILE_EXAMPLES=OFF"
@@ -62,5 +61,9 @@ stdenv.mkDerivation (finalAttrs: {
       panicgh
     ];
     platforms = lib.platforms.linux;
+
+    # Build failure in old version of vendored sqlite3
+    # https://github.com/eProsima/Fast-DDS/issues/6570
+    broken = stdenv.hostPlatform.isAarch64;
   };
 })

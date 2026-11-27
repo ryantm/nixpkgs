@@ -24,16 +24,15 @@
 
 buildPythonPackage (finalAttrs: {
   pname = "exa-py";
-  version = "2.16.1";
+  version = "2.25.0";
   pyproject = true;
-  __structuredAttrs = true;
 
   # pypi doesn't include tests but there aren't any upstream git tags
   src = fetchFromGitHub {
     owner = "exa-labs";
     repo = "exa-py";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-zMQAPJnIHA7PiHCoPf0/iPrTEsctnM8cQBY2fVpDpjo=";
+    hash = "sha256-TS9Q/PXayRdVFGKLcGhNOh+j+ByBiSwK/30AZiluNwU=";
   };
 
   build-system = [

@@ -25,6 +25,24 @@ in
       description = "The port that ImmichFrame will listen on.";
     };
 
+    configSource = mkOption {
+      type = types.enum [
+        "file"
+        "database"
+      ];
+      default = "file";
+      description = ''
+        Whether a config file or the database is the source of truth for ImmichFrame's configuration.
+
+        The default ("file") allows for purely declarative management of ImmichFrame,
+        but disables the admin UI.
+
+        "database" enables the admin UI, but means the values you set in
+        {option}`config.services.immichframe.settings`  will only be read the first time ImmichFrame starts.
+        After that, changes must be made through the admin UI.
+      '';
+    };
+
     settings = mkOption {
       type = types.submodule {
         freeformType = format.type;
@@ -120,6 +138,7 @@ in
         after = [ "network.target" ];
         wantedBy = [ "multi-user.target" ];
         environment = {
+          IMMICHFRAME_CONFIG_SOURCE = cfg.configSource;
           IMMICHFRAME_CONFIG_PATH = pkgs.runCommand "Config" { } ''
             mkdir $out
             ln -s ${format.generate "Settings.json" settingsWithFixedSecretPaths} $out/Settings.json
@@ -134,6 +153,40 @@ in
           Type = "simple";
           Restart = "on-failure";
           RestartSec = 3;
+
+          # systemd hardening, based on jellyfin (also .NET) but stricter
+          CapabilityBoundingSet = [ "" ];
+          DevicePolicy = "closed";
+          LockPersonality = true;
+          NoNewPrivileges = true;
+          PrivateDevices = true;
+          PrivateUsers = true;
+          ProcSubset = "pid";
+          ProtectClock = true;
+          ProtectControlGroups = !config.boot.isContainer;
+          ProtectHome = true;
+          ProtectHostname = true;
+          ProtectKernelLogs = true;
+          ProtectKernelModules = !config.boot.isContainer;
+          ProtectKernelTunables = !config.boot.isContainer;
+          ProtectProc = "invisible";
+          ProtectSystem = "strict";
+          # no AF_NETLINK here since there's no network connection monitoring
+          RestrictAddressFamilies = [
+            "AF_INET"
+            "AF_INET6"
+            "AF_UNIX"
+          ];
+          RestrictNamespaces = !config.boot.isContainer;
+          RestrictRealtime = true;
+          RestrictSUIDSGID = true;
+          SystemCallArchitectures = "native";
+          SystemCallErrorNumber = "EPERM";
+          SystemCallFilter = [
+            "@system-service"
+            "~@privileged"
+          ];
+          UMask = "0077";
         };
       };
   };

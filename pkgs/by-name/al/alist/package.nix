@@ -3,7 +3,6 @@
   buildGoModule,
   fetchFromGitHub,
   fetchzip,
-  fuse,
   stdenv,
   installShellFiles,
   versionCheckHook,
@@ -11,13 +10,13 @@
 }:
 buildGoModule (finalAttrs: {
   pname = "alist";
-  version = "3.57.0";
+  version = "3.66.0";
 
   src = fetchFromGitHub {
     owner = "AlistGo";
     repo = "alist";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-wwV65vxNSrGzP7TQ+nnjWS+dcCj/+67WcMPRbNqOVbQ=";
+    hash = "sha256-uvK9UTqutExpD7QI4Ey0OxhbIkRtN1hVhfqDO7MWnOg=";
     # populate values that require us to use git. By doing this in postFetch we
     # can delete .git afterwards and maintain better reproducibility of the src.
     leaveDotGit = true;
@@ -38,11 +37,12 @@ buildGoModule (finalAttrs: {
   '';
 
   proxyVendor = true;
-  vendorHash = "sha256-aRnS3LLG25FK1ELKd7K1e5aGLmKnQ7w/3QVe4P9RRLI=";
-
-  buildInputs = [ fuse ];
+  vendorHash = "sha256-czFr9FPlE/m0KS8AiqVlj9uNIzxk1KHnKXbMiQxXMJI=";
 
   tags = [ "jsoniter" ];
+
+  # internal/fuse (cgofuse) is unused and would otherwise be compiled
+  subPackages = [ "." ];
 
   ldflags = [
     "-s"
@@ -62,6 +62,7 @@ buildGoModule (finalAttrs: {
     ldflags+=" -X \"github.com/alist-org/alist/v3/internal/conf.BuiltAt=$(cat SOURCE_DATE_EPOCH)\""
     ldflags+=" -X github.com/alist-org/alist/v3/internal/conf.GitCommit=$(cat COMMIT)"
   '';
+  __darwinAllowLocalNetworking = true;
 
   checkFlags =
     let
@@ -94,25 +95,29 @@ buildGoModule (finalAttrs: {
 
   passthru = {
     updateScript = lib.getExe (callPackage ./update.nix { });
-    webVersion = "3.57.0";
+    webVersion = "3.66.0";
     web = fetchzip {
       url = "https://github.com/AlistGo/alist-web/releases/download/${finalAttrs.passthru.webVersion}/dist.tar.gz";
-      hash = "sha256-QP1eWlSr7XBX8jUyvXhpmEGIwWaY6wy4M2l/35AiuUg=";
+      hash = "sha256-SO5jjzzulDg7hGc1agGzUl+XnqAQ+U10Bfvzk8E4m0E=";
     };
   };
 
   meta = {
     description = "File list/WebDAV program that supports multiple storages";
+    longDescription = ''
+      A file list program written in Go that serves files from many storage backends
+      (cloud drives, object storage, FTP/SFTP/SMB, and more) through a web interface,
+      WebDAV, and direct links. The web frontend is bundled from alist-web.
+
+      Note: Alist was acquired by Bugotech, a company distrusted by parts of the community.
+      Some drivers use the questionable API server alist.nn.ci for account creation.
+    '';
     homepage = "https://github.com/AlistGo/alist";
     changelog = "https://github.com/AlistGo/alist/releases/tag/v${finalAttrs.version}";
     license = with lib.licenses; [
       agpl3Only
       # alist-web
       mit
-    ];
-    knownVulnerabilities = [
-      "Alist was acquired by Bugotech, a company distrusted by the community"
-      "Uses a questionable API server alist.nn.ci for account creation for certain drivers"
     ];
     maintainers = with lib.maintainers; [ moraxyc ];
     sourceProvenance = with lib.sourceTypes; [

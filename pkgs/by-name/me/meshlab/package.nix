@@ -76,12 +76,7 @@ stdenv.mkDerivation (finalAttrs: {
     bzip2
     muparser
     eigen
-    # MeshLab renders through Qt's xcb platform, which creates a GLX context,
-    # and calls glewInit() against it. The default EGL-enabled glew is built
-    # EGL-only (no GLX dispatch table), so glewInit can't read GL_VERSION and
-    # the app fails to launch with "GLEW initialization failed: Missing GL
-    # version". See https://github.com/NixOS/nixpkgs/issues/531470
-    (glew.override { enableEGL = false; })
+    glew
     gmp
     levmar
     qhull
@@ -134,7 +129,11 @@ stdenv.mkDerivation (finalAttrs: {
 
   # display a black screen on wayland, so force XWayland for now.
   # Might be fixed when upstream will be ready for Qt6.
-  qtWrapperArgs = lib.optional stdenv.hostPlatform.isLinux "--set QT_QPA_PLATFORM xcb";
+  qtWrapperArgs = lib.optionals stdenv.hostPlatform.isLinux [
+    "--set"
+    "QT_QPA_PLATFORM"
+    "xcb"
+  ];
 
   postFixup =
     lib.optionalString stdenv.hostPlatform.isLinux ''

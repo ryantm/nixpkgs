@@ -10,7 +10,7 @@ stdenv.mkDerivation (finalAttrs: {
   version = "0.11.0";
 
   src = fetchFromGitHub {
-    owner = "martinmoene";
+    owner = "nonstd-lite";
     repo = "span-lite";
     rev = "v${finalAttrs.version}";
     hash = "sha256-BYRSdGzIvrOjPXxeabMj4tPFmQ0wfq7y+zJf6BD/bTw=";
@@ -22,8 +22,8 @@ stdenv.mkDerivation (finalAttrs: {
 
   meta = {
     description = "C++20-like span for C++98, C++11 and later in a single-file header-only library";
-    homepage = "https://github.com/martinmoene/span-lite";
-    license = lib.licenses.bsd1;
+    homepage = "https://github.com/nonstd-lite/span-lite";
+    license = lib.licenses.boost;
     maintainers = with lib.maintainers; [ icewind1991 ];
     platforms = lib.platforms.all;
   };

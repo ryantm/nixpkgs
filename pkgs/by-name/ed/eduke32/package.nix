@@ -27,14 +27,14 @@ let
 in
 stdenv.mkDerivation (finalAttrs: {
   pname = "eduke32";
-  version = "0-unstable-2026-02-03";
+  version = "0-unstable-2026-11-26";
 
   src = fetchFromGitLab {
     domain = "voidpoint.io";
     owner = "terminx";
     repo = "eduke32";
-    rev = "ba6b7bb1d50d7db820ec03d9bbd66404fab5c543";
-    hash = "sha256-hD8j2YahEWLNgeATL7ZPwU0ovjwMSmzYdDYgMHKQLTw=";
+    rev = "0baaeaab4d4169e6842a45002298b4458aff49a0";
+    hash = "sha256-oy/kGIXkVw6II/RMy+P79dw75iAevCggaTojgqQp36o=";
     deepClone = true;
     leaveDotGit = true;
     postFetch = ''
@@ -181,7 +181,7 @@ stdenv.mkDerivation (finalAttrs: {
   meta = {
     description = "Enhanced port of Duke Nukem 3D for various platforms";
     homepage = "https://eduke32.com";
-    license = with lib.licenses; [ gpl2Plus ];
+    license = lib.licenses.gpl2Plus;
     maintainers = with lib.maintainers; [
       qubitnano
     ];

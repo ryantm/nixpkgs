@@ -1,5 +1,6 @@
 {
   buildPythonPackage,
+  cryptography,
   fetchFromGitHub,
   hatchling,
   hatch-vcs,
@@ -9,17 +10,18 @@
   rustPlatform,
   serialx,
   socat,
+  sybil,
   tenacity,
 }:
 
 let
-  version = "0.4.1";
+  version = "1.1.0";
 
   src = fetchFromGitHub {
     owner = "wlcrs";
     repo = "tmodbus";
     tag = "v${version}";
-    hash = "sha256-pVP2QaCYkeeKhlEha7qIyNhbN1DfVyRxTSZBloEMXxc=";
+    hash = "sha256-2UzEd6pyq77vEn/HRMX+SlCATVUGcrZu0aijZOY86mQ=";
   };
 
   rmodbus-server = rustPlatform.buildRustPackage (finalAttrs: {
@@ -30,7 +32,7 @@ let
 
     sourceRoot = "${src.name}/integration_tests/rmodbus";
 
-    cargoHash = "sha256-t7lJ7zC5+z1E/EDWTPR6cbGhcy/RmtXQXon+FiXRZlI=";
+    cargoHash = "sha256-vZgLhVsdH8M42YyuJO0mBq/a1oAGmlqic3S72QcVjyA=";
 
     meta = {
       description = "Rust Modbus server";
@@ -47,7 +49,7 @@ let
 
     sourceRoot = "${src.name}/integration_tests/tokio";
 
-    cargoHash = "sha256-grYnQxf0CH7hkFq1zTMxw6brtHfCheh/O2EtPPPpVqA=";
+    cargoHash = "sha256-/V10uVQPgiqp05557OvhVgo/jDyWopRUUAkf4Ibfh/E=";
 
     meta = {
       description = "Rust Tokio Modbus server";
@@ -62,12 +64,8 @@ buildPythonPackage (finalAttrs: {
   inherit version src;
   pyproject = true;
 
-  __structuredAttrs = true;
-
   postPatch = ''
-    substituteInPlace \
-      integration_tests/tokio/test_tokio_client.py \
-      integration_tests/rmodbus/test_rmodbus_client.py \
+    substituteInPlace integration_tests/helpers.py \
       --replace-fail "/usr/bin/socat" "${lib.getExe socat}"
 
     mkdir -p integration_tests/{rmodbus,tokio}/target/release
@@ -81,18 +79,21 @@ buildPythonPackage (finalAttrs: {
     hatchling
   ];
 
+  dependencies = [ tenacity ];
+
   optional-dependencies = {
     async-serial = [
       serialx
     ];
-    smart = [
-      tenacity
+    security = [
+      cryptography
     ];
   };
 
   nativeCheckInputs = [
     pytest-asyncio
     pytestCheckHook
+    sybil
   ]
   ++ lib.concatAttrValues finalAttrs.passthru.optional-dependencies;
 

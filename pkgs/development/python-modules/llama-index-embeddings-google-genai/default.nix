@@ -9,13 +9,13 @@
 
 buildPythonPackage (finalAttrs: {
   pname = "llama-index-embeddings-google-genai";
-  version = "0.5.1";
+  version = "0.7.0";
   pyproject = true;
 
   src = fetchPypi {
     pname = "llama_index_embeddings_google_genai";
     inherit (finalAttrs) version;
-    hash = "sha256-xA0J65uYGUnbWaNh0yJ0U8IumOnhjTXHK9Jklnvd2UQ=";
+    hash = "sha256-qOmNnwfLa7oXU4Na444L4SVXfOxvOq16KEXM7Cb+0bo=";
   };
 
   build-system = [ hatchling ];

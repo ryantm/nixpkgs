@@ -1,24 +1,34 @@
 {
   lib,
+  aws-lc,
   rustPlatform,
   fetchFromGitHub,
   versionCheckHook,
   nix-update-script,
+  pkg-config,
+  zstd,
 }:
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "datafusion-cli";
-  version = "54.0.0";
+  version = "56.0.0";
 
   src = fetchFromGitHub {
     name = "datafusion-cli-source";
     owner = "apache";
     repo = "datafusion";
     tag = finalAttrs.version;
-    hash = "sha256-BWpHiLCn7idvzI2rlsre8l23TbxQU1Ma6bCjAMxQ6m8=";
+    hash = "sha256-rGwoyWSH4PkwtEwS9WCMHur3X7AfoS5XuKL7ddeCQfQ=";
   };
 
-  cargoHash = "sha256-Sj/biBiJPIYwxpL+Fua0k47vOu6gyyAhcKb4ZSUli6k=";
+  cargoHash = "sha256-RpBUkkiKudO4sxUFRsuCdsV9oae2OnM/htCDGMnZyuw=";
+
+  nativeBuildInputs = [ pkg-config ];
+
+  buildInputs = [
+    aws-lc
+    zstd
+  ];
 
   buildAndTestSubdir = "datafusion-cli";
 

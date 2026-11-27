@@ -6,13 +6,13 @@
 }:
 stdenv.mkDerivation (finalAttrs: {
   pname = "rapidcsv";
-  version = "8.99";
+  version = "9.09";
 
   src = fetchFromGitHub {
     owner = "d99kris";
     repo = "rapidcsv";
     rev = "v${finalAttrs.version}";
-    hash = "sha256-TJ4IpBt2G+zUf2AEUB9wwz8Zk1UEoqqoemTVJCB+8D0=";
+    hash = "sha256-gQ9j/BC88QYhSS1njgkb1+BH6kmDowUUi9+2OaT3/3Q=";
   };
 
   nativeBuildInputs = [

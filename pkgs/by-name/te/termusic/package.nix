@@ -29,9 +29,18 @@ rustPlatform.buildRustPackage (finalAttrs: {
 
   cargoHash = "sha256-xFQObWhONoRBAdEZblBDQeQtq/KmaCWWnCwv3XEmG2k=";
 
+  patches = [
+    # https://github.com/tramhao/termusic/pull/803
+    ./enable-sqlite-foreign-keys.patch
+  ];
+
   useNextest = true;
 
-  buildFeatures = [ "rusty-libopus" ];
+  buildFeatures = [
+    "rusty-libopus"
+    "all-backends"
+    "cover"
+  ];
 
   nativeBuildInputs = [
     pkg-config
@@ -56,7 +65,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
   meta = {
     description = "Terminal Music Player TUI written in Rust";
     homepage = "https://github.com/tramhao/termusic";
-    license = with lib.licenses; [ gpl3Only ];
+    license = lib.licenses.gpl3Only;
     maintainers = with lib.maintainers; [
       devhell
       theeasternfurry

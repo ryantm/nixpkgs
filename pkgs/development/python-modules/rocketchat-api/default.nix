@@ -8,16 +8,16 @@
   requests,
 }:
 
-buildPythonPackage rec {
+buildPythonPackage (finalAttrs: {
   pname = "rocketchat-api";
-  version = "3.7.0";
+  version = "3.8.0";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "jadolg";
     repo = "rocketchat_API";
-    tag = version;
-    hash = "sha256-s+RyHzuWI5pVshTG/DsgtC9+lpexTMkPJYNpNrI7Jkc=";
+    tag = finalAttrs.version;
+    hash = "sha256-Huf/nLRDRI4X/j9XbnyCadMx+bEsVTA7aB99QhQNlNU=";
   };
 
   build-system = [
@@ -40,10 +40,10 @@ buildPythonPackage rec {
   doCheck = false;
 
   meta = {
-    changelog = "https://github.com/jadolg/rocketchat_API/releases/tag/${src.tag}";
+    changelog = "https://github.com/jadolg/rocketchat_API/releases/tag/${finalAttrs.src.tag}";
     description = "Python API wrapper for Rocket.Chat";
     homepage = "https://github.com/jadolg/rocketchat_API";
     license = lib.licenses.mit;
     maintainers = with lib.maintainers; [ dotlambda ];
   };
-}
+})

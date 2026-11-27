@@ -5,6 +5,7 @@
   uv-build,
   serialx,
   aiowebostv,
+  pyprojectVersionPatchHook,
   pytest-asyncio,
   pytest-timeout,
   pytestCheckHook,
@@ -12,20 +13,22 @@
 
 buildPythonPackage (finalAttrs: {
   pname = "lg-rs232-tv";
-  version = "1.2.0";
+  version = "1.3.2";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "home-assistant-libs";
     repo = "lg-rs232-tv";
     tag = finalAttrs.version;
-    hash = "sha256-gMjRyZ/gUMAsS0v465ISD38YAlrOB8N/5VAFZkXtyAE=";
+    hash = "sha256-T8xUfKqe3lRcAE8yahlYy7NEXwoCje3/06ZXaRmBJiQ=";
   };
 
   postPatch = ''
     substituteInPlace pyproject.toml \
       --replace-fail "uv_build>=0.8.4,<0.9.0" "uv_build"
   '';
+
+  nativeBuildInputs = [ pyprojectVersionPatchHook ];
 
   build-system = [ uv-build ];
 

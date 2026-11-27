@@ -10,10 +10,10 @@
 
   # dependencies
   anyio,
-  distro,
   docstring-parser,
-  httpx,
+  httpx2,
   jiter,
+  opentelemetry-api,
   pydantic,
   sniffio,
   typing-extensions,
@@ -25,33 +25,34 @@
   aiohttp,
   httpx-aiohttp,
 
-  # test
+  # tests
   dirty-equals,
   http-snapshot,
   inline-snapshot,
   nest-asyncio,
+  opentelemetry-sdk,
   pytest-asyncio,
   pytest-xdist,
   pytestCheckHook,
   respx,
+  writableTmpDirAsHomeHook,
 }:
 
 buildPythonPackage (finalAttrs: {
   pname = "anthropic";
-  version = "0.109.1";
+  version = "2.3.0";
   pyproject = true;
-  __structuredAttrs = true;
 
   src = fetchFromGitHub {
     owner = "anthropics";
     repo = "anthropic-sdk-python";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-H+blENPgkKhoGPJmAtdszFsJDkAzgprlDso0o2fhwz8=";
+    hash = "sha256-w/hQKC74BvWah8bDRgeNsmipk95p36K3J3fQPe/Jj4E=";
   };
 
   postPatch = ''
     substituteInPlace pyproject.toml \
-      --replace-fail '"hatchling==1.26.3"' '"hatchling>=1.26.3"'
+      --replace-fail 'hatchling==' 'hatchling>='
   '';
 
   build-system = [
@@ -61,10 +62,10 @@ buildPythonPackage (finalAttrs: {
 
   dependencies = [
     anyio
-    distro
     docstring-parser
-    httpx
+    httpx2
     jiter
+    opentelemetry-api
     pydantic
     sniffio
     typing-extensions
@@ -87,12 +88,16 @@ buildPythonPackage (finalAttrs: {
     http-snapshot
     inline-snapshot
     nest-asyncio
+    opentelemetry-sdk
     pytest-asyncio
     pytest-xdist
     pytestCheckHook
     respx
   ]
-  ++ lib.flatten (builtins.attrValues finalAttrs.passthru.optional-dependencies);
+  ++ lib.optionals stdenv.hostPlatform.isDarwin [
+    writableTmpDirAsHomeHook
+  ]
+  ++ lib.concatAttrValues finalAttrs.passthru.optional-dependencies;
 
   pythonImportsCheck = [ "anthropic" ];
 
@@ -111,6 +116,13 @@ buildPythonPackage (finalAttrs: {
     # Hangs
     # https://github.com/anthropics/anthropic-sdk-python/issues/1008
     "test_get_platform"
+
+    # Fail in the sandbox:
+    #   AssertionError: Regex pattern did not match.
+    #     Expected regex: "outside the session's working directory and its other permitted directories"
+    #     Actual message: "path '/nix/var/nix/builds/nix-53257-3010075771/pytest-of-_nixbld1/pytest-0/popen-gw2/test_resolve_path_symlink_out_0/mount/leak': permission denied"
+    "test_resolve_path_absolute_inside_workdir"
+    "test_resolve_path_symlink_out_of_allowed_root_is_rejected"
   ];
 
   disabledTestPaths = [

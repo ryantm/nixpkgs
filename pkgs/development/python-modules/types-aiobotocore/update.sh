@@ -134,8 +134,8 @@ packages=(
   types-aiobotocore-es
   types-aiobotocore-events
   # types-aiobotocore-evidently
-  types-aiobotocore-finspace
-  types-aiobotocore-finspace-data
+  # types-aiobotocore-finspace
+  # types-aiobotocore-finspace-data
   types-aiobotocore-firehose
   types-aiobotocore-fis
   types-aiobotocore-fms
@@ -167,8 +167,8 @@ packages=(
   types-aiobotocore-iot-jobs-data
   # types-aiobotocore-iotanalytics
   types-aiobotocore-iotdeviceadvisor
-  types-aiobotocore-iotevents
-  types-aiobotocore-iotevents-data
+  # types-aiobotocore-iotevents
+  # types-aiobotocore-iotevents-data
   types-aiobotocore-iotfleetwise
   types-aiobotocore-iotsecuretunneling
   types-aiobotocore-iotsitewise
@@ -245,7 +245,7 @@ packages=(
   types-aiobotocore-organizations
   types-aiobotocore-osis
   types-aiobotocore-outposts
-  types-aiobotocore-panorama
+  # types-aiobotocore-panorama
   types-aiobotocore-payment-cryptography
   types-aiobotocore-payment-cryptography-data
   types-aiobotocore-personalize
@@ -314,7 +314,7 @@ packages=(
   types-aiobotocore-sesv2
   types-aiobotocore-shield
   types-aiobotocore-signer
-  types-aiobotocore-simspaceweaver
+  # types-aiobotocore-simspaceweaver
   types-aiobotocore-snow-device-management
   types-aiobotocore-snowball
   types-aiobotocore-sns
@@ -336,7 +336,7 @@ packages=(
   types-aiobotocore-textract
   types-aiobotocore-timestream-query
   types-aiobotocore-timestream-write
-  types-aiobotocore-tnb
+  # types-aiobotocore-tnb
   types-aiobotocore-transcribe
   types-aiobotocore-transfer
   types-aiobotocore-translate

@@ -5,18 +5,18 @@
   cmake,
   curl,
   obs-studio,
-  qtbase,
+  qt6,
 }:
 
 stdenv.mkDerivation rec {
   pname = "obs-vertical-canvas";
-  version = "1.6.4";
+  version = "1.6.8";
 
   src = fetchFromGitHub {
     owner = "Aitum";
     repo = "obs-vertical-canvas";
     rev = version;
-    sha256 = "sha256-cWiC4e+ZojTuNAaNwuBQ1pPlchdiuTsVhWMHvcyxx2A=";
+    hash = "sha256-GwKlckNMwuC9SZq3JzuPXtVEaOp5FMqT+IupyJt6w7w=";
   };
 
   nativeBuildInputs = [ cmake ];
@@ -24,7 +24,7 @@ stdenv.mkDerivation rec {
   buildInputs = [
     curl
     obs-studio
-    qtbase
+    qt6.qtbase
   ];
 
   cmakeFlags = [

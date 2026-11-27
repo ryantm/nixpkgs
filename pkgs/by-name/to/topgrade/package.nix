@@ -1,39 +1,41 @@
 {
   stdenv,
   lib,
+  aws-lc,
   fetchFromGitHub,
+  pkg-config,
   rustPlatform,
   installShellFiles,
-  llvmPackages,
 }:
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "topgrade";
-  version = "17.7.0";
+  version = "17.16.0";
 
   src = fetchFromGitHub {
     owner = "topgrade-rs";
     repo = "topgrade";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-2oydjlPZLWlGNvahsRK7kG5gxEKEHMDNxteaOeYupPA=";
+    hash = "sha256-a2eeivvrjvML8e8varZa3o1xndkpnyCNUDnPim+iV2A=";
   };
 
-  cargoHash = "sha256-8pK6ZUlMNcczbmMJvQUsJKp0RoXnimnkbAc7SzrIcJQ=";
+  cargoHash = "sha256-ioSYCGt/hicvH4Z7EDXcRkrv84cWZBhblP8kBDi5qdA=";
 
   nativeBuildInputs = [
     installShellFiles
-  ]
-  # TODO: Remove once #536365 reaches this branch
-  ++ lib.optionals stdenv.hostPlatform.isDarwin [ llvmPackages.lld ];
+    pkg-config
+  ];
 
-  env = lib.optionalAttrs stdenv.hostPlatform.isDarwin {
-    NIX_CFLAGS_COMPILE = toString [
+  buildInputs = [
+    aws-lc
+  ];
+
+  env.NIX_CFLAGS_COMPILE = toString (
+    lib.optionals stdenv.hostPlatform.isDarwin [
       "-framework"
       "AppKit"
-    ];
-    # TODO: Remove once #536365 reaches this branch
-    NIX_CFLAGS_LINK = "-fuse-ld=lld";
-  };
+    ]
+  );
 
   postInstall = lib.optionalString (stdenv.buildPlatform.canExecute stdenv.hostPlatform) ''
     installShellCompletion --cmd topgrade \

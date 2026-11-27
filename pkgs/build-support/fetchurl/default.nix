@@ -1,8 +1,5 @@
 {
   lib,
-  buildPackages ? {
-    inherit stdenvNoCC;
-  },
   stdenvNoCC,
   curl, # Note that `curl' may be `null', in case of the native stdenvNoCC.
   cacert ? null,
@@ -24,7 +21,11 @@ let
     isList
     isString
     length
+    mapAttrs'
     match
+    nameValuePair
+    toFile
+    toShellVars
     warn
     ;
   nixpkgsVersion = lib.trivial.release;
@@ -38,19 +39,24 @@ let
   # fetchurl instantiations via environment variables.  This makes the
   # resulting store derivations (.drv files) much smaller, which in
   # turn makes nix-env/nix-instantiate faster.
-  mirrorsFile = buildPackages.stdenvNoCC.mkDerivation (
-    {
-      name = "mirrors-list";
-      strictDeps = true;
-      builder = ./write-mirror-list.sh;
-      preferLocalBuild = true;
-    }
-    // mirrors
-  );
+  mirrorsListFile =
+    let
+      # Add a prefix to the names of the mirrors to avoid variable name clashes in the builder
+      mirrorsPrefixed = mapAttrs' (n: v: nameValuePair ("_mirror_" + n) v) mirrors;
+    in
+    toFile "mirrors-list" (toShellVars mirrorsPrefixed);
 
   # Names of the master sites that are mirrored (i.e., "sourceforge",
   # "gnu", etc.).
   sites = builtins.attrNames mirrors;
+
+  # partially applied set of functions for each hash type
+  # this is indexed into with a prefix to avoid re-calling hasPrefix, since it
+  # takes advantage of partial application for performance reasons
+  hasAlgoPrefix = lib.genAttrs [ "sha256" "sha1" "sha512" ] hasPrefix;
+
+  matchColonInfix = match ".*:.*";
+  splitOnColon = match "([^:]+)[:](.*)";
 
   /**
     Resolve a URL against the available mirrors.
@@ -75,9 +81,12 @@ let
     A list of resolved URLs.
   */
   resolveUrl =
+    let
+      matchMirror = match "mirror://([[:alpha:]]+)/(.+)";
+    in
     url:
     let
-      mirrorSplit = match "mirror://([[:alpha:]]+)/(.+)" url;
+      mirrorSplit = matchMirror url;
       mirrorName = head mirrorSplit;
       mirrorList = mirrors."${mirrorName}" or (throw "unknown mirror:// site ${mirrorName}");
     in
@@ -87,10 +96,10 @@ let
       map (mirror: mirror + elemAt mirrorSplit 1) mirrorList;
 
   rewriteAllUrls =
-    urls:
     if rewriteURL == null then
-      urls
+      urls: urls
     else
+      urls:
       let
         u = concatMap (
           url:
@@ -217,58 +226,55 @@ lib.extendMkDerivation {
     }@args:
 
     let
-      preRewriteUrls =
-        if urls != [ ] && url == "" then
-          (if isList urls then urls else throw "`urls` is not a list: ${lib.generators.toPretty { } urls}")
-        else if urls == [ ] && url != "" then
+      urls_ = rewriteAllUrls (
+        if urls == [ ] && url != "" then
           (
             if isString url then [ url ] else throw "`url` is not a string: ${lib.generators.toPretty { } urls}"
           )
+        else if urls != [ ] && url == "" then
+          (if isList urls then urls else throw "`urls` is not a list: ${lib.generators.toPretty { } urls}")
         else
-          throw "fetchurl requires either `url` or `urls` to be set: ${lib.generators.toPretty { } args}";
+          throw "fetchurl requires either `url` or `urls` to be set: ${lib.generators.toPretty { } args}"
+      );
 
-      urls_ = rewriteAllUrls preRewriteUrls;
-
+      # If any hash is set, ensure all the others aren't set. Make sure that each
+      # condition includes all 5 hash types!
       hash_ =
-        if
-          length (
-            filter (s: s != "") [
-              hash
-              outputHash
-              sha1
-              sha256
-              sha512
-            ]
-          ) > 1
-        then
-          throw "multiple hashes passed to fetchurl: ${lib.generators.toPretty { } urls_}"
-        else
-
-        if hash != "" then
+        if hash != "" && (outputHash == "" && sha1 == "" && sha256 == "" && sha512 == "") then
           {
             outputHashAlgo = null;
             outputHash = hash;
           }
-        else if outputHash != "" then
-          if outputHashAlgo != "" then
-            { inherit outputHashAlgo outputHash; }
-          else
-            throw "fetchurl was passed outputHash without outputHashAlgo: ${lib.generators.toPretty { } urls_}"
-        else if sha512 != "" then
-          {
-            outputHashAlgo = "sha512";
-            outputHash = sha512;
-          }
-        else if sha256 != "" then
+        else if sha256 != "" && (hash == "" && outputHash == "" && sha1 == "" && sha512 == "") then
           {
             outputHashAlgo = "sha256";
             outputHash = sha256;
           }
-        else if sha1 != "" then
+        else if outputHash != "" && (hash == "" && sha1 == "" && sha256 == "" && sha512 == "") then
+          if outputHashAlgo != "" then
+            { inherit outputHashAlgo outputHash; }
+          else
+            throw "fetchurl was passed outputHash without outputHashAlgo: ${lib.generators.toPretty { } urls_}"
+        else if sha512 != "" && (hash == "" && outputHash == "" && sha1 == "" && sha256 == "") then
+          {
+            outputHashAlgo = "sha512";
+            outputHash = sha512;
+          }
+        else if sha1 != "" && (hash == "" && outputHash == "" && sha256 == "" && sha512 == "") then
           {
             outputHashAlgo = "sha1";
             outputHash = sha1;
           }
+        else if
+          filter (s: s != "") [
+            hash
+            outputHash
+            sha1
+            sha256
+            sha512
+          ] != [ ]
+        then
+          throw "multiple hashes passed to fetchurl: ${lib.generators.toPretty { } urls_}"
         else if cacert != null then
           {
             outputHashAlgo = null;
@@ -277,8 +283,8 @@ lib.extendMkDerivation {
         else
           throw "fetchurl requires a hash for fixed-output derivation: ${lib.generators.toPretty { } urls_}";
 
-      finalHashHasColon = match ".*:.*" finalAttrs.hash != null;
-      finalHashColonMatch = match "([^:]+)[:](.*)" finalAttrs.hash;
+      finalHashHasColon = matchColonInfix finalAttrs.hash != null;
+      finalHashColonMatch = splitOnColon finalAttrs.hash;
     in
 
     derivationArgs
@@ -299,6 +305,8 @@ lib.extendMkDerivation {
 
       nativeBuildInputs = defaultNativeBuildInputs ++ nativeBuildInputs;
 
+      strictDeps = true;
+
       urls = urls_;
 
       # If set, prefer the content-addressable mirrors
@@ -310,7 +318,7 @@ lib.extendMkDerivation {
         if
           hash_.outputHashAlgo == null
           || hash_.outputHash == ""
-          || hasPrefix hash_.outputHashAlgo hash_.outputHash
+          || hasAlgoPrefix.${hash_.outputHashAlgo} hash_.outputHash
         then
           hash_.outputHash
         else
@@ -326,19 +334,22 @@ lib.extendMkDerivation {
 
       # Disable TLS verification only when we know the hash and no credentials are
       # needed to access the resource
-      env.SSL_CERT_FILE =
-        if
-          (
-            hash_.outputHash == ""
-            || hash_.outputHash == fakeSha256
-            || hash_.outputHash == fakeSha512
-            || hash_.outputHash == fakeHash
-            || netrcPhase != null
-          )
-        then
-          "${cacert}/etc/ssl/certs/ca-bundle.crt"
-        else
-          "/no-cert-file.crt";
+      env = {
+        SSL_CERT_FILE =
+          if
+            (
+              hash_.outputHash == ""
+              || hash_.outputHash == fakeSha256
+              || hash_.outputHash == fakeSha512
+              || hash_.outputHash == fakeHash
+              || netrcPhase != null
+            )
+          then
+            "${cacert}/etc/ssl/certs/ca-bundle.crt"
+          else
+            "/no-cert-file.crt";
+      }
+      // (derivationArgs.env or { });
 
       outputHashMode = if (recursiveHash || executable) then "recursive" else "flat";
 
@@ -368,7 +379,7 @@ lib.extendMkDerivation {
         curlOptsList
         downloadToTemp
         executable
-        mirrorsFile
+        mirrorsListFile
         postFetch
         showURLs
         ;

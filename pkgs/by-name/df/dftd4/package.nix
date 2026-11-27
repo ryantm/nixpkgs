@@ -16,7 +16,7 @@
   multicharge,
 }:
 
-assert !blas.isILP64 && !lapack.isILP64;
+assert blas.isILP64 == lapack.isILP64;
 assert (
   builtins.elem buildType [
     "meson"
@@ -26,7 +26,7 @@ assert (
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "dftd4";
-  version = "4.2.0";
+  version = "4.3.1";
   __structuredAttrs = true;
   strictDeps = true;
 
@@ -34,7 +34,7 @@ stdenv.mkDerivation (finalAttrs: {
     owner = "dftd4";
     repo = "dftd4";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-uKjNOIza3/I0oREp88oFESoNqEdumo1AztIjcrVb1O8=";
+    hash = "sha256-hItJfHB3ZDFlqixrhT9Ut54I0xC3BoWeor5mVzZhLK8=";
   };
 
   patches = [
@@ -64,8 +64,22 @@ stdenv.mkDerivation (finalAttrs: {
     multicharge
   ];
 
+  mesonFlags = [
+    "-Dilp64=${if blas.isILP64 then "true" else "false"}"
+  ]
+  ++ lib.optionals blas.isILP64 [
+    "-Dlapack=custom"
+    "-Dcustom_libraries=blas,lapack"
+  ];
+
   cmakeFlags = [
     (lib.strings.cmakeBool "BUILD_SHARED_LIBS" (!stdenv.hostPlatform.isStatic))
+    (lib.cmakeBool "WITH_ILP64" blas.isILP64)
+  ]
+  ++ lib.optionals blas.isILP64 [
+    "-DBLAS_LIBRARIES=${lib.getLib blas}/lib/libblas${
+      if stdenv.hostPlatform.isStatic then ".a" else stdenv.hostPlatform.extensions.sharedLibrary
+    }"
   ];
 
   outputs = [
@@ -85,11 +99,8 @@ stdenv.mkDerivation (finalAttrs: {
     description = "Generally Applicable Atomic-Charge Dependent London Dispersion Correction";
     changelog = "https://github.com/dftd4/dftd4/releases/tag/${finalAttrs.src.tag}";
     mainProgram = "dftd4";
-    license = with lib.licenses; [
-      lgpl3Plus
-      gpl3Plus
-    ];
-    homepage = "https://github.com/grimme-lab/dftd4";
+    license = lib.licenses.lgpl3Plus;
+    homepage = "https://github.com/dftd4/dftd4";
     platforms = lib.platforms.linux;
     maintainers = [ lib.maintainers.sheepforce ];
   };

@@ -3,37 +3,37 @@
   buildPythonPackage,
   fetchFromGitHub,
   hatchling,
-  pymodbus,
+  jinja2,
+  modbus-connection,
   pytestCheckHook,
   pytest-asyncio,
   pytest-mock,
 }:
 
-buildPythonPackage rec {
+buildPythonPackage (finalAttrs: {
   pname = "pystiebeleltron";
-  version = "0.3.2";
+  version = "0.11.0";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "ThyMYthOS";
     repo = "python-stiebel-eltron";
-    tag = "v${version}";
-    hash = "sha256-ApFhqJsYC/Kym1ITq5dn0/OQ6++led6RbG97DGvno0k=";
+    tag = "v${finalAttrs.version}";
+    hash = "sha256-42lfxunhQnoz24MqvU7wZZqwSqV6Dk6HHqaLJzGQy18=";
   };
 
   build-system = [ hatchling ];
 
-  dependencies = [ pymodbus ];
+  dependencies = [
+    modbus-connection
+  ]
+  ++ modbus-connection.optional-dependencies.tmodbus;
 
   nativeCheckInputs = [
+    jinja2
     pytestCheckHook
     pytest-asyncio
     pytest-mock
-  ];
-
-  disabledTestPaths = [
-    # mock server is not compatible with pymodbus 3.13
-    "test/test_pystiebeleltron.py"
   ];
 
   pythonImportsCheck = [ "pystiebeleltron" ];
@@ -41,7 +41,8 @@ buildPythonPackage rec {
   meta = {
     description = "Python API for interacting with the Stiebel Eltron ISG web gateway via Modbus";
     homepage = "https://github.com/ThyMYthOS/python-stiebel-eltron";
+    changelog = "https://github.com/ThyMYthOS/python-stiebel-eltron/releases/tag/${finalAttrs.src.tag}";
     license = lib.licenses.mit;
     maintainers = [ lib.maintainers.jamiemagee ];
   };
-}
+})

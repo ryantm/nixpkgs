@@ -9,6 +9,7 @@
   fetchNpmDeps,
   npmHooks,
   lib,
+  libgit2,
   libsoup_3,
   nodejs,
   openssh,
@@ -22,41 +23,55 @@
   rustfmt,
   clippy,
   writableTmpDirAsHomeHook,
+  nix-update-script,
 }:
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "radicle-desktop";
-  version = "0.13.0";
+  version = "0.19.0";
+
+  __structuredAttrs = true;
 
   src = fetchFromRadicle {
     seed = "seed.radicle.dev";
-    repo = "z4D5UCArafTzTQpDZNQRuqswh3ury";
-    tag = "releases/${finalAttrs.version}";
-    hash = "sha256-XpzOzyUwAGLF/klXXbBFX5oLRSURB+AsL8n9WWv5x7s=";
+    repo = "z4V1sjrXqjvFdnCUbxPFqd5p4DtH5";
+    tag = "releases/desktop/${finalAttrs.version}";
+    nonConeMode = true;
+    sparseCheckout = [
+      "/.prettierrc"
+      "/desktop"
+      "/package-lock.json"
+      "/package.json"
+      "/shared"
+    ];
     leaveDotGit = true;
     postFetch = ''
       git -C $out rev-parse --short HEAD > $out/.git_head
       rm -rf $out/.git
     '';
+    hash = "sha256-baGrmj9XpqINTTxp0SxQGmucIEdM3dpC5X0pP82jFqI=";
   };
 
   postPatch = ''
-    patchShebangs scripts/copy-katex-assets scripts/check-js scripts/check-rs
+    patchShebangs desktop/scripts/{copy-katex-assets,check-js,check-rs}
 
-    mkdir -p public/twemoji
-    cp -t public/twemoji -r -- ${finalAttrs.twemojiAssets}/assets/svg/*
-    : >scripts/install-twemoji-assets
+    mkdir -p desktop/public/twemoji
+    cp -t desktop/public/twemoji -r -- ${finalAttrs.twemojiAssets}/assets/svg/*
+    : >desktop/scripts/install-twemoji-assets
 
-    substituteInPlace scripts/check-rs \
+    substituteInPlace desktop/scripts/check-rs \
       --replace-fail "-Dwarnings" ""
   '';
 
   npmDeps = fetchNpmDeps {
     inherit (finalAttrs) src;
-    hash = "sha256-EigvRDUmiuz/wt5vZ3NSxovxjvxHVGrHdA9HIod/fO8=";
+    hash = "sha256-snCaZtx4PVot+zo7iH8mLBLEzoGEb+wCfpKzoygXzlU=";
   };
 
-  cargoHash = "sha256-HInTwQYuLVFnRCbQq2hNRPGJP1I9gBRQZQ9ul3DWtBQ=";
+  cargoHash = "sha256-FhbXqjG5J3wfsN/XTyrhXa2ToYO3QcpWia5WvACikw4=";
+
+  cargoRoot = "desktop";
+  buildAndTestSubdir = "desktop";
 
   twemojiAssets = fetchFromGitHub {
     owner = "twitter";
@@ -83,6 +98,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
   buildInputs = [
     glib
     gtk3
+    libgit2
     libsoup_3
     openssl
   ]
@@ -104,6 +120,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
   checkPhase = ''
     runHook preCheck
 
+    pushd desktop
     export RAD_PASSPHRASE=""
     rad auth --alias test
     bins="tests/tmp/bin/heartwood/$HW_RELEASE"
@@ -115,19 +132,22 @@ rustPlatform.buildRustPackage (finalAttrs: {
     npm run test:unit
     scripts/check-js
     scripts/check-rs
+    popd
 
     runHook postCheck
   '';
 
+  __darwinAllowLocalNetworking = true;
+
   passthru = {
     inherit (finalAttrs) env;
-    updateScript = ./update.sh;
+    updateScript = nix-update-script { };
   };
 
   meta = {
     description = "Radicle desktop app";
-    homepage = "https://radicle.network/nodes/seed.radicle.dev/rad:z4D5UCArafTzTQpDZNQRuqswh3ury";
-    changelog = "https://radicle.network/nodes/seed.radicle.dev/rad:z4D5UCArafTzTQpDZNQRuqswh3ury/tree/CHANGELOG.md";
+    homepage = "https://radicle.network/nodes/seed.radicle.dev/rad:z4V1sjrXqjvFdnCUbxPFqd5p4DtH5";
+    changelog = "https://radicle.network/nodes/seed.radicle.dev/rad:z4V1sjrXqjvFdnCUbxPFqd5p4DtH5/tree/desktop/CHANGELOG.md";
     license = lib.licenses.gpl3Only;
     platforms = lib.platforms.unix;
     teams = [ lib.teams.radicle ];

@@ -1,8 +1,7 @@
 {
   lib,
   buildPythonPackage,
-  fetchpatch,
-  fetchPypi,
+  fetchFromGitHub,
   autopage,
   cmd2,
   openstackdocstheme,
@@ -14,23 +13,25 @@
   callPackage,
 }:
 
-buildPythonPackage rec {
+buildPythonPackage (finalAttrs: {
   pname = "cliff";
-  version = "4.13.2";
+  version = "4.17.0";
   pyproject = true;
 
-  src = fetchPypi {
-    inherit pname version;
-    hash = "sha256-6Um1hbm2RUnehziM79Seh91jCVziufO5j5Ej182Uvho=";
+  src = fetchFromGitHub {
+    owner = "openstack";
+    repo = "cliff";
+    tag = finalAttrs.version;
+    hash = "sha256-zHUWBNdfekEpAqvdY8K9uyFcJYYKB4Z8eAjR3O8080U=";
   };
 
-  patches = [
-    # Fix compatibility with Python 3.14.3
-    (fetchpatch {
-      url = "https://github.com/openstack/cliff/commit/391261c849c994ca2d3f42926497e633047ed8c7.patch";
-      hash = "sha256-jcjZKJlcJ8C4VKJejb/bjJ6Li4JjeC2xWK/nFWzIL2c=";
-    })
-  ];
+  # Manually set version since pbr wants to get it from git (not in a tarball)
+  env.PBR_VERSION = finalAttrs.version;
+
+  postPatch = ''
+    # pbr needs git to ship subpackages and package data
+    echo "recursive-include cliff *" > MANIFEST.in
+  '';
 
   build-system = [
     openstackdocstheme
@@ -51,7 +52,10 @@ buildPythonPackage rec {
   # check in passthru.tests.pytest to escape infinite recursion with stestr
   doCheck = false;
 
-  pythonImportsCheck = [ "cliff" ];
+  pythonImportsCheck = [
+    "cliff"
+    "cliff.formatters"
+  ];
 
   passthru.tests = {
     pytest = callPackage ./tests.nix { };
@@ -63,4 +67,4 @@ buildPythonPackage rec {
     license = lib.licenses.asl20;
     teams = [ lib.teams.openstack ];
   };
-}
+})

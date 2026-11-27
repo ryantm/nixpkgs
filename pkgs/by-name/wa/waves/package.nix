@@ -10,16 +10,16 @@
 }:
 buildGoModule (finalAttrs: {
   pname = "waves";
-  version = "0.1.46";
+  version = "0.1.51";
 
   src = fetchFromGitHub {
     owner = "llehouerou";
     repo = "waves";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-vl9xMUo6vaJfGAc5Cj1+bLPFYOVvZt+ZB0lkD+i8dtI=";
+    hash = "sha256-N+FEfYB8e7cdPbyGnwaOYrUUP/lvN4AAk+MsktIIkd0=";
   };
 
-  vendorHash = "sha256-lps0OdY8KoILJh/roY78iC+bYHPeENioQoIsL6v/N0A=";
+  vendorHash = "sha256-CpAkWIJZJokJZhGMtr2h/aXDRV1JIsf3nVhNV5U0Bg0=";
 
   nativeBuildInputs = lib.optionals stdenv.hostPlatform.isLinux [ pkg-config ];
 
@@ -28,7 +28,7 @@ buildGoModule (finalAttrs: {
   ldflags = [
     "-s"
     "-w"
-    "-X main.version=${finalAttrs.version}"
+    "-X github.com/llehouerou/waves/internal/version.Version=${finalAttrs.version}"
   ];
 
   doCheck = !stdenv.hostPlatform.isDarwin;

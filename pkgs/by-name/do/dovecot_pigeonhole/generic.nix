@@ -3,6 +3,7 @@
   url,
   hash,
   patches ? _: [ ],
+  knownVulnerabilities ? [ ],
 }:
 {
   lib,
@@ -10,7 +11,9 @@
   fetchpatch,
   fetchzip,
   dovecot,
+  icu75,
   openssl,
+  pkg-config,
   libstemmer,
   perl,
   python3,
@@ -26,6 +29,9 @@ stdenv.mkDerivation (finalAttrs: {
   pname = "dovecot-pigeonhole";
   inherit version;
 
+  __structuredAttrs = true;
+  strictDeps = true;
+
   src = fetchzip {
     url = url {
       inherit (finalAttrs) version;
@@ -40,13 +46,19 @@ stdenv.mkDerivation (finalAttrs: {
     patchShebangs src/plugins/settings/settings-get.pl
   '';
 
-  nativeBuildInputs = lib.optional isCurrent perl;
+  nativeBuildInputs = [
+    pkg-config
+  ]
+  ++ lib.optional isCurrent perl;
 
   buildInputs = [
     dovecot
     openssl
   ]
-  ++ lib.optional (isCurrent && stdenv.hostPlatform.isDarwin) libstemmer
+  ++ lib.optionals (isCurrent && stdenv.hostPlatform.isDarwin) [
+    icu75
+    libstemmer
+  ]
   ++ lib.optionals withLDAP [
     cyrus_sasl
     openldap
@@ -91,5 +103,6 @@ stdenv.mkDerivation (finalAttrs: {
       prince213
     ];
     platforms = lib.platforms.unix;
+    inherit knownVulnerabilities;
   };
 })

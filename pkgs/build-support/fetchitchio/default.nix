@@ -85,6 +85,8 @@ lib.extendMkDerivation {
         ]
         ++ nativeBuildInputs;
 
+        strictDeps = true;
+
         inherit preferLocalBuild;
 
         # ENV
@@ -110,7 +112,7 @@ lib.extendMkDerivation {
         builder = builtins.toFile "builder.sh" ''
           source "$NIX_ATTRS_SH_FILE"
           runHook preFetch
-          python ${./fetchitchio.py}
+          python -P ${./fetchitchio.py}
           runHook postFetch
         '';
       }

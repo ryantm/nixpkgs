@@ -5,28 +5,30 @@
   makeBinaryWrapper,
   symlinkJoin,
   versionCheckHook,
-  vale,
   valeStyles,
 }:
 
-buildGoModule rec {
+buildGoModule (finalAttrs: {
   pname = "vale";
-  version = "3.15.1";
+  version = "3.28.1";
 
   subPackages = [ "cmd/vale" ];
 
   src = fetchFromGitHub {
-    owner = "errata-ai";
+    owner = "vale-cli";
     repo = "vale";
-    tag = "v${version}";
-    hash = "sha256-zp3yEFtYOMsPh6WqIzDnBSvO4mPAcysPkGSnsM44Z9U=";
+    tag = "v${finalAttrs.version}";
+    hash = "sha256-CpnGwDR60YQTwzRicQl9ZYwjR6vfbpShkPYr5bFbgSU=";
   };
 
-  vendorHash = "sha256-OOatkx5c+0VCT1+M/Ra60Ujy/djgQd1f3SIYoh9Mesg=";
+  # go mod vendor prunes go-tree-sitter/php/tree_sitter/ because it is
+  # headers-only. see https://github.com/golang/go/issues/26366
+  proxyVendor = true;
+  vendorHash = "sha256-0saUjaPuUzMBBLbo4p4McH5YFYq5vvjuuCZRT0lvvMU=";
 
   ldflags = [
     "-s"
-    "-X main.version=${version}"
+    "-X main.version=${finalAttrs.version}"
   ];
 
   # Tests require network access
@@ -38,16 +40,14 @@ buildGoModule rec {
   passthru.withStyles =
     selector:
     symlinkJoin {
-      name = "vale-with-styles-${vale.version}";
-      paths = [ vale ] ++ selector valeStyles;
+      name = "vale-with-styles-${finalAttrs.version}";
+      paths = [ finalAttrs.finalPackage ] ++ selector valeStyles;
       nativeBuildInputs = [ makeBinaryWrapper ];
       postBuild = ''
         wrapProgram "$out/bin/vale" \
           --set VALE_STYLES_PATH "$out/share/vale/styles/"
       '';
-      meta = {
-        inherit (vale.meta) mainProgram;
-      };
+      meta.mainProgram = finalAttrs.meta.mainProgram;
     };
 
   meta = {
@@ -61,9 +61,9 @@ buildGoModule rec {
       ```
     '';
     homepage = "https://vale.sh/";
-    changelog = "https://github.com/errata-ai/vale/releases/tag/v${version}";
+    changelog = "https://github.com/vale-cli/vale/releases/tag/${finalAttrs.src.tag}";
     mainProgram = "vale";
     license = lib.licenses.mit;
     maintainers = with lib.maintainers; [ pbsds ];
   };
-}
+})

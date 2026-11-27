@@ -91,7 +91,10 @@ let
 
               click_when_unobstructed((By.XPATH, "//a[contains(., 'Skip to web app')]"))
 
-              click_when_unobstructed((By.XPATH, "//button[contains(., 'New item')]"))
+              # Skip the tour on first login
+              click_when_unobstructed((By.XPATH, "//button[contains(., 'Skip')]"))
+
+              click_when_unobstructed((By.XPATH, "//button[contains(., 'Add item')]"))
 
               driver.find_element(By.XPATH, '//input[@formcontrolname="name"]').send_keys(
                   'secrets'
@@ -153,6 +156,12 @@ let
                 };
 
                 sqlite = {
+                  services.vaultwarden.backupDir = "/srv/backups/vaultwarden";
+
+                  environment.systemPackages = [ pkgs.sqlite ];
+                };
+
+                sqlite_system = {
                   services.vaultwarden.backupDir = "/srv/backups/vaultwarden";
 
                   environment.systemPackages = [ pkgs.sqlite ];
@@ -254,8 +263,9 @@ builtins.mapAttrs (k: v: makeVaultwardenTest k v) {
   mysql = { };
   postgresql = { };
   sqlite = { };
+  sqlite_system = { };
   sqlite-backup = {
-    backend = "sqlite";
+    backend = "sqlite_system";
     withClient = false;
 
     testScript = ''

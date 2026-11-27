@@ -18,16 +18,15 @@ let
 in
 buildPythonPackage.override { inherit (torch) stdenv; } (finalAttrs: {
   pname = "pyg-lib";
-  version = "0.7.0";
+  version = "0.9.0";
   pyproject = true;
-  __structuredAttrs = true;
 
   src = fetchFromGitHub {
     owner = "pyg-team";
     repo = "pyg-lib";
     tag = finalAttrs.version;
     fetchSubmodules = true;
-    hash = "sha256-czHSOIocmoup502kLS8v+aeu6fVPPhqFh3hbGcFvNEQ=";
+    hash = "sha256-ZqJ5raXdTkqftUi1wKyc20UPVn2Eyo/cf87K2N1Pt3k=";
   };
 
   build-system = [

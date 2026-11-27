@@ -1,7 +1,6 @@
 {
   lib,
   fetchurl,
-  ocaml,
   buildDunePackage,
   ounit,
   ppx_deriving,
@@ -9,7 +8,7 @@
   ppxlib,
   version ?
     if lib.versionAtLeast ppxlib.version "0.36" then
-      "1.12.0"
+      "1.13.0"
     else if lib.versionAtLeast ppxlib.version "0.26" then
       "1.11.0"
     else if lib.versionAtLeast ppxlib.version "0.24.0" then
@@ -26,14 +25,15 @@ buildDunePackage {
     url =
       let
         dir = if lib.versionAtLeast version "1.11" then "v${version}" else "${version}";
+        ext = if lib.versionAtLeast version "1.13" then "tar.gz" else "tbz";
       in
-      "https://github.com/ocaml-ppx/ppx_import/releases/download/${dir}/ppx_import-${version}.tbz";
+      "https://github.com/ocaml-ppx/ppx_import/releases/download/${dir}/ppx_import-${version}.${ext}";
 
     hash =
       {
         "1.9.1" = "sha256-0bSY4u44Ds84XPIbcT5Vt4AG/4PkzFKMl9CDGFZyIdI=";
         "1.11.0" = "sha256-Jmfv1IkQoaTkyxoxp9FI0ChNESqCaoDsA7D4ZUbOrBo=";
-        "1.12.0" = "sha256-1vpYHFl0rEdG3hE+6BCpWmfLvdLvoEx+Jxq0DFrRdJc=";
+        "1.13.0" = "sha256-QQcbV5hAhsEkhvOFbdFSlu5kJ1jg258EBk5KvozFO2k=";
       }
       ."${version}";
   };
@@ -54,6 +54,5 @@ buildDunePackage {
     description = "Syntax extension for importing declarations from interface files";
     license = lib.licenses.mit;
     homepage = "https://github.com/ocaml-ppx/ppx_import";
-    broken = lib.versionAtLeast ocaml.version "5.5";
   };
 }

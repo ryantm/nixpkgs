@@ -6,11 +6,12 @@
   freetype,
   gettext,
   glib,
-  gtk2,
   libGL,
   libGLU,
   libmpeg2,
-  lua,
+  libx11,
+  libxi,
+  lua5_2_compat,
   openal,
   pkg-config,
   strip-nondeterminism,
@@ -19,9 +20,12 @@
   zlib,
   nix-update-script,
 }:
+let
+  lua = lua5_2_compat;
+in
 
 stdenv.mkDerivation (finalAttrs: {
-  pname = "fs-uae";
+  pname = "fsuae";
   version = "3.2.35";
 
   src = fetchFromGitHub {
@@ -30,6 +34,8 @@ stdenv.mkDerivation (finalAttrs: {
     rev = "v${finalAttrs.version}";
     hash = "sha256-e+Q+PC6Kpq3OBKsgoRvmu2p9dQfJeRCdFO1agXIGcU8=";
   };
+
+  enableParallelBuilding = true;
 
   nativeBuildInputs = [
     autoreconfHook
@@ -43,14 +49,19 @@ stdenv.mkDerivation (finalAttrs: {
     freetype
     gettext
     glib
-    gtk2
     libGL
     libGLU
     libmpeg2
+    libx11
+    libxi
     lua
     openal
     zlib
   ];
+
+  # GCC 16 defaults to C++20, where std::numbers clashes with the
+  # `numbers` array in src/statusline.cpp. Build with C++17 like older GCC.
+  env.NIX_CFLAGS_COMPILE = "-std=gnu++17";
 
   strictDeps = true;
 
@@ -59,7 +70,10 @@ stdenv.mkDerivation (finalAttrs: {
     strip-nondeterminism --type zip $out/share/fs-uae/fs-uae.dat
   '';
 
-  passthru.updateScript = nix-update-script { };
+  passthru.updateScript = nix-update-script {
+    # Upstream also tags development versions, only follow releases
+    extraArgs = [ "--use-github-releases" ];
+  };
 
   meta = {
     homepage = "https://fs-uae.net";

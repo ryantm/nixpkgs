@@ -23,6 +23,8 @@ bootstrapData
 
     ```
     allSortedCudaCapabilities = [
+      "3.5"
+      "3.7"
       "5.0"
       "5.2"
       "6.0"
@@ -45,6 +47,18 @@ bootstrapData
       "10.3"
       "10.3a"
       "10.3f"
+      "10.7"
+      "10.7a"
+      "10.7f"
+      "11.0"
+      "11.0a"
+      "11.0f"
+      "12.0"
+      "12.0a"
+      "12.0f"
+      "12.1"
+      "12.1a"
+      "12.1f"
     ];
     ```
   */
@@ -61,5 +75,44 @@ bootstrapData
   */
   cudaArchNameToCapabilities = lib.groupBy (
     cudaCapability: db.cudaCapabilityToInfo.${cudaCapability}.archName
+  ) db.allSortedCudaCapabilities;
+
+  /**
+    All architecture-specific CUDA capabilities, sorted by version.
+
+    # Type
+
+    ```
+    architectureSpecificCudaCapabilities :: [CudaCapability]
+    ```
+  */
+  architectureSpecificCudaCapabilities = lib.filter (
+    cudaCapability: db.cudaCapabilityToInfo.${cudaCapability}.isArchitectureSpecific
+  ) db.allSortedCudaCapabilities;
+
+  /**
+    All family-specific CUDA capabilities, sorted by version.
+
+    # Type
+
+    ```
+    familySpecificCudaCapabilities :: [CudaCapability]
+    ```
+  */
+  familySpecificCudaCapabilities = lib.filter (
+    cudaCapability: db.cudaCapabilityToInfo.${cudaCapability}.isFamilySpecific
+  ) db.allSortedCudaCapabilities;
+
+  /**
+    All Jetson CUDA capabilities, sorted by version.
+
+    # Type
+
+    ```
+    jetsonCudaCapabilities :: [CudaCapability]
+    ```
+  */
+  jetsonCudaCapabilities = lib.filter (
+    cudaCapability: db.cudaCapabilityToInfo.${cudaCapability}.isJetson
   ) db.allSortedCudaCapabilities;
 }

@@ -35,6 +35,7 @@ lib.makeOverridable (
       i586 = "i386";
       i686 = "i386";
       x86_64 = "amd64";
+      riscv64 = "riscv64";
     };
 
     archMap = {
@@ -44,6 +45,7 @@ lib.makeOverridable (
       i586 = "i386";
       i686 = "i386";
       x86_64 = "amd64";
+      riscv64 = "riscv64";
     };
 
   in
@@ -89,10 +91,14 @@ lib.makeOverridable (
       strictDeps = true;
 
       meta = {
-        maintainers = with lib.maintainers; [ ericson2314 ];
+        maintainers = with lib.maintainers; [
+          ericson2314
+          iamanaws
+        ];
         platforms = lib.platforms.openbsd;
         license = lib.licenses.bsd2;
-      };
+      }
+      // attrs.meta or { };
     }
     // lib.optionalAttrs stdenv'.hasCC {
       # TODO should CC wrapper set this?
@@ -103,6 +109,9 @@ lib.makeOverridable (
       dontBuild = true;
     }
     // lib.optionalAttrs stdenv'.hostPlatform.isStatic { NOLIBSHARED = true; }
-    // (removeAttrs attrs [ "extraNativeBuildInputs" ])
+    // (removeAttrs attrs [
+      "extraNativeBuildInputs"
+      "meta"
+    ])
   )
 )

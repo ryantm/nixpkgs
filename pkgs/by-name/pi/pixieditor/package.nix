@@ -46,13 +46,13 @@ let
 in
 buildDotnetModule (finalAttrs: {
   pname = "pixieditor";
-  version = "2.1.1.5";
+  version = "2.1.2.4";
 
   src = fetchFromGitHub {
     owner = "PixiEditor";
     repo = "PixiEditor";
     tag = finalAttrs.version;
-    hash = "sha256-XtDcAnMgNc4Su2hj5OV2SP+LFIAMSfH8h2LLw+VbHok=";
+    hash = "sha256-40oOf9dgHBsHd9fUhHctvmB1//aGD++snd+VwsgOxIU=";
     fetchSubmodules = true;
   };
 
@@ -182,8 +182,9 @@ buildDotnetModule (finalAttrs: {
     platforms = [
       "x86_64-linux"
       "aarch64-linux"
-      "x86_64-darwin"
       "aarch64-darwin"
     ];
+    # Temporary disable until the missing DeviceId.Mac missing dependecy get's solved
+    badPlatforms = [ "aarch64-darwin" ];
   };
 })

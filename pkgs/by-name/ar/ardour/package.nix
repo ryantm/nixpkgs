@@ -2,13 +2,12 @@
   lib,
   stdenv,
   fetchgit,
-  fetchpatch,
   fetchzip,
   alsa-lib,
   apple-sdk,
   aubio,
   boost,
-  cairomm,
+  cairomm_1_0,
   cppunit,
   curl,
   darwin,
@@ -21,7 +20,7 @@
   flac,
   fluidsynth,
   glibc,
-  glibmm,
+  glibmm_2_4,
   graphviz,
   harvid,
   hidapi,
@@ -36,7 +35,7 @@
   libpulseaudio,
   librdf_rasqal,
   libsamplerate,
-  libsigcxx,
+  libsigcxx_2_0,
   libsndfile,
   libusb1,
   libuv,
@@ -49,7 +48,7 @@
   lv2,
   makeWrapper,
   pango,
-  pangomm,
+  pangomm_1_4,
   perl,
   pkg-config,
   python3,
@@ -88,14 +87,14 @@ let
 
   generic = stdenv.mkDerivation (finalAttrs: {
     pname = "ardour";
-    version = "9.7";
+    version = "9.10";
 
     # We can't use `fetchFromGitea` here, as attempting to fetch release archives from git.ardour.org
     # result in an empty archive. See https://tracker.ardour.org/view.php?id=7328 for more info.
     src = fetchgit {
       url = "git://git.ardour.org/ardour/ardour.git";
       tag = finalAttrs.version;
-      hash = "sha256-6gtlnk/oPXWJcN5tcb1r7dXyLpHPTSJwd8VfOjjFnWQ=";
+      hash = "sha256-0325KN8TccXPP9OCyah60zHbsI8WrFNianOf8CvrcUU=";
     };
 
     patches = [
@@ -134,7 +133,7 @@ let
     buildInputs = [
       aubio
       boost
-      cairomm
+      cairomm_1_0
       cppunit
       curl
       ffmpeg
@@ -142,7 +141,7 @@ let
       fftwSinglePrec
       flac
       fluidsynth
-      glibmm
+      glibmm_2_4
       hidapi
       itstool
       kissfft
@@ -154,7 +153,7 @@ let
       libogg
       librdf_rasqal
       libsamplerate
-      libsigcxx
+      libsigcxx_2_0
       libsndfile
       libusb1
       libuv
@@ -165,7 +164,7 @@ let
       lrdf
       lv2
       pango
-      pangomm
+      pangomm_1_4
       perl
       python3
       qm-dsp
@@ -193,7 +192,7 @@ let
       # https://discourse.ardour.org/t/ardour-8-2-released/109615/8
       # "--use-external-libs"
     ]
-    ++ lib.optional finalAttrs.doCheck "--test"
+    ++ lib.optional finalAttrs.finalPackage.doCheck "--test"
     ++ lib.optional optimize "--optimize";
 
     env = {
@@ -294,15 +293,6 @@ let
       majorVersion = lib.versions.major finalAttrs.version;
     in
     {
-      patches = finalAttrs.patches ++ [
-        (fetchpatch {
-          # TODO: Remove with the next release of Ardour
-          url = "https://github.com/Ardour/ardour/commit/bff1ebbca2f50f1a0d2285efcf6e0c8237a07d8f.diff";
-          hash = "sha256-Ye22S2bmRt+c/GrrvgWCDlzUqSwaOdAh5vFuJb/BqV8=";
-          name = "fix-path-to-mo-files.diff";
-        })
-      ];
-
       postPatch = finalAttrs.postPatch + ''
         substituteInPlace wscript \
           --replace-fail '-DMAC_OS_X_VERSION_MAX_ALLOWED=110000' '-DMAC_OS_X_VERSION_MAX_ALLOWED=140000' \

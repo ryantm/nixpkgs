@@ -23,7 +23,7 @@
 }:
 buildPythonPackage (finalAttrs: {
   pname = "qtile-extras";
-  version = "0.36.0";
+  version = "0.37.1";
   # nixpkgs-update: no auto update
   # should be updated alongside with `qtile`
   pyproject = true;
@@ -32,7 +32,7 @@ buildPythonPackage (finalAttrs: {
     owner = "elParaguayo";
     repo = "qtile-extras";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-H2A5Y+ukTkUqjQB5eQVuOMYpf7T8RgQlNlQ25wlWwr8=";
+    hash = "sha256-sR/+Nmd/reMSi2Cu3WBKgsBsTmNiNWsFsEhap2YHqF4=";
   };
 
   build-system = [ setuptools-scm ];
@@ -72,6 +72,8 @@ buildPythonPackage (finalAttrs: {
     # AttributeError: 'NoneType' object has no attribute 'theta'
     "test_image_size_horizontal"
     "test_image_size_vertical"
+    # Import error
+    "test_init_import_error_no_fallback"
   ];
 
   disabledTestPaths = [
@@ -83,8 +85,8 @@ buildPythonPackage (finalAttrs: {
   ];
 
   pytestFlags = [
-    "--reruns 3"
-    "--reruns-delay 5"
+    "--reruns=3"
+    "--reruns-delay=5"
   ];
 
   preCheck = ''
@@ -102,6 +104,6 @@ buildPythonPackage (finalAttrs: {
     homepage = "https://github.com/elParaguayo/qtile-extras";
     changelog = "https://github.com/elParaguayo/qtile-extras/blob/${finalAttrs.src.tag}/CHANGELOG";
     license = lib.licenses.mit;
-    maintainers = with lib.maintainers; [ arjan-s ];
+    maintainers = with lib.maintainers; [ sigmanificient ];
   };
 })

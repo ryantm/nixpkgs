@@ -3,28 +3,26 @@
   stdenv,
   callPackage,
   fetchFromGitHub,
-  apple-sdk_14,
   ncurses,
   gettext,
   pkg-config,
   cscope,
-  ruby_3_4,
+  ruby_4_0,
   tcl,
   perl,
   luajit,
   python3,
+  pixman,
   # Setting withXcodePath makes it use that instead of the system-default Xcode.
   # This can be set to one of the `darwin.xcode_*` packages as well.
   # If set, this should be a path to Xcode.app, e.g. `"/Applications/Xcode.app"`.
   withXcodePath ? null,
-  # TODO: Clean up on `staging`
-  llvmPackages,
 }:
 
 # Try to match MacVim's documented script interface compatibility
 let
-  # Ruby 3.4
-  ruby = ruby_3_4;
+  # Ruby 4.0
+  ruby = ruby_4_0;
 in
 
 let
@@ -33,7 +31,7 @@ in
 stdenv.mkDerivation (finalAttrs: {
   pname = "macvim";
 
-  version = "182";
+  version = "184";
 
   src = fetchFromGitHub {
     owner = "macvim-dev";
@@ -43,21 +41,18 @@ stdenv.mkDerivation (finalAttrs: {
         releaseType = if lib.hasInfix "." finalAttrs.version then "prerelease" else "release";
       in
       "${releaseType}-${finalAttrs.version}";
-    hash = "sha256-JEb71wZcvFsz94vb3+gC83BhlEccjlPrpr9RCXDUEIo=";
+    hash = "sha256-1bsoqL5tQiRJT/bS9Usbzzl4ccsJ23lTrN4WlqHrSLc=";
   };
 
   enableParallelBuilding = true;
 
   nativeBuildInputs = [
     pkg-config
-    # TODO: Clean up on `staging`
-    llvmPackages.lld
   ];
   buildInputs = [
     # MacVim references up to MAC_OS_VERSION_14_0 in its source
-    # Update this SDK if it adds APIs that use newer versions
+    # Add the SDK here if it adds APIs that use newer versions
     # (check both MAC_OS_VERSION_* and MAC_OS_X_VERSION_*)
-    apple-sdk_14
     gettext
     ncurses
     cscope
@@ -66,6 +61,7 @@ stdenv.mkDerivation (finalAttrs: {
     tcl
     perl
     python3
+    pixman
   ];
 
   patches = [
@@ -123,6 +119,7 @@ stdenv.mkDerivation (finalAttrs: {
     "--enable-perlinterp=yes"
     "--enable-rubyinterp=yes"
     "--enable-tclinterp=yes"
+    "--enable-pixman"
     "--without-local-dir"
     "--with-luajit"
     "--with-lua-prefix=${luajit}"
@@ -192,8 +189,7 @@ stdenv.mkDerivation (finalAttrs: {
   # macvim obj-c log macro triggers -Wformat-security (seems like a bug? it's a string literal!)
   hardeningDisable = common.hardeningDisable ++ [ "format" ];
   # os_log also enables -Werror,-Wformat by default
-  # TODO: Clean up on `staging`
-  env.NIX_CFLAGS_COMPILE = "-DOS_LOG_FORMAT_WARNINGS -fuse-ld=lld";
+  env.NIX_CFLAGS_COMPILE = "-DOS_LOG_FORMAT_WARNINGS";
 
   # We rely on the user's Xcode install to build. It may be located in an arbitrary place, and
   # it's not clear what system-level components it may require, so for now we'll just allow full

@@ -2,43 +2,57 @@
   lib,
   stdenv,
   fetchFromGitHub,
+  fetchurl,
   callPackage,
   jq,
   cmake,
   flex,
   bison,
   gecode,
-  mpfr,
   cbc,
   zlib,
 }:
 
 let
-  gecode_6_3_0 = gecode.overrideAttrs (_: {
-    version = "6.3.0";
-    src = fetchFromGitHub {
-      owner = "gecode";
-      repo = "gecode";
-      rev = "f7f0d7c273d6844698f01cec8229ebe0b66a016a";
-      hash = "sha256-skf2JEtNkRqEwfHb44WjDGedSygxVuqUixskTozi/5k=";
+  # The URLs and hashes below are taken from the cmake configuration files
+  fetch =
+    { url, hash }@arg:
+    {
+      inherit url;
+      file = fetchurl arg;
     };
-    patches = [ ];
-  });
-in
-let
-  gecode = gecode_6_3_0;
+  mimalloc = fetch {
+    url = "https://github.com/microsoft/mimalloc/archive/refs/tags/v3.5.3.tar.gz";
+    hash = "sha256:3b4a15153a59905995f7070296ed604bb5ccc00cabb8b93446931aff77224d47";
+  };
+  tree-sitter = fetch {
+    url = "https://github.com/tree-sitter/tree-sitter/archive/refs/tags/v0.26.12.tar.gz";
+    hash = "sha256:428e2b182fe38eddc100d8bd851e47c96921a69281b66abafc25ba4b0aaeeeab";
+  };
+  tree_feller = fetch {
+    url = "https://github.com/Dekker1/tree-feller/archive/refs/tags/v0.1.1.tar.gz";
+    hash = "sha256:4a6b463da95ec6a9a1014732df6e77dabdb5e20c95cd9005107d1d4596e92cf9";
+  };
 in
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "minizinc";
-  version = "2.9.7";
+  version = "2.11.0";
 
   src = fetchFromGitHub {
     owner = "MiniZinc";
     repo = "libminizinc";
     tag = finalAttrs.version;
-    hash = "sha256-k9imUrGn6VyQVvHU8Ef9wvBIOEHA3SSmEwIui3fW9JI=";
+    hash = "sha256-uCm/LVxBGIguURt67uomH4LBr6mcttDMqZABLvpZH+U=";
   };
+
+  preConfigure = ''
+    substituteInPlace cmake/targets/libminizinc_parser.cmake \
+    --replace-fail ${tree-sitter.url} "${tree-sitter.file}" \
+    --replace-fail ${tree_feller.url} "${tree_feller.file}"
+    substituteInPlace cmake/targets/libmzn.cmake \
+    --replace-fail ${mimalloc.url} "${mimalloc.file}"
+  '';
 
   nativeBuildInputs = [
     bison
@@ -49,7 +63,6 @@ stdenv.mkDerivation (finalAttrs: {
 
   buildInputs = [
     gecode
-    mpfr
     cbc
     zlib
   ];

@@ -16,13 +16,13 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "podofo";
-  version = "1.1.1";
+  version = "1.1.3";
 
   src = fetchFromGitHub {
     owner = "podofo";
     repo = "podofo";
     rev = finalAttrs.version;
-    hash = "sha256-y+3nOynd0xJRF14XA1oK2smL6irCfaFrJ8rvxJS6b8M=";
+    hash = "sha256-B8hEPbtwcdz95Oe6tPEyfXsLOt/trzwwMqDugpEp1L8=";
   };
 
   outputs = [
@@ -66,5 +66,7 @@ stdenv.mkDerivation (finalAttrs: {
     maintainers = with lib.maintainers; [
       kuflierl
     ];
+    # last successful hydra build on darwin was in 2025
+    broken = stdenv.hostPlatform.isDarwin;
   };
 })

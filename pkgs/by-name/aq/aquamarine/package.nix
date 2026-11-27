@@ -1,6 +1,6 @@
 {
   lib,
-  gcc15Stdenv,
+  gcc16Stdenv,
   cmake,
   fetchFromGitHub,
   hwdata,
@@ -21,16 +21,20 @@
   wayland-protocols,
   wayland-scanner,
 }:
-gcc15Stdenv.mkDerivation (finalAttrs: {
+gcc16Stdenv.mkDerivation (finalAttrs: {
   pname = "aquamarine";
-  version = "0.12.1";
+  version = "0.16.0";
 
   src = fetchFromGitHub {
     owner = "hyprwm";
     repo = "aquamarine";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-cUQENbJn0PHQUttXame5+PbGGew+BckHZFTfpb8XGI8=";
+    hash = "sha256-/ccpiTctvwVY8msdVa3Ssj/iKV2LiY2+s72o0bUKFw4=";
   };
+
+  depsBuildBuild = [
+    pkg-config
+  ];
 
   nativeBuildInputs = [
     cmake
@@ -38,11 +42,15 @@ gcc15Stdenv.mkDerivation (finalAttrs: {
     pkg-config
   ];
 
+  propagatedBuildInputs = [
+    hyprutils
+    libdrm
+    wayland
+  ];
+
   buildInputs = [
     hwdata
-    hyprutils
     libdisplay-info
-    libdrm
     libffi
     libGL
     libinput
@@ -50,7 +58,6 @@ gcc15Stdenv.mkDerivation (finalAttrs: {
     pixman
     seatd
     udev
-    wayland
     wayland-protocols
     wayland-scanner
   ];

@@ -1,20 +1,14 @@
 {
   lib,
-  gcc15Stdenv,
+  gcc16Stdenv,
   fetchFromGitHub,
   cmake,
   pkg-config,
-  aquamarine,
-  cairo,
-  hyprgraphics,
   hyprtoolkit,
-  hyprutils,
-  libdrm,
   pipewire,
-  pixman,
 }:
 
-gcc15Stdenv.mkDerivation (finalAttrs: {
+gcc16Stdenv.mkDerivation (finalAttrs: {
   pname = "hyprpwcenter";
   version = "0.1.2";
 
@@ -31,14 +25,8 @@ gcc15Stdenv.mkDerivation (finalAttrs: {
   ];
 
   buildInputs = [
-    aquamarine
-    cairo
-    hyprgraphics
     hyprtoolkit
-    hyprutils
-    libdrm
     pipewire
-    pixman
   ];
 
   meta = {

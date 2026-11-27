@@ -1,7 +1,9 @@
 {
   lib,
   fetchFromGitHub,
+  pkg-config,
   rustPlatform,
+  sqlite,
 }:
 
 rustPlatform.buildRustPackage {
@@ -17,6 +19,10 @@ rustPlatform.buildRustPackage {
 
   cargoHash = "sha256-G2s/IggPXfi7FXOoM5s9I9PEphYHjEdg9W1LCAxIk1M=";
 
+  nativeBuildInputs = [ pkg-config ];
+
+  buildInputs = [ sqlite ];
+
   # tests are network based :(
   doCheck = false;
 
@@ -24,7 +30,7 @@ rustPlatform.buildRustPackage {
     changelog = "https://github.com/ckampfe/russ/blob/master/CHANGELOG.md";
     description = "TUI RSS reader with vim-like controls and a local-first, offline-first focus";
     homepage = "https://github.com/ckampfe/russ";
-    license = with lib.licenses; [ agpl3Only ];
+    license = lib.licenses.agpl3Only;
     maintainers = with lib.maintainers; [ blusk ];
     mainProgram = "russ";
   };

@@ -6,16 +6,18 @@
 }:
 buildNpmPackage rec {
   pname = "stylelint";
-  version = "17.11.0";
+  version = "17.16.0";
 
   src = fetchFromGitHub {
     owner = "stylelint";
     repo = "stylelint";
     tag = version;
-    hash = "sha256-mJGZ7zZ9Fi1VEVHWKu9CmKJsCLdmiHe3mqoGM0OGTRw=";
+    hash = "sha256-PKOmPhDQpY63//gVLjt81Zvb9aNKW63l7dyTYfq5xQc=";
   };
 
-  npmDepsHash = "sha256-RgXZgNEfx76XLrB4E8r/+a0Pi+82PVb/TOeUa0gFhTY=";
+  npmDepsHash = "sha256-6QXOKwMxXy5+ncl0R3ATFmo59974Wc+ZU4mvr1DIO1g=";
+
+  npmFlags = [ "--legacy-peer-deps" ];
 
   dontNpmBuild = true;
 
@@ -26,6 +28,6 @@ buildNpmPackage rec {
     mainProgram = "stylelint";
     homepage = "https://stylelint.io";
     license = lib.licenses.mit;
-    maintainers = [ ];
+    maintainers = with lib.maintainers; [ kamadorueda ];
   };
 }

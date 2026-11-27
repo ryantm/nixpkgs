@@ -8,47 +8,55 @@
   apple-sdk_15,
   libiconv,
   versionCheckHook,
-  nix-update-script,
+  nix-update,
+  writeShellApplication,
+  curl,
   runCommand,
   jq,
+  zstd,
 }:
 
 let
-  # ccusage embeds the LiteLLM model-pricing table at build time. Its build
-  # script otherwise downloads this file from the network, which fails in the
-  # sandbox. Upstream pins the data via a flake input and points
-  # CCUSAGE_PRICING_JSON_PATH at it; mirror that exact revision here so the
-  # build is offline and reproducible (see package.nix + flake.lock in the
-  # upstream repo at tag v20.0.6). Bump this revision together with the package
-  # version; nix-update only refreshes the src and cargo hashes.
+  # ccusage embeds the LiteLLM model-pricing table at build time instead of
+  # downloading it (the Nix sandbox has no network). Upstream pins the exact
+  # data revision via its flake.lock and points CCUSAGE_PRICING_JSON_PATH at it;
+  # we mirror that revision here so the build is offline, reproducible, and
+  # byte-identical to what upstream ships.
+  #
+  # Both values below are kept in sync with the package version by
+  # passthru.updateScript — do not edit them by hand.
+  litellmPricingUrl = "https://raw.githubusercontent.com/BerriAI/litellm/1046716b6d3d45f30d5efad42becbd440d6187ee/model_prices_and_context_window.json";
+  litellmPricingHash = "sha256-j4Bg2M56QMkbmVx01qJ2V1Q9SePBxTQw2r1VbyRDksY=";
   litellmPricing = fetchurl {
-    url = "https://raw.githubusercontent.com/BerriAI/litellm/f27df8d516802ce4c1b32973992154fe83b851cf/model_prices_and_context_window.json";
-    hash = "sha256-zJa6H2EwP9s+hMVs78Y+hwo4UX1dHRtvX5J3MdGh5aI=";
+    url = litellmPricingUrl;
+    hash = litellmPricingHash;
   };
 in
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "ccusage";
-  version = "20.0.6";
+  version = "20.0.48";
 
   src = fetchFromGitHub {
     owner = "ccusage";
     repo = "ccusage";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-uf/FlPprxx4jh74YwjmYMtoIHpTkKrWTLetbNoYiFv4=";
+    hash = "sha256-1Y8BoZqMvmBgRVYkT+faOivrSnvgqEu7Bx4KLrxilbY=";
   };
 
   # The Cargo workspace lives in rust/, not at the repo root.
   cargoRoot = "rust";
   buildAndTestSubdir = "rust";
 
-  cargoHash = "sha256-izA2Gs5nPmt0zn6/e1xM80vyyQHYKGEUDpUFRpyFiB8=";
+  cargoHash = "sha256-B8dMFKe9lqXAlppHA7RldnzCh8vK/782MBZrLW7PPO4=";
 
   __structuredAttrs = true;
-  strictDeps = true;
 
   nativeBuildInputs = [ pkg-config ];
 
-  buildInputs = lib.optionals stdenv.hostPlatform.isDarwin [
+  buildInputs = [
+    zstd
+  ]
+  ++ lib.optionals stdenv.hostPlatform.isDarwin [
     apple-sdk_15
     libiconv
   ];
@@ -72,7 +80,37 @@ rustPlatform.buildRustPackage (finalAttrs: {
   doInstallCheck = true;
 
   passthru = {
-    updateScript = nix-update-script { };
+    updateScript = lib.getExe (writeShellApplication {
+      name = "ccusage-update";
+      runtimeInputs = [
+        curl
+        jq
+        nix-update
+      ];
+      text = ''
+        set -euo pipefail
+
+        attr="''${UPDATE_NIX_ATTR_PATH:-ccusage}"
+
+        nix-update "$attr"
+
+        version=$(nix-instantiate --eval --raw -A "$attr.version")
+        if ! url=$(curl --fail --silent --show-error --location \
+          "https://raw.githubusercontent.com/ccusage/ccusage/v''${version}/flake.lock" \
+          | jq --exit-status --raw-output '.nodes[.nodes.root.inputs.litellm].locked.url'); then
+          echo "Could not find the LiteLLM pricing URL in ccusage v$version flake.lock" >&2
+          exit 1
+        fi
+        hash=$(nix-prefetch-url --type sha256 "$url" \
+          | xargs nix --extra-experimental-features nix-command hash convert --hash-algo sha256 --to sri)
+
+        file=$(nix-instantiate --eval --raw -A "$attr.meta.position" | sed -re 's/:[0-9]+$//')
+        sed -i \
+          -e "s|litellmPricingUrl = \"[^\"]*\"|litellmPricingUrl = \"''${url}\"|" \
+          -e "s|litellmPricingHash = \"sha256-[^\"]*\"|litellmPricingHash = \"''${hash}\"|" \
+          "$file"
+      '';
+    });
 
     tests = {
       # With no agent data on disk, ccusage must still emit a valid, empty JSON

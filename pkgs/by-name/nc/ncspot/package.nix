@@ -2,11 +2,11 @@
   lib,
   stdenv,
   alsa-lib,
-  config,
   dbus,
   fetchFromGitHub,
   libpulseaudio,
   libxcb,
+  aws-lc,
   ncurses,
   nix-update-script,
   openssl,
@@ -15,7 +15,6 @@
   python3,
   rustPlatform,
   versionCheckHook,
-  ueberzug,
   withALSA ? stdenv.hostPlatform.isLinux,
   withClipboard ? true,
   withCover ? false,
@@ -25,33 +24,33 @@
   withNotify ? true,
   withPancurses ? false,
   withPortAudio ? stdenv.hostPlatform.isDarwin,
-  withPulseAudio ? config.pulseaudio or stdenv.hostPlatform.isLinux,
+  withPulseAudio ? stdenv.hostPlatform.isLinux,
   withRodio ? false,
   withShareSelection ? false,
   withTermion ? false,
 }:
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "ncspot";
-  version = "1.3.4";
+  version = "1.5.1";
 
   src = fetchFromGitHub {
     owner = "hrkfdn";
     repo = "ncspot";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-QQeiVmMRF5ql2GVR5nopKtBrTAP8K1Rjs/B89+Azg5s=";
+    hash = "sha256-fR0CP06S6m8t7AwKfqbSym1CwQPhQuk37X1sTpmi8sI=";
   };
 
-  cargoHash = "sha256-u6T5zaeN+rmTH5eM7Inpw/EZh48RauhhVhnAmUMYFIc=";
+  cargoHash = "sha256-a0ajUAB7SaIhGLJcyVa9irrd6ZhJTlXmgM2YR1X8440=";
 
   nativeBuildInputs = [ pkg-config ] ++ lib.optional withClipboard python3;
 
   buildInputs = [
+    aws-lc
     ncurses
   ]
   ++ lib.optional stdenv.hostPlatform.isLinux openssl
   ++ lib.optional (withALSA || withRodio) alsa-lib
   ++ lib.optional withClipboard libxcb
-  ++ lib.optional withCover ueberzug
   ++ lib.optional (withMPRIS || withNotify) dbus
   ++ lib.optional withNcurses ncurses
   ++ lib.optional withPortAudio portaudio

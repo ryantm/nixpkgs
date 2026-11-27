@@ -12,14 +12,14 @@
 
 buildPythonPackage (finalAttrs: {
   pname = "aiocsv";
-  version = "1.4.1";
+  version = "1.4.2";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "MKuranowski";
     repo = "aiocsv";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-WENNtQKvpUuoYai6r8nTRamwCOloVA42YoAA3JGK9B8=";
+    hash = "sha256-WSEVmrMSc0QD4BkEtGblxCPV7SZRk31UcSoM+XAl1DM=";
   };
 
   build-system = [
@@ -47,7 +47,7 @@ buildPythonPackage (finalAttrs: {
   ];
 
   meta = {
-    description = "Library for for asynchronous CSV reading/writing";
+    description = "Library for asynchronous CSV reading/writing";
     homepage = "https://github.com/MKuranowski/aiocsv";
     changelog = "https://github.com/MKuranowski/aiocsv/releases/tag/${finalAttrs.src.tag}";
     license = lib.licenses.mit;

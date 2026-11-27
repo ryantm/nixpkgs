@@ -4,26 +4,27 @@
   fetchFromGitHub,
   nix-update-script,
   poetry-core,
+  pyprojectVersionPatchHook,
   scaleway-core,
 }:
 
 buildPythonPackage (finalAttrs: {
   pname = "scaleway";
-  version = "2.11.0";
+  version = "2.13.0";
   pyproject = true;
-
-  __structuredAttrs = true;
 
   src = fetchFromGitHub {
     owner = "scaleway";
     repo = "scaleway-sdk-python";
     tag = finalAttrs.version;
-    hash = "sha256-v/dN0vLXr+vCobcrH9E6wXS61qMHsESHyL5BEpsJPkM=";
+    hash = "sha256-M4M+y3GTHMXzOlwFxbJgEX3CDiQ3xQ2mLXkSxQLThK8=";
   };
 
   sourceRoot = "${finalAttrs.src.name}/${finalAttrs.pname}";
 
   build-system = [ poetry-core ];
+
+  nativeBuildInputs = [ pyprojectVersionPatchHook ];
 
   dependencies = [ scaleway-core ];
 

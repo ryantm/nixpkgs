@@ -23,7 +23,7 @@
   libspnav,
   libthai,
   libxkbcommon,
-  pangomm,
+  pangomm_1_4,
   pcre2,
   util-linuxMinimal, # provides libmount
   libxtst,
@@ -34,7 +34,7 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "solvespace";
-  version = "3.2";
+  version = "3.3";
 
   __structuredAttrs = true;
 
@@ -42,7 +42,7 @@ stdenv.mkDerivation (finalAttrs: {
     owner = "solvespace";
     repo = "solvespace";
     rev = "v${finalAttrs.version}";
-    hash = "sha256-+ZSAC7wDOaN51RjbSAqaQOp10JzxSME3g0ln4VdkwcA=";
+    hash = "sha256-E9FVjzo+3ymmu1WyzsJSayxIt8x8QAryqHl7OmDrKGk=";
     fetchSubmodules = true;
   };
 
@@ -73,7 +73,7 @@ stdenv.mkDerivation (finalAttrs: {
     libspnav
     libthai
     libxkbcommon
-    pangomm
+    pangomm_1_4
     pcre2
     util-linuxMinimal
     libpthread-stubs

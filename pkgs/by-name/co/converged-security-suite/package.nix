@@ -9,6 +9,8 @@ buildGoModule (finalAttrs: {
 
   version = "2.8.2";
 
+  __structuredAttrs = true;
+
   src = fetchFromGitHub {
     owner = "9elements";
     repo = "converged-security-suite";
@@ -32,9 +34,9 @@ buildGoModule (finalAttrs: {
     "-w"
   ];
 
-  checkPhase = ''
-    go test -v ./pkg/...
-  '';
+  checkFlags = [
+    "./pkg/..."
+  ];
 
   meta = {
     homepage = "https://github.com/9elements/converged-security-suite";

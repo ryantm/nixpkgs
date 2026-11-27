@@ -2,7 +2,7 @@
   lib,
   buildHomeAssistantComponent,
   fetchFromGitHub,
-  sympy,
+  wikipedia-api,
   pytest-asyncio,
   pytest-cov-stub,
   pytest-freezer,
@@ -13,17 +13,17 @@
 buildHomeAssistantComponent (finalAttrs: {
   owner = "skye-harris";
   domain = "llm_intents";
-  version = "1.8.2";
+  version = "1.12.0";
 
   src = fetchFromGitHub {
     inherit (finalAttrs) owner;
     repo = "llm_intents";
     tag = finalAttrs.version;
-    hash = "sha256-UYWt+PpG0M1DE1nHqLJ/npp29JyfNz19Pyb1Jv3LM48=";
+    hash = "sha256-nYGgIdKLMGiUtmy24q5tJoTKORKW71qjakyjzjw4o4E=";
   };
 
   dependencies = [
-    sympy
+    wikipedia-api
   ];
 
   nativeCheckInputs = [
@@ -32,6 +32,12 @@ buildHomeAssistantComponent (finalAttrs: {
     pytest-freezer
     pytest-homeassistant-custom-component
     pytestCheckHook
+  ];
+
+  disabledTestPaths = [
+    # API break
+    # HomeControlAPI._async_get_api_prompt() takes 2 positional arguments but 3 were given
+    "tests/test_home_control.py"
   ];
 
   meta = {

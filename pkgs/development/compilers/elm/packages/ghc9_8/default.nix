@@ -1,4 +1,10 @@
-{ pkgs, lib }:
+{
+  pkgs,
+  lib,
+  makeWrapper,
+  nodejs,
+  fetchElmDeps,
+}:
 
 self:
 pkgs.haskell.packages.ghc98.override {
@@ -8,10 +14,48 @@ pkgs.haskell.packages.ghc98.override {
       inherit (pkgs.haskell.lib.compose) justStaticExecutables overrideCabal;
 
       elmPkgs = {
+        elm =
+          overrideCabal
+            (drv: {
+              # sadly with parallelism most of the time breaks compilation
+              enableParallelBuilding = false;
+              preConfigure = fetchElmDeps {
+                elmPackages = (import ../elm-srcs.nix);
+                elmVersion = drv.version;
+                registryDat = ../../registry.dat;
+              };
+              buildTools = drv.buildTools or [ ] ++ [ makeWrapper ];
+              postInstall = ''
+                wrapProgram $out/bin/elm \
+                  --prefix PATH ':' ${lib.makeBinPath [ nodejs ]}
+              '';
+
+              description = "Delightful language for reliable webapps";
+              homepage = "https://elm-lang.org/";
+              license = lib.licenses.bsd3;
+              maintainers = with lib.maintainers; [
+                turbomack
+              ];
+            })
+            (
+              self.callPackage ./elm {
+                # note: only elm itself works with this older version
+                # elm-format needs the standard newer version
+                ansi-wl-pprint = overrideCabal (drv: {
+                  jailbreak = true;
+                }) (self.callPackage ./ansi-wl-pprint { });
+              }
+            );
+
         # Post-patch override taken from the upstream repository:
         # https://github.com/avh4/elm-format/blob/e7e5da37716acbfb4954a88128b5cc72b2c911d9/package/nix/generate_derivation.sh
         elm-format = justStaticExecutables (
           overrideCabal (drv: {
+            # jailbreak required due to optparse-applicative bounds
+            # optparse-applicative >=0.17.0.0 && <0.19
+            # upstream PR https://github.com/avh4/elm-format/pull/841
+            jailbreak = true;
+
             postPatch = ''
               mkdir -p ./generated
               cat <<EOHS > ./generated/Build_elm_format.hs
@@ -28,6 +72,9 @@ pkgs.haskell.packages.ghc98.override {
             ];
           }) (self.callPackage ./elm-format/elm-format.nix { })
         );
+
+        inherit fetchElmDeps;
+        elmVersion = elmPkgs.elm.version;
       };
     in
     elmPkgs
@@ -35,8 +82,14 @@ pkgs.haskell.packages.ghc98.override {
       inherit elmPkgs;
 
       # Needed for elm-format
+
       avh4-lib = self.callPackage ./elm-format/avh4-lib.nix { };
-      elm-format-lib = self.callPackage ./elm-format/elm-format-lib.nix { };
+      # jailbreak required due to optparse-applicative bounds
+      # optparse-applicative >=0.17.0.0 && <0.19
+      # upstream PR https://github.com/avh4/elm-format/pull/841
+      elm-format-lib = pkgs.haskell.lib.doJailbreak (
+        self.callPackage ./elm-format/elm-format-lib.nix { }
+      );
       elm-format-test-lib = self.callPackage ./elm-format/elm-format-test-lib.nix { };
       elm-format-markdown = self.callPackage ./elm-format/elm-format-markdown.nix { };
     };

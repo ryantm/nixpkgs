@@ -14,7 +14,7 @@ stdenv.mkDerivation rec {
 
   src = fetchurl {
     url = "https://dumps.wikimedia.org/enwiktionary/${version}/enwiktionary-${version}-pages-articles.xml.bz2";
-    sha256 = "f37e899a9091a1b01137c7b0f3d58813edf3039e9e94ae656694c88859bbe756";
+    hash = "sha256-836JmpCRobARN8ew89WIE+3zA56elK5lZpTIiFm751Y=";
   };
 
   nativeBuildInputs = [
@@ -31,7 +31,7 @@ stdenv.mkDerivation rec {
     cd $out/share/dictd
 
     source_date=$(date --utc --date=@$SOURCE_DATE_EPOCH "+%F %T")
-    faketime -f "$source_date" ${python3.interpreter} -O ${./wiktionary2dict.py} "${src}"
+    faketime -f "$source_date" ${python3.interpreter} -P -O ${./wiktionary2dict.py} "${src}"
     faketime -f "$source_date" dictzip wiktionary-en.dict
     echo en_US.UTF-8 > locale
   '';

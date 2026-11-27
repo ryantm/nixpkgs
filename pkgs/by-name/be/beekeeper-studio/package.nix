@@ -18,6 +18,7 @@
   cups,
   libdrm,
   gdk-pixbuf,
+  musl,
   nss,
   nspr,
   libxrandr,
@@ -32,14 +33,18 @@
   libxkbcommon,
   libgbm,
   vulkan-loader,
-  systemd,
+  systemdLibs,
   libGL,
   krb5,
+  unixodbc,
 }:
 
 stdenv.mkDerivation (finalAttrs: {
+  __structuredAttrs = true;
+  strictDeps = true;
+
   pname = "beekeeper-studio";
-  version = "5.8.1";
+  version = "6.3.0";
 
   src =
     let
@@ -47,17 +52,15 @@ stdenv.mkDerivation (finalAttrs: {
       asset = selectSystem {
         x86_64-linux = "beekeeper-studio_${finalAttrs.version}_amd64.deb";
         aarch64-linux = "beekeeper-studio_${finalAttrs.version}_arm64.deb";
-        x86_64-darwin = "Beekeeper-Studio-${finalAttrs.version}-mac.zip";
         aarch64-darwin = "Beekeeper-Studio-${finalAttrs.version}-arm64-mac.zip";
       };
     in
     fetchurl {
       url = "https://github.com/beekeeper-studio/beekeeper-studio/releases/download/v${finalAttrs.version}/${asset}";
       hash = selectSystem {
-        x86_64-linux = "sha256-e5y7uBzdbDSUQKpxRjho+2kU3wx23spdSv1PwmJ30gA=";
-        aarch64-linux = "sha256-iuZDeSYljiSRUqtLIA1BcrRaYoqg9dnlbRDLsetVkMQ=";
-        x86_64-darwin = "sha256-7iW40NPAU4C+gDZb7YmGFmTOnmg5V/yb9+6EW6MlyXU=";
-        aarch64-darwin = "sha256-Jnm4Vfm9+6dXmjnI5gYpYW1g7Anl9xhIKXbQA2SGUDE=";
+        x86_64-linux = "sha256-djlhoGcFSkX+nJKaiDwdbh2TH2YF8+1I3CvnbDclF+0=";
+        aarch64-linux = "sha256-KCoPGyMErQ49oSlZ1pTBHRMDyHnScqITd4SzkwrQdG8=";
+        aarch64-darwin = "sha256-1KW84VuYMzTDCPw1hDSeumwgv+fbaLbJ+DCJsiEVj5A=";
       };
     };
 
@@ -91,6 +94,7 @@ stdenv.mkDerivation (finalAttrs: {
     cups
     libdrm
     gdk-pixbuf
+    musl
     nss
     nspr
     alsa-lib
@@ -98,9 +102,10 @@ stdenv.mkDerivation (finalAttrs: {
     libgbm
     vulkan-loader
     krb5
+    unixodbc
   ];
 
-  runtimeDependencies = lib.optionals stdenv.hostPlatform.isLinux (lib.getLib systemd);
+  runtimeDependencies = lib.optionals stdenv.hostPlatform.isLinux (lib.getLib systemdLibs);
 
   installPhase = ''
     runHook preInstall
@@ -146,7 +151,7 @@ stdenv.mkDerivation (finalAttrs: {
     description = "Modern and easy to use SQL client for MySQL, Postgres, SQLite, SQL Server, and more";
     homepage = "https://www.beekeeperstudio.io";
     changelog = "https://github.com/beekeeper-studio/beekeeper-studio/releases/tag/v${finalAttrs.version}";
-    license = lib.licenses.gpl3Only;
+    license = lib.licenses.gpl3Plus;
     sourceProvenance = with lib.sourceTypes; [ binaryNativeCode ];
     mainProgram = "beekeeper-studio";
     maintainers = with lib.maintainers; [
@@ -158,7 +163,6 @@ stdenv.mkDerivation (finalAttrs: {
       "aarch64-linux"
       "x86_64-linux"
       "aarch64-darwin"
-      "x86_64-darwin"
     ];
   };
 })

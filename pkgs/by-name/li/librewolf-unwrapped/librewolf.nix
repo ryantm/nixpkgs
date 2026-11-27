@@ -6,55 +6,15 @@
 }:
 let
   src = callPackage ./src.nix { };
-in
-rec {
+  inherit (src)
+    packageVersion
+    firefoxVersion
+    firefox
+    source
+    ;
 
-  inherit (src) packageVersion firefox source;
-
-  extraPatches = [ "${source}/patches/pref-pane/pref-pane-small.patch" ];
-
-  extraConfigureFlags = [
-    "--with-unsigned-addon-scopes=app,system"
-    "--disable-default-browser-agent"
-    # Flags based on discussion in https://github.com/NixOS/nixpkgs/issues/482250
-    "--disable-debug"
-    "--disable-debug-symbols"
-  ]
-  ++ lib.optionals stdenv.hostPlatform.isLinux [
-    "--enable-lto=thin,cross"
-  ];
-
-  extraPostPatch = ''
-    while read patch_name; do
-      echo "applying LibreWolf patch: $patch_name"
-      patch -p1 < ${source}/$patch_name
-    done <${source}/assets/patches.txt
-
-    rm toolkit/components/ml/content/backends/OpenAIPipeline.mjs
-    rm -rf toolkit/components/ml/vendor/openai
-
-    cp -r ${source}/themes/browser .
-    cp ${source}/assets/search-config.json services/settings/dumps/main/search-config.json
-    sed -i '/MOZ_SERVICES_HEALTHREPORT/ s/True/False/' browser/moz.configure
-
-    cp ${source}/patches/pref-pane/category-librewolf.svg browser/themes/shared/preferences
-    cp ${source}/patches/pref-pane/librewolf.css browser/themes/shared/preferences
-    cp ${source}/patches/pref-pane/librewolf.inc.xhtml browser/components/preferences
-    cp ${source}/patches/pref-pane/librewolf.js browser/components/preferences
-
-    # override firefox version
-    for fn in browser/config/version.txt browser/config/version_display.txt; do
-      echo "${packageVersion}" > "$fn"
-    done
-
-    echo "patching appstrings.properties"
-    find . -path '*/appstrings.properties' -exec sed -i s/Firefox/LibreWolf/ {} \;
-
-    for fn in $(find "${source}/l10n/en-US/browser" -type f -name '*.inc.*'); do
-      target_fn=$(echo "$fn" | sed "s,${source}/l10n/en-US/browser,browser/locales/en-US," | sed "s,\.inc,,")
-      cat "$fn" >> "$target_fn"
-    done
-  '';
+  versionComponents = lib.strings.splitString "-" src.packageVersion;
+  release = builtins.elemAt versionComponents 1;
 
   localSettingsPrefs = runCommand "local-settings.js" { } ''
     # Import of `librewolf.cfg` file is already being done manually.
@@ -68,10 +28,52 @@ rec {
   ];
 
   extraPoliciesFiles = [ "${source}/settings/distribution/policies.json" ];
+in
+{
+  inherit packageVersion;
+
+  srcs = [
+    firefox
+    source
+  ];
+
+  extraPostUnpack = ''
+    chmod -R u+w -- "${source.name}"
+    # This layout is required for the patch script to work
+    mv firefox-${firefoxVersion} ${source.name}/librewolf-${packageVersion}
+    chmod -R u+w -- "$sourceRoot"
+  '';
+
+  sourceRoot = "${source.name}/librewolf-${packageVersion}";
+
+  extraConfigureFlags = [
+    "--with-unsigned-addon-scopes=app,system"
+    "--disable-default-browser-agent"
+    # Flags based on discussion in https://github.com/NixOS/nixpkgs/issues/482250
+    "--disable-debug"
+    "--disable-debug-symbols"
+  ]
+  ++ lib.optionals stdenv.hostPlatform.isLinux [
+    "--enable-lto=thin,cross"
+  ];
+
+  extraPreConfigure = ''
+    export MOZ_TELEMETRY_REPORTING=
+    export MOZ_PKG_VERSION=${packageVersion}
+  '';
+
+  extraPostPatch = ''
+    patchShebangs --build ../scripts
+    SKIP_FETCHING_LOCALES=1 ../scripts/patch.sh ${firefoxVersion} ${release}
+    # We set the parameters in build-mozilla-mach instead
+    rm mozconfig
+  '';
+
+  inherit localSettingsPrefs extraPrefsFiles extraPoliciesFiles;
 
   extraPassthru = {
     librewolf = {
-      inherit src extraPatches;
+      inherit src;
     };
     inherit extraPrefsFiles extraPoliciesFiles;
   };

@@ -5,31 +5,26 @@
   fetchPypi,
   hatchling,
   nix-update-script,
-  poetry-core,
   pydantic,
   pyjwt,
   requests,
-  setuptools,
   urllib3,
 }:
 
 buildPythonPackage (finalAttrs: {
   pname = "stackit-core";
-  version = "0.2.0";
+  version = "0.6.0";
   pyproject = true;
-
-  __structuredAttrs = true;
 
   src = fetchPypi {
     pname = "stackit_core";
     inherit (finalAttrs) version;
-    hash = "sha256-uK+Rh3zbBg1paaMD2M8gvAszs0Wv2R9nnESphzgeLUc=";
+    hash = "sha256-HtUDPx+iT8g2SCQ9ZPGis1+Y1fcTBBrIfgZcJwoMZd0=";
   };
 
-  build-system = [
-    poetry-core
-    setuptools
-  ];
+  pythonRelaxDeps = [ "urllib3" ];
+
+  build-system = [ hatchling ];
 
   dependencies = [
     cryptography

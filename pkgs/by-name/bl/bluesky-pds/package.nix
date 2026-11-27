@@ -15,11 +15,10 @@
   lib,
   nix-update-script,
   cctools,
-  fetchpatch2,
 }:
 
 let
-  # upstream bluesky-social/atproto uses nodejs 22+
+  # upstream bluesky-social/pds uses nodejs 22+ (aims for LTS)
   nodejs = nodejs_24;
   nodeSources = srcOnly nodejs;
   pythonEnv = python3.withPackages (p: [ p.setuptools ]);
@@ -28,24 +27,16 @@ in
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "pds";
-  version = "0.4.5009";
+  version = "0.4.5051";
 
   src = fetchFromGitHub {
     owner = "bluesky-social";
     repo = "pds";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-3IEbVn7ThiVL7E2fXMHzsRSLT7Tm1eiX8bPQ88rJCvs=";
+    hash = "sha256-vcDCtoCO3Gyw5yO5iixZJXQERYElH7JZaDDk7bNR3xI=";
   };
 
   sourceRoot = "${finalAttrs.src.name}/service";
-
-  patchFlags = [ "-p2" ];
-  patches = [
-    (fetchpatch2 {
-      url = "https://github.com/bluesky-social/pds/commit/f8de5f08900c42023b01a4d10995556f16d05145.patch?full_index=1";
-      hash = "sha256-E0mWvLWQ4lFjkFgqtmMIESpNH7PSAB/QpSqxIwsj6Q8=";
-    })
-  ];
 
   nativeBuildInputs = [
     makeBinaryWrapper
@@ -69,12 +60,10 @@ stdenv.mkDerivation (finalAttrs: {
       version
       src
       sourceRoot
-      patchFlags
-      patches
       ;
     inherit pnpm;
     fetcherVersion = 4;
-    hash = "sha256-BTSMmGhLpQ6KrI7/XfinRwe8ap7btIrPa55f6HB63M8=";
+    hash = "sha256-aAv3EmoKTKv7fyCJT7/rRQBr4yBR5OsGuDU5MSIsRzY=";
   };
 
   buildPhase = ''

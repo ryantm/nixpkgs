@@ -1,29 +1,107 @@
 {
   lib,
   buildGoModule,
+  stdenvNoCC,
   fetchFromGitHub,
   gitMinimal,
   installShellFiles,
+  pnpm_10,
+  pnpmConfigHook,
+  pnpmBuildHook,
+  fetchPnpmDeps,
+  nodejs,
+  buildPackages,
 }:
-
+let
+  pnpm = pnpm_10;
+in
 buildGoModule (finalAttrs: {
   pname = "git-bug";
-  version = "0.10.1";
+  version = "0.12.0";
+
+  __structuredAttrs = true;
 
   src = fetchFromGitHub {
     owner = "git-bug";
     repo = "git-bug";
     rev = "v${finalAttrs.version}";
-    sha256 = "sha256-iLYhVv6QMZStuNtxvvIylFSVb1zLfC58NU2QJChFfug=";
+    hash = "sha256-hSDCeoowjwMcacYj0hAsKedLpbrfvIzawfZx9MvXAZY=";
   };
 
-  vendorHash = "sha256-qztAkP+CHhryhfv1uKHEpDutofMwHGun7Vr30BHWAOE=";
+  webui = stdenvNoCC.mkDerivation {
+    inherit (finalAttrs) version src;
+    pname = "${finalAttrs.pname}-webui";
 
-  nativeBuildInputs = [ installShellFiles ];
+    pnpmDeps = fetchPnpmDeps {
+      inherit (finalAttrs)
+        pname
+        version
+        src
+        ;
+      inherit pnpm;
+
+      sourceRoot = "${finalAttrs.src.name}/webui";
+      fetcherVersion = 4;
+      hash = "sha256-2pOmDj19c55/fYWns1uKxp0guVJ7yrGhc0h5ehaii+E=";
+    };
+
+    nativeBuildInputs = [
+      pnpm
+      nodejs
+      pnpmConfigHook
+      pnpmBuildHook
+    ];
+
+    pnpmRoot = "webui";
+
+    installPhase = ''
+      runHook preInstall
+
+      cp -r webui/ $out
+
+      runHook postInstall
+    '';
+  };
+
+  vendorHash = "sha256-5wvgJOph8vTohvfxskpoPK98LuQi9CzN7jDgDATC6Mg=";
+
+  overrideModAttrs = _: {
+    # prevent `go mod vendor` from finding Go stuff in webui's node_modules
+    preBuild = "";
+  };
+
+  nativeBuildInputs = [
+    installShellFiles
+  ];
 
   nativeCheckInputs = [
     gitMinimal
   ];
+
+  excludedPackages = [
+    "./webui/node_modules"
+    "cmd"
+    "doc"
+    "completion"
+  ];
+
+  tags = [
+    "webui"
+  ];
+
+  ldflags = [
+    "-X main.version=${finalAttrs.version}"
+  ];
+
+  preBuild = ''
+    rm -rf webui
+    cp -r ${finalAttrs.webui} webui
+    (
+        export CC="${lib.getExe buildPackages.stdenv.cc}"
+        export LD="${lib.getExe' buildPackages.stdenv.cc "ld"}"
+        GOOS= GOARCH= go generate
+    )
+  '';
 
   checkFlags =
     let
@@ -40,16 +118,7 @@ buildGoModule (finalAttrs: {
       "-skip=^${lib.concatStringsSep "$|^" integrationTests}$"
     ];
 
-  excludedPackages = [
-    "doc"
-    "misc"
-  ];
-
-  ldflags = [
-    "-X github.com/git-bug/git-bug/commands.GitCommit=v${finalAttrs.version}"
-    "-X github.com/git-bug/git-bug/commands.GitLastTag=${finalAttrs.version}"
-    "-X github.com/git-bug/git-bug/commands.GitExactTag=${finalAttrs.version}"
-  ];
+  __darwinAllowLocalNetworking = true;
 
   postInstall = ''
     installShellCompletion \

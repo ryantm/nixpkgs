@@ -1,22 +1,22 @@
 {
   stdenv,
   lib,
-  python3Packages,
   fetchFromGitHub,
   nixosTests,
   fetchYarnDeps,
   python3,
+  python3Packages,
   nodejs,
   yarnBuildHook,
   yarnConfigHook,
 }:
 let
-  version = "5.4.1";
+  version = "6.1.0";
   src = fetchFromGitHub {
     owner = "suitenumerique";
     repo = "docs";
     tag = "v${version}";
-    hash = "sha256-Xomq2i1t1POgggcAR8FAWf+Lr0y6YOKGvANFOv/BH20=";
+    hash = "sha256-H43DGVYqUnhi3K7hKZhJBZ5Lfx2RczB7S9yO8Oe19ZQ=";
   };
 
   mail-templates = stdenv.mkDerivation {
@@ -29,7 +29,7 @@ let
 
     offlineCache = fetchYarnDeps {
       yarnLock = "${src}/src/mail/yarn.lock";
-      hash = "sha256-miA1ysqNSaBZSb2B2uqTx1rea9R5/AgRfuCPr5X0bx8=";
+      hash = "sha256-cTlRkj5hplrYi+qzldd3JCdj6cZm41LrICAcmhla+Ms=";
     };
 
     nativeBuildInputs = [
@@ -40,6 +40,31 @@ let
 
     dontInstall = true;
   };
+
+  python3Packages' = python3Packages.overrideScope (
+    self: super: {
+      django-treebeard = super.django-treebeard.overridePythonAttrs (
+        finalAttrs: { src, ... }: {
+          version = "4.8.0";
+          src = src.override {
+            hash = "sha256-DrjI0HlrJhNqrYul3SO0xkkFwjWRn94OgvTA/Z3wv84=";
+          };
+        }
+      );
+      mcp = self.mcp_1;
+      # mistralai's MCP integration (unused here) requires mcp>=2
+      mistralai = super.mistralai.overridePythonAttrs (old: {
+        disabledTestPaths = old.disabledTestPaths or [ ] ++ [
+          "src/mistralai/extra/tests/test_connectors_gateway.py"
+          "src/mistralai/extra/tests/test_mcp_streamable_http.py"
+        ];
+      });
+    }
+  );
+in
+let
+  # Prevent using the wrong one.
+  python3Packages = python3Packages';
 in
 
 python3Packages.buildPythonApplication (finalAttrs: {
@@ -50,20 +75,15 @@ python3Packages.buildPythonApplication (finalAttrs: {
   sourceRoot = "${finalAttrs.src.name}/src/backend";
 
   patches = [
-    # Support configuration throught environment variables for SECURE_*
+    # Support configuration through environment variables for SECURE_*
     ./secure_settings.patch
   ];
 
   # They use a old version of mistralai which exported a class
   # at the top level
   postPatch = ''
-    substituteInPlace core/services/ai_services/legacy.py \
-      --replace-fail \
-        "from mistralai import Mistral" \
-        "from mistralai.client import Mistral"
-
     substituteInPlace pyproject.toml \
-      --replace-fail "uv_build>=0.11.9,<0.12" "uv_build"
+      --replace-fail "uv_build>=0.13.4,<0.14" "uv_build"
   ''
   # Otherwise fails with:
   # socket.gaierror: [Errno 8] nodename nor servname provided, or not known
@@ -94,7 +114,9 @@ python3Packages.buildPythonApplication (finalAttrs: {
       django-filter
       django-lasuite
       django-parler
+      django-prometheus
       django-redis
+      django-silk
       django-storages
       django-timezone-field
       django-treebeard
@@ -115,6 +137,7 @@ python3Packages.buildPythonApplication (finalAttrs: {
       nested-multipart-parser
       openai
       posthog
+      prometheus-client
       psycopg
       pycrdt
       pydantic-ai-slim
@@ -124,6 +147,7 @@ python3Packages.buildPythonApplication (finalAttrs: {
       redis
       requests
       sentry-sdk
+      servestatic
       uvicorn
       whitenoise
     ]

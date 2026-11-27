@@ -11,8 +11,6 @@ buildPythonPackage (finalAttrs: {
   version = "1.1.2";
   pyproject = true;
 
-  __structuredAttrs = true;
-
   src = fetchFromGitHub {
     owner = "mampfes";
     repo = "python-wiffi";
@@ -33,7 +31,7 @@ buildPythonPackage (finalAttrs: {
     description = "Python module to interface with STALL WIFFI devices";
     homepage = "https://github.com/mampfes/python-wiffi";
     changelog = "https://github.com/mampfes/python-wiffi/blob/${finalAttrs.version}/HISTORY.md";
-    license = with lib.licenses; [ mit ];
+    license = lib.licenses.mit;
     maintainers = with lib.maintainers; [ fab ];
   };
 })

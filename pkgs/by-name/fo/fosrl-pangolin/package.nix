@@ -9,6 +9,8 @@
   edition ? "oss",
   environmentVariables ? { },
   nixosTests,
+  nodejs_24,
+  nix-update-script,
 }:
 
 assert lib.assertOneOf "databaseType" databaseType [
@@ -35,8 +37,7 @@ in
 
 buildNpmPackage (finalAttrs: {
   pname = "pangolin";
-  version = "1.19.4";
-
+  version = "1.27.1";
   __structuredAttrs = true;
   enableParallelBuilding = true;
 
@@ -44,11 +45,13 @@ buildNpmPackage (finalAttrs: {
     owner = "fosrl";
     repo = "pangolin";
     tag = finalAttrs.version;
-    hash = "sha256-Joo7N92ZbKybD15ojIIoEtjLjzcho5PqAzuGlj17zag=";
+    hash = "sha256-2D9f2sb93c4eTPIH5k/7h6a5uewnha/8N2i2cH7vDiQ=";
   };
 
+  nodejs = nodejs_24;
   npmDepsFetcherVersion = 2;
-  npmDepsHash = "sha256-XOuP3WgV9Xt2uRhHVmnjjf46RV+Pv1pl8a71yTizn10=";
+  npmDepsHash = "sha256-seCi8vqvY/uYD3iVQx5FNxd9AsN6rLNl4ROZ3rbdT0U=";
+  npmFlags = [ "--legacy-peer-deps" ];
 
   nativeBuildInputs = [
     esbuild
@@ -62,11 +65,11 @@ buildNpmPackage (finalAttrs: {
 
   # upstream inconsistently updates this
   # so leaving this here in case it's needed
-  postPatch = ''
-    substituteInPlace server/lib/consts.ts --replace-fail \
-      'export const APP_VERSION = "${lib.versions.majorMinor finalAttrs.version + ".0"}";' \
-      'export const APP_VERSION = "${finalAttrs.version}";'
-  '';
+  # postPatch = ''
+  #   substituteInPlace server/lib/consts.ts --replace-fail \
+  #     'export const APP_VERSION = "${lib.versions.majorMinor finalAttrs.version + ".0"}";' \
+  #     'export const APP_VERSION = "${finalAttrs.version}";'
+  # '';
 
   preBuild = ''
     npm run set:${db false}
@@ -130,7 +133,9 @@ buildNpmPackage (finalAttrs: {
                dir:
                "test -f ${dir}/.nix_skip_setup || { rm -${lib.optionalString (dir == ".next") "r"}f ${dir} && ${
                  if (dir == ".next") then "cp -rd" else "ln -s"
-               } ${placeholder "out"}/share/pangolin/${dir} .; }"
+               } ${placeholder "out"}/share/pangolin/${dir} .${
+                 lib.optionalString (dir == ".next") " && chmod -R u+w ${dir}"
+               }; }"
              )
              [
                ".next"
@@ -167,6 +172,7 @@ buildNpmPackage (finalAttrs: {
   passthru = {
     inherit databaseType;
     tests = { inherit (nixosTests) pangolin; };
+    updateScript = nix-update-script { };
   };
 
   meta = {

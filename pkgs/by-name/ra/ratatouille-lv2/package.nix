@@ -8,18 +8,20 @@
   lv2,
   pkg-config,
   stdenv,
+  which,
   xorgproto,
+  xxd,
 }:
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "ratatouille-lv2";
-  version = "0.9.11";
+  version = "0.9.12";
 
   src = fetchFromGitHub {
     owner = "brummer10";
     repo = "Ratatouille.lv2";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-mig3yUGSNz1xuyz6ljKqJUjNqmEcsbXSH1vTxTGdOFk=";
+    hash = "sha256-Emxpdc9Hx1rKgn3sGjS926/EWlhidOqCzZ3gS/RCKxU=";
     fetchSubmodules = true;
   };
 
@@ -28,6 +30,8 @@ stdenv.mkDerivation (finalAttrs: {
 
   nativeBuildInputs = [
     pkg-config
+    which
+    xxd
   ];
 
   buildInputs = [
@@ -47,11 +51,13 @@ stdenv.mkDerivation (finalAttrs: {
     "VST2_INSTAL_DIR=$(out)/lib/vst"
     "user=root"
     "STRIP=:"
+    "PKGCONFIG=$(PKG_CONFIG)"
   ];
 
   postPatch = ''
     substituteInPlace Ratatouille/makefile \
-      --replace-fail "-flto=auto" ""
+      --replace-fail "-flto=auto" "" \
+      --replace-fail "pkg-config" '$(PKGCONFIG)'
   '';
 
   meta = {

@@ -3,43 +3,77 @@
   stdenv,
   fetchFromGitHub,
   autoreconfHook,
+  docbook_xml_dtd_45,
+  docbook_xsl,
+  libtool,
+  libxslt,
   pkg-config,
+  liburcu,
   libuuid,
   e2fsprogs,
   nilfs-utils,
   ntfs3g,
   openssl,
+  xxhash,
+  zlib,
+  zstd,
+  versionCheckHook,
+  nix-update-script,
+  fuse3,
 }:
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "partclone";
-  version = "0.3.38";
+  version = "0.3.54";
+
+  __structuredAttrs = true;
+  strictDeps = true;
 
   src = fetchFromGitHub {
     owner = "Thomas-Tsai";
     repo = "partclone";
     rev = finalAttrs.version;
-    sha256 = "sha256-lWnGi8giz7vzdBnuth55h0VMuNyCQaCclRqPJdm0I14=";
+    hash = "sha256-6ahyj5kGDsnBNDIhCmW0uwySeyh+uvtbf2nljtZ9Dqg=";
   };
 
   nativeBuildInputs = [
     autoreconfHook
+    docbook_xml_dtd_45
+    docbook_xsl
+    libtool
+    libxslt
     pkg-config
   ];
+
+  postPatch = ''
+    substituteInPlace docs/Makefile.am \
+      --replace-fail 'http://docbook.sourceforge.net/release/xsl/current/manpages/docbook.xsl' \
+                     '${docbook_xsl}/xml/xsl/docbook/manpages/docbook.xsl'
+    substituteInPlace docs/*.xml \
+      --replace-fail 'http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd' \
+                     '${docbook_xml_dtd_45}/xml/dtd/docbook/docbookx.dtd'
+  '';
+
   buildInputs = [
-    e2fsprogs
-    libuuid
-    stdenv.cc.libc
-    nilfs-utils
-    ntfs3g
     openssl
-    (lib.getOutput "static" stdenv.cc.libc)
+    xxhash
+    zlib
+    zstd
+    liburcu
+    libuuid
+
+    fuse3
+    e2fsprogs
+    ntfs3g
+    nilfs-utils
   ];
 
   configureFlags = [
+    "--enable-fuse"
     "--enable-xfs"
     "--enable-extfs"
     "--enable-hfsp"
+    "--enable-apfs"
     "--enable-fat"
     "--enable-exfat"
     "--enable-ntfs"
@@ -51,6 +85,13 @@ stdenv.mkDerivation (finalAttrs: {
 
   enableParallelBuilding = true;
 
+  # partclone has many executables, however testing one should be enough
+  versionCheckProgram = "${placeholder "out"}/bin/partclone.chkimg";
+  nativeInstallCheckInputs = [ versionCheckHook ];
+  doInstallCheck = true;
+
+  passthru.updateScript = nix-update-script { };
+
   meta = {
     description = "Utilities to save and restore used blocks on a partition";
     longDescription = ''
@@ -61,7 +102,7 @@ stdenv.mkDerivation (finalAttrs: {
     '';
     homepage = "https://partclone.org";
     license = lib.licenses.gpl2Plus;
-    maintainers = [ ];
+    maintainers = with lib.maintainers; [ daimond113 ];
     platforms = lib.platforms.linux;
   };
 })

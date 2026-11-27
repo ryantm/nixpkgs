@@ -20,14 +20,14 @@
 
 python313Packages.buildPythonApplication (finalAttrs: {
   pname = "high-tide";
-  version = "1.5.0";
+  version = "1.7.0";
   pyproject = false;
 
   src = fetchFromGitHub {
     owner = "Nokse22";
     repo = "high-tide";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-uZkXpzRIDzn6wT3GmwNQbtf2/G9ddU13f7iMkj9Qopc=";
+    hash = "sha256-DL0SNxaJefc4167ntX9C08A2bcPfTaN9Ioi1z1Nwf3M=";
   };
 
   nativeBuildInputs = [
@@ -66,14 +66,16 @@ python313Packages.buildPythonApplication (finalAttrs: {
 
   dontWrapGApps = true;
 
-  makeWrapperArgs = [ "\${gappsWrapperArgs[@]}" ];
+  preFixup = ''
+    makeWrapperArgs+=("''${gappsWrapperArgs[@]}")
+  '';
 
   passthru.updateScript = nix-update-script { };
 
   meta = {
     description = "Libadwaita TIDAL client for Linux";
     homepage = "https://github.com/Nokse22/high-tide";
-    license = with lib.licenses; [ gpl3Plus ];
+    license = lib.licenses.gpl3Plus;
     mainProgram = "high-tide";
     maintainers = with lib.maintainers; [
       drafolin

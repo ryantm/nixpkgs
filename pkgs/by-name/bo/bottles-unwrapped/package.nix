@@ -10,7 +10,6 @@
   appstream-glib,
   desktop-file-utils,
   fvs2,
-  librsvg,
   gtk4,
   gtksourceview5,
   libadwaita,
@@ -27,20 +26,26 @@
   vkbasalt-cli,
   vulkan-tools,
   vmtouch,
-  libportal,
+  libportal-gtk4,
+  libsecret,
+  obs-studio-plugins,
+  libxml2,
+  umu-launcher,
   nix-update-script,
   removeWarningPopup ? false,
+  withObsVkCapture ? false,
+  withLsfgVk ? false,
 }:
 
 python3Packages.buildPythonApplication (finalAttrs: {
   pname = "bottles-unwrapped";
-  version = "64.1";
+  version = "67.7";
 
   src = fetchFromGitHub {
     owner = "bottlesdevs";
     repo = "bottles";
     tag = finalAttrs.version;
-    hash = "sha256-RwH2XLY9PmyDvIYu3Wr2qL89ErJBfC58i0jHLLNnKJQ=";
+    hash = "sha256-jSN+Nr22hykkOi1jXJjwQ5oNO9xHWUkc4RWB5rlsNmw=";
   };
 
   patches = [
@@ -67,14 +72,15 @@ python3Packages.buildPythonApplication (finalAttrs: {
     gtk4 # gtk4-update-icon-cache
     appstream-glib
     desktop-file-utils
+    libxml2
   ];
 
   buildInputs = [
-    librsvg
     gtk4
     gtksourceview5
     libadwaita
-    libportal
+    libportal-gtk4
+    libsecret
   ];
 
   propagatedBuildInputs =
@@ -97,6 +103,7 @@ python3Packages.buildPythonApplication (finalAttrs: {
       certifi
       pefile
       yara-python
+      pysocks
     ]
     ++ [
       cabextract
@@ -111,12 +118,14 @@ python3Packages.buildPythonApplication (finalAttrs: {
       mangohud
       vmtouch
       fvs2
+      umu-launcher
 
       # Undocumented (subprocess.Popen())
       lsb-release
       pciutils
       procps
-    ];
+    ]
+    ++ lib.optional withObsVkCapture obs-studio-plugins.obs-vkcapture;
 
   pyproject = false;
   dontWrapGApps = true; # prevent double wrapping

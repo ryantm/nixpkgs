@@ -1,37 +1,54 @@
 {
   lib,
   stdenv,
+  fetchurl,
   fetchFromGitHub,
   fetchNpmDeps,
-  buildGoModule,
+  buildGo127Module,
   buildNpmPackage,
-  systemd,
+  systemdLibs,
   installShellFiles,
   versionCheckHook,
   nixosTests,
-  nix-update-script,
   lld,
   useLLD ? stdenv.hostPlatform.isArmv7,
+  withBeyla ?
+    stdenv.targetPlatform.system == "x86_64-linux" || stdenv.targetPlatform.system == "aarch64-linux",
 }:
-
-let
-  beylaVersion = "v3.9.5";
-in
-
-buildGoModule (finalAttrs: {
+buildGo127Module (finalAttrs: {
   pname = "grafana-alloy";
-  version = "1.16.0";
+  version = "1.22.0";
+  strictDeps = true;
+  __structuredAttrs = true;
 
   src = fetchFromGitHub {
     owner = "grafana";
     repo = "alloy";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-q5R2noxBZ3OPyZqmB+bx3iJKWFxC2WIprcgh9RwjLzk=";
+    hash = "sha256-Zo/eZHvo5achk1/Li/1SnFGmbggU+sklV09tsAfBalg=";
   };
+
+  postUnpack = lib.optionalString withBeyla (
+    let
+      inherit (stdenv.targetPlatform) system;
+      arch =
+        {
+          x86_64-linux = "amd64";
+          aarch64-linux = "arm64";
+        }
+        .${system} or (throw "Unsupported system: ${system}");
+      beyla = builtins.fromJSON (builtins.readFile ./beyla.json);
+    in
+    ''
+      tar -xf ${
+        fetchurl { inherit (beyla.${arch}) url hash; }
+      } -C source/internal/component/beyla/ebpf/binaries/${arch} beyla
+    ''
+  );
 
   npmDeps = fetchNpmDeps {
     src = "${finalAttrs.src}/internal/web/ui";
-    hash = "sha256-vResNUT4auDsK9ngnJYfMUUOYr/ikPhrvakqCjGq2Q8=";
+    hash = "sha256-s5vbrl83slJ1yTGK3ICQUirZ5nJ1XhX8Ki6DaeahJQM=";
   };
 
   frontend = buildNpmPackage {
@@ -55,17 +72,15 @@ buildGoModule (finalAttrs: {
   patchPhase = ''
     cp -av ${finalAttrs.frontend}/share internal/web/ui/dist
 
-    goSumBeylaVersion="$(grep beyla go.sum | head -1 | cut -d ' ' -f2)"
-    if [[ "$goSumBeylaVersion" != "${beylaVersion}" ]];then
-      echo "beyla version in go.sum ($goSumBeylaVersion) doesn't match the one set in the expression (${beylaVersion}), needs updating."
-      exit 1
-    fi
+    # Use only the system CA store. The embedded fallback bundle does not get cacert updates.
+    substituteInPlace flowcmd/flowcmd.go \
+      --replace-fail '_ "golang.org/x/crypto/x509roots/fallback"' ""
   '';
 
   modRoot = "collector";
 
   proxyVendor = true;
-  vendorHash = "sha256-uTIdurwLfxh27fb1CPCHbHmENk3S6VYNBaGT/5yh3Sc=";
+  vendorHash = "sha256-CBLfxNm85Ah6gXHBtgk5tgEozd0fAUjUClv9Ic2AvtM=";
 
   subPackages = [ "." ];
 
@@ -77,7 +92,6 @@ buildGoModule (finalAttrs: {
     "-X github.com/grafana/alloy/internal/build.Revision=v${finalAttrs.version}"
     "-X github.com/grafana/alloy/internal/build.BuildUser=nix@nixpkgs"
     "-X github.com/grafana/alloy/internal/build.BuildDate=1970-01-01T00:00:00Z"
-    "-X github.com/grafana/beyla/pkg/buildinfo=${beylaVersion}"
   ];
 
   tags = [
@@ -96,7 +110,7 @@ buildGoModule (finalAttrs: {
     // lib.optionalAttrs (stdenv.hostPlatform.isLinux) {
       # Uses go-systemd, which uses libsystemd headers.
       # https://github.com/coreos/go-systemd/issues/351
-      NIX_CFLAGS_COMPILE = "-I${lib.getDev systemd}/include";
+      NIX_CFLAGS_COMPILE = "-I${lib.getDev systemdLibs}/include";
     };
 
   nativeBuildInputs = [
@@ -123,7 +137,7 @@ buildGoModule (finalAttrs: {
   postFixup = lib.optionalString stdenv.hostPlatform.isLinux ''
     patchelf \
       --set-rpath "${
-        lib.makeLibraryPath [ (lib.getLib systemd) ]
+        lib.makeLibraryPath [ (lib.getLib systemdLibs) ]
       }:$(patchelf --print-rpath $out/bin/alloy)" \
       $out/bin/alloy
   '';
@@ -132,14 +146,7 @@ buildGoModule (finalAttrs: {
     tests = {
       inherit (nixosTests) alloy;
     };
-    updateScript = nix-update-script {
-      extraArgs = [
-        "--version-regex"
-        "v(.+)"
-      ];
-    };
-    # For nix-update to be able to find and update the hash.
-    inherit (finalAttrs) npmDeps;
+    updateScript = ./update.sh;
   };
 
   meta = {

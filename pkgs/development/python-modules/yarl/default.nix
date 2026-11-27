@@ -16,16 +16,16 @@
   pytestCheckHook,
 }:
 
-buildPythonPackage rec {
+buildPythonPackage (finalAttrs: {
   pname = "yarl";
-  version = "1.24.2";
+  version = "1.25.1";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "aio-libs";
     repo = "yarl";
-    tag = "v${version}";
-    hash = "sha256-GEe2GDXmqsQgWB0UxPZVMdSco3j2JYHg9BU9M6oqynw=";
+    tag = "v${finalAttrs.version}";
+    hash = "sha256-cQsVglP3OqaQW95OYPlbWCFTs5p6L5wOzx7QCIqqJ9U=";
   };
 
   build-system = [
@@ -61,10 +61,10 @@ buildPythonPackage rec {
   pythonImportsCheck = [ "yarl" ];
 
   meta = {
-    changelog = "https://github.com/aio-libs/yarl/blob/${src.tag}/CHANGES.rst";
+    changelog = "https://github.com/aio-libs/yarl/blob/${finalAttrs.src.tag}/CHANGES.rst";
     description = "Yet another URL library";
     homepage = "https://github.com/aio-libs/yarl";
     license = lib.licenses.asl20;
     maintainers = with lib.maintainers; [ dotlambda ];
   };
-}
+})

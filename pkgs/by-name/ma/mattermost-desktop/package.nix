@@ -1,8 +1,10 @@
 {
   lib,
+  stdenv,
   fetchFromGitHub,
   buildNpmPackage,
-  electron_41,
+  electron_43,
+  autoPatchelfHook,
   makeWrapper,
   testers,
   mattermost-desktop,
@@ -10,25 +12,35 @@
 }:
 
 let
-  electron = electron_41;
+  electron = electron_43;
 in
 
 buildNpmPackage rec {
   pname = "mattermost-desktop";
-  version = "6.2.2";
+  version = "6.3.2";
 
   src = fetchFromGitHub {
     owner = "mattermost";
     repo = "desktop";
     tag = "v${version}";
-    hash = "sha256-KSyFJrYy+pueSrX20SPBoudWfiHmy5L2O8TdzLJRiYk=";
+    hash = "sha256-mrV0rQWgJNGEBw0FTFcfMrgh96FHo1WnLB8l3UGIoH8=";
   };
 
-  npmDepsHash = "sha256-70TBP4iDKuF4X9Tf0tsbUQ3N7bluoPn65OdfdcWin4Y=";
+  npmDepsHash = "sha256-2Uv0VMMkTVZRMyTvbk0Y6XpeHYddx0Ypt6rgaiwbLL4=";
   npmBuildScript = "build-prod";
   makeCacheWritable = true;
 
-  nativeBuildInputs = [ makeWrapper ];
+  nativeBuildInputs = [
+    makeWrapper
+    # The package uses a pre-built binary Node.js module.
+    autoPatchelfHook
+  ];
+
+  autoPatchelfIgnoreMissingDeps = [ "libc.musl-*.so.*" ];
+
+  buildInputs = [
+    stdenv.cc.cc
+  ];
 
   env.ELECTRON_SKIP_BINARY_DOWNLOAD = "1";
 
@@ -100,6 +112,12 @@ buildNpmPackage rec {
     changelog = "https://github.com/mattermost/desktop/releases/tag/${src.tag}";
     license = lib.licenses.asl20;
     platforms = electron.meta.platforms;
+    # https://github.com/NixOS/nixpkgs/issues/430763
+    broken = stdenv.hostPlatform.isDarwin;
+    sourceProvenance = with lib.sourceTypes; [
+      fromSource
+      binaryNativeCode
+    ];
     maintainers = with lib.maintainers; [
       joko
       liff

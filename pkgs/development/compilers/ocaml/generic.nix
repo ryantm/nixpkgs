@@ -21,6 +21,7 @@ in
   ncurses,
   binutils,
   buildEnv,
+  pkgsBuildBuild,
   libunwind,
   fetchpatch,
   libx11,
@@ -142,11 +143,7 @@ stdenv.mkDerivation (
     # does not exist. So, disable these configure flags on `aarch64-darwin`.
     # See #144785 for details.
     configurePlatforms =
-      lib.optionals
-        (
-          lib.versionAtLeast version "4.08"
-          && !(stdenv.hostPlatform.isDarwin && stdenv.hostPlatform.isAarch64)
-        )
+      lib.optionals (lib.versionAtLeast version "4.08" && !stdenv.hostPlatform.isDarwin)
         [
           "host"
           "target"
@@ -177,6 +174,7 @@ stdenv.mkDerivation (
         ]
       else
         [ "nixpkgs_world" ];
+    nativeBuildInputs = optional (stdenv.hostPlatform != stdenv.targetPlatform) pkgsBuildBuild.ocaml;
     buildInputs =
       optional (lib.versionOlder version "4.07") ncurses
       ++ optionals useX11 [
@@ -214,10 +212,7 @@ stdenv.mkDerivation (
     meta = {
       homepage = "https://ocaml.org/";
       branch = versionNoPatch;
-      license = with lib.licenses; [
-        qpl # compiler
-        lgpl2 # library
-      ];
+      license = lib.licenses.lgpl21;
       description = "OCaml is an industrial-strength programming language supporting functional, imperative and object-oriented styles";
 
       maintainers = [ lib.maintainers.georgyo ];

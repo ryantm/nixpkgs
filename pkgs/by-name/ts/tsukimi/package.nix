@@ -21,21 +21,25 @@
   versionCheckHook,
   libxml2,
   appstream,
+  blueprint-compiler,
+  glycin-loaders,
+  libglycin,
+  aws-lc,
 }:
 stdenv.mkDerivation (finalAttrs: {
   pname = "tsukimi";
-  version = "26.7.1";
+  version = "26.11.1";
 
   src = fetchFromGitHub {
     owner = "tsukinaha";
     repo = "tsukimi";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-PGd2dWmUfdOyBsfn2Jozb7tAxSy2sv8XOKL1K8FwuLE=";
+    hash = "sha256-GZ90FVYTD1OEWbCFB5zxTe9vGkHDDrStSYtznWgp8Zc=";
   };
 
   cargoDeps = rustPlatform.fetchCargoVendor {
-    inherit (finalAttrs) src;
-    hash = "sha256-lfDPrmCl+Fuf/AG8xiFv00HD76Wy63cBc9Iji7Cw2sw=";
+    inherit (finalAttrs) pname version src;
+    hash = "sha256-VxEaJb4ovfc+08NWkXLRHHa22LJcDGdUhFQZa1cBG1c=";
   };
 
   nativeBuildInputs = [
@@ -49,6 +53,8 @@ stdenv.mkDerivation (finalAttrs: {
     desktop-file-utils
     libxml2 # xmllint
     appstream # appstreamcli
+    blueprint-compiler
+    libglycin.patchVendorHook
   ];
 
   buildInputs = [
@@ -58,6 +64,9 @@ stdenv.mkDerivation (finalAttrs: {
     openssl
     libepoxy
     dbus
+    libglycin
+    glycin-loaders
+    aws-lc
   ]
   ++ (with gst_all_1; [
     gstreamer

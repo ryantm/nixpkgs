@@ -2,6 +2,7 @@
   aiosqlite,
   asyncpg,
   buildPythonPackage,
+  defusedxml,
   fetchFromGitHub,
   lib,
   pytest-asyncio,
@@ -13,20 +14,27 @@
 
 buildPythonPackage (finalAttrs: {
   pname = "knx-telegram-store";
-  version = "0.4.0";
+  version = "0.16.0";
   pyproject = true;
-
-  __structuredAttrs = true;
 
   src = fetchFromGitHub {
     owner = "XKNX";
     repo = "knx-telegram-store";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-t4Bmm5n9+XSBiR2Rvm6UKAKweH9fQuZwaNqG1W2q3Co=";
+    hash = "sha256-Bit4VbFGtGiCSF1ow598xultIl6WVwQLRltiHz/JPFA=";
   };
+
+  patches = [
+    # Preserve PYTHONPATH when calling sys.executable
+    ./preserve-pythonpath.patch
+  ];
 
   build-system = [
     setuptools
+  ];
+
+  dependencies = [
+    defusedxml
   ];
 
   optional-dependencies = {
@@ -45,7 +53,7 @@ buildPythonPackage (finalAttrs: {
     pytest-cov-stub
     pytestCheckHook
   ]
-  ++ finalAttrs.passthru.optional-dependencies.sqlite;
+  ++ lib.concatAttrValues finalAttrs.passthru.optional-dependencies;
 
   pythonImportsCheck = [
     "knx_telegram_store"

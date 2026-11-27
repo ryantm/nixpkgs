@@ -14,16 +14,14 @@
 }:
 python3Packages.buildPythonApplication (finalAttrs: {
   pname = "tauno-monitor";
-  version = "0.2.20";
+  version = "0.3.10";
   pyproject = false;
-
-  __structuredAttrs = true;
 
   src = fetchFromGitHub {
     owner = "taunoe";
     repo = "tauno-monitor";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-rtFnWK1K4S866lgR/lGaTB+REqDExKsEFePX8cwai5E=";
+    hash = "sha256-rs/Q5Bgyqhx0NRLTpIDQKWr8nD/wsKOIrFrMjil+ctc=";
   };
 
   nativeBuildInputs = [
@@ -43,12 +41,17 @@ python3Packages.buildPythonApplication (finalAttrs: {
   dependencies = with python3Packages; [
     pygobject3
     pyserial
+    matplotlib
   ];
 
   dontWrapGApps = true;
 
   preFixup = ''
     makeWrapperArgs+=("''${gappsWrapperArgs[@]}")
+  '';
+
+  postInstallCheck = ''
+    mesonCheckPhase
   '';
 
   passthru.updateScript = nix-update-script { };

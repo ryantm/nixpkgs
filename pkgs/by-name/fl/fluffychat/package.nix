@@ -2,57 +2,35 @@
   lib,
   stdenv,
   fetchFromGitHub,
-  fetchzip,
+  flutter347,
   imagemagick,
-  libgbm,
-  libdrm,
-  flutter341,
-  pulseaudio,
   webkitgtk_4_1,
   copyDesktopItems,
   makeDesktopItem,
-
   callPackage,
-  vodozemac-wasm ? callPackage ./vodozemac-wasm.nix { flutter = flutter341; },
-
+  vodozemac-wasm ? callPackage ./vodozemac-wasm.nix { flutter = flutter347; },
   targetFlutterPlatform ? "linux",
 }:
 
 let
-  libwebrtcRpath = lib.makeLibraryPath [
-    libgbm
-    libdrm
-  ];
   pubspecLock = lib.importJSON ./pubspec.lock.json;
-  libwebrtc = fetchzip {
-    url = "https://github.com/flutter-webrtc/flutter-webrtc/releases/download/v1.4.0/libwebrtc.zip";
-    sha256 = "sha256-OvqUF6RuytDorJE+C58EnIxPHfcphs8iPiPjt7SDrU0=";
-  };
 in
-flutter341.buildFlutterApplication (
+flutter347.buildFlutterApplication (
+  finalAttrs:
   rec {
     pname = "fluffychat-${targetFlutterPlatform}";
-    version = "2.6.0";
+    version = "2.11.5";
 
     src = fetchFromGitHub {
       owner = "krille-chan";
       repo = "fluffychat";
       tag = "v${version}";
-      hash = "sha256-iAHJjpDd2RNYPtEqyotFNvW/nybW1ozNtvMTT+wQVVY=";
+      hash = "sha256-hyLBN+qrBuJ/mQ3YeHYML3ZcIV4lYKzo6RlwlcU3+J0=";
     };
 
     inherit pubspecLock;
 
-    gitHashes = {
-      webcrypto = "sha256-yPhL0LoSIaJ9e9wrLtdPuTBRvXft1DQM9KR7WdNcj68=";
-    };
-
     inherit targetFlutterPlatform;
-
-    flutterBuildFlags = [
-      # Required since v2.4.0
-      "--enable-experiment=dot-shorthands"
-    ];
 
     meta = {
       description = "Chat with your friends (matrix client)";
@@ -76,9 +54,7 @@ flutter341.buildFlutterApplication (
       webkitgtk_4_1
     ];
 
-    runtimeDependencies = [ pulseaudio ];
-
-    env.NIX_LDFLAGS = "-rpath-link ${libwebrtcRpath}";
+    env.CXXFLAGS = "-include cstdint";
 
     desktopItems = [
       (makeDesktopItem {
@@ -96,18 +72,20 @@ flutter341.buildFlutterApplication (
       })
     ];
 
-    customSourceBuilders = {
-      flutter_webrtc =
+    customSourceBuilders = lib.optionalAttrs (stdenv.hostPlatform.system == "aarch64-linux") {
+      native_toolchain_cmake =
         { version, src, ... }:
         stdenv.mkDerivation {
-          pname = "flutter_webrtc";
+          pname = "native_toolchain_cmake";
           inherit version src;
           inherit (src) passthru;
 
           postPatch = ''
-            substituteInPlace third_party/CMakeLists.txt \
-              --replace-fail "\''${CMAKE_CURRENT_LIST_DIR}/downloads/libwebrtc.zip" ${libwebrtc}
-              ln -s ${libwebrtc} third_party/libwebrtc
+            substituteInPlace cmake/aarch64-linux-gnu.toolchain.cmake \
+              --replace-fail "aarch64-linux-gnu-gcc" "gcc"
+
+            substituteInPlace cmake/aarch64-linux-gnu.toolchain.cmake \
+              --replace-fail "aarch64-linux-gnu-g++" "g++"
           '';
 
           installPhase = ''
@@ -121,31 +99,23 @@ flutter341.buildFlutterApplication (
         };
     };
 
-    # Temporary fix for json deprecation error
-    # https://github.com/juliansteenbakker/flutter_secure_storage/issues/965
     postPatch = ''
       substituteInPlace linux/CMakeLists.txt \
         --replace-fail \
         "PRIVATE -Wall -Werror" \
-        "PRIVATE -Wall -Werror -Wno-deprecated"
+        "PRIVATE -Wall"
     '';
 
     postInstall = ''
-      FAV=$out/app/fluffychat-linux/data/flutter_assets/assets/favicon.png
       ICO=$out/share/icons
 
-      for size in 24 32 42 64 128 256 512; do
-        D=$ICO/hicolor/''${size}x''${size}/apps
-        mkdir -p $D
-        magick $FAV -resize ''${size}x''${size} $D/fluffychat.png
-      done
-
-      patchelf --add-rpath ${libwebrtcRpath} $out/app/fluffychat-linux/lib/libwebrtc.so
+      mkdir -p $ICO/hicolor/scalable/apps
+      cp $src/assets/logo/vector/logo_standalone.svg $ICO/hicolor/scalable/apps/fluffychat.png
     '';
   }
   // lib.optionalAttrs (targetFlutterPlatform == "web") {
     preBuild = ''
-      cp -r ${vodozemac-wasm}/* ./assets/vodozemac/
+      cp -r ${vodozemac-wasm} -T ./assets/vodozemac/${finalAttrs.finalPackage.pubspecLock.dependencyVersions.flutter_vodozemac}
     '';
   }
 )

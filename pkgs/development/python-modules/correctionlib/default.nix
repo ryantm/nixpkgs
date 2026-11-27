@@ -35,7 +35,6 @@ buildPythonPackage (finalAttrs: {
   pname = "correctionlib";
   version = "2.9.0";
   pyproject = true;
-  __structuredAttrs = true;
 
   src = fetchFromGitHub {
     owner = "cms-nanoAOD";
@@ -104,7 +103,7 @@ buildPythonPackage (finalAttrs: {
     mainProgram = "correction";
     homepage = "https://cms-nanoaod.github.io/correctionlib/";
     changelog = "https://github.com/cms-nanoAOD/correctionlib/releases/tag/${finalAttrs.src.tag}";
-    license = with lib.licenses; [ bsd3 ];
+    license = lib.licenses.bsd3;
     maintainers = with lib.maintainers; [ veprbl ];
   };
 })

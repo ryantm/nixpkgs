@@ -6,20 +6,21 @@
   fetchPypi,
   hatchling,
   llama-index-core,
+  pandas,
   pymupdf,
   pypdf,
   striprtf,
 }:
 
-buildPythonPackage rec {
+buildPythonPackage (finalAttrs: {
   pname = "llama-index-readers-file";
-  version = "0.6.0";
+  version = "0.8.0";
   pyproject = true;
 
   src = fetchPypi {
     pname = "llama_index_readers_file";
-    inherit version;
-    hash = "sha256-/zZtb/XstxGSdayFkxDYtnLYtrMmGvrgL0CE/OkHa9A=";
+    inherit (finalAttrs) version;
+    hash = "sha256-OcJuQDKy2zxYYZHM34bPRQI5ZBh6Z8cq9L8TSVZbCBs=";
   };
 
   pythonRelaxDeps = [
@@ -35,6 +36,7 @@ buildPythonPackage rec {
     beautifulsoup4
     defusedxml
     llama-index-core
+    pandas
     pymupdf
     pypdf
     striprtf
@@ -51,4 +53,4 @@ buildPythonPackage rec {
     license = lib.licenses.mit;
     maintainers = with lib.maintainers; [ fab ];
   };
-}
+})

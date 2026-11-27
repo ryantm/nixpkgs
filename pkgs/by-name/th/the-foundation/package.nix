@@ -1,7 +1,7 @@
 {
   lib,
   stdenv,
-  fetchFromGitea,
+  fetchFromCodeberg,
   cmake,
   pkg-config,
   curl,
@@ -13,14 +13,13 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "the-foundation";
-  version = "1.12.2";
+  version = "1.14.1";
 
-  src = fetchFromGitea {
-    domain = "git.skyjake.fi";
+  src = fetchFromCodeberg {
     owner = "skyjake";
     repo = "the_Foundation";
-    rev = "v${finalAttrs.version}";
-    hash = "sha256-1mHZ+ihGeslOnLATf6PjaemkJBXSbqe4ULvwAluH6JM=";
+    tag = "v${finalAttrs.version}";
+    hash = "sha256-8hnya1VDEAJjHpJyZIrfAmaRcABFClRgVP5s1GsdfcE=";
   };
 
   nativeBuildInputs = [
@@ -40,16 +39,14 @@ stdenv.mkDerivation (finalAttrs: {
     (lib.cmakeFeature "UNISTRING_DIR" "${libunistring}")
   ];
 
-  env.NIX_CFLAGS_COMPILE = "-Wno-error=attribute-warning";
-
   postFixup = ''
     substituteInPlace "$out"/lib/pkgconfig/the_Foundation.pc \
-      --replace '="''${prefix}//' '="/'
+      --replace-fail '="''${prefix}//' '="/'
   '';
 
   meta = {
     description = "Opinionated C11 library for low-level functionality";
-    homepage = "https://git.skyjake.fi/skyjake/the_Foundation";
+    homepage = "https://codeberg.org/skyjake/the_Foundation";
     license = lib.licenses.bsd2;
     maintainers = with lib.maintainers; [ sikmir ];
     platforms = lib.platforms.unix;

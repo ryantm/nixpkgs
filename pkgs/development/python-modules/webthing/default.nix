@@ -15,8 +15,6 @@ buildPythonPackage (finalAttrs: {
   version = "0.15.0";
   pyproject = true;
 
-  __structuredAttrs = true;
-
   src = fetchFromGitHub {
     owner = "WebThingsIO";
     repo = "webthing-python";
@@ -42,7 +40,7 @@ buildPythonPackage (finalAttrs: {
   meta = {
     description = "Python implementation of a Web Thing server";
     homepage = "https://github.com/WebThingsIO/webthing-python";
-    license = with lib.licenses; [ mpl20 ];
+    license = lib.licenses.mpl20;
     maintainers = with lib.maintainers; [ fab ];
   };
 })

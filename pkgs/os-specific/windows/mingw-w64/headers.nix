@@ -23,6 +23,9 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   '';
 
   passthru = {
+    # Headers-only stand-in used to bootstrap a toolchain before the real libc
+    # exists: runtimes can compile against it, but not link.
+    headersOnly = true;
     tests = {
       inherit (nixosTests) wine;
     };
@@ -33,6 +36,9 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     homepage = "https://www.mingw-w64.org/";
     downloadPage = "https://sourceforge.net/projects/mingw-w64/files/mingw-w64/mingw-w64-release/";
     description = "Collection of headers and libraries for building native Windows applications";
+    identifiers.cpeParts = lib.meta.cpeFullVersionWithVendor "mingw-w64" finalAttrs.version // {
+      product = "mingw-w64";
+    };
     license = with lib.licenses; [
       # Primarily under
       zpl21

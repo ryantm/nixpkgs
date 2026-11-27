@@ -23,16 +23,16 @@
   torch,
 }:
 
-buildPythonPackage rec {
+buildPythonPackage (finalAttrs: {
   pname = "treescope";
-  version = "0.1.10";
+  version = "0.1.11";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "google-deepmind";
     repo = "treescope";
-    tag = "v${version}";
-    hash = "sha256-SfycwuI/B7S/rKkaqxtnJI26q89313pvj/Xsomg6qyA=";
+    tag = "v${finalAttrs.version}";
+    hash = "sha256-tFv/hb+xgur/ntrJxDY2cZy8mwy9p9vhAwTlkUAQFu4=";
   };
 
   build-system = [ flit-core ];
@@ -62,8 +62,8 @@ buildPythonPackage rec {
   meta = {
     description = "Interactive HTML pretty-printer for machine learning research in IPython notebooks";
     homepage = "https://github.com/google-deepmind/treescope";
-    changelog = "https://github.com/google-deepmind/treescope/releases/tag/v${version}";
+    changelog = "https://github.com/google-deepmind/treescope/releases/tag/${finalAttrs.src.tag}";
     license = lib.licenses.asl20;
     maintainers = with lib.maintainers; [ GaetanLepage ];
   };
-}
+})

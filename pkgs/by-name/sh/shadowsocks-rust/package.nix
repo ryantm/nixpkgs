@@ -5,24 +5,36 @@
   rustPlatform,
   pkg-config,
   openssl,
+  zstd,
+  aws-lc,
 }:
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "shadowsocks-rust";
-  version = "1.24.0";
+  version = "1.25.0";
 
   src = fetchFromGitHub {
     owner = "shadowsocks";
     repo = "shadowsocks-rust";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-wqZh+JQDUbH7ZYT4vNzSI3JwRRYDgS5/RjrDaKCxgLc=";
+    hash = "sha256-BS6tc/ac7zewfzYvGWf+OkYjNjBwOWYTumVtQpjWHdg=";
   };
 
-  cargoHash = "sha256-ZLgHDJ4kP+Ohw1OgC/0wHAPnTEc5bN0JQMmgms1Gih4=";
+  cargoPatches = [
+    # TODO: remove once this is merged upstream and released
+    # https://github.com/shadowsocks/shadowsocks-rust/pull/2203
+    ./update-webpki-roots.patch
+  ];
 
-  nativeBuildInputs = lib.optionals stdenv.hostPlatform.isLinux [ pkg-config ];
+  cargoHash = "sha256-Lwc/TYs4cfN3W/Wc74lL0nqD6LCbwDWfMnPyhiXoR+k=";
 
-  buildInputs = lib.optionals stdenv.hostPlatform.isLinux [ openssl ];
+  nativeBuildInputs = [ pkg-config ];
+
+  buildInputs = [
+    zstd
+    aws-lc
+  ]
+  ++ lib.optionals stdenv.hostPlatform.isLinux [ openssl ];
 
   buildFeatures = [
     "trust-dns"

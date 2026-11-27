@@ -6,6 +6,7 @@
   # dependencies
   aiohttp,
   alembic,
+  anyio,
   cryptography,
   docker,
   flask,
@@ -27,9 +28,8 @@
 
 buildPythonPackage (finalAttrs: {
   pname = "mlflow";
-  version = "3.14.0";
+  version = "3.18.0";
   format = "wheel";
-  __structuredAttrs = true;
 
   # We build from the PyPI wheel rather than fetchFromGitHub, because the mlflow-server
   # JS UI is absent from GitHub but provided in the wheel.
@@ -39,7 +39,7 @@ buildPythonPackage (finalAttrs: {
     format = "wheel";
     dist = "py3";
     python = "py3";
-    hash = "sha256-2/d/fNtbXA7Fm0ZxxhcwsbkUtN/3ookuJnpUfLVFT1Y=";
+    hash = "sha256-vn2Eug0LEjkvW1MmDNs+bXt+9LgMKdqQqJtaH223EC8=";
   };
 
   # Nix-wrapped python populates sys.path via NIX_PYTHONPATH/site hooks,
@@ -50,13 +50,10 @@ buildPythonPackage (finalAttrs: {
     patch -p1 -d "$out/lib/python"*/site-packages < ${./subprocess-pythonpath.patch}
   '';
 
-  pythonRelaxDeps = [
-    "cryptography"
-  ];
-
   dependencies = [
     aiohttp
     alembic
+    anyio
     cryptography
     docker
     flask

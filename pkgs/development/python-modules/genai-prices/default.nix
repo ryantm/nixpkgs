@@ -4,7 +4,8 @@
   fetchFromGitHub,
 
   # build-system
-  uv-build,
+  hatchling,
+  uv-dynamic-versioning,
 
   # dependencies
   httpx2,
@@ -13,20 +14,21 @@
 
 buildPythonPackage (finalAttrs: {
   pname = "genai-prices";
-  version = "0.0.71";
+  version = "0.2.3";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "pydantic";
     repo = "genai-prices";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-IFBdpXJ0AE3UNNqUlOrYMIgRGeB87BYbNqb4GvtJkl0=";
+    hash = "sha256-Cn3WwQ/53WzF7xgOqqteyWecvajuDZKnIXO6rlD2W20=";
   };
 
   sourceRoot = "${finalAttrs.src.name}/packages/python";
 
   build-system = [
-    uv-build
+    hatchling
+    uv-dynamic-versioning
   ];
 
   dependencies = [

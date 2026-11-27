@@ -20,7 +20,7 @@
   zstd,
   xz,
   dejagnu,
-  sourceHighlight,
+  source-highlight,
   libiconv,
   xxhash,
 
@@ -111,7 +111,7 @@ stdenv.mkDerivation (finalAttrs: {
     zlib
     zstd
     xz
-    sourceHighlight
+    source-highlight
     xxhash
     dejagnu # for tests
   ]
@@ -136,7 +136,7 @@ stdenv.mkDerivation (finalAttrs: {
   env.NIX_CFLAGS_COMPILE = "-Wno-format-nonliteral";
 
   # Workaround for Apple Silicon, configurePlatforms must be disabled
-  configurePlatforms = optionals (!(stdenv.hostPlatform.isDarwin && stdenv.hostPlatform.isAarch64)) [
+  configurePlatforms = optionals (!stdenv.hostPlatform.isDarwin) [
     "build"
     "host"
     "target"
@@ -191,13 +191,14 @@ stdenv.mkDerivation (finalAttrs: {
   ++ optional stdenv.hostPlatform.isStatic "--disable-inprocess-agent"
   ++ optional (!hostCpuOnly) "--enable-targets=all"
   # Workaround for Apple Silicon, "--target" must be "faked", see eg: https://github.com/Homebrew/homebrew-core/pull/209753
-  ++ optional (
-    stdenv.hostPlatform.isDarwin && stdenv.hostPlatform.isAarch64
-  ) "--target=x86_64-apple-darwin";
+  ++ optional stdenv.hostPlatform.isDarwin "--target=x86_64-apple-darwin";
 
   postInstall = ''
     # Remove Info files already provided by Binutils and other packages.
     rm -v $out/share/info/bfd.info
+
+    # Make sure pyc files are generated before fixup
+    python3 -m compileall $out/share/gdb/python/gdb
   '';
 
   doInstallCheck = true;
@@ -206,13 +207,13 @@ stdenv.mkDerivation (finalAttrs: {
   passthru = {
     updateScript = writeScript "update-gdb" ''
       #!/usr/bin/env nix-shell
-      #!nix-shell -i bash -p curl pcre common-updater-scripts
+      #!nix-shell -i bash -p curl pcre2 common-updater-scripts
 
       set -eu -o pipefail
 
       # Expect the text in format of '<h3>GDB version 12.1</h3>'
       new_version="$(curl -s https://www.sourceware.org/gdb/ |
-          pcregrep -o1 '<h3>GDB version ([0-9.]+)</h3>')"
+          pcre2grep -o1 '<h3>GDB version ([0-9.]+)</h3>')"
       update-source-version ${pname} "$new_version"
     '';
   };

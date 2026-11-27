@@ -29,6 +29,7 @@ python3.pkgs.buildPythonApplication (finalAttrs: {
   pythonRelaxDeps = [
     "aiorun"
     "aiosqlite"
+    "apprise"
     "click"
     "uiprotect"
   ];
@@ -55,10 +56,7 @@ python3.pkgs.buildPythonApplication (finalAttrs: {
     homepage = "https://github.com/ep1cman/unifi-protect-backup";
     changelog = "https://github.com/ep1cman/unifi-protect-backup/blob/v${finalAttrs.version}/CHANGELOG.md";
     license = lib.licenses.mit;
-    maintainers = with lib.maintainers; [
-      das_j
-      helsinki-Jo
-    ];
+    maintainers = with lib.maintainers; [ helsinki-Jo ];
     mainProgram = "unifi-protect-backup";
   };
 })

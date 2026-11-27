@@ -1,47 +1,42 @@
 {
   lib,
-  black,
   buildPythonPackage,
+  black,
   cachecontrol,
   fetchFromGitHub,
+  hatch-vcs,
+  hatchling,
   mistune,
   mypy-extensions,
   mypy,
+  pytest-xdist,
   pytestCheckHook,
   rdflib,
   requests,
   rich-argparse,
   ruamel-yaml,
-  setuptools-scm,
-  types-dataclasses,
-  types-requests,
-  types-setuptools,
 }:
 
-buildPythonPackage rec {
+buildPythonPackage (finalAttrs: {
   pname = "schema-salad";
-  version = "8.9.20260327095315";
+  version = "8.10.20261106141337";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "common-workflow-language";
     repo = "schema_salad";
-    tag = version;
-    hash = "sha256-j3jevOMsNHT9+HI/8MD4MUwj+IHUisKMs/OA5wpweao=";
+    tag = finalAttrs.version;
+    hash = "sha256-dd1ZmD0BsJhRkNfdYr2B5ifkHwJH8Heq5umvjzqLFjg=";
   };
 
-  pythonRelaxDeps = [ "mistune" ];
+  build-system = [
+    hatch-vcs
+    hatchling
+  ];
 
-  postPatch = ''
-    substituteInPlace setup.py \
-      --replace-fail 'pytest_runner + ["setuptools_scm>=8.0.4,<11"]' '["setuptools_scm"]'
-    substituteInPlace pyproject.toml \
-      --replace-fail '"setuptools_scm[toml]>=8.0.4,<11"' '"setuptools_scm[toml]"' \
-      --replace-fail "mypy[mypyc]==1.19.1" "mypy"
-    sed -i "/black>=/d" pyproject.toml
-  '';
-
-  build-system = [ setuptools-scm ];
+  pythonRelaxDeps = [
+    "cachecontrol"
+  ];
 
   dependencies = [
     cachecontrol
@@ -52,17 +47,18 @@ buildPythonPackage rec {
     requests
     rich-argparse
     ruamel-yaml
-    types-dataclasses
-    types-requests
-    types-setuptools
   ]
   ++ cachecontrol.optional-dependencies.filecache;
 
-  nativeCheckInputs = [ pytestCheckHook ] ++ optional-dependencies.pycodegen;
+  optional-dependencies = {
+    pycodegen = [ black ];
+  };
 
-  preCheck = ''
-    rm tox.ini
-  '';
+  nativeCheckInputs = [
+    pytest-xdist
+    pytestCheckHook
+  ]
+  ++ lib.flatten (builtins.attrValues finalAttrs.passthru.optional-dependencies);
 
   disabledTests = [
     "test_load_by_yaml_metaschema"
@@ -77,15 +73,11 @@ buildPythonPackage rec {
 
   pythonImportsCheck = [ "schema_salad" ];
 
-  optional-dependencies = {
-    pycodegen = [ black ];
-  };
-
   meta = {
     description = "Semantic Annotations for Linked Avro Data";
     homepage = "https://github.com/common-workflow-language/schema_salad";
-    changelog = "https://github.com/common-workflow-language/schema_salad/releases/tag/${src.tag}";
+    changelog = "https://github.com/common-workflow-language/schema_salad/releases/tag/${finalAttrs.src.tag}";
     license = lib.licenses.asl20;
     maintainers = with lib.maintainers; [ veprbl ];
   };
-}
+})

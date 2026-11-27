@@ -8,16 +8,19 @@
 
 buildGoModule (finalAttrs: {
   pname = "kubecfg";
-  version = "0.37.0";
+  version = "0.43.0";
 
   src = fetchFromGitHub {
     owner = "kubecfg";
     repo = "kubecfg";
     rev = "v${finalAttrs.version}";
-    hash = "sha256-uJ6G0puANDrnA5NOOWZSGt6gVgIOMUgLfZcBWoXutyo=";
+    hash = "sha256-or7xRjyo0mjgnJnDZPD2YklGo32rWYg7iaPtUzj2ijw=";
   };
 
-  vendorHash = "sha256-eMDdbjsYXK5TxC+cIq3lJ+G7lp7Kt/HgoVPPHv2ESsk=";
+  vendorHash = "sha256-FMC3d2RmFlXMWiohVk7j/6S0HmrM7/smPDjOmBDAjQE=";
+
+  # Separate Go module used only to host-test the wasm build.
+  excludedPackages = [ "./wasm/hosttest" ];
 
   ldflags = [
     "-s"

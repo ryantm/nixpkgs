@@ -29,9 +29,9 @@ let
   loadersPath = "${gdk-pixbuf.binaryDir}/jxl-loaders.cache";
 in
 
-stdenv.mkDerivation rec {
+stdenv.mkDerivation (finalAttrs: {
   pname = "libjxl";
-  version = "0.11.2";
+  version = "0.13.0";
 
   outputs = [
     "out"
@@ -43,8 +43,8 @@ stdenv.mkDerivation rec {
   src = fetchFromGitHub {
     owner = "libjxl";
     repo = "libjxl";
-    tag = "v${version}";
-    hash = "sha256-L4/BY68ZBCpebQxryR7D1CxrsneYvw8B8EvW2mkF7bA=";
+    tag = "v${finalAttrs.version}";
+    hash = "sha256-fVT+HIAMpXnr12uNVI624SeD9oRhBTp+LPd6k30ZHwM=";
     # There are various submodules in `third_party/`.
     fetchSubmodules = true;
   };
@@ -69,7 +69,6 @@ stdenv.mkDerivation rec {
   # that the cmake build can apparently use:
   #     OpenGL/GLUT (for Examples -> comparison with sjpeg)
   #     viewer (see `cmakeFlags`)
-  #     plugins like for GDK and GIMP (see `cmakeFlags`)
 
   # Vendored libraries:
   # `libjxl` currently vendors many libraries as git submodules that they
@@ -127,7 +126,6 @@ stdenv.mkDerivation rec {
   ++ lib.optionals enablePlugins [
     # Enable plugins, such as:
     # * the `gdk-pixbuf` one, which allows applications like `eog` to load jpeg-xl files
-    # * the `gimp` one, which allows GIMP to load jpeg-xl files
     "-DJPEGXL_ENABLE_PLUGINS=ON"
   ]
   ++ lib.optionals stdenv.hostPlatform.isStatic [
@@ -147,9 +145,7 @@ stdenv.mkDerivation rec {
     shopt -u extglob
 
     substituteInPlace plugins/gdk-pixbuf/jxl.thumbnailer \
-      --replace '/usr/bin/gdk-pixbuf-thumbnailer' "$out/libexec/gdk-pixbuf-thumbnailer-jxl"
-    substituteInPlace CMakeLists.txt \
-      --replace 'sh$' 'sh( -e$|$)'
+      --replace-fail '/usr/bin/gdk-pixbuf-thumbnailer' "$out/libexec/gdk-pixbuf-thumbnailer-jxl"
   '';
 
   # Move `benchmark_xl` into a separate output to avoid a file collision
@@ -173,9 +169,7 @@ stdenv.mkDerivation rec {
     CXXFLAGS = "-mfp16-format=ieee";
   };
 
-  # FIXME x86_64-darwin:
-  # https://github.com/NixOS/nixpkgs/pull/204030#issuecomment-1352768690
-  doCheck = with stdenv; !(hostPlatform.isi686 || isDarwin && isx86_64);
+  doCheck = with stdenv.hostPlatform; !isi686;
 
   disabledTests = lib.optionals stdenv.hostPlatform.isBigEndian [
     # https://github.com/libjxl/libjxl/issues/3629
@@ -201,6 +195,8 @@ stdenv.mkDerivation rec {
     ".*bitSqueeze.*"
   ];
 
+  __structuredAttrs = true;
+
   meta = {
     homepage = "https://github.com/libjxl/libjxl";
     description = "JPEG XL image format reference implementation";
@@ -208,4 +204,4 @@ stdenv.mkDerivation rec {
     maintainers = with lib.maintainers; [ nh2 ];
     platforms = lib.platforms.all;
   };
-}
+})

@@ -6,19 +6,16 @@
   setuptools,
 }:
 
-let
-  version = "2026.4.4";
-in
-buildPythonPackage {
+buildPythonPackage (finalAttrs: {
   pname = "regex";
-  inherit version;
+  version = "2026.9.29";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "mrabarnett";
     repo = "mrab-regex";
-    tag = version;
-    hash = "sha256-vLhukoQc50XOgv74hBQS36w+T+27y5GTTDetZ2JV8r4=";
+    tag = finalAttrs.version;
+    hash = "sha256-9WiynNc25LhHzooLEU4AubVFc6fXAJnBjqPIvfk/l44=";
   };
 
   build-system = [ setuptools ];
@@ -38,6 +35,7 @@ buildPythonPackage {
   pythonImportsCheck = [ "regex" ];
 
   meta = {
+    changelog = "https://github.com/mrabarnett/mrab-regex/blob/${finalAttrs.src.tag}/changelog.txt";
     description = "Alternative regular expression module, to replace re";
     homepage = "https://github.com/mrabarnett/mrab-regex";
     license = [
@@ -46,4 +44,4 @@ buildPythonPackage {
     ];
     maintainers = [ lib.maintainers.dwoffinden ];
   };
-}
+})

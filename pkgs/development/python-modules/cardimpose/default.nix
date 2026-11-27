@@ -1,25 +1,30 @@
 {
   lib,
   buildPythonPackage,
-  fetchFromGitHub,
+  fetchPypi,
   setuptools,
   pymupdf,
+  tkinter,
 }:
-buildPythonPackage {
+buildPythonPackage (finalAttrs: {
   pname = "cardimpose";
-  version = "0.2.1-unstable-2024-12-28";
+  version = "0.3.0";
   pyproject = true;
 
-  src = fetchFromGitHub {
-    owner = "frsche";
-    repo = "cardimpose";
-    rev = "eb26a9795e20db3e3dd5b62dbcbbad547cb05a55";
-    hash = "sha256-Fel0YOe2D76h+QAon/wxI6EsZhfLca+0ncNi9i888+E=";
+  # Get source from Pypi as the GitHub repository doesn't have any version
+  # indicators, so there's no way to tell when a new version is available or
+  # what the version should be.
+  src = fetchPypi {
+    inherit (finalAttrs) pname version;
+    hash = "sha256-NVRk/sDCEeQYx4bwJ268w7oitq9y4FqOo1m1pzPRLiE=";
   };
 
   build-system = [ setuptools ];
 
-  dependencies = [ pymupdf ];
+  dependencies = [
+    pymupdf
+    tkinter
+  ];
 
   pythonImportsCheck = [ "cardimpose" ];
 
@@ -38,4 +43,4 @@ buildPythonPackage {
     badPlatforms = pymupdf.meta.badPlatforms or [ ];
     maintainers = [ lib.maintainers.me-and ];
   };
-}
+})

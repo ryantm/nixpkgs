@@ -4,8 +4,8 @@
   hostPlatform,
   fetchurl,
   bash,
+  gcc-buildbuild,
   gcc,
-  musl,
   binutils,
   gnumake,
   gnupatch,
@@ -20,10 +20,17 @@
 let
   inherit (import ./common.nix { inherit lib; }) meta;
   pname = "binutils-static";
-  version = "2.46.0";
+  # TODO: need to set version to 2.46, but binutils tarball is named as
+  # "2.46.0"
+  # This is due to a mismatch between binutils-with-gold, which is
+  # named as 2.46. The top-level package follows binutils-with-gold,
+  # and the version here is asserted to be older or equal. The version
+  # comparison function from lib considers 2.46.0 to be "newer" than
+  # 2.46.
+  version = "2.46";
 
   src = fetchurl {
-    url = "mirror://gnu/binutils/binutils-${version}.tar.xz";
+    url = "mirror://gnu/binutils/binutils-${version}.0.tar.xz";
     hash = "sha256-11qU9Nc+ekCG91E+Z+Q56Pzcu3Jv/mP0ZhdE5iVrLPI=";
   };
 
@@ -33,7 +40,7 @@ let
   ];
 
   configureFlags = [
-    "CC=musl-gcc"
+    # otherwise the binary links dynamically and pulls gcc into the closure
     "LDFLAGS=--static"
     "--prefix=${placeholder "out"}"
     "--build=${buildPlatform.config}"
@@ -42,7 +49,6 @@ let
     "--disable-dependency-tracking"
     "--disable-nls"
 
-    "--with-sysroot=/"
     "--enable-deterministic-archives"
     # depends on bison
     "--disable-gprofng"
@@ -70,7 +76,7 @@ bash.runCommand "${pname}-${version}"
 
     nativeBuildInputs = [
       gcc
-      musl
+      gcc-buildbuild
       binutils
       gnumake
       gnupatch
@@ -94,7 +100,7 @@ bash.runCommand "${pname}-${version}"
   ''
     # Unpack
     tar xf ${src}
-    cd binutils-${version}
+    cd binutils-${version}.0
 
     # Patch
     ${lib.concatMapStringsSep "\n" (f: "patch -Np1 -i ${f}") patches}

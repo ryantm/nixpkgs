@@ -1,5 +1,4 @@
 {
-  stdenvNoCC,
   lib,
   protobuf,
   rustPlatform,
@@ -10,36 +9,41 @@
   writableTmpDirAsHomeHook,
   versionCheckHook,
   nix-update-script,
+  sqlite,
+  sqlcipher,
 }:
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "gurk-rs";
-  version = "0.9.3";
+  version = "0.10.2";
+
+  __structuredAttrs = true;
 
   src = fetchFromGitHub {
     owner = "boxdot";
     repo = "gurk-rs";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-tIR2HJAqpWewsQeD5kYriPCsGJci++LYDbmazqoQ/L0=";
+    hash = "sha256-qJOmuwctXDm6kSQOfx4j6Vu/nfcJg7vX+zPr1RgtidE=";
   };
 
   postPatch = ''
     rm .cargo/config.toml
   '';
 
-  cargoHash = "sha256-gmuQxqDsO4mqLYsv9ahVAfxRu7IJAG47jFNRksC/kfI=";
+  cargoHash = "sha256-HbqFWiRMx21OA5gLUjHDav01Kbd6lCD6ODd22hNZpDw=";
 
   nativeBuildInputs = [
     protobuf
     pkg-config
   ];
 
-  buildInputs = [ openssl ];
+  buildInputs = [
+    openssl
+    sqlite
+    sqlcipher
+  ];
 
   env = {
-    NIX_LDFLAGS = lib.optionalString (
-      with stdenvNoCC.hostPlatform; (isDarwin && isx86_64)
-    ) "-framework AppKit";
     OPENSSL_NO_VENDOR = true;
     PROTOC = "${lib.getExe pkgsBuildHost.protobuf}";
   };
@@ -62,6 +66,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
       devhell
       mattkang
       nicknb
+      faukah
     ];
   };
 })

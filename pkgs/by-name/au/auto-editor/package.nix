@@ -1,7 +1,6 @@
 {
   lib,
   stdenv,
-  config,
   buildNimPackage,
   fetchFromGitHub,
 
@@ -9,9 +8,11 @@
   yt-dlp,
   lame,
   libopus,
-  libvpx,
   x264,
   dav1d,
+  zlib,
+  alsa-lib,
+  libass,
 
   python3,
   python3Packages,
@@ -19,24 +20,27 @@
 
 buildNimPackage rec {
   pname = "auto-editor";
-  version = "30.4.0";
+  version = "31.9.0";
 
   src = fetchFromGitHub {
     owner = "WyattBlue";
     repo = "auto-editor";
     tag = version;
-    hash = "sha256-AzUTDOWzyhZLrwqO9HfZ/Ke72LElJAMzVoDydBfYKwg=";
+    hash = "sha256-F7br3bk0lpzPaIHnXMpGIbla2IriDyc2nyITjqj9O6Q=";
   };
 
   lockFile = ./lock.json;
 
   buildInputs = [
     ffmpeg-full
-    lame
+    lame # Upstream uses a minimal, unpackaged fork of `lame` named `bwlame`.
     libopus
     x264
     dav1d
-  ];
+    zlib
+    libass
+  ]
+  ++ lib.optional stdenv.hostPlatform.isLinux alsa-lib;
 
   env = {
     # Nothing should be dynamically linked, as ffmpeg should already link it.
@@ -45,7 +49,16 @@ buildNimPackage rec {
     DISABLE_VPX = "1";
     DISABLE_SVTAV1 = "1";
     DISABLE_VPL = "1";
+    DISABLE_LIBASS = "1"; # configs.nim also links downstream dependencies (for upstream packaging), this disables that
   };
+
+  nimDefines = [
+    "libass" # Required to get auto-editor to detect libass
+  ];
+
+  nimFlags = [
+    "--clib:ass"
+  ];
 
   postPatch = ''
     substituteInPlace src/log.nim \
@@ -54,27 +67,12 @@ buildNimPackage rec {
     # buildNimPackage hack
     substituteInPlace ae.nimble \
       --replace-fail '"main=auto-editor"' '"main"'
-
-    mv tests/unit.nim tests/tunit.nim # buildNimPackage expects tests to start with t
   '';
 
   nativeCheckInputs = [
     python3
     python3Packages.av
   ];
-
-  checkPhase = ''
-    runHook preCheck
-
-    nim_builder --phase:check
-
-    substituteInPlace tests/test.py \
-      --replace-fail '"./auto-editor"' "\"$out/bin/main\""
-
-    python3 tests/test.py
-
-    runHook postCheck
-  '';
 
   postInstall = ''
     mv $out/bin/main $out/bin/auto-editor

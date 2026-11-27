@@ -4,6 +4,9 @@
   fetchFromGitHub,
   rustPlatform,
   pytestCheckHook,
+  # system libs
+  pkg-config,
+  pkgsHostTarget,
   # Deps
   arro3-core,
   protobuf,
@@ -31,11 +34,15 @@ buildPythonPackage rec {
   pyproject = true;
 
   src = fetchFromGitHub {
-    owner = "hex-inc";
+    owner = "vega";
     repo = "vegafusion";
     tag = "v${version}";
     hash = "sha256-yiECw9WGd+03KFOWa+bwR10gQFqzx4Riy6uw2zwdc3s=";
   };
+
+  patches = [
+    ./fix-test_transformer.patch
+  ];
 
   cargoDeps = rustPlatform.fetchCargoVendor {
     inherit src;
@@ -45,12 +52,17 @@ buildPythonPackage rec {
 
   buildAndTestSubdir = "vegafusion-python";
 
-  buildInputs = [ protobuf ];
-
-  nativeBuildInputs = with rustPlatform; [
-    cargoSetupHook
-    maturinBuildHook
+  buildInputs = [
+    protobuf
+    pkgsHostTarget.zstd
   ];
+
+  nativeBuildInputs =
+    (with rustPlatform; [
+      cargoSetupHook
+      maturinBuildHook
+    ])
+    ++ [ pkg-config ];
 
   dependencies = [
     arro3-core
@@ -94,7 +106,7 @@ buildPythonPackage rec {
 
   meta = with lib; {
     description = "Core tools for using VegaFusion from Python";
-    homepage = "https://github.com/hex-inc/vegafusion";
+    homepage = "https://github.com/vega/vegafusion";
     license = lib.licenses.bsd3;
     maintainers = with maintainers; [ wariuccio ];
   };

@@ -2,37 +2,46 @@
   lib,
   buildPythonPackage,
   fetchFromGitHub,
-  replaceVars,
+  fetchpatch2,
+  pyprojectVersionPatchHook,
   pythonOlder,
   hatch-vcs,
   hatchling,
   python-dateutil,
   typing-extensions,
   tzdata,
-  hypothesis,
-  pyprojectVersionPatchHook,
   pytestCheckHook,
+  pytz,
 }:
 
-buildPythonPackage rec {
-  version = "7.2.0";
+buildPythonPackage (finalAttrs: {
   pname = "icalendar";
+  version = "7.3.0";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "collective";
     repo = "icalendar";
-    tag = "v${version}";
-    hash = "sha256-0NKNbWigZ3BOfKBM8Q+XrOdoFBOF5Lu4XujJcYCMuMw=";
+    tag = "v${finalAttrs.version}";
+    hash = "sha256-SrQ5Bfb3ZyUyYYvT9FkUs6pAwx9WGL+DdWTAn1N0RrA=";
   };
 
-  nativeBuildInputs = [
-    pyprojectVersionPatchHook
+  patches = [
+    # https://github.com/collective/icalendar/pull/1661
+    (fetchpatch2 {
+      name = "warn-on-cached-tzid-guess.patch";
+      url = "https://github.com/collective/icalendar/commit/0213619845d5ff2525de409d70dd40c0fe1d5f1f.patch?full_index=1";
+      hash = "sha256-dkzQp3nsKqdDR2sACe8imYvJyNVJzBfFXpE4gXv5oiY=";
+    })
   ];
 
   build-system = [
     hatch-vcs
     hatchling
+  ];
+
+  nativeBuildInputs = [
+    pyprojectVersionPatchHook
   ];
 
   dependencies = [
@@ -45,9 +54,11 @@ buildPythonPackage rec {
   ];
 
   nativeCheckInputs = [
-    hypothesis
     pytestCheckHook
+    pytz
   ];
+
+  pythonImportsCheck = [ "icalendar" ];
 
   disabledTests = [
     # AssertionError: assert {'Atlantic/Jan_Mayen'} == {'Arctic/Longyearbyen'}
@@ -58,11 +69,12 @@ buildPythonPackage rec {
   enabledTestPaths = [ "src/icalendar" ];
 
   meta = {
-    changelog = "https://github.com/collective/icalendar/blob/${src.tag}/CHANGES.rst";
     description = "Parser/generator of iCalendar files";
-    mainProgram = "icalendar";
     homepage = "https://github.com/collective/icalendar";
+    changelog = "https://github.com/collective/icalendar/blob/${finalAttrs.src.rev}/CHANGES.rst";
     license = lib.licenses.bsd2;
-    maintainers = with lib.maintainers; [ olcai ];
+    maintainers = with lib.maintainers; [ iamanaws ];
+    teams = with lib.teams; [ ngi ];
+    mainProgram = "icalendar";
   };
-}
+})

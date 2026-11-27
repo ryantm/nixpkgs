@@ -20,17 +20,22 @@
 
 buildPythonPackage rec {
   pname = "osmnx";
-  version = "2.1.0";
+  version = "2.1.1";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "gboeing";
     repo = "osmnx";
     tag = "v${version}";
-    hash = "sha256-3uLgc6zptmXlPg93qtsWbqNxXiBD/SEnXBL/IM/1m2c=";
+    hash = "sha256-PX4Vhf3R9UGKMYp636+tJ5NV/oURd3Zzxfvj7LLCaPM=";
   };
 
   build-system = [ uv-build ];
+
+  postPatch = ''
+    substituteInPlace pyproject.toml \
+      --replace-fail "uv_build==0.11.*" uv_build
+  '';
 
   dependencies = [
     geopandas

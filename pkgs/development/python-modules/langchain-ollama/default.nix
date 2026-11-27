@@ -25,8 +25,6 @@ buildPythonPackage (finalAttrs: {
   pname = "langchain-ollama";
   version = "1.1.0";
   pyproject = true;
-  __structuredAttrs = true;
-  strictDeps = true;
 
   src = fetchFromGitHub {
     owner = "langchain-ai";
@@ -40,6 +38,8 @@ buildPythonPackage (finalAttrs: {
   build-system = [
     hatchling
   ];
+
+  pythonRelaxDeps = [ "langchain-core" ];
 
   dependencies = [
     langchain-core

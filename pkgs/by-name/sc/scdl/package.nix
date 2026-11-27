@@ -7,12 +7,12 @@
 
 python3Packages.buildPythonApplication (finalAttrs: {
   pname = "scdl";
-  version = "3.0.6";
+  version = "3.0.9";
   pyproject = true;
 
   src = fetchPypi {
     inherit (finalAttrs) pname version;
-    hash = "sha256-kAvK1KqfVK6axQXTkBtcMxc7OHLPYNfIyy2n+97LhB4=";
+    hash = "sha256-vNWU6rLBoNH0CsAlOyYuO4HY3cNf636JMGqoc57ejWs=";
   };
 
   build-system = [ python3Packages.setuptools ];
@@ -33,7 +33,10 @@ python3Packages.buildPythonApplication (finalAttrs: {
       packagesToBinPath = [ ffmpeg-headless ];
     in
     [
-      ''--prefix PATH : "${lib.makeBinPath packagesToBinPath}"''
+      "--prefix"
+      "PATH"
+      ":"
+      (lib.makeBinPath packagesToBinPath)
     ];
 
   # No tests in repository

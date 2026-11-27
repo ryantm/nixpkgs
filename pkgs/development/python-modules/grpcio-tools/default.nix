@@ -13,19 +13,14 @@
 # nixpkgs-update: no auto update
 buildPythonPackage rec {
   pname = "grpcio-tools";
-  version = "1.81.0";
+  version = "1.85.1";
   pyproject = true;
 
   src = fetchPypi {
     pname = "grpcio_tools";
     inherit version;
-    hash = "sha256-BzPXc+yoy0YfTyobecZMEj25ZhvkGwgYS4FJeyuZHMs=";
+    hash = "sha256-1vHuIToH3pRiyQ7l3r5KeN/yAwag+zlKZdSLL5T+MaE=";
   };
-
-  postPatch = ''
-    substituteInPlace pyproject.toml \
-      --replace-fail "Cython==3.1.1" Cython
-  '';
 
   outputs = [
     "out"

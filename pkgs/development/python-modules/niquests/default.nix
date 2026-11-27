@@ -16,16 +16,16 @@
   wassima,
 }:
 
-buildPythonPackage rec {
+buildPythonPackage (finalAttrs: {
   pname = "niquests";
-  version = "3.20.0";
+  version = "3.21.3";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "jawah";
     repo = "niquests";
-    tag = "v${version}";
-    hash = "sha256-9zBo59l/zDIMKnYX1jOMOCec+oRnCkqJjjJmjbAzoPM=";
+    tag = "v${finalAttrs.version}";
+    hash = "sha256-UzT2fUuhFxjGHsNFH3v8DZisrByHpgqGp7M6BjG3nVY=";
   };
 
   build-system = [ hatchling ];
@@ -41,6 +41,7 @@ buildPythonPackage rec {
       brotli
       socks
       ws
+      ws-fast
       zstd
       ;
     full = [
@@ -70,11 +71,15 @@ buildPythonPackage rec {
     pytest-httpbin
     pytestCheckHook
   ]
-  ++ optional-dependencies.socks;
+  ++ finalAttrs.passthru.optional-dependencies.socks;
 
   disabledTestPaths = [
+    # broken by python-socks v3
+    "tests/test_lowlevel.py::test_use_proxy_from_environment"
     # tests connect to the internet
     "tests/test_requests.py"
+    # we don't care about coverage
+    "tests/wasi_guest/coverage_runner.py"
   ]
   ++ lib.optionals stdenv.hostPlatform.isDarwin [
     # NameResolutionError: Failed to resolve 'localhost'
@@ -99,10 +104,10 @@ buildPythonPackage rec {
     ];
 
   meta = {
-    changelog = "https://github.com/jawah/niquests/blob/${src.tag}/HISTORY.md";
+    changelog = "https://github.com/jawah/niquests/blob/${finalAttrs.src.tag}/HISTORY.md";
     description = "Simple HTTP library that is a drop-in replacement for Requests";
     homepage = "https://github.com/jawah/niquests";
     license = lib.licenses.asl20;
     maintainers = with lib.maintainers; [ dotlambda ];
   };
-}
+})

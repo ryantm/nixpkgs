@@ -1,28 +1,28 @@
 {
   lib,
   fetchFromGitHub,
-  buildGoModule,
+  buildGo127Module,
   nodejs,
   npmHooks,
   fetchNpmDeps,
   nix-update-script,
 }:
-buildGoModule (finalAttrs: {
+buildGo127Module (finalAttrs: {
   pname = "go-hass-agent";
-  version = "14.14.1";
+  version = "14.19.0";
 
   src = fetchFromGitHub {
     owner = "joshuar";
     repo = "go-hass-agent";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-s5kzxzyfNGK57MtusjEjcm0Gn75Wu8vfwJEIaVz7m20=";
+    hash = "sha256-ApaNeScISB3qVUZ7aDAjL/ufNvm7VhB/NhdmPBB3cS0=";
   };
 
-  vendorHash = "sha256-ZiLYnEcugciobjAchzJZNQrE3G11ehf3vi6cIMxZiTQ=";
+  vendorHash = "sha256-+JCAolvTS/gkHZg9x1aLg6x9b6NJoXT/FY9V96ojFq8=";
 
   npmDeps = fetchNpmDeps {
     inherit (finalAttrs) src;
-    hash = "sha256-K/VrxDlE3MVDBItsx4ADkAgn3W06onfVwpBYoU3kejs=";
+    hash = "sha256-PZt7yIqAN/5UkKwZhAD4ZXaZvAbA6aeBsoacCzsJpeE=";
   };
 
   overrideModAttrs = oldAttrs: {

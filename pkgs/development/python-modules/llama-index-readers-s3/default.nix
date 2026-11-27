@@ -9,16 +9,18 @@
   s3fs,
 }:
 
-buildPythonPackage rec {
+buildPythonPackage (finalAttrs: {
   pname = "llama-index-readers-s3";
-  version = "0.6.1";
+  version = "0.8.0";
   pyproject = true;
 
   src = fetchPypi {
     pname = "llama_index_readers_s3";
-    inherit version;
-    hash = "sha256-cK5XmH4F0TZt6IMJvAnmEs7UWkekrrbEAIvd/CE33xw=";
+    inherit (finalAttrs) version;
+    hash = "sha256-9/9mOW4TivdnpCOs4n7U25f2YexKVy0dPQioZ0hgQak=";
   };
+
+  pythonRelaxDeps = [ "llama-index-embeddings-openai" ];
 
   build-system = [ hatchling ];
 
@@ -40,4 +42,4 @@ buildPythonPackage rec {
     license = lib.licenses.mit;
     maintainers = with lib.maintainers; [ fab ];
   };
-}
+})

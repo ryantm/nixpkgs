@@ -12,8 +12,6 @@ buildPythonPackage (finalAttrs: {
   version = "1.2.3";
   pyproject = true;
 
-  __structuredAttrs = true;
-
   src = fetchFromGitHub {
     owner = "CybercentreCanada";
     repo = "cart";
@@ -36,7 +34,7 @@ buildPythonPackage (finalAttrs: {
     mainProgram = "cart";
     homepage = "https://github.com/CybercentreCanada/cart";
     changelog = "https://github.com/CybercentreCanada/cart/releases/tag/${finalAttrs.src.tag}";
-    license = with lib.licenses; [ mit ];
+    license = lib.licenses.mit;
     maintainers = with lib.maintainers; [ fab ];
   };
 })

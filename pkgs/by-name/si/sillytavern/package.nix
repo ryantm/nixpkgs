@@ -5,17 +5,22 @@
 }:
 buildNpmPackage (finalAttrs: {
   pname = "sillytavern";
-  version = "1.18.0";
+  version = "1.19.1";
 
   src = fetchFromGitHub {
     owner = "SillyTavern";
     repo = "SillyTavern";
     tag = finalAttrs.version;
-    hash = "sha256-1FDqbV+t9JF93aTgy7Hnwe4lCJZHooHw0J3zOsCZWDA=";
+    hash = "sha256-igzzV64pqD7d5nyFMuAbagTTuKY8m/BC3FKKjpi90IU=";
   };
-  npmDepsHash = "sha256-jDySPn354gh1gFI8I2apGmXDxOz4d4STfJX+iFVFhdg=";
+  npmDepsHash = "sha256-DL+4AP7EVHdeKzuuxiTJQJJleXihkiow98OojTf1Uqs=";
 
   dontNpmBuild = true;
+
+  postPatch = ''
+    # `.npmrc` breaks `npm pack`.
+    rm .npmrc
+  '';
 
   # These dirs are not installed automatically.
   # And if they were not in place, the app would try to create them at runtime, which is of course impossible to achieve.

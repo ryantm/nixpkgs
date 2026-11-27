@@ -53,6 +53,7 @@
 {
   version,
   pinned ? false,
+  broken ? false,
   hash,
   cargoHash ? null,
   patches ? [ ],
@@ -90,6 +91,10 @@ stdenv.mkDerivation (
       substituteInPlace src/miral/x11_support.cpp \
         --replace-fail '/usr/bin/Xwayland' '${lib.getExe xwayland}'
     ''
+    # MirCookie code needs cstdint header, was previously getting implicitly pulled in
+    + lib.optionalString (lib.strings.versionOlder version "2.17.0") ''
+      sed -i -e '/#define MIR_SERVER_H_/a #include <cstdint>' src/include/server/mir/server.h
+    ''
     + lib.optionalString (lib.strings.versionOlder version "2.18.0") ''
 
       # Fix paths for generating drm-formats
@@ -104,6 +109,18 @@ stdenv.mkDerivation (
         tests/unit-tests/CMakeLists.txt \
         tests/mir_test_framework/CMakeLists.txt \
         --replace-fail 'Boost::system' ""
+    ''
+    # Fix ambiguity (int/void*) of nullptr w/ gtest 1.18
+    # https://github.com/canonical/mir/commit/fae4944d3b9f3dc8431efc8aba1c79f677ae1c50
+    # https://github.com/canonical/mir/commit/fc0cac6fd6f8828f05fc4b876990641f2ae71523
+    # One hunk fails to apply
+    + lib.optionalString (lib.strings.versionOlder version "2.29.0") ''
+      substituteInPlace tests/unit-tests/console/test_linux_virtual_terminal.cpp \
+        --replace-fail ', nullptr' ', static_cast<void*>(nullptr)'
+    ''
+    # This works as-is on 2.29.0 but fails on 2.15.0, so this header must be getting pulled in from somewhere else...
+    + ''
+      sed -i -e '/#define MIR_SCENE_BASIC_TEXT_INPUT_HUB_H_/a #include <cstdint>' src/server/scene/basic_text_input_hub.h
     '';
 
     strictDeps = true;
@@ -198,7 +215,8 @@ stdenv.mkDerivation (
       (lib.cmakeBool "MIR_ENABLE_TESTS" finalAttrs.finalPackage.doCheck)
       # BadBufferTest.test_truncated_shm_file *doesn't* throw an error as the test expected, mark as such
       # https://github.com/canonical/mir/pull/1947#issuecomment-811810872
-      (lib.cmakeBool "MIR_SIGBUS_HANDLER_ENVIRONMENT_BROKEN" true)
+      # Doesn't happen anymore with 2.31, don't know at what point this got fixed...
+      (lib.cmakeBool "MIR_SIGBUS_HANDLER_ENVIRONMENT_BROKEN" pinned)
       (lib.cmakeFeature "MIR_EXCLUDE_TESTS" (
         lib.strings.concatStringsSep ";" (
           lib.optionals (lib.strings.versionOlder version "2.22.0") [
@@ -210,11 +228,6 @@ stdenv.mkDerivation (
       # These get built but don't get executed by default, yet they get installed when tests are enabled
       (lib.cmakeBool "MIR_BUILD_PERFORMANCE_TESTS" false)
       (lib.cmakeBool "MIR_BUILD_PLATFORM_TEST_HARNESS" false)
-      (lib.cmakeBool "MIR_USE_APPARMOR" true)
-      (lib.cmakeBool "MIR_ENABLE_RUST" true)
-      # https://github.com/canonical/mir/issues/2987
-      # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=106799
-      (lib.cmakeBool "MIR_USE_PRECOMPILED_HEADERS" false)
       (lib.cmakeFeature "MIR_COMPILER_QUIRKS" (
         lib.strings.concatStringsSep ";" (
           lib.optionals (lib.strings.versionOlder version "2.22.0") [
@@ -223,7 +236,17 @@ stdenv.mkDerivation (
           ]
         )
       ))
-    ];
+    ]
+    ++ lib.optionals (lib.strings.versionAtLeast version "2.18.0") [
+      (lib.cmakeBool "MIR_USE_APPARMOR" true)
+    ]
+    # Option added in 2.22, Rust dependency made unconditional & option dropped in 2.30
+    ++
+      lib.optionals
+        (lib.strings.versionAtLeast version "2.22.0" && lib.strings.versionOlder version "2.30.0")
+        [
+          (lib.cmakeBool "MIR_ENABLE_RUST" true)
+        ];
 
     env.NIX_CFLAGS_COMPILE = lib.optionalString (lib.strings.versionOlder version "2.20.0") (toString [
       # std::wstring_convert<std::codecvt_utf8[...]> in src/server/shell/decoration/renderer.cpp is deprecated in C++17, removed in C++26
@@ -290,6 +313,7 @@ stdenv.mkDerivation (
     };
 
     meta = {
+      inherit broken;
       description = "Display server and Wayland compositor developed by Canonical";
       homepage = "https://mir-server.io";
       changelog = "https://github.com/canonical/mir/releases/tag/v${finalAttrs.version}";

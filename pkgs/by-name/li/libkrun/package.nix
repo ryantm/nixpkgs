@@ -6,6 +6,7 @@
   cargo,
   pkg-config,
   glibc,
+  zstd,
   openssl,
   libcap_ng,
   libepoxy,
@@ -35,13 +36,13 @@ let
 in
 stdenv.mkDerivation (finalAttrs: {
   pname = "libkrun" + lib.optionalString (variant != null) "-${variant}";
-  version = "1.19.0";
+  version = "1.19.8";
 
   src = fetchFromGitHub {
     owner = "libkrun";
     repo = "libkrun";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-g4u34sGdgv6mRRry9b5TAXSx+pmVwCNSD3YNtr6qRxo=";
+    hash = "sha256-JcMkgtoNlY2cK32ZjlyGCne2gIWXTSqQSEiOadUSd4E=";
   };
 
   outputs = [
@@ -51,7 +52,7 @@ stdenv.mkDerivation (finalAttrs: {
 
   cargoDeps = rustPlatform.fetchCargoVendor {
     inherit (finalAttrs) src;
-    hash = "sha256-rxdaqEKDDMxFwRuX6kLhqGyFXJTz+Bx4mJJhYL5nPgU=";
+    hash = "sha256-FrHkBeTO1RL/hRT0H6okuGdbGiGNljwUOepBsQvrEug=";
   };
 
   # Make sure libkrunfw can be found by dlopen()
@@ -71,6 +72,13 @@ stdenv.mkDerivation (finalAttrs: {
     rustc
   ];
 
+  patches = lib.optionals stdenv.hostPlatform.isRiscV64 [
+    # https://github.com/libkrun/libkrun/commit/d4bb6e0
+    # Fix riscv64 non-TEE memory region setup
+    # Remove in next release (Not included in 1.19.4)
+    ./riscv64-non-tee-memory.patch
+  ];
+
   buildInputs = [
     libcap_ng
     libkrunfw'
@@ -83,7 +91,8 @@ stdenv.mkDerivation (finalAttrs: {
     virglrenderer
   ]
   ++ lib.optional withSound pipewire
-  ++ lib.optional (variant == "sev" || variant == "tdx") openssl;
+  ++ lib.optional (variant == "sev" || variant == "tdx") openssl
+  ++ lib.optional stdenv.hostPlatform.isx86_64 zstd;
 
   makeFlags = [
     "PREFIX=${placeholder "out"}"

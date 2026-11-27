@@ -2,7 +2,7 @@
   buildPythonPackage,
   lib,
   fetchPypi,
-  setuptools,
+  setuptools_80,
 }:
 
 buildPythonPackage (finalAttrs: {
@@ -10,15 +10,13 @@ buildPythonPackage (finalAttrs: {
   version = "1.0.3";
   pyproject = true;
 
-  __structuredAttrs = true;
-
   src = fetchPypi {
     pname = "XStatic";
     inherit (finalAttrs) version;
     hash = "sha256-QCVEzJ4XlIlEEFTwnIB4BOEV6iRpB96HwDVftPWjEmg=";
   };
 
-  build-system = [ setuptools ];
+  build-system = [ setuptools_80 ];
 
   # no tests implemented
   doCheck = false;

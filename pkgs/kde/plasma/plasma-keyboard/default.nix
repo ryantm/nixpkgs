@@ -2,7 +2,6 @@
   mkKdeDerivation,
   pkg-config,
   qtvirtualkeyboard,
-  libplasma,
   wayland-protocols,
 }:
 mkKdeDerivation {
@@ -14,15 +13,14 @@ mkKdeDerivation {
 
   extraBuildInputs = [
     qtvirtualkeyboard
-
-    libplasma
-
     wayland-protocols
   ];
 
   qtWrapperArgs = [
     # FIXME: fix this upstream? This should probably be XDG_DATA_DIRS
-    "--set QT_VIRTUALKEYBOARD_HUNSPELL_DATA_PATH /run/current-system/sw/share/hunspell/"
+    "--set"
+    "QT_VIRTUALKEYBOARD_HUNSPELL_DATA_PATH"
+    "/run/current-system/sw/share/hunspell/"
   ];
 
   # themes rely on non-global imports

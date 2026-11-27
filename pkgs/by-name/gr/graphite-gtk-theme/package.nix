@@ -2,8 +2,7 @@
   lib,
   stdenvNoCC,
   fetchFromGitHub,
-  gitUpdater,
-  gtk-engine-murrine,
+  nix-update-script,
   jdupes,
   sassc,
   themeVariants ? [ ], # default: blue
@@ -59,33 +58,44 @@ lib.checkListOfEnum "${pname}: theme variants"
   grubScreens
 
   stdenvNoCC.mkDerivation
-  rec {
+  (finalAttrs: {
     inherit pname;
-    version = "2025-07-06";
+    version = "2026-08-23";
 
     src = fetchFromGitHub {
       owner = "vinceliuice";
       repo = "graphite-gtk-theme";
-      rev = version;
-      hash = "sha256-TOIpQTYg+1DX/Tq5BMygxbUC0NpzPWBGDtOnnT55c1w=";
+      tag = finalAttrs.version;
+      hash = "sha256-hovFi3UQb/DFVtQv43TjSoTF2IMNrkjtozj29dPJY64=";
     };
+
+    __structuredAttrs = true;
+    strictDeps = true;
 
     nativeBuildInputs = [
       jdupes
       sassc
     ];
 
-    propagatedUserEnvPkgs = [
-      gtk-engine-murrine
-    ];
+    # The GTK2 themes need gtk-engine-murrine, which is no longer packaged.
+    # Replace with --no-gtk2 once merged:
+    # https://github.com/vinceliuice/Graphite-gtk-theme/pull/228
+    patches = [ ./remove-gtk2.patch ];
 
     postPatch = ''
-      patchShebangs install.sh wallpaper/install-wallpapers.sh
+      patchShebangs .
+
+      # install_app puts a GTK4 theme-switcher GUI in $HOME; this package ships themes.
+      substituteInPlace install.sh \
+        --replace-fail "install_theme && install_app" "install_theme"
 
       substituteInPlace wallpaper/install-wallpapers.sh \
        --replace-fail /usr/share $out/share \
        --replace-fail '[[ "$UID" -eq "$ROOT_UID" ]]' true
     '';
+
+    dontConfigure = true;
+    dontBuild = true;
 
     installPhase = ''
       runHook preInstall
@@ -116,13 +126,13 @@ lib.checkListOfEnum "${pname}: theme variants"
       runHook postInstall
     '';
 
-    passthru.updateScript = gitUpdater { };
+    passthru.updateScript = nix-update-script { };
 
     meta = {
       description = "Flat Gtk+ theme based on Elegant Design";
       homepage = "https://github.com/vinceliuice/Graphite-gtk-theme";
       license = lib.licenses.gpl3Only;
-      platforms = lib.platforms.unix;
-      maintainers = [ lib.maintainers.romildo ];
+      platforms = lib.platforms.all;
+      maintainers = with lib.maintainers; [ FlorianFranzen ];
     };
-  }
+  })

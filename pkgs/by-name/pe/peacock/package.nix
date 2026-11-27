@@ -1,6 +1,7 @@
 {
   lib,
   fetchFromGitHub,
+  substitute,
   stdenv,
   nodejs,
   yarn-berry_4,
@@ -13,20 +14,30 @@ in
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "peacock";
-  version = "8.8.1";
+  version = "8.10.2";
 
   src = fetchFromGitHub {
     owner = "thepeacockproject";
     repo = "Peacock";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-OeROaz2Uvg3nsB0R9Ojo65a+zhnw/QmYaagcBrnIdIk=";
-  };
+    hash = "sha256-yEJLVAUeSRUwPjg6gMz/EHZmR2uNvsG7TnKE+3YTVSI=";
 
-  patches = [
-    # Remove after upstream updates to Yarn 4.14
-    # https://github.com/thepeacockproject/Peacock/blob/master/package.json#L109
-    ./yarn-4.14-support.patch
-  ];
+    # Remove after upstream updates to Yarn 4.15
+    # https://github.com/thepeacockproject/Peacock/blob/master/package.json#L107
+    postFetch = ''
+      cd $out
+      patch -p1 < ${
+        (substitute {
+          src = ./yarn-fix.patch;
+          substitutions = [
+            "--replace-fail"
+            "YARN_LOCKFILE_VERSION_PLACEHOLDER"
+            yarn-berry.lockfileVersion
+          ];
+        })
+      }
+    '';
+  };
 
   nativeBuildInputs = [
     nodejs
@@ -81,8 +92,8 @@ stdenv.mkDerivation (finalAttrs: {
 
   missingHashes = ./missing-hashes.json;
   offlineCache = yarn-berry.fetchYarnBerryDeps {
-    inherit (finalAttrs) src missingHashes patches;
-    hash = "sha256-9u/w/zy4f51uPFfkzf0fDZlsj8GFXAfw7RGR9owo5n8=";
+    inherit (finalAttrs) src missingHashes;
+    hash = "sha256-z0na8mKK+gBgMLZ6QOCMeNZQQlFceVAhFqfuI9l1b9c=";
   };
 
   meta = {
@@ -92,6 +103,6 @@ stdenv.mkDerivation (finalAttrs: {
     license = lib.licenses.agpl3Only;
     maintainers = with lib.maintainers; [ marie ];
     mainProgram = "peacock";
-    platforms = lib.platforms.linux;
+    inherit (nodejs.meta) platforms;
   };
 })

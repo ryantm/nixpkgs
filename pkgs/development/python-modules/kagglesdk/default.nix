@@ -13,15 +13,14 @@
 
 buildPythonPackage (finalAttrs: {
   pname = "kagglesdk";
-  version = "0.1.30";
+  version = "0.1.38";
   pyproject = true;
-  __structuredAttrs = true;
 
   src = fetchFromGitHub {
     owner = "Kaggle";
-    repo = "kagglesdk";
+    repo = "kaggle-sdk-python";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-7YjbJ6uo6R3jpo25wlHftYAA+0t7oUXc432N/REeCzU=";
+    hash = "sha256-1oTqbaOZr/p7JC3BLdYPD/tUkV9TIsztQXF2/rJ5P+4=";
   };
 
   build-system = [
@@ -41,8 +40,8 @@ buildPythonPackage (finalAttrs: {
 
   meta = {
     description = "Bindings to access Kaggle endpoints";
-    homepage = "https://github.com/Kaggle/kagglesdk";
-    changelog = "https://github.com/Kaggle/kagglesdk/releases/tag/${finalAttrs.src.tag}";
+    homepage = "https://github.com/Kaggle/kaggle-sdk-python";
+    changelog = "https://github.com/Kaggle/kaggle-sdk-python/releases/tag/${finalAttrs.src.tag}";
     license = lib.licenses.asl20;
     maintainers = with lib.maintainers; [ GaetanLepage ];
   };

@@ -7,13 +7,13 @@
 
 buildPythonPackage (finalAttrs: {
   pname = "types-regex";
-  version = "2026.6.28.20260630";
+  version = "2026.11.19.20261119";
   pyproject = true;
 
   src = fetchPypi {
     pname = "types_regex";
     inherit (finalAttrs) version;
-    hash = "sha256-X6/kNLV409d2QKq5SKPr/J7+pyNBK/rlVRs/VQhqtqc=";
+    hash = "sha256-4m2sv5+cpGKB7MzIWrQpR81seQDZCSQ1ly6As3yFEdM=";
   };
 
   build-system = [ setuptools ];

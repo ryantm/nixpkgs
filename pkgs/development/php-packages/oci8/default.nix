@@ -19,14 +19,17 @@ let
       }
     else
       {
-        version = "3.4.0";
-        sha256 = "sha256-YPXDijyQxGHZbWHFEpx4xTq3hCJU3ANVIi5t0OqMEag=";
+        version = "3.4.1";
+        sha256 = "sha256-xtYSvHUNVR38FblpNG9qZxZ/REHwiUOtqj5/2l2Q3Ss=";
       };
 in
 buildPecl {
   pname = "oci8";
 
   inherit (versionData) version sha256;
+
+  # One version and hash per PHP version, which nix-update cannot update
+  passthru.updateScript = null;
 
   buildInputs = [ oracle-instantclient ];
   configureFlags = [ "--with-oci8=shared,instantclient,${oracle-instantclient.lib}/lib" ];

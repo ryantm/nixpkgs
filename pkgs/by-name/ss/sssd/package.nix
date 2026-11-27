@@ -4,9 +4,9 @@
   fetchFromGitHub,
   autoreconfHook,
   makeWrapper,
-  glibc,
   adcli,
   augeas,
+  bashNonInteractive,
   dnsutils,
   c-ares,
   curl,
@@ -21,6 +21,7 @@
   python3,
   pam,
   popt,
+  realmd,
   talloc,
   tdb,
   tevent,
@@ -38,7 +39,7 @@
   libxslt,
   libxml2,
   libuuid,
-  systemd,
+  systemdLibs,
   nspr,
   check,
   cmocka,
@@ -65,13 +66,16 @@ let
 in
 stdenv.mkDerivation (finalAttrs: {
   pname = "sssd";
-  version = "2.13.1";
+  version = "2.13.2";
+
+  __structuredAttrs = true;
+  strictDeps = true;
 
   src = fetchFromGitHub {
     owner = "SSSD";
     repo = "sssd";
     tag = finalAttrs.version;
-    hash = "sha256-f4abHqZ8ojNU4dVw1hkfEJC4asE/NamhYmOQyy368eI=";
+    hash = "sha256-dKuPAP4DbPFu5cFNm+hqwBNRNVYETbMqtLJccD1t3JI=";
   };
 
   patches = [
@@ -91,11 +95,12 @@ stdenv.mkDerivation (finalAttrs: {
   ];
   separateDebugInfo = true;
 
-  # Something is looking for <libxml/foo.h> instead of <libxml2/libxml/foo.h>
-  env.NIX_CFLAGS_COMPILE = toString [
-    "-DRENEWAL_PROG_PATH=\"${adcli}/bin/adcli\""
-    "-I${libxml2.dev}/include/libxml2"
-  ];
+  env = {
+    KRB5_CONFIG = lib.getExe' (lib.getDev libkrb5) "krb5-config";
+    NSUPDATE = lib.getExe' dnsutils "nsupdate";
+    XMLLINT = lib.getExe' libxml2 "xmllint";
+    XSLTPROC = lib.getExe' libxslt "xsltproc";
+  };
 
   preConfigure = ''
     export SGML_CATALOG_FILES="${docbookFiles}"
@@ -112,12 +117,12 @@ stdenv.mkDerivation (finalAttrs: {
       --with-syslog=journald
       --with-initscript=systemd
       --without-selinux
-      --without-semanage
       --with-xml-catalog-path=''${SGML_CATALOG_FILES%%:*}
       --with-ldb-lib-dir=$out/modules/ldb
-      --with-nscd=${glibc.bin}/sbin/nscd
       --with-sssd-user=root
       --with-ldb-modules-path="${placeholder "out"}/modules/ldb:${ldb}/modules/ldb"
+      --with-adcli-path=${lib.meta.getExe adcli}
+      --with-realm-path=${lib.meta.getExe realmd}
     )
   ''
   + lib.optionalString withSudo ''
@@ -134,10 +139,18 @@ stdenv.mkDerivation (finalAttrs: {
     makeWrapper
     pkg-config
     doxygen
+    (python3.withPackages (
+      p: with p; [
+        setuptools
+        distutils
+        python-ldap
+      ]
+    ))
   ];
 
   buildInputs = [
     augeas
+    bashNonInteractive
     dnsutils
     c-ares
     curl
@@ -150,13 +163,6 @@ stdenv.mkDerivation (finalAttrs: {
     samba
     nfs-utils
     p11-kit
-    (python3.withPackages (
-      p: with p; [
-        setuptools
-        distutils
-        python-ldap
-      ]
-    ))
     popt
     talloc
     tdb
@@ -174,7 +180,7 @@ stdenv.mkDerivation (finalAttrs: {
     libxslt
     libxml2
     libuuid
-    systemd
+    systemdLibs
     nspr
     check
     cmocka

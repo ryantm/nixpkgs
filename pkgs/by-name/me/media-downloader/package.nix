@@ -16,13 +16,13 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "media-downloader";
-  version = "5.4.9";
+  version = "5.6.8";
 
   src = fetchFromGitHub {
     owner = "mhogomchungu";
     repo = "media-downloader";
     rev = finalAttrs.version;
-    hash = "sha256-afQ3Tra7hUjrG3vs4XBfmvSOBrhG7k5fkEMDr6WF+Fo=";
+    hash = "sha256-IgA+RZp20GXAboNJrJPPKIZvSMEl7Zf1EJ8aIroU9Vo=";
   };
 
   nativeBuildInputs = [
@@ -35,7 +35,12 @@ stdenv.mkDerivation (finalAttrs: {
     qt6.qtwayland
   ];
 
-  qtWrapperArgs = [ "--prefix PATH : ${lib.makeBinPath extraPackages}" ];
+  qtWrapperArgs = [
+    "--prefix"
+    "PATH"
+    ":"
+    (lib.makeBinPath extraPackages)
+  ];
 
   meta = {
     description = "Qt/C++ GUI front end for yt-dlp and others";

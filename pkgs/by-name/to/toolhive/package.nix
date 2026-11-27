@@ -1,24 +1,29 @@
 {
   lib,
-  buildGoModule,
+  buildGo127Module,
   fetchFromGitHub,
   nix-update-script,
   testers,
-  toolhive,
 }:
 
-buildGoModule (finalAttrs: {
+buildGo127Module (finalAttrs: {
   pname = "toolhive";
-  version = "0.29.1";
+  version = "0.56.0";
 
   src = fetchFromGitHub {
     owner = "stacklok";
     repo = "toolhive";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-gep1QAHl7de67xS+T42/LHH4fdy670OGguwp41jgAjE=";
+    hash = "sha256-rssF9ODeL/ISfJSqzD40RhOz1AeX+gMs+ruf5XRT6iM=";
   };
 
-  vendorHash = "sha256-ooPLPnGqyqi8e+zzu2MVjS+v7LgTfvdXbbuUp1asRNQ=";
+  vendorHash = "sha256-37Eq3KDt6pMFTLL2MgkD0F1WvEGUhtA8fTOuxPVcgyA=";
+
+  ldflags = [
+    "-s"
+    "-w"
+    "-X github.com/stacklok/toolhive/pkg/versions.Version=v${finalAttrs.version}"
+  ];
 
   # Build only the main CLI and operator binaries
   subPackages = [
@@ -32,9 +37,9 @@ buildGoModule (finalAttrs: {
     updateScript = nix-update-script { };
     tests = {
       version = testers.testVersion {
-        package = toolhive;
+        package = finalAttrs.finalPackage;
         command = "thv version";
-        version = "ToolHive build-unknown";
+        version = "ToolHive v${finalAttrs.version}";
       };
     };
   };

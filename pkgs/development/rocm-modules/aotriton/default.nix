@@ -2,6 +2,7 @@
   lib,
   stdenv,
   fetchFromGitHub,
+  fetchpatch2,
   cmake,
   rocm-cmake,
   clr,
@@ -34,27 +35,53 @@ let
   # Pick a single arbitrary target to speed up shim build when we can't support our target
   supportedTargets' =
     if anySupportedTargets then lib.concatStringsSep ";" supportedTargets else "gfx1200";
+  sourceRoot = "aotriton";
 in
 stdenv.mkDerivation (finalAttrs: {
   pname = "aotriton${lib.optionalString (!anySupportedTargets) "-shim"}";
-  version = "0.11.1b";
+  version = "0.12b";
+  inherit sourceRoot;
 
-  src = fetchFromGitHub {
-    owner = "ROCm";
-    repo = "aotriton";
-    tag = finalAttrs.version;
-    hash = "sha256-F7JjyS+6gMdCpOFLldTsNJdVzzVwd6lwW7+V8ZOZfig=";
-    leaveDotGit = true;
-    # fetch all submodules except unused triton submodule that is ~500MB
-    postFetch = ''
-      cd $out
-      git reset --hard HEAD
-      for submodule in $(git config --file .gitmodules --get-regexp path | awk '{print $2}' | grep '^third_party/' | grep -v '^third_party/triton$'); do
-        git submodule update --init --recursive "$submodule"
-      done
-      find "$out" -name .git -print0 | xargs -0 rm -rf
-    '';
-  };
+  srcs = [
+    (fetchFromGitHub {
+      owner = "ROCm";
+      repo = "aotriton";
+      tag = finalAttrs.version;
+      hash = "sha256-KOc+xAoWABjokIEq5n9olpln3JUqVFYGADLwqV/H2Zc=";
+      # for reference false is the default, setting it here to document upstream has an unused triton submodule that is ~500MB we don't want to download.
+      fetchSubmodules = false;
+      name = sourceRoot;
+    })
+    (fetchFromGitHub {
+      owner = "ROCm";
+      repo = "aiter";
+      tag = "v0.1.11";
+      hash = "sha256-e1C/baFYkm1/iuLUCcCLyiHfivRgBb96lnVGH9mOmM0=";
+      name = "aiter";
+    })
+  ];
+
+  # link aiter source where build would normally put it via git checkout
+  postUnpack = ''
+    ln -s aiter ${sourceRoot}/third_party/aiter
+  '';
+
+  patches = [
+    ./aiter-no-git-checkout.patch
+    # Backport of "flash: make empty composed offsets one-element tensors for
+    # Triton 3.9" (merged upstream as part of fb3d390, the 0.15b release).
+    # 0.12b predates the tritonsrc -> modules/flash/kernel move, so the path in
+    # the upstream commit has to be rewritten to the one 0.12b actually has.
+    (fetchpatch2 {
+      name = "triton-3.9-composed-tensors.patch";
+      url = "https://github.com/ROCm/aotriton/commit/ab24ced82e999dfaf05dfee46f6da50ca2c0561f.patch?full_index=1";
+      hash = "sha256-t4wwbEuuM0RPpyIvY3QaQAXHkCbSXA41tx0SxVgjn9o=";
+      postFetch = ''
+        substituteInPlace $out \
+          --replace-fail 'modules/flash/kernel/composed_tensors.py' 'tritonsrc/composed_tensors.py'
+      '';
+    })
+  ];
 
   cmakeBuildType = "RelWithDebInfo";
   separateDebugInfo = true;
@@ -69,6 +96,8 @@ stdenv.mkDerivation (finalAttrs: {
     CFLAGS = "-w -g1 -gz -Wno-c++11-narrowing";
     CXXFLAGS = finalAttrs.env.CFLAGS;
     TRITON_STORE_BINARY_ONLY = 1; # reduce triton disk space usage
+    AOTRITON_GIT_TREESHA1 = "35bfbd0ebe2fd774e97cdc12421592c23f59abfe"; # git rev-parse 'HEAD^{tree}'
+    TRITON_DEFAULT_FP_FUSION = "1"; # Silence warning introduced in triton 3.9 https://github.com/triton-lang/triton/pull/12479
   };
 
   nativeBuildInputs = [
@@ -105,7 +134,7 @@ stdenv.mkDerivation (finalAttrs: {
   # This builds+installs
   installPhase = ''
     runHook preInstall
-    ninja -v install
+    ninja install
     runHook postInstall
   '';
   # tests are intended to be ran manually as test/ python scripts and need accelerator

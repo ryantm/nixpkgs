@@ -1,48 +1,42 @@
 {
   lib,
+  mkProtonBinDerivation,
+  proton-bin-update-script,
   fetchzip,
-  writeScript,
-  proton-ge-bin,
-
-  steamDisplayName ? "dwproton",
 }:
-proton-ge-bin.overrideAttrs (
-  finalAttrs: _: {
-    inherit steamDisplayName;
+mkProtonBinDerivation (finalAttrs: {
+  steamDisplayName = "dwproton";
 
-    pname = "dwproton-bin";
-    version = "dwproton-11.0-5";
+  pname = "dwproton-bin";
+  version = "dwproton-11.0-17";
 
-    src = fetchzip {
-      url = "https://dawn.wine/dawn-winery/dwproton/releases/download/${finalAttrs.version}/${finalAttrs.version}-x86_64.tar.xz";
-      hash = "sha256-2x4xotJ2aJYbg+G2TDPqyU7uuoc/hZQon9CA6SFGin0=";
+  variants = {
+    "x86_64-linux" = {
+      toolName = "${finalAttrs.version}-x86_64";
+      src = fetchzip {
+        url = "https://dawn.wine/dawn-winery/dwproton/releases/download/${finalAttrs.version}/${finalAttrs.version}-x86_64.tar.xz";
+        hash = "sha256-58pd22pNMz+lyp7xYn/nxE6Kere4gh3OiHUwuGsoXfk=";
+      };
     };
+  };
 
-    preFixup = ''
-      substituteInPlace "$steamcompattool/compatibilitytool.vdf" \
-        --replace-fail "${finalAttrs.version}" "${steamDisplayName}"
+  passthru.updateScript = proton-bin-update-script {
+    latestVersionCommand = ''
+      curl -fsSL "https://dawn.wine/api/v1/repos/dawn-winery/dwproton/releases?pre-release=false&limit=1" \
+        | jq -er '.[0].tag_name'
     '';
+  };
 
-    passthru.updateScript = writeScript "update-dwproton" ''
-      #!/usr/bin/env nix-shell
-      #!nix-shell -i bash -p curl jq common-updater-scripts
-      version=$(curl -sL "https://dawn.wine/api/v1/repos/dawn-winery/dwproton/tags?page=1\&limit=1" | jq -r .[0].name)
-      update-source-version dwproton-bin "$version"
+  meta = {
+    description = ''
+      Dawn Winery's custom Proton fork with fixes for various games.
+
+      (This is intended for use in the `programs.steam.extraCompatPackages` option only.)
     '';
-
-    meta = {
-      description = ''
-        Dawn Winery's custom Proton fork with fixes for various games.
-
-        (This is intended for use in the `programs.steam.extraCompatPackages` option only.)
-      '';
-      homepage = "https://dawn.wine/dawn-winery/dwproton";
-      license = lib.licenses.bsd3;
-      maintainers = with lib.maintainers; [
-        Renna42
-      ];
-      platforms = [ "x86_64-linux" ];
-      sourceProvenance = [ lib.sourceTypes.binaryNativeCode ];
-    };
-  }
-)
+    homepage = "https://dawn.wine/dawn-winery/dwproton";
+    license = lib.licenses.bsd3;
+    maintainers = with lib.maintainers; [
+      Renna42
+    ];
+  };
+})

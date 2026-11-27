@@ -6,6 +6,7 @@
   pkg-config,
   sqlite,
   openssl,
+  zstd,
   versionCheckHook,
   nix-update-script,
   nixosTests,
@@ -13,7 +14,7 @@
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "arti";
-  version = "2.5.0";
+  version = "2.8.0";
 
   src = fetchFromGitLab {
     domain = "gitlab.torproject.org";
@@ -21,22 +22,32 @@ rustPlatform.buildRustPackage (finalAttrs: {
     owner = "core";
     repo = "arti";
     tag = "arti-v${finalAttrs.version}";
-    hash = "sha256-jOCFXlBI2xAzgpb7Fa8ap53SpDF6kcRGYnBXcu3vpk4=";
+    hash = "sha256-InCAlqPG2p5q049aiPgMZu32LWZQbaqd06amnxrKcEo=";
   };
 
   # Working around a bug in cargo that appears with cargo-auditable, see
   # https://github.com/rust-secure-code/cargo-auditable/issues/124.
   postPatch = ''
     substituteInPlace crates/arti/Cargo.toml \
-      --replace-fail '"tokio-util"' '"dep:tokio-util"'
+      --replace-fail '"http"' '"dep:http"' \
+      --replace-fail '"tokio-util"' '"dep:tokio-util"' \
+      --replace-fail '"opentelemetry-appender-tracing",' ""
+
+    substituteInPlace crates/equix/Cargo.toml \
+      --replace-fail '"dep:visibility"' '"visibility"'
   '';
 
   buildAndTestSubdir = "crates/arti";
-  cargoHash = "sha256-JK6ubp697jZ98ErNrZdFe0mXIez3lUZ5SmAHkyD97WQ=";
+  cargoHash = "sha256-grgIqU1gw1UqeGgR4aR7cAOxBW91F12bHMgOj4pgLcY=";
 
-  nativeBuildInputs = lib.optionals stdenv.hostPlatform.isLinux [ pkg-config ];
+  nativeBuildInputs = [ pkg-config ];
 
-  buildInputs = [ sqlite ] ++ lib.optionals stdenv.hostPlatform.isLinux [ openssl ];
+  buildInputs = [
+    sqlite
+    zstd
+  ]
+  ++ lib.optionals stdenv.hostPlatform.isLinux [ openssl ];
+
   # `full` includes all stable and non-conflicting feature flags. the primary
   # downsides are increased binary size and memory usage for building, but
   # those are acceptable for nixpkgs

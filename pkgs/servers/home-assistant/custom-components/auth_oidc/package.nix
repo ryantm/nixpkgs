@@ -16,13 +16,13 @@
 buildHomeAssistantComponent rec {
   owner = "christaangoossens";
   domain = "auth_oidc";
-  version = "1.1.1";
+  version = "1.2.1";
 
   src = fetchFromGitHub {
     owner = "christiaangoossens";
     repo = "hass-oidc-auth";
     tag = "v${version}";
-    hash = "sha256-d1nRSAR4HAoW+gpAtyb0s6bh40CcoT59dgVOkwKHavU=";
+    hash = "sha256-vwQDrMM4phbrXT85Syyz6hWEIhLB3TKNNTM04OdvNWk=";
   };
 
   postPatch = ''
@@ -32,12 +32,16 @@ buildHomeAssistantComponent rec {
       substituteInPlace "$f" \
         --replace-fail "from auth_oidc" "from custom_components.auth_oidc"
     done
+
+    # Home Assistant 2026.11 stores person data in PersonData dataclass instead of tuple
+    substituteInPlace tests/test_hass_auth_provider.py \
+      --replace-fail "hass.data[PERSON_DOMAIN][1]" "hass.data[PERSON_DOMAIN].storage_collection"
   '';
 
   env.npmDeps = fetchNpmDeps {
     name = "${domain}-npm-deps";
     inherit src;
-    hash = "sha256-rVBc1RSARmKZhjEAoWtb/kJLbaY0Hxhyj/ZaPJVj3jo=";
+    hash = "sha256-yAm08NVz2Ln6ob9LoPfxuz6U1oBS4AEydIQHhv0WpOg=";
   };
 
   nativeBuildInputs = [

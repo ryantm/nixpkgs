@@ -46,14 +46,14 @@ let
 in
 buildPythonPackage (finalAttrs: {
   pname = "rembg";
-  version = "2.0.76";
+  version = "2.0.86";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "danielgatis";
     repo = "rembg";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-Iv98z6LdQCkfndBOZubyUtN8teTlZsi8fmQ/Vec18yI=";
+    hash = "sha256-0zs5tr0vr7KwIEZeH/15/V9Z1wZ80nNF13rHfKvBvr4=";
   };
 
   env.POETRY_DYNAMIC_VERSIONING_BYPASS = finalAttrs.version;
@@ -141,7 +141,7 @@ buildPythonPackage (finalAttrs: {
     homepage = "https://github.com/danielgatis/rembg";
     changelog = "https://github.com/danielgatis/rembg/releases/tag/${finalAttrs.src.tag}";
     license = lib.licenses.mit;
-    maintainers = with lib.maintainers; [ defelo ];
+    maintainers = [ ];
     mainProgram = "rembg";
   };
 })

@@ -34,13 +34,13 @@ stdenv.mkDerivation (
   in
   {
     pname = "cairo";
-    version = "1.18.4";
+    version = "1.18.6";
 
     src = fetchurl {
       url = "https://cairographics.org/${
         if lib.mod (builtins.fromJSON (lib.versions.minor version)) 2 == 0 then "releases" else "snapshots"
       }/${pname}-${version}.tar.xz";
-      hash = "sha256-RF7YIIpuSCPeEianTKMZ02AOg/Y2n5mxQmUAZZnDLMs=";
+      hash = "sha256-HHZzCBdDN6dGlNoPPsBpwnFFIWOh70VAlkxQwwHxV9Q=";
     };
 
     outputs = [
@@ -99,11 +99,8 @@ stdenv.mkDerivation (
           {
             linux = "true";
             freebsd = "true";
-            netbsd = "false";
-            windows = "false";
           }
-          .${stdenv.hostPlatform.parsed.kernel.name}
-            or (throw "Unknown value for ipc_rmid_deferred_release on ${stdenv.hostPlatform.parsed.kernel.name}")
+          .${stdenv.hostPlatform.parsed.kernel.name} or "false"
         }
       ''}"
     ];

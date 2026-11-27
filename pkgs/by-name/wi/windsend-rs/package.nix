@@ -17,16 +17,16 @@
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "windsend-rs";
-  version = "1.7.1";
+  version = "1.7.5";
 
   src = fetchFromGitHub {
     owner = "doraemonkeys";
     repo = "WindSend";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-r3D6Uj8buMceqXov6An+OxgOTcNFrX5PwxhphtbeUv0=";
+    hash = "sha256-we/msDVdxf9V8H14R4Sa5HX0/dALutLN8TIRhbDRLsw=";
   };
 
-  cargoHash = "sha256-uRL9cnvEZzaO/Qewl8Nm1LZlidCLLDC/RDY2j5byMnE=";
+  cargoHash = "sha256-q/BDHdS58j2Wa+Kq4XI1+Kh4oORog7CA57bMsV33Nws=";
 
   sourceRoot = "${finalAttrs.src.name}/windSend-rs";
 
@@ -83,7 +83,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
     description = "Quickly and securely sync clipboard, transfer files and directories between devices";
     homepage = "https://github.com/doraemonkeys/WindSend";
     mainProgram = "wind_send";
-    license = with lib.licenses; [ mit ];
+    license = lib.licenses.mit;
     maintainers = [ ];
     platforms = lib.platforms.linux;
   };

@@ -6,7 +6,7 @@
   bzip2,
   zstd,
   stdenv,
-  rocksdb,
+  callPackage,
   nix-update-script,
   testers,
   matrix-continuwuity,
@@ -14,41 +14,20 @@
   liburing,
   nixosTests,
 }:
-let
-  rocksdb' =
-    (rocksdb.override {
-      # rocksdb does not support prefixed jemalloc, which is required on darwin
-      enableJemalloc = !stdenv.hostPlatform.isDarwin;
-      jemalloc = rust-jemalloc-sys-unprefixed;
-    }).overrideAttrs
-      (
-        final: old: {
-          version = "11.1.1";
-          src = fetchFromGitea {
-            domain = "forgejo.ellis.link";
-            owner = "continuwuation";
-            repo = "rocksdb";
-            rev = "3756b2b905e13216d8b56bcc783d814e7b073aff";
-            hash = "sha256-rSv4fr2bf9JJwdodgeuPCuceeh7k97KVxrAOC0wyPQY=";
-          };
 
-          patches = [ ];
-        }
-      );
-in
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "matrix-continuwuity";
-  version = "26.6.2";
+  version = "26.9.4";
 
   src = fetchFromGitea {
     domain = "forgejo.ellis.link";
     owner = "continuwuation";
     repo = "continuwuity";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-GcCjJiUOGX+vF7R4IRgNQs8KpfVj+MXwnhofwSm6gpA=";
+    hash = "sha256-Nr3mwlAMafuJAuRI4vY5dTZEXrcd7mdFI1VJXiMapc0=";
   };
 
-  cargoHash = "sha256-p1Bz7op/qPogBn8bj9pQ7KjRhH2kZao8o0LPqWH2ZYo=";
+  cargoHash = "sha256-7nGl4SQZXheDWifnbIgQGkZtZt2qZCfe+dkFcBPs2vA=";
 
   nativeBuildInputs = [
     pkg-config
@@ -59,17 +38,20 @@ rustPlatform.buildRustPackage (finalAttrs: {
     bzip2
     zstd
     rust-jemalloc-sys-unprefixed
+  ]
+  ++ lib.optionals stdenv.hostPlatform.isLinux [
     liburing
   ];
 
   env = {
     ZSTD_SYS_USE_PKG_CONFIG = true;
-    ROCKSDB_INCLUDE_DIR = "${rocksdb'}/include";
-    ROCKSDB_LIB_DIR = "${rocksdb'}/lib";
+    ROCKSDB_INCLUDE_DIR = "${finalAttrs.rocksdb}/include";
+    ROCKSDB_LIB_DIR = "${finalAttrs.rocksdb}/lib";
   };
 
+  rocksdb = callPackage ./rocksdb.nix { }; # make used rocksdb version available (e.g., for backup scripts)
+
   passthru = {
-    rocksdb = rocksdb'; # make used rocksdb version available (e.g., for backup scripts)
     updateScript = nix-update-script { };
     tests = {
       version = testers.testVersion {
@@ -91,6 +73,8 @@ rustPlatform.buildRustPackage (finalAttrs: {
       bartoostveen
       nyabinary
       snaki
+      logn
+      pyrox0
     ];
     # Not a typo, continuwuity is a drop-in replacement for conduwuit.
     mainProgram = "conduwuit";

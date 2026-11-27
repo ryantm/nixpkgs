@@ -2,18 +2,37 @@
   lib,
   stdenv,
   fetchFromGitHub,
+  fetchpatch2,
   cmake,
   ninja,
   openssl,
-  openjdk11,
   python3,
-  unixodbc,
-  withJdbc ? false,
-  withOdbc ? false,
   versionCheckHook,
 }:
 
 let
+  canExecute = stdenv.buildPlatform.canExecute stdenv.hostPlatform;
+  # Keep this in sync with DuckDBPlatform() in DuckDB's platform.hpp.
+  duckdbPlatform =
+    let
+      os =
+        if stdenv.hostPlatform.isWindows then
+          "windows"
+        else if stdenv.hostPlatform.isDarwin then
+          "osx"
+        else if stdenv.hostPlatform.isFreeBSD then
+          "freebsd"
+        else
+          "linux";
+      arch =
+        if stdenv.hostPlatform.isAarch64 then
+          "arm64"
+        else if stdenv.hostPlatform.is64bit then
+          "amd64"
+        else
+          "i686";
+    in
+    "${os}_${arch}${lib.optionalString stdenv.hostPlatform.isMusl "_musl"}${lib.optionalString stdenv.hostPlatform.isMinGW "_mingw"}";
   versions = lib.importJSON ./versions.json;
 in
 stdenv.mkDerivation (finalAttrs: {
@@ -29,6 +48,19 @@ stdenv.mkDerivation (finalAttrs: {
     tag = "v${finalAttrs.version}";
   };
 
+  patches = [
+    # Fix uninitialized terminal width in the unittest progress reporter.
+    # It padded every progress line to a garbage width when stdin is not a TTY and
+    # blew up the build log past Hydra's limit.
+    # Patch is merged upstream and should be in DuckDB >=2.0.1
+    # https://github.com/NixOS/nixpkgs/issues/570642
+    # https://github.com/duckdb/duckdb/pull/27894
+    (fetchpatch2 {
+      url = "https://github.com/duckdb/duckdb/commit/95e44bf80b7306eac421a16b87507bdec5aa3321.patch?full_index=1";
+      hash = "sha256-aDGSpXsvOTz8ywsboSeeDDeKtEUOlt+CPsiJq6jrY70=";
+    })
+  ];
+
   outputs = [
     "out"
     "lib"
@@ -40,22 +72,19 @@ stdenv.mkDerivation (finalAttrs: {
     ninja
     python3
   ];
-  buildInputs = [
-    openssl
-  ]
-  ++ lib.optionals withJdbc [ openjdk11 ]
-  ++ lib.optionals withOdbc [ unixodbc ];
+  buildInputs = [ openssl ];
 
   cmakeFlags = [
     (lib.cmakeFeature "DUCKDB_EXTENSION_CONFIGS" "${finalAttrs.src}/.github/config/in_tree_extensions.cmake")
-    (lib.cmakeBool "BUILD_ODBC_DRIVER" withOdbc)
-    (lib.cmakeBool "JDBC_DRIVER" withJdbc)
     (lib.cmakeFeature "OVERRIDE_GIT_DESCRIBE" "v${finalAttrs.version}-0-g${finalAttrs.rev}")
     # development settings
-    (lib.cmakeBool "BUILD_UNITTESTS" finalAttrs.doInstallCheck)
+    (lib.cmakeBool "BUILD_UNITTESTS" finalAttrs.finalPackage.doInstallCheck)
+  ]
+  ++ lib.optionals (!canExecute) [
+    (lib.cmakeFeature "DUCKDB_EXPLICIT_PLATFORM" duckdbPlatform)
   ];
 
-  doInstallCheck = true;
+  doInstallCheck = canExecute;
 
   nativeInstallCheckInputs = [ versionCheckHook ];
 

@@ -1,26 +1,30 @@
 {
   lib,
+  stdenv,
   buildGoModule,
-  fetchFromCodeberg,
+  fetchgit,
   nix-update-script,
   versionCheckHook,
+  formats,
+  coreutils,
+  nixosTests,
 }:
 
 buildGoModule (finalAttrs: {
   pname = "git-pages";
-  version = "0.9.1";
+  version = "0.10.2";
   __structuredAttrs = true;
 
-  src = fetchFromCodeberg {
-    owner = "git-pages";
-    repo = "git-pages";
+  # fetchFromCodeberg tries to download tar.gz from codeberg and times out frequently
+  src = fetchgit {
+    url = "https://codeberg.org/git-pages/git-pages.git";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-4yQ3RRJbOfMaqjJJ6CRRN7TuaYY8ScLXxMZPd4tWPwk=";
+    hash = "sha256-01X3Dc77Ge5njLIn8l24mq6MW3vp0P8SMo17R1P1g2E=";
   };
 
   subPackages = [ "." ];
 
-  vendorHash = "sha256-NNIkzgRki2rtCVUnnhT44rEBcMZYiJPmsXySpxiHYR0=";
+  vendorHash = "sha256-VlagZykL6DhOXe55y98iweNk3VShzzhdXonHdQAETb8=";
 
   ldflags = [
     "-s"
@@ -31,14 +35,28 @@ buildGoModule (finalAttrs: {
   nativeInstallCheckInputs = [ versionCheckHook ];
   versionCheckProgramArg = "-version";
 
-  passthru.updateScript = nix-update-script { };
+  passthru = {
+    tests = lib.optionalAttrs (!stdenv.hostPlatform.isDarwin) {
+      inherit (nixosTests) git-pages-modular;
+    };
+    updateScript = nix-update-script { };
+    services.default = {
+      imports = [
+        (lib.modules.importApply ./service.nix { inherit formats coreutils; })
+      ];
+      git-pages.package = finalAttrs.finalPackage;
+    };
+  };
 
   meta = {
     description = "Scalable static site server for Git forges (like GitHub Pages or Netlify";
     homepage = "https://codeberg.org/git-pages/git-pages";
     changelog = "https://codeberg.org/git-pages/git-pages/releases/tag/${finalAttrs.src.tag}";
     license = lib.licenses.bsd0;
-    maintainers = with lib.maintainers; [ drupol ];
+    maintainers = with lib.maintainers; [
+      drupol
+      phanirithvij
+    ];
     mainProgram = "git-pages";
   };
 })

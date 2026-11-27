@@ -6,7 +6,6 @@
   lib,
   libGL,
   nix-update-script,
-  openxr-loader,
   python3,
   stdenv,
   vulkan-headers,
@@ -60,9 +59,9 @@ stdenv.mkDerivation (finalAttrs: {
   meta = {
     description = "Reimplementation of OpenVR, translating calls to OpenXR";
     homepage = "https://gitlab.com/znixian/OpenOVR";
-    license = with lib.licenses; [ gpl3Only ];
+    license = lib.licenses.gpl3Only;
     maintainers = with lib.maintainers; [ Scrumplex ];
-    # This can realistically only work on systems that support OpenXR Loader
-    inherit (openxr-loader.meta) platforms;
+    # Upstream supports Windows and Linux only
+    platforms = lib.platforms.linux;
   };
 })

@@ -3,15 +3,16 @@
   stdenvNoCC,
   fetchurl,
   _7zz,
+  directoryListingUpdater,
 }:
 
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "bbedit";
-  version = "15.5.5";
+  version = "16.1";
 
   src = fetchurl {
     url = "https://s3.amazonaws.com/BBSW-download/BBEdit_${finalAttrs.version}.dmg";
-    hash = "sha256-DsrGj2id9XUf3n55s0OHoJnX4AQY5AqiP9skaXysghk=";
+    hash = "sha256-jR3ju3eMcUSdxTs4yOGqtlh5UXXnc5U/GtzknfRxbcQ=";
   };
 
   sourceRoot = ".";
@@ -29,6 +30,12 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
   # app bundle may be messed up by standard fixup
   dontFixup = true;
+
+  passthru.updateScript = directoryListingUpdater {
+    # must match the DMG filename prefix (case-sensitive)
+    pname = "BBEdit";
+    url = "https://www.barebones.com/products/bbedit/download.html";
+  };
 
   meta = {
     description = "Powerful and full-featured professional HTML and text editor for macOS";

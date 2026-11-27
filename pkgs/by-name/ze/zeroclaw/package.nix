@@ -7,29 +7,50 @@
   nodejs,
   pkg-config,
   protobuf,
+  aws-lc,
   sqlite,
   writableTmpDirAsHomeHook,
   gitMinimal,
+  jq,
+  python3,
+  expect,
+  curl,
   versionCheckHook,
+  makeBinaryWrapper,
+  which,
   nix-update-script,
+  withMatrix ? true,
 }:
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "zeroclaw";
-  version = "0.8.2";
+  version = "0.8.7";
 
   src = fetchFromGitHub {
     owner = "zeroclaw-labs";
     repo = "zeroclaw";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-mTH7DRaCHmYw3m9DguceP+nGGMYff7vsoIe3J0XNb/Q=";
+    hash = "sha256-ntONOqywlcJXLO4/v+212xUn637ipnw7Fi1ejfpstNo=";
   };
 
-  cargoHash = "sha256-6tLLt8cblYABOTli1LrrWbyTOJYGmmewHJgTxBAhJlE=";
+  cargoHash = "sha256-FY77N8KhBmfm9IwNvpb6G49gj4f8lqGKlb91i6CfeqA=";
+
+  # zerocode is a separate workspace member and expects the daemon beside it.
+  cargoBuildFlags = [
+    "--package"
+    "zeroclaw"
+    "--package"
+    "zerocode"
+  ]
+  ++ lib.optionals withMatrix [
+    "--features"
+    "zeroclaw/channel-matrix"
+  ];
+  cargoTestFlags = finalAttrs.cargoBuildFlags;
 
   npmDeps = fetchNpmDeps {
     inherit (finalAttrs) src;
     sourceRoot = "${finalAttrs.src.name}/web";
-    hash = "sha256-SKltlDJm39ZzVaEt1bbnoiXy+wlbq+fC3bO4mW5V15o=";
+    hash = "sha256-xwp8rzQeZf51W4c/F//HlpYHi18Z61TeGuKD3DjUltk=";
   };
   npmRoot = "web";
 
@@ -49,9 +70,11 @@ rustPlatform.buildRustPackage (finalAttrs: {
     protobuf
     nodejs
     npmHooks.npmConfigHook
+    makeBinaryWrapper
   ];
 
   buildInputs = [
+    aws-lc
     sqlite
   ];
 
@@ -62,16 +85,26 @@ rustPlatform.buildRustPackage (finalAttrs: {
     popd
   '';
 
+  preCheck = ''
+    unset RUST_LOG
+  '';
+
+  # the release-workflow architecture tests shell out to scripts/release/*.sh
   nativeCheckInputs = [
     writableTmpDirAsHomeHook
     gitMinimal
+    jq
+    python3
+    expect
+    curl
+    which
   ];
 
   # wiremock tests require socket binding, which is denied in the darwin sandbox
   checkFlags = [
-    "--skip=commands::update::tests::download_binary_preserves_missing_checksum_fallback"
-    "--skip=commands::update::tests::download_binary_rejects_checksum_mismatch_without_writing"
-    "--skip=commands::update::tests::download_binary_verifies_checksum_before_writing"
+    "--skip=commands::update::tests::download_release_preserves_missing_checksum_fallback"
+    "--skip=commands::update::tests::download_release_rejects_checksum_mismatch_without_writing"
+    "--skip=commands::update::tests::download_release_verifies_checksum_before_writing"
     "--skip=tests::exchange_pairing_code_posts_code_and_returns_token"
     "--skip=tests::fetch_pairing_code_reads_gateway_pair_code_response"
     "--skip=tests::gateway_addr_in_use_message_skips_occupied_restart_hint_port"
@@ -84,6 +117,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
   postInstall = ''
     mkdir -p $out/bin/web
     cp -r web/dist $out/bin/web/dist
+    wrapProgram $out/bin/zerocode --prefix PATH : ${lib.makeBinPath [ which ]}
   '';
 
   doInstallCheck = true;

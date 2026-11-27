@@ -1,58 +1,73 @@
 {
   rustPlatform,
   fetchFromGitHub,
-  pkg-config,
-  alsa-lib,
+  cacert,
   cmake,
-  opus,
+  git,
+  pkg-config,
+  makeWrapper,
+  nasm,
+  alsa-lib,
+  pipewire,
+  libva,
+  mesa,
+  zstd,
   lib,
   stdenv,
-  # TODO: Clean up on `staging`
-  lld,
+  nix-update-script,
 }:
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "concord-tui";
-  version = "2.4.0";
+  version = "2.7.2";
 
   src = fetchFromGitHub {
     owner = "chojs23";
     repo = "concord";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-/79Hq54qXWXLopPda6xiZ6892UpVoKXQad84QOXCTDM=";
+    hash = "sha256-Igdhp1oatjrzEdPEubujNiFA1bUcWEJOOqa2Mrnwgts=";
   };
 
-  cargoHash = "sha256-Ihr4JM0hKEvJ9FMcQ5VPtemJjjPB5mXvAeDa4G0pGSo=";
+  cargoHash = "sha256-SoyT73pu8Fw+WipS3Yw9ZrD3mBaXhurJunafTu43NzI=";
 
   buildInputs = [
-    opus
+    zstd
   ]
   ++ lib.optionals stdenv.hostPlatform.isLinux [
     alsa-lib
+    pipewire
+    libva
+    mesa
   ];
   nativeBuildInputs = [
-    pkg-config
     cmake
+    git
+    pkg-config
+    rustPlatform.bindgenHook
   ]
-  # TODO: Clean up on `staging`
-  ++ lib.optionals stdenv.hostPlatform.isDarwin [
-    lld
-  ];
+  ++ lib.optionals stdenv.hostPlatform.isLinux [
+    makeWrapper
+  ]
+  ++ lib.optionals stdenv.hostPlatform.isx86_64 [ nasm ];
+
+  nativeCheckInputs = lib.optionals stdenv.hostPlatform.isLinux [ cacert ];
+
+  postFixup = lib.optionalString stdenv.hostPlatform.isLinux ''
+    wrapProgram "$out/bin/concord" \
+      --set-default PIPEWIRE_CONFIG_DIR "${pipewire}/share/pipewire"
+  '';
 
   __darwinAllowLocalNetworking = true;
 
   __structuredAttrs = true;
 
-  # TODO: Clean up on `staging`
-  env = lib.optionalAttrs stdenv.hostPlatform.isDarwin {
-    NIX_CFLAGS_LINK = "-fuse-ld=${lib.getExe' lld "ld64.lld"}";
-  };
+  passthru.updateScript = nix-update-script { };
 
   meta = {
     description = "Feature-rich TUI client for Discord, written in Rust";
     homepage = "https://github.com/chojs23/concord";
     license = lib.licenses.gpl3Only;
     maintainers = with lib.maintainers; [
-      Simon-Weij
+      inomish
       neo
       Br1ght0ne
     ];

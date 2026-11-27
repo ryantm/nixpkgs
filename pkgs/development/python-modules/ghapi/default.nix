@@ -3,26 +3,28 @@
   buildPythonPackage,
   fetchFromGitHub,
   fastcore,
+  fastspec,
   packaging,
   setuptools,
 }:
 
 buildPythonPackage (finalAttrs: {
   pname = "ghapi";
-  version = "1.0.15";
+  version = "2.1.5";
   pyproject = true;
 
   src = fetchFromGitHub {
-    owner = "fastai";
+    owner = "AnswerDotAI";
     repo = "ghapi";
     tag = finalAttrs.version;
-    hash = "sha256-H1DuoESnGtU3nsKzW3Zj0RdGNXj1bBGpt6W3mprpVeg=";
+    hash = "sha256-K5+m6MKBhX+v/IdAJQZ5s0YkKSELv3YV4PrE1RMfzGA=";
   };
 
   build-system = [ setuptools ];
 
   dependencies = [
     fastcore
+    fastspec
     packaging
   ];
 
@@ -33,8 +35,8 @@ buildPythonPackage (finalAttrs: {
 
   meta = {
     description = "Python interface to GitHub's API";
-    homepage = "https://github.com/fastai/ghapi";
-    changelog = "https://github.com/fastai/ghapi/releases/tag/${finalAttrs.src.tag}";
+    homepage = "https://github.com/AnswerDotAI/ghapi";
+    changelog = "https://github.com/AnswerDotAI/ghapi/releases/tag/${finalAttrs.src.tag}";
     license = lib.licenses.asl20;
     maintainers = with lib.maintainers; [ fab ];
   };

@@ -3,36 +3,34 @@
   stdenv,
   buildNpmPackage,
   fetchFromGitHub,
-  electron_41,
-  dart-sass,
+  electron_43,
   mpv-unwrapped,
   fetchPnpmDeps,
   pnpmConfigHook,
-  pnpm_10,
+  pnpm_11,
   darwin,
   actool,
   copyDesktopItems,
   makeDesktopItem,
   nix-update-script,
   webVersion ? false,
+  nixosTests,
 }:
 let
+  electron = electron_43;
+
+  pnpm = pnpm_11;
+in
+buildNpmPackage (finalAttrs: {
   pname = "feishin";
-  version = "1.13.0";
+  version = "1.17.0";
 
   src = fetchFromGitHub {
     owner = "jeffvli";
     repo = "feishin";
-    tag = "v${version}";
-    hash = "sha256-v6dWzEB1+IK4bHmDo8Rr5e0Xi3OWKcm+UPBmBiSfdZ0=";
+    tag = "v${finalAttrs.version}";
+    hash = "sha256-1ZIw5XiN+2EhpHmdvN0HxgMSvn4QvN9B+ZJ3RlPXhLw=";
   };
-
-  electron = electron_41;
-in
-buildNpmPackage {
-  inherit pname version;
-
-  inherit src;
 
   __structuredAttrs = true;
 
@@ -41,20 +39,20 @@ buildNpmPackage {
 
   npmDeps = null;
   pnpmDeps = fetchPnpmDeps {
-    inherit
+    inherit pnpm;
+    inherit (finalAttrs)
       pname
       version
       src
       ;
-    pnpm = pnpm_10;
-    fetcherVersion = 3;
-    hash = "sha256-zNOGJ24G0xcgsGK4DmbBm7d1PHTp7IJS+RTALGRtfDg=";
+    fetcherVersion = 4;
+    hash = "sha256-ltpz4e5Vv2vxt/93M4+vHUFJZjwTRwb2zrwvl1Lqjo8=";
   };
 
   env.ELECTRON_SKIP_BINARY_DOWNLOAD = "1";
 
   nativeBuildInputs = [
-    pnpm_10
+    pnpm
   ]
   ++ lib.optionals (stdenv.hostPlatform.isLinux && !webVersion) [ copyDesktopItems ]
   ++ lib.optionals (stdenv.hostPlatform.isDarwin && !webVersion) [
@@ -65,16 +63,7 @@ buildNpmPackage {
   postPatch = ''
     # release/app dependencies are installed on preConfigure
     substituteInPlace package.json \
-      --replace-fail '"postinstall": "electron-builder install-app-deps",' ""
-  '';
-
-  preBuild = ''
-    rm -r node_modules/.pnpm/sass-embedded-*
-
-    test -d node_modules/.pnpm/sass-embedded@*
-    dir="$(echo node_modules/.pnpm/sass-embedded@*)/node_modules/sass-embedded/dist/lib/src/vendor/dart-sass"
-    mkdir -p "$dir"
-    ln -s ${dart-sass}/bin/dart-sass "$dir"/sass
+      --replace-fail '"postinstall": "install-electron && electron-builder install-app-deps",' ""
   '';
 
   postBuild = lib.optionalString (!webVersion) ''
@@ -151,12 +140,19 @@ buildNpmPackage {
     })
   ];
 
-  passthru.updateScript = nix-update-script { };
+  passthru = {
+    updateScript = nix-update-script { };
+
+    # add a tests
+    tests = {
+      inherit (nixosTests.feishin) caddy nginx;
+    };
+  };
 
   meta = {
     description = "Full-featured Jellyfin, Navidrome, and OpenSubsonic Compatible Music Player";
     homepage = "https://github.com/jeffvli/feishin";
-    changelog = "https://github.com/jeffvli/feishin/releases/tag/v${version}";
+    changelog = "https://github.com/jeffvli/feishin/releases/tag/v${finalAttrs.version}";
     sourceProvenance = with lib.sourceTypes; [ fromSource ];
     license = lib.licenses.gpl3Plus;
     platforms = lib.platforms.unix;
@@ -167,4 +163,4 @@ buildNpmPackage {
     ];
   }
   // lib.optionalAttrs (!webVersion) { mainProgram = "feishin"; };
-}
+})

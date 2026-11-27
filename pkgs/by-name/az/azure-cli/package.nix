@@ -26,14 +26,14 @@
 }:
 
 let
-  version = "2.88.0";
+  version = "2.93.0";
 
   src = fetchFromGitHub {
     name = "azure-cli-${version}-src";
     owner = "Azure";
     repo = "azure-cli";
     tag = "azure-cli-${version}";
-    hash = "sha256-9lDDzUuON1fkZzvV6oAzUOZcf+t7biDzPFufZIYQrAY=";
+    hash = "sha256-5pPhppFk3SCGOxcAATH5p23rLuH5j83x/nbHh/Gbr8g=";
   };
 
   # put packages that needs to be overridden in the py package scope
@@ -144,13 +144,16 @@ py.pkgs.toPythonApplication (
   py.pkgs.buildAzureCliPackage rec {
     pname = "azure-cli";
     inherit version src;
-    format = "setuptools";
+    pyproject = true;
 
     sourceRoot = "${src.name}/src/azure-cli";
+
+    pythonRelaxDeps = true;
 
     nativeBuildInputs = [
       installShellFiles
       py.pkgs.argcomplete
+      py.pkgs.setuptools
     ];
 
     # Dependencies from:
@@ -216,6 +219,7 @@ py.pkgs.toPythonApplication (
         azure-mgmt-rdbms
         azure-mgmt-mysqlflexibleservers
         azure-mgmt-recoveryservicesbackup
+        # azure-mgmt-recoveryservicesbackup-passivestamp is merged into azure-mgmt-recoveryservicesbackup
         azure-mgmt-recoveryservices
         azure-mgmt-redhatopenshift
         azure-mgmt-redis
@@ -373,6 +377,7 @@ py.pkgs.toPythonApplication (
       "azure.mgmt.rdbms"
       "azure.mgmt.recoveryservices"
       "azure.mgmt.recoveryservicesbackup"
+      "azure.mgmt.recoveryservicesbackup.passivestamp"
       "azure.mgmt.redis"
       "azure.mgmt.resource"
       "azure.mgmt.resource.deployments"

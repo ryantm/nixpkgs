@@ -383,7 +383,8 @@ in
 
     systemd.services.transmission = {
       description = "Transmission BitTorrent Service";
-      after = [ "network.target" ] ++ optional apparmor.enable "apparmor.service";
+      wants = [ "network-online.target" ];
+      after = [ "network-online.target" ] ++ optional apparmor.enable "apparmor.service";
       requires = optional apparmor.enable "apparmor.service";
       wantedBy = [ "multi-user.target" ];
 
@@ -607,6 +608,7 @@ in
       ${config.systemd.services.transmission.environment.CURL_CA_BUNDLE} r,
 
       owner ${cfg.home}/${settingsDir}/** rw,
+      owner ${cfg.home}/${settingsDir}/lock rwk,
       ${cfg.settings.download-dir}/** rw,
       ${optionalString cfg.settings.incomplete-dir-enabled ''
         ${cfg.settings.incomplete-dir}/** rw,

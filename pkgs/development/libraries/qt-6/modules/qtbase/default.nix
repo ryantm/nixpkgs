@@ -21,7 +21,7 @@
   zstd,
   double-conversion,
   util-linux,
-  systemd,
+  systemdLibs,
   systemdSupport ? stdenv.hostPlatform.isLinux,
   libb2,
   md4c,
@@ -89,9 +89,6 @@
   # options
   qttranslations ? null,
   fetchpatch,
-
-  # TODO: Clean up on `staging`.
-  llvmPackages,
 }:
 
 let
@@ -138,7 +135,7 @@ stdenv.mkDerivation {
     unixodbcDrivers.mariadb
   ]
   ++ lib.optionals systemdSupport [
-    systemd
+    systemdLibs
   ]
   ++ lib.optionals stdenv.hostPlatform.isLinux [
     util-linux
@@ -200,11 +197,7 @@ stdenv.mkDerivation {
     cmake
     ninja
   ]
-  ++ lib.optionals stdenv.hostPlatform.isDarwin [
-    moveBuildTree
-    # TODO: Clean up on `staging`.
-    llvmPackages.lld
-  ];
+  ++ lib.optionals stdenv.hostPlatform.isDarwin [ moveBuildTree ];
 
   propagatedNativeBuildInputs = [
     lndir
@@ -246,17 +239,14 @@ stdenv.mkDerivation {
     ./use-cmake-from-path.patch
 
     # macdeployqt fixes
-    # get qmlimportscanner location from environment variable
-    ./find-qmlimportscanner.patch
-    # pass QML2_IMPORT_PATH from environment to qmlimportscanner
-    ./qmlimportscanner-import-path.patch
-    # don't pass qtbase's QML directory to qmlimportscanner if it's empty
-    ./skip-missing-qml-directory.patch
+    # FIXME: these should probably be a wrapper
+    ./macdeployqt-fixes.patch
 
-    # another crash fix
+    # backport touchpad scrolling fix
+    # FIXME: remove in 6.12.1
     (fetchpatch {
-      url = "https://github.com/qt/qtbase/commit/515cbbacfba9f4259c9c3b0714a31222c2b4c879.diff";
-      hash = "sha256-93tzp4O7dZxRZv7ilN/gbQSVmaeOGmxpYgM7aomN0n8=";
+      url = "https://github.com/qt/qtbase/commit/ddf0f49dc949beab8485b3bfb8e88616e4bd8076.diff";
+      hash = "sha256-fWTHLU0IQxOknxPitqhHN8VVVPz/tLQlGzF2t7rYdFc=";
     })
   ];
 
@@ -319,8 +309,6 @@ stdenv.mkDerivation {
     # When this variable is not set, cmake tries to execute xcodebuild
     # to query the version.
     "-DQT_INTERNAL_XCODE_VERSION=0.1"
-    # TODO: Clean up on `staging`.
-    (lib.cmakeFeature "CMAKE_LINKER_TYPE" "LLD")
   ]
   ++ lib.optionals isCrossBuild [
     "-DQT_HOST_PATH=${pkgsBuildBuild.qt6.qtbase}"
@@ -385,6 +373,8 @@ stdenv.mkDerivation {
   passthru = {
     inherit qtPluginPrefix qtQmlPrefix;
   };
+
+  __structuredAttrs = true;
 
   meta = {
     homepage = "https://www.qt.io/";

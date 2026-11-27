@@ -8,14 +8,21 @@
 
 let
   mkPhp =
-    { version, hash }:
+    {
+      version,
+      hash ? null,
+      phpSrc ? null,
+      knownVulnerabilities ? [ ],
+    }:
     let
       base = callPackage ./generic.nix {
         stdenv = if stdenv.cc.isClang then llvmPackages.stdenv else stdenv;
-        pcre2 = pcre2.override {
-          withJitSealloc = false; # See https://bugs.php.net/bug.php?id=78927 and https://bugs.php.net/bug.php?id=78630
-        };
-        inherit version hash;
+        inherit
+          version
+          hash
+          phpSrc
+          knownVulnerabilities
+          ;
       };
     in
     base.withExtensions (
@@ -68,20 +75,22 @@ let
     );
 in
 {
-  php82 = mkPhp {
-    version = "8.2.32";
-    hash = "sha256-jyHpiMpN1eFN2fuImIRIeENWbkhygAJ8Tvq2yTGIotE=";
-  };
+  # NOTE TO all contributors: from 2026-11 we no longer accept release candidates.
+
   php83 = mkPhp {
-    version = "8.3.32";
-    hash = "sha256-93fKJGYZZvlLMfaEDNrUN88wUBU324uHKxt6HCRLjQI=";
+    version = "8.3.37";
+    hash = "sha256-eDe0PNThjbXerCHubwCGbkd5pwXy5U+uqDyKbPVv0dg=";
   };
   php84 = mkPhp {
-    version = "8.4.23";
-    hash = "sha256-wULAY7EM/2jQcnZuP/v7NlSgibk4ZosIMDVkN+6V4Po=";
+    version = "8.4.28";
+    hash = "sha256-sjqhvlt0YprWJP0BNlwOTfbYh4RzmD8zc0lDPvNJwfc=";
   };
   php85 = mkPhp {
-    version = "8.5.8";
-    hash = "sha256-Ivk478bE6qi/LkCuEUZhQDCUlqpdWhkgQnL7JZb9Ed0=";
+    version = "8.5.13";
+    hash = "sha256-R9UMNgFnhKSnHwGc17+inDHkvg3iLT+gYJWygKYpni8=";
+  };
+  php86 = mkPhp {
+    version = "8.6.0";
+    hash = "sha256-niM+OJmaifNRozrmpydtHK9a3cuhHgnju+Oo0l9BH/E=";
   };
 }

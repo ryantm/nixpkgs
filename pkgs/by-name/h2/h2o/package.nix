@@ -2,6 +2,7 @@
   lib,
   stdenv,
   fetchFromGitHub,
+  cacert,
   pkg-config,
   cmake,
   makeBinaryWrapper,
@@ -20,18 +21,20 @@
   ruby,
   withUring ? stdenv.hostPlatform.isLinux,
   liburing,
+  withZstandard ? true,
+  zstd,
   nixosTests,
 }:
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "h2o";
-  version = "2.3.0-rolling-2026-06-25";
+  version = "2.3.0-rolling-2026-11-14";
 
   src = fetchFromGitHub {
     owner = "h2o";
     repo = "h2o";
-    rev = "58a9a054300a09235df52954101a49573762e0fc";
-    hash = "sha256-TofY3JzWM4XNiMqna5KnmtBJETndJ/YY0sFY/0X99GA=";
+    rev = "d3e43fcf00c3e6b17826b95d2d362d646185918a";
+    hash = "sha256-XUiAVTLavgv7uJef9c/zYUzG9DzNdTD4epmaTdF1FPs=";
   };
 
   outputs = [
@@ -53,7 +56,8 @@ stdenv.mkDerivation (finalAttrs: {
     bison
     ruby
   ]
-  ++ lib.optional withUring liburing;
+  ++ lib.optional withUring liburing
+  ++ lib.optional withZstandard zstd;
 
   buildInputs = [
     brotli
@@ -64,11 +68,13 @@ stdenv.mkDerivation (finalAttrs: {
     zlib
     wslay
   ]
-  ++ lib.optional withBrotli brotli;
+  ++ lib.optional withBrotli brotli
+  ++ lib.optional withZstandard zstd;
 
   cmakeFlags = [
-    "-DWITH_BROTLI=${if withBrotli then "ON" else "OFF"}"
-    "-DWITH_MRUBY=${if withMruby then "ON" else "OFF"}"
+    (lib.cmakeBool "WITH_BROTLI" withBrotli)
+    (lib.cmakeBool "WITH_MRUBY" withMruby)
+    (lib.cmakeBool "WITH_ZSTD" withZstandard)
   ];
 
   postInstall = ''
@@ -81,6 +87,10 @@ stdenv.mkDerivation (finalAttrs: {
 
     wrapProgram "$out/bin/h2olog" \
         --set "PERL5LIB" "$PERL5LIB"
+
+    # Always use provided CA certs & not the one bundled with H2O
+    rm $out/share/h2o/ca-bundle.crt
+    ln -s ${cacert}/etc/ssl/certs/ca-bundle.crt $out/share/h2o/ca-bundle.crt
   '';
 
   passthru = {

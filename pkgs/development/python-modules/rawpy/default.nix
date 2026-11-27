@@ -24,15 +24,21 @@
 
 buildPythonPackage (finalAttrs: {
   pname = "rawpy";
-  version = "0.27.0";
+  version = "0.28.0";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "letmaik";
     repo = "rawpy";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-zM6S1oCOy6AWpaGgdgAqOUGW3rQ0Q9CxKMJoQTJPJIA=";
+    hash = "sha256-zmI5MPMg5rcQK0LCX1TqO1J78R8PXTSRMxM+SksNvJI=";
   };
+
+  # cmake is only needed to build libraw when `RAWPY_USE_SYSTEM_LIBRAW` is disabled
+  postPatch = ''
+    substituteInPlace pyproject.toml \
+      --replace-fail '"cmake",' ""
+  '';
 
   build-system = [
     cython
@@ -55,12 +61,6 @@ buildPythonPackage (finalAttrs: {
   env = {
     RAWPY_USE_SYSTEM_LIBRAW = 1;
   };
-
-  # cmake is only needed to build libraw when `RAWPY_USE_SYSTEM_LIBRAW` is disabled
-  postPatch = ''
-    substituteInPlace pyproject.toml \
-      --replace-fail '"cmake",' ""
-  '';
 
   pythonImportsCheck = [
     "rawpy"
@@ -88,6 +88,7 @@ buildPythonPackage (finalAttrs: {
   meta = {
     description = "RAW image processing for Python, a wrapper for libraw";
     homepage = "https://github.com/letmaik/rawpy";
+    changelog = "https://github.com/letmaik/rawpy/releases/tag/${finalAttrs.src.tag}";
     license = with lib.licenses; [
       lgpl21Only
       mit

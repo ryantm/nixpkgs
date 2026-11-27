@@ -7,15 +7,15 @@
 
 buildGoModule (finalAttrs: {
   pname = "gb-backup";
-  version = "0-unstable-2026-06-05";
+  version = "0-unstable-2026-11-10";
 
   __structuredAttrs = true;
 
   src = fetchFromGitHub {
     owner = "leijurv";
     repo = "gb";
-    rev = "d388723a2cbed495bcf1793aa0958a9ba4f3d6b9";
-    hash = "sha256-um2wMfHdEL3GkILtM7R/bNW17pknq0M/CCfHPlu6/58=";
+    rev = "2fda32c0af235cfa32af537c52dd31987eba5956";
+    hash = "sha256-sGHgfhVTGwB6369OWkcqgrVmHTB4FS15fC3Fz0L0TEo=";
   };
 
   vendorHash = "sha256-fjOIp2LUBaAPAPMxU2T+qbIQZgmVa0vNPYzW2hOsBr8=";

@@ -18,6 +18,7 @@
   openssl,
   webkitgtk_4_1,
   gst_all_1,
+  zstd,
 
   nix-update-script,
 }:
@@ -27,13 +28,13 @@ let
 in
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "en-croissant";
-  version = "0.15.0";
+  version = "0.15.1";
 
   src = fetchFromGitHub {
     owner = "franciscoBSalgueiro";
     repo = "en-croissant";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-xP/u3EABj11bylZKDpvBsuUF6QRmtArQV/pTY+0ANb0=";
+    hash = "sha256-a+UVorsX3A8/NYjXJM+k2uDvCdySLr88UqzTq7ROJEM=";
   };
 
   pnpmDeps = fetchPnpmDeps {
@@ -44,7 +45,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
       ;
     inherit pnpm;
     fetcherVersion = 3;
-    hash = "sha256-icJ5cU0ZNnYSZl+MPASNmGanc9Vaa61sotza8/G/xs4=";
+    hash = "sha256-U6iJFtbgQV8VV3tvTP0DMUQWZ5FI+QUGpqpEhQJl40E=";
   };
 
   postPatch = ''
@@ -58,7 +59,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
 
   cargoRoot = "src-tauri";
 
-  cargoHash = "sha256-/L3URUdUIVrWHlXgRJfmDfFfOKGz9slDe49iE5nPw5k=";
+  cargoHash = "sha256-B5LAt2SKGZ8ksQZDvajWfkTKDzFZPCWGqRWvQAJPh/c=";
 
   buildAndTestSubdir = finalAttrs.cargoRoot;
 
@@ -75,7 +76,10 @@ rustPlatform.buildRustPackage (finalAttrs: {
   ++ lib.optionals stdenv.hostPlatform.isLinux [ wrapGAppsHook3 ]
   ++ lib.optionals stdenv.hostPlatform.isDarwin [ makeBinaryWrapper ];
 
-  buildInputs = lib.optionals stdenv.hostPlatform.isLinux [
+  buildInputs = [
+    zstd
+  ]
+  ++ lib.optionals stdenv.hostPlatform.isLinux [
     openssl
     webkitgtk_4_1
 
@@ -84,6 +88,9 @@ rustPlatform.buildRustPackage (finalAttrs: {
     gst_all_1.gst-plugins-good
     gst_all_1.gst-plugins-bad
   ];
+
+  # vite resolves localhost during the frontend build
+  __darwinAllowLocalNetworking = true;
 
   doCheck = false; # many scoring tests fail
 

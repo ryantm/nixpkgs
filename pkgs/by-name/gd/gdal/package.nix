@@ -3,6 +3,7 @@
   stdenv,
   callPackage,
   fetchFromGitHub,
+  fetchpatch,
 
   useMinimalFeatures ? false,
   useArmadillo ? (!useMinimalFeatures),
@@ -16,8 +17,7 @@
   useNetCDF ? (!useMinimalFeatures),
   usePoppler ? (!useMinimalFeatures),
   usePostgres ? (!useMinimalFeatures),
-  useTiledb ?
-    (!useMinimalFeatures) && !(stdenv.hostPlatform.isDarwin && stdenv.hostPlatform.isx86_64),
+  useTiledb ? (!useMinimalFeatures),
 
   ant,
   armadillo,
@@ -79,18 +79,31 @@
   xz,
   zlib,
   zstd,
+  buildPackages,
 }:
-
 stdenv.mkDerivation (finalAttrs: {
   pname = "gdal" + lib.optionalString useMinimalFeatures "-minimal";
-  version = "3.13.1";
+  version = "3.13.3";
 
   src = fetchFromGitHub {
     owner = "OSGeo";
     repo = "gdal";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-IsSENjOJpCMnGR1O8/gV6X7GTNIK/c+JIYBrkxDgj/A=";
+    hash = "sha256-8rTCv0Nsb+BhRypwXDY5SWP7Bo1vqJBlm7y6YCOMa2M=";
   };
+
+  patches = [
+    # https://github.com/OSGeo/gdal/pull/15259
+    ./proj-9.9.0-compat.patch
+
+    (fetchpatch {
+      name = "test_ogr_gml_billion_laugh-expat-2.10.patch";
+      url = "https://github.com/OSGeo/gdal/commit/7cf7bb5976130bb065cfc05f5ba9aedee77b62c1.diff";
+      hash = "sha256-cRYW+OkXLWpEXnomkG1Ojm/wF1CjeCrwHVpc2u6hS7k=";
+    })
+  ]
+  # https://github.com/OSGeo/gdal/pull/15471#issuecomment-6845965799
+  ++ lib.optional stdenv.hostPlatform.isDarwin ./test_ogr_gml_billion_laugh-expat-2.10-fixup.patch;
 
   nativeBuildInputs = [
     bison
@@ -113,7 +126,9 @@ stdenv.mkDerivation (finalAttrs: {
     "-DGEOTIFF_LIBRARY_RELEASE=${lib.getLib libgeotiff}/lib/libgeotiff${stdenv.hostPlatform.extensions.sharedLibrary}"
     "-DMYSQL_INCLUDE_DIR=${lib.getDev libmysqlclient}/include/mysql"
     "-DMYSQL_LIBRARY=${lib.getLib libmysqlclient}/lib/${
-      lib.optionalString (libmysqlclient.pname != "mysql") "mysql/"
+      # mysql puts libraries into top-level `lib` (but has pkgconfig),
+      # mariadb puts them into a subdirectory (but has no pkgconfig)
+      lib.optionalString (libmysqlclient.pname != "mysql-client") "mysql/"
     }libmysqlclient${stdenv.hostPlatform.extensions.sharedLibrary}"
   ]
   ++ lib.optionals finalAttrs.doInstallCheck [
@@ -132,6 +147,9 @@ stdenv.mkDerivation (finalAttrs: {
     # This is not strictly needed as the Java bindings wouldn't build anyway if
     # ant/jdk were not available.
     "-DBUILD_JAVA_BINDINGS=OFF"
+  ]
+  ++ lib.optionals (!stdenv.buildPlatform.canExecute stdenv.hostPlatform) [
+    "-DCMAKE_CROSSCOMPILING_EMULATOR=${stdenv.hostPlatform.emulator buildPackages}"
   ];
 
   buildInputs =

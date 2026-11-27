@@ -5,6 +5,7 @@
   apple-sdk_15,
   chafa,
   cmake,
+  darwin,
   dbus,
   dconf,
   ddcutil,
@@ -47,7 +48,7 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "fastfetch-unwrapped";
-  version = "2.65.2";
+  version = "2.71.0";
 
   strictDeps = true;
   __structuredAttrs = true;
@@ -56,7 +57,7 @@ stdenv.mkDerivation (finalAttrs: {
     owner = "fastfetch-cli";
     repo = "fastfetch";
     tag = finalAttrs.version;
-    hash = "sha256-yRKxETZEIlpl42y+adp9wpQhD6ZDebdfGj4SL1zxr3w=";
+    hash = "sha256-qjE9El3e91V6EGlxYDt5oYAa5y8NtC+7w4Isv+txzec=";
   };
 
   outputs = [
@@ -68,10 +69,14 @@ stdenv.mkDerivation (finalAttrs: {
     cmake
     pkg-config
     python3
+  ]
+  ++ lib.optionals stdenv.hostPlatform.isDarwin [
+    darwin.sigtool
   ];
 
   buildInputs = [
     chafa
+    glib
     imagemagick
     sqlite
     yyjson
@@ -81,7 +86,6 @@ stdenv.mkDerivation (finalAttrs: {
     dconf
     ddcutil
     enlightenment.efl
-    glib
     libdrm
     libelf
     libglvnd
@@ -142,6 +146,9 @@ stdenv.mkDerivation (finalAttrs: {
 
   nativeInstallCheckInputs = [ versionCheckHook ];
   doInstallCheck = true;
+
+  # Stripping replaces the signing identifiers needed for macOS now-playing access.
+  dontStrip = stdenv.hostPlatform.isDarwin;
 
   passthru = {
     updateScript = nix-update-script { };

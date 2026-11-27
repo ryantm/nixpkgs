@@ -37,11 +37,13 @@ buildPythonPackage rec {
 
   pythonImportsCheck = [ "requests_futures" ];
 
+  __darwinAllowLocalNetworking = true;
+
   meta = {
     description = "Asynchronous Python HTTP Requests for Humans using Futures";
     homepage = "https://github.com/ross/requests-futures";
     changelog = "https://github.com/ross/requests-futures/blob/${src.tag}/CHANGELOG.md";
-    license = with lib.licenses; [ asl20 ];
+    license = lib.licenses.asl20;
     maintainers = with lib.maintainers; [ applePrincess ];
   };
 }

@@ -19,16 +19,16 @@
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "evcxr";
-  version = "0.21.1";
+  version = "0.23.0";
 
   src = fetchFromGitHub {
     owner = "evcxr";
     repo = "evcxr";
     rev = "v${finalAttrs.version}";
-    sha256 = "sha256-8dV+NNtU4HFerrgRyc1kO+MSsMTJJItTtJylEIN014g=";
+    sha256 = "sha256-46ViRBLN+dkrMwxvKKfyW03e/DcFz3chyY/Qng2go+A=";
   };
 
-  cargoHash = "sha256-HJrEXt6O7qCNJ/xOh4kjmqKJ22EVwBTzV1S+q98k0VQ=";
+  cargoHash = "sha256-48ro+KhIvjoQFggPZZ6lTzWY1Nh2x7hELjcDuD5PHAY=";
 
   env.RUST_SRC_PATH = "${rustPlatform.rustLibSrc}";
 
@@ -85,6 +85,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
       ${wrap "evcxr"}
       ${wrap "evcxr_jupyter"}
       rm $out/bin/testing_runtime
+      rm $out/bin/print_performance_info
     '';
 
   passthru.updateScript = nix-update-script { };

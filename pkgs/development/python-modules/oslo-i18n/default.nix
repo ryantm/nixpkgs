@@ -1,26 +1,33 @@
 {
   lib,
   buildPythonPackage,
-  fetchPypi,
+  fetchFromGitHub,
   oslotest,
   pbr,
   setuptools,
+  stestrCheckHook,
   testscenarios,
-  stestr,
 }:
 
-buildPythonPackage rec {
+buildPythonPackage (finalAttrs: {
   pname = "oslo-i18n";
-  version = "6.8.0";
+  version = "6.9.0";
   pyproject = true;
 
-  src = fetchPypi {
-    pname = "oslo_i18n";
-    inherit version;
-    hash = "sha256-oLTGTBOWhp1xRNymCtl8frAo949h+RxwB1MSOAUZl98=";
+  src = fetchFromGitHub {
+    owner = "openstack";
+    repo = "oslo.i18n";
+    tag = finalAttrs.version;
+    hash = "sha256-FSkz9l0pxJW+qxdzEWcc/G/pLVDsXCpzyPc5MdtTmKE=";
   };
 
+  # Manually set version since pbr wants to get it from git (not in a tarball)
+  env.PBR_VERSION = finalAttrs.version;
+
   postPatch = ''
+    # pbr needs git to ship subpackages and package data
+    echo "recursive-include oslo_i18n *" > MANIFEST.in
+
     # only a small portion of the listed packages are actually needed for running the tests
     # so instead of removing them one by one remove everything
     rm test-requirements.txt
@@ -33,20 +40,9 @@ buildPythonPackage rec {
 
   nativeCheckInputs = [
     oslotest
-    stestr
+    stestrCheckHook
     testscenarios
   ];
-
-  checkPhase = ''
-    runHook preCheck
-
-    stestr run -e <(echo "
-    # list is not deduped
-    oslo_i18n.tests.test_gettextutils.GettextTest.test_get_available_languages
-    ")
-
-    runHook postCheck
-  '';
 
   pythonImportsCheck = [ "oslo_i18n" ];
 
@@ -56,4 +52,4 @@ buildPythonPackage rec {
     license = lib.licenses.asl20;
     teams = [ lib.teams.openstack ];
   };
-}
+})

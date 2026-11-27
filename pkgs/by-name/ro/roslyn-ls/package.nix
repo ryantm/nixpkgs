@@ -15,12 +15,12 @@ let
   dotnet-sdk =
     with dotnetCorePackages;
     # required sdk
-    sdk_10_0
+    sdk_11_0
     // {
       # with additional packages to minimize deps.json
       inherit
         (combinePackages [
-          sdk_9_0
+          sdk_10_0
           sdk_8_0
         ])
         packages
@@ -33,24 +33,27 @@ let
 
   rid = dotnetCorePackages.systemToDotnetRid stdenvNoCC.targetPlatform.system;
 
-  project = "Microsoft.CodeAnalysis.LanguageServer";
+  projects = [
+    "Microsoft.CodeAnalysis.LanguageServer"
+    "roslyn-language-server"
+  ];
 in
 buildDotnetModule (finalAttrs: {
   inherit pname dotnet-sdk dotnet-runtime;
 
-  vsVersion = "2.144.9-prerelease";
+  vsVersion = "11.9.41-prerelease";
   src = fetchFromGitHub {
     owner = "dotnet";
     repo = "roslyn";
     rev = "VSCode-CSharp-${finalAttrs.vsVersion}";
-    hash = "sha256-Cq1ynxtNaguLhVSSR04wUkqrn4/0YmwGxHfBZC4zMS8=";
+    hash = "sha256-1mBgW5EWGJpND57lQ/5XqTevsgno3dIBRJWr4zLTMzM=";
   };
 
   # versioned independently from vscode-csharp
   # "roslyn" in here:
   # https://github.com/dotnet/vscode-csharp/blob/main/package.json
-  version = "5.9.0-1.26314.1";
-  projectFile = "src/LanguageServer/${project}/${project}.csproj";
+  version = "5.14.0-1.26561.8";
+  projectFile = map (project: "src/LanguageServer/${project}/${project}.csproj") projects;
   useDotnetFromEnv = true;
   nugetDeps = ./deps.json;
 
@@ -63,7 +66,7 @@ buildDotnetModule (finalAttrs: {
   ];
 
   postPatch = ''
-    # Upstream uses rollForward = latestPatch, which pins to an *exact* .NET SDK version.
+    # Upstream uses rollForward = patch, which pins to an exact .NET SDK feature band.
     jq '.sdk.rollForward = "latestMinor"' < global.json > global.json.tmp
     mv global.json.tmp global.json
   '';
@@ -73,7 +76,7 @@ buildDotnetModule (finalAttrs: {
   dotnetFlags = [
     "-p:TargetRid=${rid}"
     # we don't want to build the binary
-    # and useAppHost is not enough, need to explicilty set to false
+    # and useAppHost is not enough, need to explicitly set to false
     "-p:UseAppHost=false"
     # avoid platform-specific crossgen packages
     "-p:PublishReadyToRun=false"
@@ -84,20 +87,25 @@ buildDotnetModule (finalAttrs: {
     "-p:EnableRuntimePackDownload=false"
   ];
 
-  executables = [ project ];
+  executables = projects;
 
   postInstall = ''
-    # fake executable that we substitute in postFixup
-    touch $out/lib/$pname/${project}
-    chmod +x $out/lib/$pname/${project}
+    # fake executables that we substitute in postFixup
+    for project in ${toString projects}; do
+      touch $out/lib/$pname/$project
+      chmod +x $out/lib/$pname/$project
+    done
   '';
 
-  # problem and solution:
-  # BuildHost project within roslyn is running Build target during publish -> --no-build removed
+  # custom install phase: default publishes with --no-build,
+  # but the DeployNetFrameworkBuildHost target in Workspaces.MSBuild explicitly invokes Build
+  #
+  # publishing roslyn-language-server also publishes Microsoft.CodeAnalysis.LanguageServer
+  # next to it (PublishBundledLanguageServer target)
   installPhase = ''
     runHook preInstall
 
-    env dotnet publish $dotnetProjectFiles \
+    env dotnet publish src/LanguageServer/roslyn-language-server/roslyn-language-server.csproj \
         -p:ContinuousIntegrationBuild=true \
         -p:Deterministic=true \
         -p:InformationalVersion=$version \
@@ -114,20 +122,27 @@ buildDotnetModule (finalAttrs: {
     runHook postInstall
   '';
 
-  # force dotnet-runtime to run the dll
-  # but keep the wrapper created with useDotnetFromEnv to allow LS to work properly on codebases
   postFixup = ''
-    rm -f $out/lib/$pname/${project}
-    substituteInPlace $out/bin/${project} \
-      --replace-fail "$out/lib/$pname/${project}" "${lib.getExe dotnet-runtime}\" \"$out/lib/$pname/${project}.dll"
+    for project in ${toString projects}; do
+      # force dotnet-runtime to run the dll
+      # but keep the wrapper created with useDotnetFromEnv to allow LS to work properly on codebases
+      substituteInPlace $out/bin/$project \
+        --replace-fail "$out/lib/$pname/$project" "${lib.getExe dotnet-runtime}\" \"$out/lib/$pname/$project.dll"
+      # roslyn-language-server launches both executables from its own directory; point them at the wrappers
+      ln -sf $out/bin/$project $out/lib/$pname/$project
+    done
   '';
 
   passthru = {
     tests =
       let
-        with-sdk =
-          sdk:
-          runCommand "with-${if sdk ? version then sdk.version else "no"}-sdk"
+        handshake =
+          {
+            sdk ? null,
+            program ? finalAttrs.meta.mainProgram,
+            args ? "",
+          }:
+          runCommand "${program}${args}-with-${if sdk ? version then sdk.version else "no"}-sdk"
             {
               nativeBuildInputs = [
                 finalAttrs.finalPackage
@@ -136,29 +151,41 @@ buildDotnetModule (finalAttrs: {
               ];
               meta.timeout = 60;
             }
+            # run a LSP handshake rather than matching startup logs -
+            # those go through a StreamWriter that upstream never flushes
             ''
               HOME=$TMPDIR
               expect <<"EOF"
-                spawn ${finalAttrs.meta.mainProgram} --stdio --logLevel Information --extensionLogDirectory log
-                expect_before timeout {
-                  send_error "timeout!\n"
-                  exit 1
+                set timeout 60
+                set req "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"initialize\",\"params\":{\"processId\":null,\"rootUri\":null,\"capabilities\":{}}}"
+
+                set chan [open "|${program} --stdio ${args} --extensionLogDirectory log 2>@stderr" r+]
+                fconfigure $chan -translation binary -buffering none
+                spawn -open $chan
+                match_max 100000
+
+                send -- "Content-Length: [string length $req]\r\n\r\n$req"
+                expect {
+                  -ex {"id":1,"result"} { }
+                  timeout { send_error "\ntimeout!\n"; exit 1 }
+                  eof { send_error "\nserver exited!\n"; exit 1 }
                 }
-                expect "Language server initialized"
-                send \x04
-                expect eof
-                catch wait result
-                exit [lindex $result 3]
               EOF
               touch $out
             '';
       in
       {
         # Make sure we can run with any supported SDK version, as well as without
-        with-net8-sdk = with-sdk dotnetCorePackages.sdk_8_0;
-        with-net9-sdk = with-sdk dotnetCorePackages.sdk_9_0;
-        with-net10-sdk = with-sdk dotnetCorePackages.sdk_10_0;
-        no-sdk = with-sdk null;
+        with-net8-sdk = handshake { sdk = dotnetCorePackages.sdk_8_0; };
+        with-net9-sdk = handshake { sdk = dotnetCorePackages.sdk_9_0; };
+        with-net10-sdk = handshake { sdk = dotnetCorePackages.sdk_10_0; };
+        with-net11-sdk = handshake { sdk = dotnetCorePackages.sdk_11_0; };
+        no-sdk = handshake { };
+        thin-client = handshake { program = "roslyn-language-server"; };
+        thin-client-daemon = handshake {
+          program = "roslyn-language-server";
+          args = "--daemon-mode";
+        };
         version = testers.testVersion { package = finalAttrs.finalPackage; };
       };
     updateScript = ./update.sh;

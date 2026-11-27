@@ -23,7 +23,7 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "rtorrent";
-  version = "0.16.17";
+  version = "0.16.28";
 
   __structuredAttrs = true;
 
@@ -31,7 +31,7 @@ stdenv.mkDerivation (finalAttrs: {
     owner = "rakshasa";
     repo = "rtorrent";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-pFEUbxrruP4Zq9WdlnBSmE6Fe95jpZ88x3md5jzytO4=";
+    hash = "sha256-ONe7fuBVY39Zcbof45VEzqje5AMpLmdpbmhol0NEv84=";
   };
 
   outputs = [
@@ -88,6 +88,7 @@ stdenv.mkDerivation (finalAttrs: {
 
   meta = {
     description = "Ncurses client for libtorrent, ideal for use with screen, tmux, or dtach";
+    changelog = "https://github.com/rakshasa/rtorrent/releases/tag/${finalAttrs.src.tag}";
     homepage = "https://rakshasa.github.io/rtorrent/";
     license = lib.licenses.gpl2Plus;
     mainProgram = "rtorrent";

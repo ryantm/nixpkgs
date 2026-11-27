@@ -1,15 +1,14 @@
 <p align="center">
   <a href="https://nixos.org">
     <picture>
-      <source media="(prefers-color-scheme: light)" srcset="https://brand.nixos.org/logos/nixos-logo-rainbow-gradient-black-regular-horizontal-minimal.svg">
-      <source media="(prefers-color-scheme: dark)" srcset="https://brand.nixos.org/logos/nixos-logo-rainbow-gradient-white-regular-horizontal-minimal.svg">
-      <img src="https://brand.nixos.org/logos/nixos-logo-rainbow-gradient-black-regular-horizontal-minimal.svg" width="500px" alt="NixOS logo">
+      <source media="(prefers-color-scheme: light)" srcset="https://brand.nixos.org/logos/nixos-logo-default-gradient-black-regular-horizontal-minimal.svg">
+      <source media="(prefers-color-scheme: dark)" srcset="https://brand.nixos.org/logos/nixos-logo-default-gradient-white-regular-horizontal-minimal.svg">
+      <img src="https://brand.nixos.org/logos/nixos-logo-default-gradient-black-regular-horizontal-minimal.svg" width="500px" alt="NixOS logo">
     </picture>
   </a>
 </p>
 
 <p align="center">
-  <a href="CONTRIBUTING.md"><img src="https://img.shields.io/github/contributors-anon/NixOS/nixpkgs" alt="Contributors badge" /></a>
   <a href="https://opencollective.com/nixos"><img src="https://opencollective.com/nixos/tiers/supporter/badge.svg?label=supporters&color=brightgreen" alt="Open Collective supporters" /></a>
 </p>
 

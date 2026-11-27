@@ -4,14 +4,14 @@
   fetchPypi,
 }:
 
-python3Packages.buildPythonPackage rec {
+python3Packages.buildPythonPackage (finalAttrs: {
   pname = "overturemaps";
-  version = "1.0.1";
+  version = "2.1.1";
   pyproject = true;
 
   src = fetchPypi {
-    inherit pname version;
-    hash = "sha256-yKl13Y9kRCGHzoqeZIQEac/PrByTCtCQFaz8sUgeVIs=";
+    inherit (finalAttrs) pname version;
+    hash = "sha256-yM2vMwJx40j3Bmb+X94UqfFSA3tZcT4fw1WrSbQknZo=";
   };
 
   nativeBuildInputs = with python3Packages; [
@@ -21,7 +21,6 @@ python3Packages.buildPythonPackage rec {
   dependencies = with python3Packages; [
     click
     colorama
-    geopandas
     numpy
     orjson
     pyarrow
@@ -30,10 +29,33 @@ python3Packages.buildPythonPackage rec {
     tqdm
   ];
 
-  # Drop once tqdm 4.67.3 reaches master
-  pythonRelaxDeps = [ "tqdm" ];
+  optional-dependencies = with python3Packages; {
+    geopandas = [
+      geopandas
+    ];
+  };
 
   pythonImportsCheck = [ "overturemaps" ];
+
+  preCheck = ''
+    substituteInPlace pytest.ini \
+      --replace-fail "testpaths = tests benchmarks" "testpaths = tests"
+  '';
+
+  disabledTestPaths = [
+    # requires network
+    "tests/test_changelog.py"
+    "tests/test_gers.py"
+    "tests/test_releases.py"
+  ];
+
+  nativeCheckInputs =
+    with python3Packages;
+    [
+      pytest-mock
+      pytestCheckHook
+    ]
+    ++ finalAttrs.passthru.optional-dependencies.geopandas;
 
   meta = {
     description = "Official command-line tool of the Overture Maps Foundation";
@@ -42,4 +64,4 @@ python3Packages.buildPythonPackage rec {
     license = lib.licenses.mit;
     maintainers = with lib.maintainers; [ crimeminister ];
   };
-}
+})

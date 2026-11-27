@@ -8,13 +8,16 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "obs-composite-blur";
-  version = "1.5.2";
+  version = "1.6.1";
+
+  __structuredAttrs = true;
+  strictDeps = true;
 
   src = fetchFromGitHub {
     owner = "FiniteSingularity";
     repo = "obs-composite-blur";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-wT49bCxik8mrg+YleNelOPQQzqcYQR7ZSnzvPXA5D3g=";
+    hash = "sha256-HV3oEVpEwQqbx7xyExJEY14hgqnWjwQvg4Zy11RNFF0=";
   };
 
   buildInputs = [
@@ -24,13 +27,6 @@ stdenv.mkDerivation (finalAttrs: {
   nativeBuildInputs = [
     cmake
   ];
-
-  postInstall = ''
-    rm -rf "$out/share"
-    mkdir -p "$out/share/obs"
-    mv "$out/data/obs-plugins" "$out/share/obs"
-    rm -rf "$out/obs-plugins" "$out/data"
-  '';
 
   meta = {
     description = "Comprehensive blur plugin for OBS that provides several different blur algorithms, and proper compositing";

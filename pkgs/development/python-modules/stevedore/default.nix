@@ -2,20 +2,25 @@
   lib,
   buildPythonPackage,
   callPackage,
-  fetchPypi,
+  fetchFromGitHub,
   pbr,
   setuptools,
 }:
 
-buildPythonPackage rec {
+buildPythonPackage (finalAttrs: {
   pname = "stevedore";
-  version = "5.6.0";
+  version = "5.9.1";
   pyproject = true;
 
-  src = fetchPypi {
-    inherit pname version;
-    hash = "sha256-8i0VxurUDFu/qcpUqn57SgfVmzauA+0SztGlTPC1GUU=";
+  src = fetchFromGitHub {
+    owner = "openstack";
+    repo = "stevedore";
+    tag = finalAttrs.version;
+    hash = "sha256-peKMn3Oa9B+HlvLYKIyFzVpS5h65tYg5MKCgjnr0s6M=";
   };
+
+  # Manually set version since pbr wants to get it from git (not in a tarball)
+  env.PBR_VERSION = finalAttrs.version;
 
   build-system = [
     pbr
@@ -37,4 +42,4 @@ buildPythonPackage rec {
     license = lib.licenses.asl20;
     teams = [ lib.teams.openstack ];
   };
-}
+})

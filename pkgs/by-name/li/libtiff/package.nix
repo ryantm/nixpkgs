@@ -37,13 +37,13 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "libtiff";
-  version = "4.7.1";
+  version = "4.7.2";
 
   src = fetchFromGitLab {
     owner = "libtiff";
     repo = "libtiff";
-    rev = "v${finalAttrs.version}";
-    hash = "sha256-UiC6s86i7UavW86EKm74oPVlEacvoKmwW7KETjpnNaI=";
+    tag = "v${finalAttrs.version}";
+    hash = "sha256-60Lpg5WRfWMzlOoOUA+C6KLlYIZ+3BjXidOVqv4M2GA=";
   };
 
   patches = [
@@ -96,6 +96,8 @@ stdenv.mkDerivation (finalAttrs: {
     lerc
   ];
 
+  strictDeps = true;
+
   cmakeFlags = [
     "-DCMAKE_FIND_PACKAGE_PREFER_CONFIG=ON"
   ];
@@ -125,6 +127,8 @@ stdenv.mkDerivation (finalAttrs: {
     };
     updateScript = nix-update-script { };
   };
+
+  __structuredAttrs = true;
 
   meta = {
     description = "Library and utilities for working with the TIFF image file format";

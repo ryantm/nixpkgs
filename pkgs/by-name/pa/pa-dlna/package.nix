@@ -11,16 +11,14 @@
 
 python3.pkgs.buildPythonApplication (finalAttrs: {
   pname = "pa-dlna";
-  version = "1.2";
+  version = "1.2.1";
   pyproject = true;
-
-  __structuredAttrs = true;
 
   src = fetchFromGitLab {
     owner = "xdegaye";
     repo = "pa-dlna";
     tag = finalAttrs.version;
-    hash = "sha256-f0JGJwenKH/4LQv40AhmpYmzAzqkSUhdTBeB4VzqTaQ=";
+    hash = "sha256-RUrT5/TY6bflSXtkbVn7D0hS+J6R2Pcg3Vv/tIdT96s=";
   };
 
   postPatch = ''

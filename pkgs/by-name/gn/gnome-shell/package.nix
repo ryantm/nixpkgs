@@ -1,6 +1,5 @@
 {
   fetchurl,
-  fetchpatch,
   replaceVars,
   lib,
   stdenv,
@@ -24,7 +23,6 @@
   librsvg,
   webp-pixbuf-loader,
   geoclue2,
-  desktop-file-utils,
   libpulseaudio,
   libical,
   gobject-introspection,
@@ -39,7 +37,6 @@
   libnma-gtk4,
   gnome-desktop,
   gsettings-desktop-schemas,
-  gnome-keyring,
   glib,
   gjs,
   mutter,
@@ -47,8 +44,9 @@
   gtk4,
   libadwaita,
   sassc,
-  systemd,
+  systemdLibs,
   pipewire,
+  libgudev,
   gst_all_1,
   adwaita-icon-theme,
   glycin-loaders,
@@ -66,6 +64,8 @@
   libsoup_3,
   libxml2,
   webkitgtk_6_0,
+  cairo,
+  libglycin,
 }:
 
 let
@@ -73,7 +73,7 @@ let
 in
 stdenv.mkDerivation (finalAttrs: {
   pname = "gnome-shell";
-  version = "50.2";
+  version = "51.1";
 
   outputs = [
     "out"
@@ -82,7 +82,7 @@ stdenv.mkDerivation (finalAttrs: {
 
   src = fetchurl {
     url = "mirror://gnome/sources/gnome-shell/${lib.versions.major finalAttrs.version}/gnome-shell-${finalAttrs.version}.tar.xz";
-    hash = "sha256-UyFUIOUO/dTQYRultZ4Qy0yJ+j9R4q3f2Vyt4GGgmik=";
+    hash = "sha256-wesI2WUaVn7V2bJ5E3HxiY5lfPRedeHYit77q4B5d9Y=";
   };
 
   patches = [
@@ -90,7 +90,6 @@ stdenv.mkDerivation (finalAttrs: {
     (replaceVars ./fix-paths.patch {
       glib_compile_schemas = "${glib.dev}/bin/glib-compile-schemas";
       gsettings = "${glib.bin}/bin/gsettings";
-      unzip = "${lib.getBin unzip}/bin/unzip";
     })
 
     # Use absolute path for libshew installation to make our patched gobject-introspection
@@ -100,16 +99,13 @@ stdenv.mkDerivation (finalAttrs: {
     # Make D-Bus services wrappable.
     ./wrap-services.patch
 
+    # Detect profile switches even when icon directory mtimes are unchanged.
+    ./icon-theme-directory-identity.patch
+
     # Fix greeter logo being too big.
     # https://gitlab.gnome.org/GNOME/gnome-shell/issues/2591
     # Reverts https://gitlab.gnome.org/GNOME/gnome-shell/-/merge_requests/1101
     ./greeter-logo-size.patch
-
-    # Work around failing fingerprint auth
-    (fetchpatch {
-      url = "https://src.fedoraproject.org/rpms/gnome-shell/raw/dcd112d9708954187e7490564c2229d82ba5326f/f/0001-gdm-Work-around-failing-fingerprint-auth.patch";
-      hash = "sha256-mgXty5HhiwUO1UV3/eDgWtauQKM0cRFQ0U7uocST25s=";
-    })
   ];
 
   nativeBuildInputs = [
@@ -121,15 +117,13 @@ stdenv.mkDerivation (finalAttrs: {
     gi-docgen
     wrapGAppsHook4
     sassc
-    desktop-file-utils
     libxslt.bin
     gobject-introspection
   ];
 
   buildInputs = [
-    systemd
+    systemdLibs
     gsettings-desktop-schemas
-    gnome-keyring
     glib
     gcr_4
     accountsservice
@@ -163,6 +157,10 @@ stdenv.mkDerivation (finalAttrs: {
     libxkbcommon
     libsoup_3
     libxml2
+    cairo
+    json-glib
+    libglycin
+    gnome-autoar
 
     # recording
     pipewire
@@ -171,14 +169,13 @@ stdenv.mkDerivation (finalAttrs: {
     gst_all_1.gst-plugins-good
 
     # not declared at build time, but typelib is needed at runtime
+    libgudev
     libgweather
     libnma-gtk4
     webkitgtk_6_0 # for gnome-shell-portal-helper
 
     # for gnome-extension tool
     bash-completion
-    gnome-autoar
-    json-glib
 
     # for tools
     pythonEnv
@@ -197,6 +194,9 @@ stdenv.mkDerivation (finalAttrs: {
     # We can generate it ourselves.
     rm -f man/gnome-shell.1
     rm data/theme/gnome-shell-{light,dark}.css
+
+    substituteInPlace meson.build \
+      --replace-fail "gjs = find_program('gjs')" "gjs = find_program('${lib.getExe gjs}')"
   '';
 
   preInstall = ''
@@ -253,11 +253,14 @@ stdenv.mkDerivation (finalAttrs: {
     };
   };
 
+  strictDeps = true;
+
   meta = {
-    description = "Core user interface for the GNOME 3 desktop";
+    description = "Core user interface for the GNOME desktop";
     homepage = "https://gitlab.gnome.org/GNOME/gnome-shell";
     changelog = "https://gitlab.gnome.org/GNOME/gnome-shell/-/blob/${finalAttrs.version}/NEWS?ref_type=tags";
     license = lib.licenses.gpl2Plus;
+    identifiers.cpeParts = lib.meta.cpeFullVersionWithVendor "gnome" finalAttrs.version;
     teams = [ lib.teams.gnome ];
     platforms = lib.platforms.linux;
   };

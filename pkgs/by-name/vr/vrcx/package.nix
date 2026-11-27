@@ -2,7 +2,7 @@
   lib,
   stdenv,
   nodejs_24,
-  electron_41,
+  electron_44,
   makeWrapper,
   fetchFromGitHub,
   buildNpmPackage,
@@ -13,24 +13,24 @@
 }:
 let
   node = nodejs_24;
-  electron = electron_41;
-  dotnet = dotnetCorePackages.dotnet_9;
+  electron = electron_44;
+  dotnet = dotnetCorePackages.dotnet_10;
 in
 buildNpmPackage (finalAttrs: {
   pname = "vrcx";
-  version = "2026.05.03";
+  version = "2026.11.14";
 
   src = fetchFromGitHub {
     repo = "VRCX";
     owner = "vrcx-team";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-TIRX1DllUaq73Aue5/2mg98luBnDoptiiMDQcZ9aBTM=";
+    hash = "sha256-/SPc0VAE50yHsYNEfeEuf3BfexgEKOvAUOLcrK7yQW8=";
   };
 
   nodejs = node;
   makeCacheWritable = true;
   npmFlags = [ "--ignore-scripts" ];
-  npmDepsHash = "sha256-hOfbDvBJgoPQ6QxnZ77kpeSHDXH9dSnidmrx9Mp9q08=";
+  npmDepsHash = "sha256-VEB+BS54jMhMi3GXmF9tNH/1ahTZn7FSy27zOAhaVqU=";
 
   nativeBuildInputs = [
     makeWrapper
@@ -38,7 +38,9 @@ buildNpmPackage (finalAttrs: {
   ];
 
   postPatch = ''
-    # V2026.05.03 seems to have an out of date lockfile
+    # VRCX's upstream lockfile lacks `integirty` and `resolved` fields
+    # annoying but can be trivially fixed by cloning the vrcx repo locally then
+    # regenerating the lockfile with `nix run nixpkgs#npm-lockfile-fix -- package-lock.json`
     cp ${./package-lock.json} package-lock.json
   '';
 
@@ -46,11 +48,12 @@ buildNpmPackage (finalAttrs: {
     runHook preBuild
 
     env PLATFORM=linux npm exec vite build src
-    node ./src-electron/patch-package-version.js
-    npm exec electron-builder -- --dir \
+    node ./build-scripts/patch-package-version.js
+    npm exec electron-builder -- \
+      --config electron-builder.config.js \
+      --dir \
       -c.electronDist=${electron.dist} \
       -c.electronVersion=${electron.version}
-    node ./src-electron/patch-node-api-dotnet.js
 
     runHook postBuild
   '';
@@ -98,6 +101,14 @@ buildNpmPackage (finalAttrs: {
 
       dotnet-sdk = dotnet.sdk;
       dotnet-runtime = dotnet.runtime;
+      dotnetFlags =
+        let
+          platformName = if stdenv.hostPlatform.isx86_64 then "x64" else "ARM64";
+        in
+        [
+          "-p:RuntimeIdentifier=${dotnetCorePackages.systemToDotnetRid stdenv.hostPlatform.system}"
+          "-p:Platform=${platformName}"
+        ];
       projectFile = "Dotnet/VRCX-Electron.csproj";
 
       nugetDeps = ./deps.json;
@@ -126,7 +137,10 @@ buildNpmPackage (finalAttrs: {
       ShyAssassin
       ImSapphire
     ];
-    platforms = lib.platforms.linux;
+    platforms = [
+      "x86_64-linux"
+      "aarch64-linux"
+    ];
     broken = !stdenv.hostPlatform.isx86_64;
   };
 })

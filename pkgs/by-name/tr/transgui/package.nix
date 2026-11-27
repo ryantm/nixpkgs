@@ -108,14 +108,17 @@ stdenv.mkDerivation rec {
   };
 
   meta = {
+    broken = true; # lazarus is now gtk3, transgui is not. Upstream has a migration in the works.
     description = "Cross platform front-end for the Transmission BitTorrent client";
     homepage = "https://sourceforge.net/p/transgui";
     license = lib.licenses.gpl2Plus;
-    maintainers = with lib.maintainers; [ ramkromberg ];
+    maintainers = with lib.maintainers; [
+      pbsds
+      ramkromberg
+    ];
     mainProgram = "transgui";
     platforms = [
       "x86_64-linux"
-      "x86_64-darwin"
     ];
   };
 }

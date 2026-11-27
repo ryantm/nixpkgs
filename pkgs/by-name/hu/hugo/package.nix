@@ -1,7 +1,7 @@
 {
   stdenv,
   lib,
-  buildGoModule,
+  buildGo127Module,
   fetchFromGitHub,
   installShellFiles,
   buildPackages,
@@ -9,18 +9,18 @@
   nix-update-script,
 }:
 
-buildGoModule (finalAttrs: {
+buildGo127Module (finalAttrs: {
   pname = "hugo";
-  version = "0.164.0";
+  version = "0.170.0";
 
   src = fetchFromGitHub {
     owner = "gohugoio";
     repo = "hugo";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-hpxz5zOggqqYVTUkgwpkWcOa7sdGaWrRJUnXjJx59cA=";
+    hash = "sha256-jLREJfdGUQkrhYu7UEEpyOy1JYFrHaOXyWf59s40hAA=";
   };
 
-  vendorHash = "sha256-35VeZOtnwgYVuabzJ3+FjvhtoJGZcVRo+TWPTBAWVC4=";
+  vendorHash = "sha256-J3XAXt/YprXvAIdZuTzPGwYE3Si/y/uYR67WRF45s7o=";
 
   checkFlags =
     let
@@ -41,10 +41,7 @@ buildGoModule (finalAttrs: {
 
   proxyVendor = true;
 
-  tags = [
-    "extended"
-    "withdeploy"
-  ];
+  tags = [ "withdeploy" ];
 
   subPackages = [ "." ];
 
@@ -52,7 +49,6 @@ buildGoModule (finalAttrs: {
 
   ldflags = [
     "-s"
-    "-w"
     "-X github.com/gohugoio/hugo/common/hugo.vendorInfo=nixpkgs"
   ];
 
@@ -69,11 +65,8 @@ buildGoModule (finalAttrs: {
         --zsh  <(${emulator} $out/bin/hugo completion zsh)
     '';
 
-  nativeInstallCheckInputs = [
-    versionCheckHook
-  ];
   doInstallCheck = true;
-  versionCheckProgram = "${placeholder "out"}/bin/hugo";
+  nativeInstallCheckInputs = [ versionCheckHook ];
   versionCheckProgramArg = "version";
 
   passthru.updateScript = nix-update-script { };

@@ -10,10 +10,10 @@
 
 let
   pname = "chatzone-desktop";
-  version = "5.6.2";
+  version = "5.8.1";
   src = fetchurl {
-    url = "https://ir.ozone.ru/s3/chatzone-clients/ci/5.6.2/1175/chatzone-desktop-linux-5.6.2.AppImage";
-    hash = "sha256-2t3mp0snHn2NxVFCcU1XQ5h3rUCb4gXjKbF43p9W8ZU=";
+    url = "https://ir.ozone.ru/s3/chatzone-clients/ci/5.8.0/1390/chatzone-desktop-linux-5.8.1.AppImage";
+    hash = "sha256-HLoHlR5vwHLCh5rFqfajPTWJwL6grzS3cgxT0Fjptoo=";
   };
   appimageContents = appimageTools.extract { inherit pname version src; };
 in
@@ -30,7 +30,7 @@ stdenvNoCC.mkDerivation {
   desktopItems = [
     (makeDesktopItem {
       name = "chatzone";
-      exec = "chatzone-desktop";
+      exec = "chatzone-desktop %U";
       icon = "chatzone-desktop";
       terminal = false;
       desktopName = "Chatzone";
@@ -42,7 +42,10 @@ stdenvNoCC.mkDerivation {
         "Chat"
       ];
       startupWMClass = "Chatzone";
-      mimeTypes = [ "x-scheme-handler/mattermost" ];
+      mimeTypes = [
+        "x-scheme-handler/mattermost"
+        "x-scheme-handler/chatzone"
+      ];
     })
   ];
 

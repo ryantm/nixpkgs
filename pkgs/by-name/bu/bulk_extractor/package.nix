@@ -16,13 +16,13 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "bulk_extractor";
-  version = "2.1.1";
+  version = "2.2.0";
 
   src = fetchFromGitHub {
     owner = "simsong";
     repo = "bulk_extractor";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-Jj/amXESFBu/ZaiIRlDKmtWTBVQ2TEvOM2jBYP3y1L8=";
+    hash = "sha256-Ed+KUImSMVVZEKLKl90YkGruwD8xtevgyozCj44bHic=";
     fetchSubmodules = true;
   };
 
@@ -36,6 +36,11 @@ stdenv.mkDerivation (finalAttrs: {
   '';
 
   enableParallelBuilding = true;
+
+  # expat 2.9.0 deprecated XML_GetCurrentLineNumber; upstream builds with -Werror
+  # https://github.com/libexpat/libexpat/pull/1323
+  env.NIX_CFLAGS_COMPILE = "-Wno-error=deprecated-declarations";
+
   nativeBuildInputs = [
     pkg-config
     python3

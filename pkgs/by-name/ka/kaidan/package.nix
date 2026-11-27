@@ -20,19 +20,15 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "kaidan";
-  version = "0.14.0";
+  version = "0.17.0";
 
   src = fetchFromGitLab {
     domain = "invent.kde.org";
     owner = "network";
     repo = "kaidan";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-lKJU8GIkubHLYsP7r+TA+1rg+TMGONwjEcys19f62/w=";
+    hash = "sha256-2lhdrtc9UAUpUV6cQe2WZB/L9rLkK1dGIQj2lBE9a9k=";
   };
-
-  patches = [
-    ./0001-Fix-compatibility-with-qt-6.10.patch
-  ];
 
   nativeBuildInputs = [
     cmake

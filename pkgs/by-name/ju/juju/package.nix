@@ -9,16 +9,16 @@
 
 buildGoModule (finalAttrs: {
   pname = "juju";
-  version = "3.6.21";
+  version = "4.0.15";
 
   src = fetchFromGitHub {
     owner = "juju";
     repo = "juju";
     rev = "v${finalAttrs.version}";
-    hash = "sha256-Gvrzk3xaMtEpOxMBMH17Aam14eymISYmuokdEyGGgCY=";
+    hash = "sha256-iugWBXxAKgW77dLYZdjKlmwjuaea3yCjWX4Hr3qobVI=";
   };
 
-  vendorHash = "sha256-Aod6k9etHDEW5WtetlA15MB0ZfaVFLbIK0Ud4gy/MuY=";
+  vendorHash = "sha256-R84DFkXmI5KUhb/0HMuDqE2QYPKguVdTfBNYkroN/oo=";
 
   subPackages = [
     "cmd/juju"

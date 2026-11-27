@@ -1,9 +1,13 @@
 {
   buildDotnetModule,
   fetchFromGitLab,
+  fetchurl,
   dotnetCorePackages,
-  buildNpmPackage,
   lib,
+  ffmpeg,
+  curl-impersonate,
+  libsodium,
+  sqlite,
   libz,
   icu,
   openssl,
@@ -39,39 +43,39 @@
   krb5,
   wrapGAppsHook3,
   _experimental-update-script-combinators,
+  grayjay-frontend,
+  grayjay-libcurlshim,
+  unzip,
 }:
 let
-  version = "17";
+  version = "21";
+  justcefVersion = "22";
   src = fetchFromGitLab {
     domain = "gitlab.futo.org";
     owner = "videostreaming";
     repo = "Grayjay.Desktop";
     tag = version;
-    hash = "sha256-/oeoLXKewjYkCO7naZNOzauWm1OYDKnsxXY9EkI7fTM=";
+    hash = "sha256-R1OzQdoA2w9sl/PDXeahy8HsuzO60fIU4Pq3pqIGmXU=";
     fetchSubmodules = true;
     fetchLFS = true;
   };
-  frontend = buildNpmPackage {
-    pname = "grayjay-frontend";
-    inherit version src;
-
-    sourceRoot = "source/Grayjay.Desktop.Web";
-
-    npmBuildScript = "build";
-    npmDepsHash = "sha256-3yJIPkuEvkFL9Wb4y/r0yEULQbXx/wHqicFBLzOPj68=";
-
-    installPhase = ''
-      runHook preInstall
-      cp -r dist/ $out
-      runHook postInstall
-    '';
+  justcefNative = fetchurl {
+    url = "https://static.grayjay.app/justcef/${justcefVersion}/JustCefNative-linux-x64.zip";
+    hash = "sha256-Ehv4JoF/KOn5TM9p8ZrWdre+wblDIoEp0/PXFl56q5s=";
   };
+  getLibrary =
+    pkg: libnm:
+    "${lib.getLib pkg}/lib/lib${libnm}${pkg.drvAttrs.stdenv.hostPlatform.extensions.sharedLibrary}";
 in
 buildDotnetModule (finalAttrs: {
   pname = "grayjay";
 
-  inherit version src frontend;
+  inherit version src;
 
+  frontend = grayjay-frontend;
+
+  __structuredAttrs = true;
+  strictDeps = true;
   buildInputs = [
     openssl
     libgbm
@@ -84,12 +88,14 @@ buildDotnetModule (finalAttrs: {
     nss
     icu
     krb5
+    curl-impersonate
   ];
 
   nativeBuildInputs = [
     autoPatchelfHook
     wrapGAppsHook3
     copyDesktopItems
+    unzip
   ];
 
   dontWrapGApps = true;
@@ -110,11 +116,15 @@ buildDotnetModule (finalAttrs: {
     "Grayjay.Engine/Grayjay.Engine/Grayjay.Engine.csproj"
     "Grayjay.Desktop.CEF/Grayjay.Desktop.CEF.csproj"
     "FUTO.MDNS/FUTO.MDNS/FUTO.MDNS.csproj"
-    "JustCef/DotCef.csproj"
+    "JustCef/cs/JustCef.csproj"
   ];
 
   testProjectFile = [
     "Grayjay.Engine/Grayjay.Engine.Tests/Grayjay.Engine.Tests.csproj"
+  ];
+
+  dotnetBuildFlags = [
+    "-p:AssemblyVersion=1.${version}.0.0"
   ];
 
   nugetDeps = ./deps.json;
@@ -135,15 +145,28 @@ buildDotnetModule (finalAttrs: {
 
   preBuild = ''
     rm -r Grayjay.ClientServer/wwwroot/web
-    cp -r ${frontend} Grayjay.ClientServer/wwwroot/web
+    cp -r ${grayjay-frontend} Grayjay.ClientServer/wwwroot/web
+
+    mkdir -p JustCef/cs/obj/justcef/net8.0/${justcefVersion}/linux-x64
+    cp ${justcefNative} \
+      JustCef/cs/obj/justcef/net8.0/${justcefVersion}/linux-x64/JustCefNative-linux-x64.zip
   '';
 
   postInstall = ''
-    chmod +x $out/lib/grayjay/cef/dotcefnative
-    chmod +x $out/lib/grayjay/ffmpeg
-    rm $out/lib/grayjay/Portable
     ln -s /tmp/grayjay-launch $out/lib/grayjay/launch
     ln -s /tmp/grayjay-cef-launch $out/lib/grayjay/cef/launch
+
+    # Unvendor most stuff
+    rm -f $out/lib/grayjay/{Portable,ffmpeg,libcurl-impersonate.so,libcurlshim.so,libsodium.so,libe_sqlite3.so,FUTO.Updater.Client}
+    ln -s ${lib.getExe ffmpeg} $out/lib/grayjay/ffmpeg
+    ln -s ${getLibrary curl-impersonate "curl-impersonate"} $out/lib/grayjay/libcurl-impersonate.so
+    ln -s ${getLibrary grayjay-libcurlshim "curlshim"} $out/lib/grayjay/libcurlshim.so
+    ln -s ${getLibrary libsodium "sodium"} $out/lib/grayjay/libsodium.so
+    ln -s ${getLibrary sqlite "sqlite3"} $out/lib/grayjay/libe_sqlite3.so
+
+    # Explicitly fetched and copied over in preBuild
+    chmod +x $out/lib/grayjay/cef/justcefnative
+
     mkdir -p $out/share/icons/hicolor/scalable/apps
     ln -s $out/lib/grayjay/grayjay.png $out/share/icons/hicolor/scalable/apps/grayjay.png
   '';
@@ -206,8 +229,12 @@ buildDotnetModule (finalAttrs: {
     maintainers = with lib.maintainers; [
       kruziikrel13
       samfundev
+      pandapip1
     ];
-    platforms = [ "x86_64-linux" ];
+    platforms = [
+      "x86_64-linux"
+      "aarch64-linux"
+    ];
     mainProgram = "Grayjay";
   };
 })

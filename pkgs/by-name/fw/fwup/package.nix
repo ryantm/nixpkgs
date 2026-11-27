@@ -21,13 +21,13 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "fwup";
-  version = "1.15.1";
+  version = "1.17.2";
 
   src = fetchFromGitHub {
     owner = "fwup-home";
     repo = "fwup";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-SIRDVlC/g+rq5m4Ind7dqPzjdCjAxRK/kAdXt6byL/8=";
+    hash = "sha256-ezNLeDsHW9fCuRJlw7h2W/SSHsY3xmy5ppy2dBQ/cjQ=";
   };
 
   nativeBuildInputs = [
@@ -49,7 +49,7 @@ stdenv.mkDerivation (finalAttrs: {
     unzip
     zip
   ]
-  ++ lib.optionals finalAttrs.doCheck [
+  ++ lib.optionals finalAttrs.finalPackage.doCheck [
     mtools
     dosfstools
   ];

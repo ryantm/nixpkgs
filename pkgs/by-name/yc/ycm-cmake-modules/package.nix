@@ -8,12 +8,12 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "ycm-cmake-modules";
-  version = "0.18.5";
+  version = "0.18.7";
   src = fetchFromGitHub {
     owner = "robotology";
     repo = "ycm-cmake-modules";
     rev = "v${finalAttrs.version}";
-    hash = "sha256-ZizhvKKTOpkpjgIbh0JJSBwCh46UZxccjrqg3J1ObTg=";
+    hash = "sha256-HbDL7Tng1Dglp0C5kcPFo1z0JtfKSpAoBD1BxecHmFs=";
   };
 
   nativeBuildInputs = [ cmake ];

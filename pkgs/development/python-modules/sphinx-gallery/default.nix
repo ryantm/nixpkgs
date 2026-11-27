@@ -42,7 +42,6 @@ buildPythonPackage (finalAttrs: {
   pname = "sphinx-gallery";
   version = "0.21.0";
   pyproject = true;
-  __structuredAttrs = true;
 
   src = fetchFromGitHub {
     owner = "sphinx-gallery";
@@ -130,5 +129,6 @@ buildPythonPackage (finalAttrs: {
     mainProgram = "sphinx_gallery_py2jupyter";
     license = lib.licenses.bsd3;
     maintainers = with lib.maintainers; [ eljamm ];
+    teams = with lib.teams; [ ngi ];
   };
 })

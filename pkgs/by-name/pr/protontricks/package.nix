@@ -5,7 +5,6 @@
   replaceVars,
   writeShellScript,
   steam,
-  fetchpatch2,
   winetricks,
   yad,
   nix-update-script,
@@ -22,17 +21,24 @@ let
           freetype
         ];
     }).run-free;
+
+  winetricks' = winetricks.overrideAttrs (attrs: {
+    patches = (attrs.patches or [ ]) ++ [
+      # Ignore expected popups for steam wine prefix (but still log to stderr)
+      ./ignore-expected-popups.patch
+    ];
+  });
 in
 python3Packages.buildPythonApplication (finalAttrs: {
   pname = "protontricks";
-  version = "1.14.1";
+  version = "1.15.1";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "Matoking";
     repo = "protontricks";
     tag = finalAttrs.version;
-    hash = "sha256-pTBpzSBGFUmol3Osb78yhyZup2DogLpNaBg/kF0dVGI=";
+    hash = "sha256-3AS/19bhQhQjgt7a5/RDS0lvfRa6Ex8OI93e1v0pmyg=";
   };
 
   patches = [
@@ -45,12 +51,14 @@ python3Packages.buildPythonApplication (finalAttrs: {
     })
 
     # Revert vendored vdf since our vdf includes `appinfo.vdf` v29 support
-    (fetchpatch2 {
-      url = "https://github.com/Matoking/protontricks/commit/4198b7ea82369a91e3084d6e185f9b370f78eaec.patch";
-      revert = true;
-      hash = "sha256-1U/LiAliKtk3ygbIBsmoavXN0RSykiiegtml+bO8CnI=";
-    })
+    # See https://github.com/Matoking/protontricks/commit/4198b7ea82369a91e3084d6e185f9b370f78eaec
+    ./revert-vendored-vdf.patch
   ];
+
+  # Contents of vendored vdf are removed manually to reduce the size of the revert patch
+  postPatch = ''
+    rm -rf src/protontricks/_vdf
+  '';
 
   build-system = with python3Packages; [ setuptools-scm ];
 
@@ -60,16 +68,24 @@ python3Packages.buildPythonApplication (finalAttrs: {
   ];
 
   makeWrapperArgs = [
-    "--prefix PATH : ${
-      lib.makeBinPath [
-        winetricks
-        yad
-      ]
-    }"
+    "--prefix"
+    "PATH"
+    ":"
+    (lib.makeBinPath [
+      winetricks'
+      yad
+    ])
+
     # Steam Runtime does not work outside of steam-run, so don't use it
-    "--set STEAM_RUNTIME 0"
+    "--set"
+    "STEAM_RUNTIME"
+    "0"
   ]
-  ++ lib.optional (extraCompatPaths != "") "--set STEAM_EXTRA_COMPAT_TOOLS_PATHS ${extraCompatPaths}";
+  ++ lib.optionals (extraCompatPaths != "") [
+    "--set"
+    "STEAM_EXTRA_COMPAT_TOOLS_PATHS"
+    extraCompatPaths
+  ];
 
   nativeCheckInputs = with python3Packages; [ pytestCheckHook ];
 
@@ -78,6 +94,13 @@ python3Packages.buildPythonApplication (finalAttrs: {
   postInstall = ''
     rm "$out/bin/protontricks-desktop-install"
   '';
+
+  disabledTests = [
+    # Executes ldconfig via steam-run, which relies on bubblewrap.
+    # bubblewrap requires unprivileged user namespaces, which means this fails in some environments
+    # with hardened kernels or restrictive distros, such as GitHub Actions (Ubuntu 24.04).
+    "test_get_runtime_library_paths"
+  ];
 
   pythonImportsCheck = [ "protontricks" ];
 

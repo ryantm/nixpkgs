@@ -85,7 +85,19 @@ for (const attr_path of Object.keys(lockfile)) {
       delete value.postFetch
 
       if (value.url === 'https://chromium.googlesource.com/chromium/src.git') {
-        value.recompress = true
+        // Tries to vaguely mirror upstream's export_tarball.py to delete some
+        // non-essential files to stay below hydra.nixos.org's max output size.
+        // https://chromium.googlesource.com/chromium/tools/build/+/HEAD/recipes/recipe_modules/chromium/resources/export_tarball.py
+        value.postFetch = [
+          'find',
+          '$out/third_party/blink/{manual_tests,perf_tests,tools,web_tests}',
+          '$out/{chrome,chrome/updater,media,components,content}/test/data',
+          '$out/third_party/sqlite/fuzz',
+          '$out/tools/perf/testdata',
+          '-type f',
+          `! -regex '.*\\.\\(gn\\|gni\\|grd\\|grdp\\|pydeps\\)$'`,
+          '-delete',
+        ].join(" ")
       }
 
       const cache_hit = (() => {
@@ -95,7 +107,7 @@ for (const attr_path of Object.keys(lockfile)) {
             cache !== undefined &&
             value.url === cache.url &&
             value.rev === cache.rev &&
-            value.recompress === cache.recompress &&
+            value.postFetch === cache.postFetch &&
             cache.hash !== undefined &&
             cache.hash !== '' &&
             cache.hash !== dummy_hash
@@ -170,6 +182,9 @@ async function fetch_chromedriver_binaries(version) {
   const url = (platform) => `https://storage.googleapis.com/chrome-for-testing-public/${version}/${platform}/chromedriver-${platform}.zip`
   return {
     version,
+    // Do not remove x86_64-darwin from the update script/lockfile until 26.05 is EOL, as
+    // chromium bumps (which chromedriver is part of) are annoying to backport otherwise.
+    // See https://github.com/NixOS/nixpkgs/pull/541166#discussion_r3599248819
     hash_darwin: await prefetch(url('mac-x64')),
     hash_darwin_aarch64: await prefetch(url('mac-arm64')),
   }

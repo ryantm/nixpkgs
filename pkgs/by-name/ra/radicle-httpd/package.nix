@@ -1,6 +1,9 @@
 {
   asciidoctor,
   fetchFromRadicle,
+  pkg-config,
+  libgit2,
+  zstd,
   git,
   installShellFiles,
   lib,
@@ -11,32 +14,45 @@
   xdg-utils,
   versionCheckHook,
   nixosTests,
+  nix-update-script,
 }:
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "radicle-httpd";
-  version = "0.25.0";
+  version = "0.31.0";
 
-  env.RADICLE_VERSION = finalAttrs.version;
+  __structuredAttrs = true;
 
-  # You must update the radicle-explorer source hash when changing this.
+  env.RADICLE_HTTPD_VERSION = finalAttrs.version;
+
   src = fetchFromRadicle {
     seed = "seed.radicle.dev";
     repo = "z4V1sjrXqjvFdnCUbxPFqd5p4DtH5";
-    tag = "releases/${finalAttrs.version}";
-    sparseCheckout = [ "radicle-httpd" ];
-    hash = "sha256-gejNiCQ511OGGItmqXoyB+TmsUw+ozoEmOWooBXBkQ8=";
+    tag = "releases/httpd/${finalAttrs.version}";
+    nonConeMode = true;
+    sparseCheckout = [
+      "/explorer/crates"
+      "/explorer/Cargo.toml"
+      "/explorer/Cargo.lock"
+    ];
+    rootDir = "explorer";
+    hash = "sha256-/H9fhYruAvDtxHm8ShNwGQIhi+cFFpVKwkh41qO+oFk=";
   };
 
-  sourceRoot = "${finalAttrs.src.name}/radicle-httpd";
-
-  cargoHash = "sha256-Oawin/2R5dZ46pf3SarwNgILF9dXSkw02Z4gYQ4HtzE=";
+  cargoHash = "sha256-GDnQzjp4Ov5jvNGiGOO0pdJi2gcPQFlKIcs69xOLgmc=";
 
   nativeBuildInputs = [
     asciidoctor
     installShellFiles
     makeWrapper
+    pkg-config
   ];
+
+  buildInputs = [
+    libgit2
+    zstd
+  ];
+
   nativeCheckInputs = [ git ];
 
   doCheck = stdenv.hostPlatform.isLinux;
@@ -68,7 +84,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
 
   passthru = {
     tests = { inherit (nixosTests) radicle; };
-    updateScript = ./update.sh;
+    updateScript = nix-update-script { };
   };
 
   meta = {
@@ -78,7 +94,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
       repositories on a Radicle node via their web browser.
     '';
     homepage = "https://radicle.dev";
-    changelog = "https://radicle.network/nodes/seed.radicle.dev/rad:z4V1sjrXqjvFdnCUbxPFqd5p4DtH5/tree/radicle-httpd/CHANGELOG.md";
+    changelog = "https://radicle.network/nodes/seed.radicle.dev/rad:z4V1sjrXqjvFdnCUbxPFqd5p4DtH5/tree/explorer/CHANGELOG.md";
     # cargo.toml says MIT and asl20, LICENSE file says GPL3
     license = with lib.licenses; [
       gpl3Only

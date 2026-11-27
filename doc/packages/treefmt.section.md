@@ -10,3 +10,9 @@ Alternatively, treefmt can be configured using [treefmt-nix](https://github.com/
 ## Options Reference {#sec-treefmt-options-reference}
 
 The following attributes can be passed to [`withConfig`](#pkgs.treefmt.withConfig) or [`evalConfig`](#pkgs.treefmt.evalConfig):
+
+```{=include=} options
+id-prefix: opt-treefmt-
+list-id: configuration-variable-list
+source: ../treefmt-options.json
+```

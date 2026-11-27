@@ -2,6 +2,7 @@
   lib,
   stdenv,
   fetchgit,
+  fetchpatch,
   cmake,
   ninja,
   perl,
@@ -13,17 +14,26 @@
 # reference: https://boringssl.googlesource.com/boringssl/+/refs/tags/0.20250818.0/BUILDING.md
 stdenv.mkDerivation (finalAttrs: {
   pname = "boringssl";
-  version = "0.20260526.0";
+  version = "0.20261105.0";
 
   src = fetchgit {
     url = "https://boringssl.googlesource.com/boringssl";
     tag = finalAttrs.version;
-    hash = "sha256-SmyImyzGn7v2b5qGJbMmQZX5bODA9i6+8jy3uGwOawA=";
+    hash = "sha256-/0V/4R4opWgHOA75IIEAXRFgzHu8QzmmuVrCj/WdJ/w=";
   };
 
   patches = [
-    # Add SECP224R1 for backward compatibility
-    ./secp224r1-compat.patch
+    # Revert https://boringssl-review.googlesource.com/c/boringssl/+/104808 to restore
+    # compatibility with the Rust boring-sys crate (as used by dependant packages in nixpkgs).
+    # The change moved the SHA wrapper functions to `inline static` header functions for better
+    # MSVC compatibility, which in turn breaks Rust FFI.
+    (fetchpatch {
+      name = "boringssl-revert-inline-sha-functions.patch";
+      url = "https://boringssl.googlesource.com/boringssl/+/77cb16a15b27beefab1e1284064a4d99895ef230^!?format=TEXT";
+      decode = "base64 -d";
+      revert = true;
+      hash = "sha256-UMVOxHtif9xlGs/6xLwmbohkkqnc5OPjkYktYlE+TEg=";
+    })
   ];
 
   nativeBuildInputs = [
@@ -63,8 +73,6 @@ stdenv.mkDerivation (finalAttrs: {
     mainProgram = "bssl";
     homepage = "https://boringssl.googlesource.com";
     maintainers = with lib.maintainers; [
-      thoughtpolice
-      theoparis
       niklaskorz
     ];
     license = with lib.licenses; [
@@ -73,5 +81,6 @@ stdenv.mkDerivation (finalAttrs: {
       mit
       bsd3
     ];
+    platforms = lib.platforms.all;
   };
 })

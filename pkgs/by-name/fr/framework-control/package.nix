@@ -7,12 +7,13 @@
   fetchNpmDeps,
   makeDesktopItem,
   copyDesktopItems,
+  nix-update-script,
   controlPort ? 30912,
 }:
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "framework-control";
-  version = "0.5.2";
+  version = "0.5.5";
 
   __structuredAttrs = true;
 
@@ -20,10 +21,10 @@ rustPlatform.buildRustPackage (finalAttrs: {
     owner = "ozturkkl";
     repo = "framework-control";
     tag = finalAttrs.version;
-    hash = "sha256-2+4RxEDtLf7pnAI35Dykx38JDhZykjNZ+mihBhX0yyI=";
+    hash = "sha256-GU7//aEjplqP+MoYtj3YB3YBB1iosioxPh1aiIUUDEc=";
   };
 
-  cargoHash = "sha256-fAx3scGTWIkkqqTmzpxp4Z4LxKxVjED5x9qikJpCGf4=";
+  cargoHash = "sha256-QZPYGhJ+8YkyCuqtDZbVjSXPrtIVHNVEwRhGk9DUzGM=";
 
   cargoRoot = "service";
   buildAndTestSubdir = "service";
@@ -33,7 +34,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
   npmDeps = fetchNpmDeps {
     name = "framework-control-npm-deps";
     src = "${finalAttrs.src}/web";
-    hash = "sha256-ZTvYT5x+7X3+PfBxaR6YzRlTKH1DBvwlxC281Srq2Og=";
+    hash = "sha256-2zyWsRLYzAanuAqHvvxoGEqPn6p1XPv+LUrHGVDGIrY=";
   };
 
   nativeBuildInputs = [
@@ -74,6 +75,9 @@ rustPlatform.buildRustPackage (finalAttrs: {
     install -Dm644 web/public/assets/logo.png \
       $out/share/icons/hicolor/256x256/apps/framework-control.png
   '';
+
+  # Upstream pre-releases use plain version tags; the releases API exposes the prerelease flag.
+  passthru.updateScript = nix-update-script { extraArgs = [ "--use-github-releases" ]; };
 
   meta = {
     description = "Lightweight control surface for Framework laptops";

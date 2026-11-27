@@ -1,32 +1,37 @@
 {
   lib,
-  rustPlatform,
+  stdenv,
+  rustPackages_1_100,
   fetchFromGitHub,
   pkg-config,
+  aws-lc,
   bzip2,
   xz,
   zstd,
+  installShellFiles,
   versionCheckHook,
 }:
 
-rustPlatform.buildRustPackage (finalAttrs: {
+rustPackages_1_100.rustPlatform.buildRustPackage (finalAttrs: {
   pname = "cargo-binstall";
-  version = "1.21.0";
+  version = "1.28.0";
 
   src = fetchFromGitHub {
     owner = "cargo-bins";
     repo = "cargo-binstall";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-6msYAVCN1i2srA4DquqcdJxUrJP1jub34c/a/4RbWCg=";
+    hash = "sha256-zbWrRPtdPB2NUo5XQV2+9TFXTqZWwvJPRmHUmltUy3Y=";
   };
 
-  cargoHash = "sha256-r9iGWxrLlD83QtvZuWXIxjI2S0RO1GNwOed531FVvJk=";
+  cargoHash = "sha256-QRckKN7k31rF7apr9fCuhwWLhDSjcAj7Xx+qWJEU5v8=";
 
   nativeBuildInputs = [
+    installShellFiles
     pkg-config
   ];
 
   buildInputs = [
+    aws-lc
     bzip2
     xz
     zstd
@@ -57,6 +62,13 @@ rustPlatform.buildRustPackage (finalAttrs: {
     "--skip=gh_api_client::test::test_gh_api_client_cargo_binstall_no_such_release"
     "--skip=gh_api_client::test::test_gh_api_client_cargo_binstall_v0_20_1"
   ];
+
+  postInstall = lib.optionalString (stdenv.buildPlatform.canExecute stdenv.hostPlatform) ''
+    installShellCompletion --cmd cargo-binstall \
+      --bash <($out/bin/cargo-binstall --completions bash) \
+      --fish <($out/bin/cargo-binstall --completions fish) \
+      --zsh <($out/bin/cargo-binstall --completions zsh)
+  '';
 
   nativeInstallCheckInputs = [ versionCheckHook ];
   doInstallCheck = true;

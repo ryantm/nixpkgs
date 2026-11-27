@@ -17,6 +17,11 @@ buildPythonPackage rec {
     hash = "sha256-5TNCnQhnT1gAblgs+AAW62HoNDPM54hpxgCnYl07j3I=";
   };
 
+  postPatch = ''
+    substituteInPlace uwsgi_chunked/version.py \
+      --replace-fail "0.1" "${version}"
+  '';
+
   build-system = [ setuptools ];
 
   # requires running containers via docker
@@ -28,6 +33,6 @@ buildPythonPackage rec {
     description = "WSGI application wrapper that handles Transfer-Encoding: chunked";
     homepage = "https://github.com/btimby/uwsgi-chunked";
     license = lib.licenses.mit;
-    maintainers = with lib.maintainers; [ defelo ];
+    maintainers = [ ];
   };
 }

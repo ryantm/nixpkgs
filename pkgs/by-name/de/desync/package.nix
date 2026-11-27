@@ -8,16 +8,18 @@
 
 buildGoModule (finalAttrs: {
   pname = "desync";
-  version = "1.0.3";
+  version = "1.1.5";
 
   src = fetchFromGitHub {
     owner = "folbricht";
     repo = "desync";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-rdwUoTwN/fG4fsOY4mCcg0bzWMErFaxBe72RtmHohdA=";
+    hash = "sha256-WPhxXHB4d+yGX/94GwEJa3HEYZhIq7ncDEMd+NeY7bQ=";
   };
 
-  vendorHash = "sha256-unwaA+WNyaJbNrOFvjXeMI2YbNTpGBrjwBGXhvOfj0M=";
+  vendorHash = "sha256-08LGC+N0NjUAjo9b5JhKNr46CuIXMz/erw2RPRU17xo=";
+
+  ldflags = [ "-X main.version=${finalAttrs.src.tag}" ];
 
   nativeBuildInputs = [ installShellFiles ];
 
@@ -26,19 +28,10 @@ buildGoModule (finalAttrs: {
 
   checkFlags =
     let
-      skippedTests = [
-        "TestExtract" # block cloning fails on ZFS
-        "TestExtractCommand/extract_while_regenerating_the_corrupted_seed" # block cloning fails on ZFS
-        "TestExtractCommand/extract_with_seed_directory" # block cloning fails on ZFS
-        "TestExtractCommand/extract_with_single_seed" # block cloning fails on ZFS
-        "TestExtractCommand/extract_with_single_seed,_explicit_data_directory_and_unexpected_seed_options" # block cloning fails on ZFS
-        "TestExtractCommand/extract_with_single_seed_and_explicit_data_directory" # block cloning fails on ZFS
-        "TestExtractWithNonStaticSeeds" # block cloning fails on ZFS
-        "TestMountIndex" # FUSE does not work in sandbox
-        "TestSeed/extract_repetitive_file" # block cloning fails on ZFS
-      ]
-      ++ lib.optionals stdenv.hostPlatform.isDarwin [
-        # sendfile is not permitted in Darwin sandbox
+      skippedTests = lib.optionals stdenv.hostPlatform.isDarwin [
+        # sendfile(2) does not work with __darwinAllowLocalNetworking, see NixOS/nix#16632
+        "TestExtractAdaptiveConcurrency"
+        "TestExtractAdaptiveNextToFixedStore"
         "TestS3StoreGetChunk/fail"
         "TestS3StoreGetChunk/recover"
       ];

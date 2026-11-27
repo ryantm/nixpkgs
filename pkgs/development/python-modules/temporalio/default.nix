@@ -4,6 +4,8 @@
   fetchFromGitHub,
   rustPlatform,
   buildPackages,
+  pkg-config,
+  zstd,
 
   # build-system
   maturin,
@@ -25,7 +27,7 @@
 
 buildPythonPackage rec {
   pname = "temporalio";
-  version = "1.30.0";
+  version = "1.36.1";
   pyproject = true;
 
   src = fetchFromGitHub {
@@ -33,7 +35,7 @@ buildPythonPackage rec {
     repo = "sdk-python";
     tag = version;
     fetchSubmodules = true;
-    hash = "sha256-8bCkm2b66CUSfIri0PhDLCijFSQR82wzAQKjdlk8VBg=";
+    hash = "sha256-Ri8wvWkfhTJcaYWTb6+1IWOLbsVbW8USaWOXVLN/QGk=";
   };
 
   cargoDeps = rustPlatform.fetchCargoVendor {
@@ -43,7 +45,7 @@ buildPythonPackage rec {
       src
       cargoRoot
       ;
-    hash = "sha256-CnQ3xwja9ZnQQy7OEwtX/WtYsPtyREBkXpjx3JAeBKo=";
+    hash = "sha256-Xe0mIsgHExd+jBiC6Pr9ld7NgZPSs5+eGdUkNfQdL2g=";
   };
 
   cargoRoot = "temporalio/bridge";
@@ -63,10 +65,13 @@ buildPythonPackage rec {
 
   nativeBuildInputs = [
     cargo
+    pkg-config
     rustPlatform.cargoSetupHook
     rustPlatform.maturinBuildHook
     rustc
   ];
+
+  buildInputs = [ zstd ];
 
   pythonRelaxDeps = [
     "protobuf"

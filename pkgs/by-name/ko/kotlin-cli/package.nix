@@ -10,11 +10,11 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "kotlin-cli";
-  version = "0.11.1";
+  version = "0.14.1";
 
   src = fetchurl {
     url = "https://packages.jetbrains.team/maven/p/amper/amper/org/jetbrains/kotlin/kotlin-cli/${finalAttrs.version}/kotlin-cli-${finalAttrs.version}-dist.tgz";
-    hash = "sha256-De0qQ09r8ZOyTiptVsO6RD9CMnIRVaZaqoNyeJQSES8=";
+    hash = "sha256-OftffgvVFIoC9VGeiNeHUvsE5xndsIYlj/V+lNg8D8s=";
   };
   sourceRoot = ".";
   dontBuild = true;
@@ -47,6 +47,7 @@ stdenv.mkDerivation (finalAttrs: {
   passthru.updateScript = nix-update-script {
     extraArgs = [
       "--url=https://github.com/JetBrains/kotlin-toolchain"
+      "--version-regex=^v(\\d+\\.\\d+\\.\\d+)$"
     ];
   };
 
@@ -54,7 +55,10 @@ stdenv.mkDerivation (finalAttrs: {
     description = "Kotlin Toolchain CLI";
     homepage = "https://github.com/JetBrains/kotlin-toolchain";
     license = lib.licenses.asl20;
-    maintainers = [ lib.maintainers.dshatz ];
+    maintainers = with lib.maintainers; [
+      dshatz
+      SubhrajyotiSen
+    ];
     platforms = jre.meta.platforms;
     sourceProvenance = [ lib.sourceTypes.binaryBytecode ];
     mainProgram = "kotlin";

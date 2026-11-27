@@ -7,14 +7,20 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "systemc";
-  version = "3.0.2";
+  version = "3.0.3";
 
   src = fetchFromGitHub {
     owner = "accellera-official";
     repo = "systemc";
     tag = finalAttrs.version;
-    hash = "sha256-v/PcQu0m/7zyx2TtpZrLFbHtknahgVCkzcRi3lgrRGw=";
+    hash = "sha256-Q0ae/EzixbiRiqdx/yoHF+R2RLay5iN+Tta5RLas3zs=";
   };
+
+  # consumers must see the SC_CPLUSPLUS the library was built with, otherwise it follows their own -std and fails to link
+  postPatch = ''
+    substituteInPlace src/sysc/kernel/sc_cmnhdr.h \
+      --replace-fail '#  define SC_CPLUSPLUS SC_CPLUSPLUS_AUTO_' '#  define SC_CPLUSPLUS 201703L'
+  '';
 
   nativeBuildInputs = [ cmake ];
 

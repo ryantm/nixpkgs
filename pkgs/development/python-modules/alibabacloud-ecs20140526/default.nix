@@ -1,5 +1,6 @@
 {
   lib,
+  alibabacloud-gateway-pop,
   alibabacloud-tea-openapi,
   buildPythonPackage,
   darabonba-core,
@@ -9,20 +10,19 @@
 
 buildPythonPackage (finalAttrs: {
   pname = "alibabacloud-ecs20140526";
-  version = "7.9.1";
+  version = "7.12.0";
   pyproject = true;
-
-  __structuredAttrs = true;
 
   src = fetchPypi {
     pname = "alibabacloud_ecs20140526";
     inherit (finalAttrs) version;
-    hash = "sha256-ntrWxB3W/fR4RBGrX4I+fcyJScCri+9V9RxAZbJQeHE=";
+    hash = "sha256-g5uAOjabpi1yfKD9yMyxpT4aJga0MREgqi8yxgPSY9w=";
   };
 
   build-system = [ setuptools ];
 
   dependencies = [
+    alibabacloud-gateway-pop
     alibabacloud-tea-openapi
     darabonba-core
   ];

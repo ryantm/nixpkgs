@@ -8,6 +8,7 @@
   lib,
   mashumaro,
   orjson,
+  pyprojectVersionPatchHook,
   pytest-cov-stub,
   pytestCheckHook,
   syrupy,
@@ -17,15 +18,17 @@
 
 buildPythonPackage (finalAttrs: {
   pname = "pyportainer";
-  version = "1.0.41";
+  version = "1.0.51";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "erwindouna";
     repo = "pyportainer";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-pQGObEYmj5Off573wwxLdU6p+kJsGqDyPVPzmD6vCc8=";
+    hash = "sha256-TZey9Xyk9fZdmupncL1k+wBhmJTJf6vnMbJijdNTvsY=";
   };
+
+  nativeBuildInputs = [ pyprojectVersionPatchHook ];
 
   build-system = [ hatchling ];
 
@@ -46,6 +49,8 @@ buildPythonPackage (finalAttrs: {
     pytestCheckHook
     syrupy
   ];
+
+  __darwinAllowLocalNetworking = true;
 
   meta = {
     changelog = "https://github.com/erwindouna/pyportainer/releases/tag/${finalAttrs.src.tag}";

@@ -25,6 +25,7 @@
   libadwaita,
   libglycin,
   libglycin-gtk4,
+  glycin-loaders,
   gsettings-desktop-schemas,
   gst_all_1,
   pipewire,
@@ -32,11 +33,11 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "gnome-contacts";
-  version = "50.0";
+  version = "51.0";
 
   src = fetchurl {
     url = "mirror://gnome/sources/gnome-contacts/${lib.versions.major finalAttrs.version}/gnome-contacts-${finalAttrs.version}.tar.xz";
-    hash = "sha256-KjvqNDFxviRPErfCGkDKOOmpLeqYkDk69eisE5vA2rM=";
+    hash = "sha256-yLYHUvZalm4KLAy/fB4WB+47Skkxi1Cxm9rSq3/GcG0=";
   };
 
   nativeBuildInputs = [
@@ -62,6 +63,7 @@ stdenv.mkDerivation (finalAttrs: {
     glib
     libportal-gtk4
     evolution-data-server-gtk4
+    glycin-loaders
     gsettings-desktop-schemas
     folks
     libadwaita

@@ -2,29 +2,36 @@
   lib,
   rustPlatform,
   fetchFromGitHub,
+  cacert,
   pkg-config,
   dbus,
   openssl,
+  aws-lc,
 }:
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "mprisence";
-  version = "1.7.0";
+  version = "1.9.2";
 
   src = fetchFromGitHub {
     owner = "lazykern";
     repo = "mprisence";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-Ss6RXxtpSI3jfq5CAwRLE0XA3tFkIBI+JMyUov2DSpM=";
+    hash = "sha256-NcHUEwAPfB1olyJ0D3fjpJcmgmMyew0hKAYPJpNFV+4=";
   };
 
-  cargoHash = "sha256-AKj+DibLyoWUw+082m5wMVnZAY4Kmf3+daRJDGeLKtc=";
+  cargoHash = "sha256-9lVHV2R+Di4R2FAEhZ9IG0gsgBThLf9+oJEJLUJ/9ZM=";
+
+  # Required for some of the tests
+  __darwinAllowLocalNetworking = true;
+  nativeCheckInputs = [ cacert ];
 
   nativeBuildInputs = [ pkg-config ];
 
   buildInputs = [
     dbus
     openssl
+    aws-lc
   ];
 
   meta = {

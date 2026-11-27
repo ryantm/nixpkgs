@@ -1,37 +1,32 @@
 {
   lib,
-  gcc15Stdenv,
+  gcc16Stdenv,
   fetchFromGitHub,
   cmake,
   pkg-config,
   hyprwayland-scanner,
-  wayland-scanner,
+  abseil-cpp,
   aquamarine,
-  cairo,
   gtest,
   hyprgraphics,
   hyprlang,
   hyprutils,
   iniparser,
-  libdrm,
   libgbm,
-  libGL,
   libxkbcommon,
-  pango,
-  pixman,
-  wayland,
+  wayland-scanner,
   wayland-protocols,
 }:
 
-gcc15Stdenv.mkDerivation (finalAttrs: {
+gcc16Stdenv.mkDerivation (finalAttrs: {
   pname = "hyprtoolkit";
-  version = "0.5.4";
+  version = "0.6.0";
 
   src = fetchFromGitHub {
     owner = "hyprwm";
     repo = "hyprtoolkit";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-gJSBj4Pd4e9nERAKo/qiHqDMpS2hBfyOI0uGCbbiML4=";
+    hash = "sha256-0rb1yZZ0PR4lRrXC2BdiMjGFttZe6MFQFSnx3wD4dko=";
   };
 
   nativeBuildInputs = [
@@ -41,22 +36,21 @@ gcc15Stdenv.mkDerivation (finalAttrs: {
     wayland-scanner
   ];
 
-  buildInputs = [
+  propagatedBuildInputs = [
     aquamarine
-    cairo
-    gtest
     hyprgraphics
-    hyprlang
     hyprutils
+  ];
+
+  buildInputs = [
+    abseil-cpp
+    gtest
+    hyprlang
     iniparser
-    libdrm
     libgbm
-    libGL
     libxkbcommon
-    pango
-    pixman
-    wayland
     wayland-protocols
+    wayland-scanner
   ];
 
   meta = {

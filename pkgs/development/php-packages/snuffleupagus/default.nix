@@ -8,15 +8,15 @@
   pcre2,
 }:
 
-buildPecl rec {
+buildPecl (finalAttrs: {
   pname = "snuffleupagus";
-  version = "0.13.0";
+  version = "0.14.0";
 
   src = fetchFromGitHub {
     owner = "jvoisin";
     repo = "snuffleupagus";
-    rev = "v${version}";
-    hash = "sha256-14Hci2/f1kSV/lCAlFTNrv/WLJxeh+Wyf0QF0+xoedc=";
+    tag = "v${finalAttrs.version}";
+    hash = "sha256-pSLJsAi6Ex5E8ZeNuIlXSFutBbBMmvYdUzosFNSzqfg=";
   };
 
   buildInputs = [
@@ -28,7 +28,7 @@ buildPecl rec {
 
   internalDeps = with php.extensions; [ session ];
 
-  sourceRoot = "${src.name}/src";
+  sourceRoot = "${finalAttrs.src.name}/src";
 
   configureFlags = [ "--enable-snuffleupagus" ];
 
@@ -37,10 +37,11 @@ buildPecl rec {
   '';
 
   meta = {
+    broken = lib.versionAtLeast php.version "8.6";
     description = "Security module for php7 and php8 - Killing bugclasses and virtual-patching the rest";
     homepage = "https://github.com/jvoisin/snuffleupagus";
     license = lib.licenses.lgpl3Only;
     maintainers = [ lib.maintainers.zupo ];
     teams = [ lib.teams.php ];
   };
-}
+})

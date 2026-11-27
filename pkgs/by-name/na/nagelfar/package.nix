@@ -1,27 +1,33 @@
 {
   lib,
   fetchurl,
+  bashNonInteractive,
   tcl,
   tclPackages,
   tk,
 }:
 
-tcl.mkTclDerivation rec {
+tcl.mkTclDerivation (finalAttrs: {
   pname = "nagelfar";
   version = "1.3.5";
 
   src = fetchurl {
     url = "https://sourceforge.net/projects/nagelfar/files/Rel_${
-      lib.replaceString "." "" version
-    }/nagelfar${lib.replaceString "." "" version}.tar.gz";
+      lib.replaceString "." "" finalAttrs.version
+    }/nagelfar${lib.replaceString "." "" finalAttrs.version}.tar.gz";
     hash = "sha256-O6+SD7NLc+MgZxGDZdB02FkpjivON0itlFhiS+zoWyM=";
   };
 
   buildInputs = [
+    bashNonInteractive
     tcl
     tclPackages.tcllib
     tk
   ];
+
+  postPatch = ''
+    substituteInPlace nagelfar.tcl --replace-fail "exec tclsh" "exec $TCLSH"
+  '';
 
   installPhase = ''
     runHook preInstall
@@ -43,4 +49,4 @@ tcl.mkTclDerivation rec {
     platforms = lib.platforms.all;
     maintainers = [ lib.maintainers.nat-418 ];
   };
-}
+})

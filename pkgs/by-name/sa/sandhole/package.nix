@@ -1,34 +1,36 @@
 {
+  aws-lc,
   cmake,
-  fetchFromGitHub,
+  fetchFromCodeberg,
   installShellFiles,
   lib,
   lld,
-  perl,
+  pkg-config,
   rustPlatform,
   stdenv,
   versionCheckHook,
 }:
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "sandhole";
-  version = "0.10.2";
+  version = "0.10.6";
 
-  src = fetchFromGitHub {
-    owner = "EpicEric";
+  src = fetchFromCodeberg {
+    owner = "sandhole";
     repo = "sandhole";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-iU9rMBiI+nlEqGthb/zHKsG/KPdBd16BKUsvzyCR0UY=";
+    hash = "sha256-De8gdqV2zFbeNw6j2HteuQXQNfEuEYVUs5SUlCtIhEE=";
   };
 
-  cargoHash = "sha256-PX2tRsNC60S2sc6kVuRS7uqFvX4CYV37v7HOqspEb7M=";
+  cargoHash = "sha256-+jY4+uFnplKeh2jsOD81t4lbEwehsjSHZBZkQydpEvE=";
 
   nativeBuildInputs = [
     cmake
     installShellFiles
-    perl
+    pkg-config
   ]
   ++ lib.optionals stdenv.hostPlatform.isDarwin [ lld ];
-  strictDeps = true;
+
+  buildInputs = [ aws-lc ];
 
   useNextest = true;
   # Skip tests that require networking.
@@ -51,8 +53,8 @@ rustPlatform.buildRustPackage (finalAttrs: {
       No extra software required to beat NAT!
     '';
     homepage = "https://sandhole.com.br";
-    changelog = "https://github.com/EpicEric/sandhole/releases/tag/v${finalAttrs.version}";
-    license = lib.licenses.mit;
+    changelog = "https://codeberg.org/sandhole/sandhole/releases/tag/${finalAttrs.src.tag}";
+    license = lib.licenses.agpl3Plus;
     mainProgram = "sandhole";
     maintainers = with lib.maintainers; [ EpicEric ];
     platforms = lib.platforms.all;

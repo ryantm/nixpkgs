@@ -8,18 +8,18 @@
 
 buildGoModule (finalAttrs: {
   pname = "pv-migrate";
-  version = "3.5.0";
+  version = "3.7.0";
 
   src = fetchFromGitHub {
     owner = "utkuozdemir";
     repo = "pv-migrate";
     tag = "v${finalAttrs.version}";
-    sha256 = "sha256-2gHWpBPl4Dpt+1WZh2W+p+t1/HWnVtjTaRC1U8dw1ZI=";
+    sha256 = "sha256-secoT/SyL9YX5jyCtXHg7UlGnOWiVhWrejHw1FluYbs=";
   };
 
   subPackages = [ "cmd/pv-migrate" ];
 
-  vendorHash = "sha256-mQIJBmsop3CqtsUv1FbnExfByxiHmS+crcVaTif5JiI=";
+  vendorHash = "sha256-mEgcw9B/V3/4aXQvZhccTOdmv5vKLmO0TI0qgx6oMCQ=";
 
   ldflags = [
     "-s"
@@ -45,7 +45,7 @@ buildGoModule (finalAttrs: {
     description = "CLI tool to easily migrate Kubernetes persistent volumes";
     homepage = "https://github.com/utkuozdemir/pv-migrate";
     changelog = "https://github.com/utkuozdemir/pv-migrate/releases/tag/v${finalAttrs.version}";
-    license = lib.licenses.afl20;
+    license = lib.licenses.asl20;
     maintainers = with lib.maintainers; [
       ivankovnatsky
       qjoly

@@ -6,15 +6,15 @@
 
 buildGoModule (finalAttrs: {
   pname = "opcr-policy";
-  version = "0.3.6";
+  version = "0.4.4";
 
   src = fetchFromGitHub {
     owner = "opcr-io";
     repo = "policy";
     rev = "v${finalAttrs.version}";
-    sha256 = "sha256-i7hS5RAIm/WxyQQyKcYlyXOfkVNL0knMcr/8v5AqyhY=";
+    sha256 = "sha256-t1aTFDUdN30murpQ2QNHtEGow21SyioadSYgzmY2WDc=";
   };
-  vendorHash = "sha256-3mqatgEDC3W+NVDETupdb7y/UZucEW44qW4e3lJubkE=";
+  vendorHash = "sha256-d6y3R/oJUfAIZLXanUb0glBsYBLlbSXPvAy1LawW9OM=";
 
   ldflags = [
     "-s"
@@ -40,7 +40,7 @@ buildGoModule (finalAttrs: {
 
   meta = {
     mainProgram = "policy";
-    homepage = "https://www.openpolicyregistry.io/";
+    homepage = "https://openpolicycontainers.com/";
     changelog = "https://github.com/opcr-io/policy/releases/tag/v${finalAttrs.version}";
     description = "CLI for managing authorization policies";
     longDescription = ''

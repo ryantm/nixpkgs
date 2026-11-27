@@ -46,13 +46,13 @@ backendStdenv.mkDerivation (finalAttrs: {
   # NOTE: Depends on the CUDA package set, so use cudaNamePrefix.
   name = "${cudaNamePrefix}-${finalAttrs.pname}-${finalAttrs.version}";
   pname = "cutlass";
-  version = "4.5.2";
+  version = "4.8.1";
 
   src = fetchFromGitHub {
     owner = "NVIDIA";
     repo = "cutlass";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-5SMEfoqB2QXRfH5wBwTKKjez0x2zhR8T8EA0bqPMqwM=";
+    hash = "sha256-Gc3HqRZGTapmCisThmEQQqbn1NenObxGK/bM0rtKaPg=";
   };
 
   # TODO: As a header-only library, we should make sure we have an `include` directory or similar which is not a
@@ -152,13 +152,16 @@ backendStdenv.mkDerivation (finalAttrs: {
     (cmakeBool "CUTLASS_ENABLE_EXAMPLES" false)
 
     # Tests.
-    (cmakeBool "CUTLASS_ENABLE_TESTS" finalAttrs.doCheck)
-    (cmakeBool "CUTLASS_ENABLE_GTEST_UNIT_TESTS" finalAttrs.doCheck)
+    (cmakeBool "CUTLASS_ENABLE_TESTS" finalAttrs.finalPackage.doCheck)
+    (cmakeBool "CUTLASS_ENABLE_GTEST_UNIT_TESTS" finalAttrs.finalPackage.doCheck)
     (cmakeBool "CUTLASS_USE_SYSTEM_GOOGLETEST" true)
 
     # NOTE: Both CUDNN and CUBLAS can be used by the examples and the profiler. Since they are large dependencies, they
     #       are disabled by default.
-    (cmakeBool "CUTLASS_ENABLE_TOOLS" enableTools)
+    # NOTE: The unit tests use the utility headers of tools/util (the cutlass_tools_util_includes target), which is only
+    #       added with the tools. The CUTLASS library (and so the profiler) stays off unless enableTools is set.
+    (cmakeBool "CUTLASS_ENABLE_TOOLS" (enableTools || finalAttrs.finalPackage.doCheck))
+    (cmakeBool "CUTLASS_ENABLE_LIBRARY" enableTools)
     (cmakeBool "CUTLASS_ENABLE_CUBLAS" enableTools)
     (cmakeBool "CUTLASS_ENABLE_CUDNN" enableTools)
 
@@ -189,12 +192,12 @@ backendStdenv.mkDerivation (finalAttrs: {
   # NOTE: Because the test cases immediately create and try to run the binaries, we don't have an opportunity
   # to patch them with autoAddDriverRunpath. To get around this, we add the driver runpath to the environment.
   # TODO: This would break Jetson when using cuda_compat, as it must come first.
-  preCheck = optionalString finalAttrs.doCheck ''
+  preCheck = optionalString finalAttrs.finalPackage.doCheck ''
     export LD_LIBRARY_PATH="$(readlink -mnv "${addDriverRunpath.driverLink}/lib")"
   '';
 
   # This is *not* a derivation you want to build on a small machine.
-  requiredSystemFeatures = optionals finalAttrs.doCheck [
+  requiredSystemFeatures = optionals finalAttrs.finalPackage.doCheck [
     "big-parallel"
     "cuda"
   ];
@@ -203,9 +206,11 @@ backendStdenv.mkDerivation (finalAttrs: {
     updateScript = gitUpdater {
       inherit (finalAttrs) pname version;
       rev-prefix = "v";
+      # Skip pre-releases, such as v4.8.0dev
+      ignoredVersions = "dev|rc";
     };
-    # TODO:
-    # tests.test = cutlass.overrideAttrs { doCheck = true; };
+    # Builds and runs the unit tests, which need a GPU.
+    gpuCheck = finalAttrs.finalPackage.overrideAttrs { doCheck = true; };
 
     # Include required architectures in compatibility check.
     # https://github.com/NVIDIA/cutlass/tree/main?tab=readme-ov-file#compatibility

@@ -5,6 +5,7 @@
   fetchFromGitHub,
   pkg-config,
   openssl,
+  zstd,
 
   # tests
   firefox-esr-unwrapped,
@@ -14,16 +15,16 @@
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "dump_syms";
-  version = "2.3.7";
+  version = "2.3.9";
 
   src = fetchFromGitHub {
     owner = "mozilla";
     repo = "dump_syms";
     rev = "v${finalAttrs.version}";
-    hash = "sha256-fCplZFp+yONBd2HDDlX/6XcmnQFbsnVmiS5b8fqGOAE=";
+    hash = "sha256-IuWuMomxbMg/fvxAP/8hOZdWe4nHzqkzPaXQwrA9IVU=";
   };
 
-  cargoHash = "sha256-guJgkcldcKvi3XWolAqyB5bFzlSMNQQMzri6axGJpLo=";
+  cargoHash = "sha256-A7qHSmJNRhmRjyQJpkr2SVLuTy4g4i3TeERlJqJYxkM=";
 
   nativeBuildInputs = [
     pkg-config
@@ -31,6 +32,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
 
   buildInputs = [
     openssl
+    zstd
   ];
 
   checkFlags = [

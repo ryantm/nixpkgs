@@ -1,37 +1,33 @@
 {
   lib,
   stdenv,
-  callPackage,
   python3Packages,
   fetchFromGitHub,
   installShellFiles,
+  bashNonInteractive,
   platformio,
+  platformio-core,
   esptool,
   git,
   versionCheckHook,
+  addBinToPathHook,
+  writableTmpDirAsHomeHook,
   nixosTests,
 }:
 
 let
-  python = python3Packages.python.override {
-    self = python;
-    packageOverrides = self: super: {
-      esphome-dashboard = self.callPackage ./dashboard.nix { };
-
-      paho-mqtt = self.paho-mqtt_1;
-    };
-  };
+  python = python3Packages.python;
 in
-python.pkgs.buildPythonApplication (finalAttrs: {
+python3Packages.buildPythonApplication (finalAttrs: {
   pname = "esphome";
-  version = "2026.6.2";
+  version = "2026.11.0";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "esphome";
     repo = "esphome";
     tag = finalAttrs.version;
-    hash = "sha256-h7aMPSXmIUutCGMoZlE3Z1wX2xNxdmZsHfBllcFHBHc=";
+    hash = "sha256-JY7USkJL/+3yd+EE9atCgldrEFox8EZfDTrpKQ3X19w=";
   };
 
   patches = [
@@ -63,8 +59,8 @@ python.pkgs.buildPythonApplication (finalAttrs: {
 
   postPatch = ''
     substituteInPlace pyproject.toml \
-      --replace-fail "setuptools==82.0.1" "setuptools" \
-      --replace-fail "wheel>=0.43,<0.48" "wheel"
+      --replace-fail "setuptools==84.2.1" "setuptools" \
+      --replace-fail "wheel>=0.43,<0.49" "wheel"
   '';
 
   # Remove esptool and platformio from requirements
@@ -74,18 +70,18 @@ python.pkgs.buildPythonApplication (finalAttrs: {
     aioesphomeapi
     argcomplete
     bleak
-    cairosvg
     click
     colorama
     cryptography
-    esphome-dashboard
     esphome-glyphsets
+    filelock
     freetype-py
-    icmplib
     jinja2
+    ninja
     paho-mqtt
     pillow
-    platformio
+    platformdirs
+    (toPythonModule (platformio-core.override { python3 = python; }))
     puremagic
     py7zr
     pyparsing
@@ -94,8 +90,8 @@ python.pkgs.buildPythonApplication (finalAttrs: {
     requests
     resvg-py
     ruamel-yaml
+    ruamel-yaml-clib
     smpclient
-    tornado
     tzdata
     tzlocal
     voluptuous
@@ -106,20 +102,37 @@ python.pkgs.buildPythonApplication (finalAttrs: {
     # platformio is used in esphome/platformio_api.py
     # esptool is used in esphome/__main__.py
     # git is used in esphome/git.py
-    "--prefix PATH : ${
-      lib.makeBinPath [
-        platformio
-        esptool
-        git
-      ]
-    }"
+    # sh is used by ninja, which nixpkgs patches to look up in PATH (see https://github.com/NixOS/nixpkgs/pull/432064)
+    "--prefix"
+    "PATH"
+    ":"
+    (lib.makeBinPath [
+      platformio
+      esptool
+      git
+      bashNonInteractive
+    ])
+
     # The dashboard requires esphome to be importable
     # dependencies are added to show better error messages
-    "--prefix PYTHONPATH : $out/${python.sitePackages}:${python.pkgs.makePythonPath finalAttrs.passthru.dependencies}"
-    "--prefix LD_LIBRARY_PATH : ${lib.makeLibraryPath [ stdenv.cc.cc ]}"
-    "--set ESPHOME_USE_SUBPROCESS ''"
+    "--prefix"
+    "PYTHONPATH"
+    ":"
+    "${placeholder "out"}/${python.sitePackages}:${python.pkgs.makePythonPath finalAttrs.passthru.dependencies}"
+
+    "--prefix"
+    "LD_LIBRARY_PATH"
+    ":"
+    (lib.makeLibraryPath [ stdenv.cc.cc ])
+
+    "--set"
+    "ESPHOME_USE_SUBPROCESS"
+    ""
+
     # https://github.com/NixOS/nixpkgs/issues/362193
-    "--set PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION 'python'"
+    "--set"
+    "PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION"
+    "python"
   ];
 
   # Needed for tests
@@ -128,30 +141,21 @@ python.pkgs.buildPythonApplication (finalAttrs: {
   nativeCheckInputs =
     with python.pkgs;
     [
+      (python3Packages.toPythonModule esptool)
       hypothesis
       mock
       pytest-asyncio
       pytest-cov-stub
       pytest-mock
       pytestCheckHook
+      ruff
     ]
     ++ [
       git
       versionCheckHook
+      addBinToPathHook
+      writableTmpDirAsHomeHook
     ];
-
-  disabledTestPaths = [
-    # platformio builds; requires networking for dependency resolution
-    "tests/integration"
-
-    # tries to dynamically patch platformio module
-    "tests/unit_tests/test_writer.py"
-    "tests/unit_tests/test_espidf_component.py"
-  ];
-
-  preCheck = ''
-    export PATH=$PATH:$out/bin
-  '';
 
   postInstall =
     let
@@ -164,33 +168,40 @@ python.pkgs.buildPythonApplication (finalAttrs: {
         --fish <(${argcomplete} --shell fish esphome)
     '';
 
-  doInstallCheck = true;
-
-  disabledTests = [
-    # tries to import platformio, which is wrapped in an fhsenv
-    "test_clean_build"
-    "test_clean_build_empty_cache_dir"
-    "test_clean_all"
-    "test_clean_all_partial_exists"
+  disabledTestPaths = [
     # tries to use esptool, which is wrapped in an fhsenv
-    "test_upload_using_esptool_passes_crystal_callback"
-    "test_upload_using_esptool_path_conversion"
-    "test_upload_using_esptool_skips_missing_extra_flash_images"
-    "test_upload_using_esptool_with_file_path"
-    # AssertionError: Expected 'run_external_command' to have been called once. Called 0 times.
-    "test_run_platformio_cli_sets_environment_variables"
-    # Expects a full git clone
-    "test_clang_tidy_mode_full_scan"
-    "test_clang_tidy_mode_targeted_scan"
+    "tests/unit_tests/test_main.py::test_upload_using_esptool_passes_crystal_callback"
+    "tests/unit_tests/test_main.py::test_upload_using_esptool_path_conversion"
+    "tests/unit_tests/test_main.py::test_upload_using_esptool_skips_missing_extra_flash_images"
+    "tests/unit_tests/test_main.py::test_upload_using_esptool_with_file_path"
     # Patched to run platformio without the esphome wrapper
-    "test_run_platformio_cli_strips_win_long_path_prefix"
-    "test_run_platformio_cli_does_not_set_pythonexepath_without_strip"
-    "test_patch_file_downloader_recovers_against_real_server"
+    "tests/unit_tests/test_platformio_toolchain.py::test_run_platformio_cli_does_not_set_pythonexepath_without_strip"
+    "tests/unit_tests/test_platformio_toolchain.py::test_run_platformio_cli_sets_environment_variables"
+    "tests/unit_tests/test_platformio_toolchain.py::test_run_platformio_cli_strips_win_long_path_prefix"
+    #  attempts to download a remote asset from github
+    "tests/component_tests/lvgl/test_list_outside_block.py::test_dynamic_widget_creates_correctly"
+    "tests/component_tests/lvgl/test_list_outside_block.py::test_dynamic_widget_type_use_define_is_registered"
+    "tests/component_tests/lvgl/test_list_outside_block.py::test_dynamic_widget_style_use_defines_are_registered"
+    # platformio builds; requires networking for dependency resolution
+    "tests/integration"
+    # tries to dynamically patch platformio module
+    "tests/unit_tests/test_writer.py"
+    "tests/unit_tests/test_espidf_component.py"
+    # depends on yamlrocks, which is not packaged in nixpkgs
+    "tests/script/test_sync_dependency_versions.py"
+    # expects PYTHONPATH to be set up in a very specific way
+    "tests/unit_tests/test_espidf_framework.py::test_install_tool_archives_extracts_pending_in_parallel"
+    # wants to access /dev/ttyUSB0
+    "tests/unit_tests/test_main.py::test_upload_using_esptool_arduino_toolchain"
+    # we are not always on apple silicon
+    "tests/unit_tests/test_platformio_pch_script.py::test_pch_script_gcc10_wrapper_on_apple_silicon"
+  ]
+  ++ lib.optionals stdenv.hostPlatform.isDarwin [
+    # OSError: No username set in the environment
+    "tests/unit_tests/test_main.py::test_check_permissions_unreadable_port"
   ];
 
   passthru = {
-    dashboard = python.pkgs.esphome-dashboard;
-    updateScript = callPackage ./update.nix { };
     tests = { inherit (nixosTests) esphome; };
   };
 
@@ -203,10 +214,10 @@ python.pkgs.buildPythonApplication (finalAttrs: {
       gpl3Only # The python codebase and all other parts of this codebase
     ];
     maintainers = with lib.maintainers; [
-      hexa
       picnoir
       thanegill
       karlbeecken
+      AAAAAASomeThingsFailToEvaluate
     ];
     mainProgram = "esphome";
   };

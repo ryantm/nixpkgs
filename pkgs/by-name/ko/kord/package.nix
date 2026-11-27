@@ -12,8 +12,12 @@ rustPlatform.buildRustPackage (finalAttrs: {
   pname = "kord";
   version = "0.6.1";
 
-  # kord depends on nightly features
-  env.RUSTC_BOOTSTRAP = 1;
+  env = {
+    # kord depends on nightly features
+    RUSTC_BOOTSTRAP = 1;
+    # linux_raw backend of rustix < 1.1.5 fails on recent rustc, use its libc backend instead
+    RUSTFLAGS = "--cfg=rustix_use_libc";
+  };
 
   src = fetchFromGitHub {
     owner = "twitchax";
@@ -55,6 +59,6 @@ rustPlatform.buildRustPackage (finalAttrs: {
     description = "Music theory binary and library for Rust";
     homepage = "https://github.com/twitchax/kord";
     maintainers = with lib.maintainers; [ kidsan ];
-    license = with lib.licenses; [ mit ];
+    license = lib.licenses.mit;
   };
 })

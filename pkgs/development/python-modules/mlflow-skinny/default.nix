@@ -8,6 +8,7 @@
   setuptools,
 
   # dependencies
+  anyio,
   cachetools,
   click,
   cloudpickle,
@@ -22,6 +23,7 @@
   protobuf,
   pydantic,
   python-dotenv,
+  python-multipart,
   pyyaml,
   requests,
   sqlparse,
@@ -34,20 +36,27 @@ buildPythonPackage (finalAttrs: {
   pname = "mlflow-skinny";
   inherit (mlflow) version;
   pyproject = true;
-  __structuredAttrs = true;
 
   src = fetchFromGitHub {
     owner = "mlflow";
     repo = "mlflow";
-    rev = "v${finalAttrs.version}";
-    hash = "sha256-e11ZncpvThb1Nt6OH+O6Do74N3dphxBiK/HIeLQMxAw=";
+    tag = "v${finalAttrs.version}";
+    hash = "sha256-GSgyzG8V84Z103WjBqQV3hTxhkdkMpZLJ5yL2yDyvsc=";
   };
+
+  postPatch = ''
+    substituteInPlace pyproject.toml \
+      --replace-fail \
+        "setuptools<=82.0.1" \
+        "setuptools"
+  '';
 
   sourceRoot = "${finalAttrs.src.name}/libs/skinny";
 
   build-system = [ setuptools ];
 
   dependencies = [
+    anyio
     cachetools
     click
     cloudpickle
@@ -62,6 +71,7 @@ buildPythonPackage (finalAttrs: {
     protobuf
     pydantic
     python-dotenv
+    python-multipart
     pyyaml
     requests
     sqlparse

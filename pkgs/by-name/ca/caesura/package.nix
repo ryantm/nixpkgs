@@ -2,10 +2,13 @@
   lib,
   fetchFromGitHub,
   rustPlatform,
+  writableTmpDirAsHomeHook,
   flac,
   lame,
   makeBinaryWrapper,
   sox_ng,
+  pkg-config,
+  aws-lc,
 }:
 let
   runtimeDeps = [
@@ -16,25 +19,26 @@ let
 in
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "caesura";
-  version = "0.27.2";
+  version = "0.33.1";
 
   src = fetchFromGitHub {
     owner = "RogueOneEcho";
     repo = "caesura";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-ifaZ+rmMmWhn8HM25sRPXJKuXvWE5VG+5hFMi9hqxA0=";
+    hash = "sha256-0YhYEHMwLgWb/QWwHz47ybxZ6VHNckUA921gdREuhwc=";
   };
 
-  cargoHash = "sha256-g8Duhl5nZ6umIrAafW7s4vtDS+f06CWnFLoLSw0wa4o=";
+  cargoHash = "sha256-/l4A1uI71aJsFwhST4xr/vrY3K2wmZHGeICk5Kq9C5g=";
 
+  buildInputs = [ aws-lc ];
   nativeBuildInputs = [
     makeBinaryWrapper
+    pkg-config
   ];
-  nativeCheckInputs = runtimeDeps;
-
-  env = {
-    CAESURA_NIX = "1";
-  };
+  nativeCheckInputs = [
+    writableTmpDirAsHomeHook
+  ]
+  ++ runtimeDeps;
 
   postPatch = ''
     substituteInPlace Cargo.toml crates/*/Cargo.toml \
@@ -50,6 +54,11 @@ rustPlatform.buildRustPackage (finalAttrs: {
   postInstall = ''
     wrapProgram $out/bin/caesura \
       --prefix PATH : ${lib.makeBinPath finalAttrs.passthru.runtimeDeps}
+  '';
+
+  doInstallCheck = true;
+  installCheckPhase = ''
+    $out/bin/caesura version --offline
   '';
 
   passthru = {

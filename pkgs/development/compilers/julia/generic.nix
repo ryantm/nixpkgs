@@ -2,6 +2,8 @@
   version,
   hash,
   patches ? [ ],
+  knownVulnerabilities ? [ ],
+  extraMeta ? { },
 }:
 
 {
@@ -35,8 +37,16 @@ let
     "REPL"
     "ccall"
   ]
-  ++ lib.optionals (lib.versionAtLeast version "1.11") [
+  ++ lib.optionals (lib.versions.majorMinor version == "1.10") [
+    "LinearAlgebra/blas"
+    "ambiguous"
+    "compiler/contextual"
+  ]
+  ++ lib.optionals (lib.versionAtLeast version "1.10") [
+    # Loading tests try to download package registries in the sandbox.
     "loading"
+  ]
+  ++ lib.optionals (lib.versionAtLeast version "1.11") [
     "cmdlineargs"
   ]
   ++ lib.optionals (lib.versionAtLeast version "1.12") [
@@ -63,6 +73,7 @@ stdenv.mkDerivation rec {
   };
 
   strictDeps = true;
+  __structuredAttrs = true;
 
   nativeBuildInputs = [
     which
@@ -121,10 +132,19 @@ stdenv.mkDerivation rec {
   ++ lib.optionals stdenv.hostPlatform.isx86_64 [
     # https://github.com/JuliaCI/julia-buildkite/blob/main/utilities/build_envs.sh
     "JULIA_CPU_TARGET=generic;sandybridge,-xsaveopt,clone_all;haswell,-rdrnd,base(1);x86-64-v4,-rdrnd,base(1)"
+    # OpenBLAS getarch CPU detection fails in Nix sandbox;
+    # Using NEHALEM as a baseline
+    "OPENBLAS_TARGET_ARCH=NEHALEM"
+    "OPENBLAS_DYNAMIC_ARCH=1"
   ]
   ++ lib.optionals stdenv.hostPlatform.isAarch64 [
     "JULIA_CPU_TARGET=generic;cortex-a57;thunderx2t99;carmel,clone_all;apple-m1,base(3);neoverse-512tvb,base(3)"
   ];
+
+  postInstall = ''
+    rm $out/share/julia/cert.pem
+    ln -s ${cacert}/etc/ssl/certs/ca-bundle.crt $out/share/julia/cert.pem
+  '';
 
   # remove forbidden reference to $TMPDIR
   preFixup = lib.optionalString stdenv.hostPlatform.isElf ''
@@ -176,6 +196,7 @@ stdenv.mkDerivation rec {
   };
 
   meta = {
+    inherit knownVulnerabilities;
     description = "High-level performance-oriented dynamical language for technical computing";
     mainProgram = "julia";
     homepage = "https://julialang.org/";
@@ -191,5 +212,6 @@ stdenv.mkDerivation rec {
       "aarch64-linux"
       "aarch64-darwin"
     ];
-  };
+  }
+  // extraMeta;
 }

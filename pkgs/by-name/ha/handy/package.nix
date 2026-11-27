@@ -10,11 +10,15 @@
   cctools,
   cargo-tauri,
   jq,
+  sqlite,
   writableTmpDirAsHomeHook,
   makeBinaryWrapper,
   swift,
   apple-sdk_26,
+  open-apple-macros,
+  replaceVars,
   symlinkJoin,
+  nix-update-script,
 
   # Linux-only
   webkitgtk_4_1,
@@ -36,6 +40,9 @@
   pipewire,
   alsa-plugins,
   wrapGAppsHook4,
+  wtype,
+  dotool,
+  wl-clipboard,
 
   # Cross-platform
   onnxruntime,
@@ -55,7 +62,7 @@ let
 in
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "handy";
-  version = "0.9.0";
+  version = "0.10.2";
 
   __structuredAttrs = true;
 
@@ -63,13 +70,21 @@ rustPlatform.buildRustPackage (finalAttrs: {
     owner = "cjpais";
     repo = "Handy";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-jRzy8nsLtlNrYXb4LWP5SK6XpIy2pguNcZno3m6Mkqw=";
+    hash = "sha256-yvbCDA6pjN8y+Ft8HpZxR180aigTHVuZfUbIEWGMsLo=";
   };
 
   cargoRoot = "src-tauri";
-  cargoHash = "sha256-Ag02t6KwKvgO1kKsQ4RAw9X+rWYNhDyav2N6i4o7ifQ=";
+  cargoHash = "sha256-5m9KEYBRbZlpt/d+/WXHSnygnnEtpiymEjdLAjc33RQ=";
 
   nativeInstallInputs = [ jq ];
+
+  patches =
+    # Use apple-open-macros to enable using Apple Intelligence on Darwin.
+    lib.optionals stdenv.hostPlatform.isDarwin [
+      (replaceVars ./add-plugin-path-for-swift-macros.patch {
+        inherit open-apple-macros;
+      })
+    ];
 
   postPatch = ''
     patch_json() {
@@ -120,6 +135,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
   ];
 
   buildInputs = [
+    sqlite
     onnxruntime
     openssl
   ]
@@ -153,6 +169,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
     );
   }
   // lib.optionalAttrs stdenv.hostPlatform.isDarwin {
+    NIX_LDFLAGS = "-lclang_rt.osx"; # Make sure `__isPlatformVersionAtLeast` is available for runtime version checks.
     SWIFTC = lib.getExe' swift "swiftc"; # Explicit so the Handy build system can avoid xcrun
   };
 
@@ -190,8 +207,17 @@ rustPlatform.buildRustPackage (finalAttrs: {
 
   preFixup = lib.optionalString stdenv.hostPlatform.isLinux ''
     gappsWrapperArgs+=(
-      --set WEBKIT_DISABLE_DMABUF_RENDERER 1
       --set ALSA_PLUGIN_DIR "${finalAttrs.passthru.alsaPluginDirectory}"
+      # Disable the in-app updater
+      --set HANDY_DISABLE_UPDATER 1
+      # Wayland text injection
+      --suffix PATH : ${
+        lib.makeBinPath [
+          wtype
+          dotool
+          wl-clipboard
+        ]
+      }
     )
   '';
 
@@ -199,6 +225,9 @@ rustPlatform.buildRustPackage (finalAttrs: {
     install_name_tool -add_rpath "${finalAttrs.env.ORT_LIB_LOCATION}" \
       "$out/Applications/Handy.app/Contents/MacOS/handy"
   '';
+
+  # HTTP tests bind local TCP listeners, which the Darwin sandbox blocks by default.
+  __darwinAllowLocalNetworking = true;
 
   preCheck = ''
     cd ${finalAttrs.cargoRoot}
@@ -246,9 +275,9 @@ rustPlatform.buildRustPackage (finalAttrs: {
 
       outputHash =
         {
-          "x86_64-linux" = "sha256-1jZBFvX9Ch3jNGPgSnOE8yNCXlHru7tcMJZ5uNZtE1g=";
-          "aarch64-linux" = "sha256-MsY2tOdBg11OMyQLRkLoVKxyrcqa0yVddfcYuIVWSxw=";
-          "aarch64-darwin" = "sha256-Fw0va7mq0F36qa15bDFVL01Q5pEprWhza78CzurLoLg=";
+          "x86_64-linux" = "sha256-2RCuoJpQeg3JN4JqlKvzO4KMz6n7rNXnsb9IyWt9law=";
+          "aarch64-linux" = "sha256-HY3VLb3jt6OwPe8Cai7udn9qb1U6XoSxM/cenALEykk=";
+          "aarch64-darwin" = "sha256-p1a02DsBfFzmwjq8GYaU4Z2IpbzLtkDOzLnrUk++KSw=";
         }
         .${stdenv.hostPlatform.system};
 
@@ -260,6 +289,13 @@ rustPlatform.buildRustPackage (finalAttrs: {
       paths = [
         "${pipewire}/lib/alsa-lib"
         "${alsa-plugins}/lib/alsa-lib"
+      ];
+    };
+
+    updateScript = nix-update-script {
+      extraArgs = [
+        "--subpackage"
+        "frontendDeps"
       ];
     };
   };
@@ -279,8 +315,8 @@ rustPlatform.buildRustPackage (finalAttrs: {
     maintainers = with lib.maintainers; [
       faukah
       philocalyst
+      structix
     ];
     platforms = with lib.platforms; linux ++ darwin;
-    badPlatforms = [ "x86_64-darwin" ]; # We weren't able to get hashes here
   };
 })

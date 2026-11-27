@@ -3,13 +3,13 @@
   lib,
   stdenv,
   fetchurl,
+  fetchpatch,
   gettext,
   meson,
   ninja,
   pkg-config,
   perl,
   python3,
-  python3Packages,
   libiconv,
   zlib,
   libffi,
@@ -23,9 +23,7 @@
   docutils,
   gi-docgen,
   # use util-linuxMinimal to avoid circular dependency (util-linux, systemd, glib)
-  util-linuxMinimal ? null,
-  # TODO: Clean up on `staging`.
-  llvmPackages,
+  util-linuxMinimal,
   buildPackages,
 
   # this is just for tests (not in the closure of any regular package)
@@ -44,8 +42,6 @@
     && lib.meta.availableOn stdenv.hostPlatform gobject-introspection
     && stdenv.hostPlatform.isLittleEndian == stdenv.buildPlatform.isLittleEndian,
 }:
-
-assert stdenv.hostPlatform.isLinux -> util-linuxMinimal != null;
 
 let
   glib-untested = glib.overrideAttrs { doCheck = false; };
@@ -80,11 +76,13 @@ let
     &&
       # dtrace support requires sys/sdt.h header
       lib.meta.availableOn stdenv.hostPlatform libsystemtap;
+
+  withSysprofCapture = !stdenv.hostPlatform.isWindows && !stdenv.hostPlatform.isFreeBSD;
 in
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "glib";
-  version = "2.88.1";
+  version = "2.90.1";
 
   outputs = [
     "bin"
@@ -97,7 +95,7 @@ stdenv.mkDerivation (finalAttrs: {
 
   src = fetchurl {
     url = "mirror://gnome/sources/glib/${lib.versions.majorMinor finalAttrs.version}/glib-${finalAttrs.version}.tar.xz";
-    hash = "sha256-UauATFb26rPlBFx3TRKQrF5Mkj1Pmj2OMxI77kXBhA4=";
+    hash = "sha256-k8lBqhfV6x1T/oODZfKai05TnCIqJW2XTsjzD8QT45Y=";
   };
 
   patches =
@@ -156,6 +154,16 @@ stdenv.mkDerivation (finalAttrs: {
       # and by default meson installs in to $out/share/gdb/auto-load
       # which does not help
       ./gdb_script.patch
+
+      # Fix buffer overflow in `g_unix_socket_address_to_native` causing the
+      # `glib:gdbus-server-auth` test to fail.
+      # Upstream issue: https://gitlab.gnome.org/GNOME/glib/-/work_items/4110
+      # Upstream PR: https://gitlab.gnome.org/GNOME/glib/-/merge_requests/5473
+      (fetchpatch {
+        name = "fix-gdbus-server-auth-test.patch";
+        url = "https://gitlab.gnome.org/GNOME/glib/-/commit/e0eb65127608e7935d6951a540520655e5e7b710.patch";
+        hash = "sha256-I/KY73uBfswdTs5gCIC622enQi/gmUERPPJpLR19Lks=";
+      })
     ];
 
   strictDeps = true;
@@ -163,7 +171,7 @@ stdenv.mkDerivation (finalAttrs: {
   buildInputs = [
     finalAttrs.setupHook
   ]
-  ++ lib.optionals (!stdenv.hostPlatform.isFreeBSD) [
+  ++ lib.optionals withSysprofCapture [
     libsysprof-capture
   ]
   ++ [
@@ -195,8 +203,6 @@ stdenv.mkDerivation (finalAttrs: {
     pkg-config
     perl
     python3
-    python3Packages.packaging # mostly used to make meson happy
-    python3Packages.wrapPython # for patchPythonScript
     gettext
     libxslt
   ]
@@ -209,10 +215,6 @@ stdenv.mkDerivation (finalAttrs: {
   ]
   ++ lib.optionals withDtrace [
     systemtap' # for dtrace
-  ]
-  # TODO: Clean up on `staging`.
-  ++ lib.optionals stdenv.hostPlatform.isDarwin [
-    llvmPackages.lld
   ];
 
   propagatedBuildInputs = [
@@ -239,13 +241,12 @@ stdenv.mkDerivation (finalAttrs: {
     # FIXME: Fails when linking target glib/tests/libconstructor-helper.so
     # relocation R_X86_64_32 against hidden symbol `__TMC_END__' can not be used when making a shared object
     "-Dtests=${lib.boolToString (!stdenv.hostPlatform.isStatic)}"
-  ]
-  ++ lib.optionals (!lib.meta.availableOn stdenv.hostPlatform elfutils) [
-    "-Dlibelf=disabled"
+    (lib.mesonEnable "libelf" (lib.meta.availableOn stdenv.hostPlatform elfutils))
+    # sysprof-capture does not build on Windows
+    (lib.mesonEnable "sysprof" withSysprofCapture)
   ]
   ++ lib.optionals stdenv.hostPlatform.isFreeBSD [
     "-Dxattr=false"
-    "-Dsysprof=disabled" # sysprof-capture does not build on FreeBSD
   ];
 
   env = {
@@ -256,13 +257,6 @@ stdenv.mkDerivation (finalAttrs: {
       "-DG_DISABLE_CAST_CHECKS"
     ];
     DETERMINISTIC_BUILD = 1;
-  }
-  // lib.optionalAttrs stdenv.hostPlatform.isDarwin {
-    # Work around ld64 hardening issue.
-    #
-    # TODO: Clean up on `staging`.
-    CC_LD = "lld";
-    OBJC_LD = "lld";
   };
 
   postPatch = ''
@@ -306,11 +300,6 @@ stdenv.mkDerivation (finalAttrs: {
     for i in $dev/bin/*; do
       moveToOutput "share/bash-completion/completions/''${i##*/}" "$dev"
     done
-  '';
-
-  preFixup = lib.optionalString (!stdenv.hostPlatform.isStatic) ''
-    buildPythonPath ${python3Packages.packaging}
-    patchPythonScript "$dev/share/glib-2.0/codegen/utils.py"
   '';
 
   # Move man pages to the same output as their binaries (needs to be
@@ -379,13 +368,13 @@ stdenv.mkDerivation (finalAttrs: {
     };
   };
 
+  __structuredAttrs = true;
+
   meta = {
     description = "C library of programming buildings blocks";
     homepage = "https://gitlab.gnome.org/GNOME/glib";
     license = lib.licenses.lgpl21Plus;
-    maintainers = with lib.maintainers; [
-      raskin
-    ];
+    identifiers.cpeParts = lib.meta.cpeFullVersionWithVendor "gnome" finalAttrs.version;
     teams = [ lib.teams.gnome ];
     pkgConfigModules = [
       "gio-2.0"

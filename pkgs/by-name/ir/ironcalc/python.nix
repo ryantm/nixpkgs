@@ -1,5 +1,5 @@
 {
-  python3,
+  python,
   buildPythonPackage,
   rustPlatform,
   pkg-config,
@@ -19,9 +19,6 @@ buildPythonPackage {
     cd bindings/python
   '';
 
-  strictDeps = true;
-  __structuredAttrs = true;
-
   cargoDeps = rustPlatform.fetchCargoVendor {
     inherit (ironcalc) src;
     hash = ironcalc.cargoHash;
@@ -29,7 +26,7 @@ buildPythonPackage {
 
   cargoRoot = "../..";
 
-  env.PYO3_PYTHON = "${python3}/bin/python3";
+  env.PYO3_PYTHON = "${python}/bin/python3";
 
   nativeBuildInputs = [
     rustPlatform.cargoSetupHook

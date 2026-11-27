@@ -11,26 +11,39 @@
   coreutils,
   curl,
   gawk,
+  nix,
   nix-prefetch-darcs,
   nix-prefetch-fossil,
   nix-prefetch-git,
   nix-prefetch-pijul,
   testers,
   nixtamal,
+  withTUI ? ocamlPackages ? console && stdenv.hostPlatform.parsed.cpu.bits >= 64,
 }:
 
-ocamlPackages.buildDunePackage (finalAttrs: {
+let
+  ocPkgs = ocamlPackages.overrideScope (
+    _: prev: {
+      jsont = prev.jsont.override {
+        withBrr = false;
+        withBytesrw = true;
+        withTypegist = false;
+      };
+    }
+  );
+in
+ocPkgs.buildDunePackage (finalAttrs: {
   pname = "nixtamal";
-  version = "1.9.0";
+  version = "3.1.0";
   release_year = 2026;
 
-  minimalOCamlVersion = "5.3";
+  minimalOCamlVersion = "5.4";
 
   src = fetchdarcs {
     url = "https://darcs.toastal.in.th/nixtamal/stable/";
     mirrors = [ "https://smeder.ee/~toastal/nixtamal.darcs" ];
     rev = finalAttrs.version;
-    hash = "sha256-Uybm9zTxIMFq82A4eCayeFCia/uW7HjhIquvO9LTfjE=";
+    hash = "sha256-AW9jcfnGM1Wi3bPKBfP8rZXjRAbwn8FIlue3SxgWGIA=";
   };
 
   nativeBuildInputs = [
@@ -38,50 +51,52 @@ ocamlPackages.buildDunePackage (finalAttrs: {
     removeReferencesTo
     installShellFiles
     # Compile-time preprocessing
-    ocamlPackages.ppx_deriving
+    ocPkgs.ppx_deriving
     # Completions
-    ocamlPackages.cmdliner
+    ocPkgs.cmdliner
     # For manpages
     python3Packages.docutils
     python3Packages.pygments
   ]
   ++ lib.optional stdenv.hostPlatform.isDarwin darwin.sigtool;
 
-  buildInputs = with ocamlPackages; [
+  buildInputs = with ocPkgs; [
     cmdliner
     fmt
   ];
 
-  propagatedBuildInputs = with ocamlPackages; [
-    camomile
-    eio
-    eio_main
-    jingoo
-    (jsont.override {
-      withBrr = false;
-      withBytesrw = true;
-    })
-    kdl
-    logs
-    saturn
-    stdint
-    xdg
+  propagatedBuildInputs =
+    (with ocPkgs; [
+      camomile
+      eio
+      eio_main
+      eio_posix
+      jingoo
+      (jsont.override {
+        withBrr = false;
+        withBytesrw = true;
+        withTypegist = false;
+      })
+      ppx_blob
+      kdl
+      logs
+      saturn
+      stdint
+      xdg
+    ])
+    ++ lib.optional withTUI ocPkgs.console;
+
+  nativeCheckInputs = [
+    nix
   ];
 
-  checkInputs = with ocamlPackages; [
+  checkInputs = with ocPkgs; [
     alcotest
     ppx_deriving_qcheck
     qcheck
     qcheck-alcotest
     qcheck-core
   ];
-
-  postPatch = ''
-    substituteInPlace bin/main.ml --subst-var version
-    substituteInPlace lib/lock_loader.ml --subst-var release_year
-  '';
-
-  doCheck = true;
 
   outputs = [
     "bin"
@@ -92,23 +107,33 @@ ocamlPackages.buildDunePackage (finalAttrs: {
     "out"
   ];
 
+  env = {
+    DUNE_CACHE = "disabled";
+  };
+
+  postPatch = ''
+    substituteInPlace bin/main.ml --subst-var version
+    substituteInPlace lib/lock_loader.ml --subst-var release_year
+  '';
+
+  doCheck = true;
+
   installPhase = ''
     runHook preInstall
 
     dune install \
        -j "$NIX_BUILD_CORES" \
-       --cache="disabled" \
        --prefix="$out" \
        --bindir="$bin/bin" \
        --datadir="$data/share" \
        --docdir="$doc/share/doc" \
        --mandir="$man/share/man" \
-       --libdir="$lib/lib/ocaml/${ocamlPackages.ocaml.version}/site-lib" \
+       --libdir="$lib/lib/ocaml/${ocPkgs.ocaml.version}/site-lib" \
        nixtamal
 
     cp -r "$src/meta" "$src/ncl" "$data/share"/*/
 
-    for dep in "${ocamlPackages.ocaml}" "${ocamlPackages.camomile}"; do
+    for dep in "${ocPkgs.ocaml}" "${ocPkgs.camomile}"; do
        remove-references-to -t "$dep" "$bin/bin/nixtamal"
     done
 
@@ -144,7 +169,7 @@ ocamlPackages.buildDunePackage (finalAttrs: {
   };
 
   meta = {
-    license = with lib.licenses; [ gpl3Plus ];
+    license = lib.licenses.gpl3Plus;
     platforms = lib.platforms.unix;
     mainProgram = "nixtamal";
     outputsToInstall = [
@@ -154,7 +179,7 @@ ocamlPackages.buildDunePackage (finalAttrs: {
       "man"
     ];
     homepage = "https://nixtamal.toast.al";
-    changelog = "https://nixtamal.toast.al/changelog/";
+    changelog = "https://nixtamal.toast.al/changelog/#${finalAttrs.version}";
     description = "Fulfilling input pinning for Nix";
     longDescription = ''
       • Automate the manual work of input pinning for dependency management
@@ -170,5 +195,6 @@ ocamlPackages.buildDunePackage (finalAttrs: {
       • No experimental Nix features required
     '';
     maintainers = with lib.maintainers; [ toastal ];
+    donationPage = "https://nixtamal.toast.al/funding/";
   };
 })

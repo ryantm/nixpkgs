@@ -19,8 +19,6 @@
   poppler,
   libspectre,
   libgxps,
-  webkitgtk_4_1,
-  mathjax,
   ninja,
   djvulibre,
   backends ? [
@@ -31,19 +29,18 @@
     "pixbuf"
     "comics"
     "xps"
-    "epub"
   ],
 }:
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "xreader";
-  version = "4.6.5";
+  version = "4.6.11";
 
   src = fetchFromGitHub {
     owner = "linuxmint";
     repo = "xreader";
     rev = finalAttrs.version;
-    hash = "sha256-wycQmScxuSlo6Ln6piSBF7kmzvi6FnTm/ES/Ds+/h8I=";
+    hash = "sha256-2MgSz8dS6TFyjf7eFJQyxz/+sxeZA3spKvaE6disFUo=";
   };
 
   nativeBuildInputs = [
@@ -57,8 +54,6 @@ stdenv.mkDerivation (finalAttrs: {
   ];
 
   mesonFlags = [
-    # FIXME: `MathJax.js` is only available in MathJax 2.7.x.
-    "-Dmathjax-directory=${mathjax}"
     "-Dintrospection=true"
   ]
   ++ (map (x: "-D${x}=true") backends);
@@ -74,8 +69,6 @@ stdenv.mkDerivation (finalAttrs: {
     poppler
     libspectre
     libgxps
-    webkitgtk_4_1
-    mathjax
     djvulibre
   ];
 

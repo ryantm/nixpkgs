@@ -9,14 +9,14 @@
 
 buildPythonPackage rec {
   pname = "ourgroceries";
-  version = "1.5.4";
+  version = "1.7.0";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "ljmerza";
     repo = "py-our-groceries";
     tag = version;
-    hash = "sha256-tlgctQvbR2YzM6Q1A/P1i40LSt4/2hsetlDeO07RBPE=";
+    hash = "sha256-+yBQhgXkS7VZNpIXhGFqad9w3hXbsSzIRJqbuHRqgdw=";
   };
 
   build-system = [ setuptools ];

@@ -11,10 +11,7 @@
   doxygen,
   dpkg,
   gettext,
-  gnutls,
   gtest,
-  libgcrypt,
-  libgpg-error,
   libseccomp,
   libtasn1,
   libxslt,
@@ -35,14 +32,14 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "apt";
-  version = "3.3.1";
+  version = "3.3.8";
 
   src = fetchFromGitLab {
     domain = "salsa.debian.org";
     owner = "apt-team";
     repo = "apt";
     rev = finalAttrs.version;
-    hash = "sha256-93DR4MfKuJ4sF1BHCZyyR04v+WIoEMBW+GvLy7OhuWk=";
+    hash = "sha256-VgoL87Tfb7klJOqOpmk2maXhHQDZb37wkFKI9W65tck=";
   };
 
   # cycle detection; lib can't be split
@@ -75,10 +72,7 @@ stdenv.mkDerivation (finalAttrs: {
     curl
     db
     dpkg
-    gnutls
     gtest
-    libgcrypt
-    libgpg-error
     libseccomp
     libtasn1
     lz4
@@ -96,10 +90,10 @@ stdenv.mkDerivation (finalAttrs: {
     (lib.cmakeOptionType "filepath" "BERKELEY_INCLUDE_DIRS" "${lib.getDev db}/include")
     (lib.cmakeOptionType "filepath" "DPKG_DATADIR" "${dpkg}/share/dpkg")
     (lib.cmakeOptionType "filepath" "DOCBOOK_XSL" "${docbook_xsl}/share/xml/docbook-xsl")
-    (lib.cmakeOptionType "filepath" "GNUTLS_INCLUDE_DIR" "${lib.getDev gnutls}/include")
     (lib.cmakeFeature "DROOT_GROUP" "root")
     (lib.cmakeBool "USE_NLS" withNLS)
     (lib.cmakeBool "WITH_DOC" withDocs)
+    (lib.cmakeBool "WITH_HEGEL_TESTS" false) # haskellPackages.hegel is broken as of writing
   ];
 
   passthru.updateScript = nix-update-script { };
@@ -108,7 +102,7 @@ stdenv.mkDerivation (finalAttrs: {
     homepage = "https://salsa.debian.org/apt-team/apt";
     description = "Command-line package management tools used on Debian-based systems";
     changelog = "https://salsa.debian.org/apt-team/apt/-/raw/${finalAttrs.version}/debian/changelog";
-    license = with lib.licenses; [ gpl2Plus ];
+    license = lib.licenses.gpl2Plus;
     mainProgram = "apt";
     maintainers = with lib.maintainers; [ VZstless ];
     platforms = lib.platforms.linux;

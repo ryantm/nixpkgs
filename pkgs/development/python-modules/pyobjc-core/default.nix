@@ -4,24 +4,21 @@
   fetchFromGitHub,
   lib,
   setuptools,
-
-  # TODO: Clean up on `staging`.
-  llvmPackages,
 }:
 
-buildPythonPackage rec {
+buildPythonPackage (finalAttrs: {
   pname = "pyobjc-core";
-  version = "11.1";
+  version = "13.1";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "ronaldoussoren";
     repo = "pyobjc";
-    tag = "v${version}";
-    hash = "sha256-2qPGJ/1hXf3k8AqVLr02fVIM9ziVG9NMrm3hN1de1Us=";
+    tag = "v${finalAttrs.version}";
+    hash = "sha256-V4dvsN0Cej604dhrsXLla2CRREc+OnrMhN+USSqdR4I=";
   };
 
-  sourceRoot = "${src.name}/pyobjc-core";
+  sourceRoot = "${finalAttrs.src.name}/pyobjc-core";
 
   build-system = [ setuptools ];
 
@@ -31,9 +28,6 @@ buildPythonPackage rec {
 
   nativeBuildInputs = [
     darwin.DarwinTools # sw_vers
-
-    # TODO: Clean up on `staging`.
-    llvmPackages.lld
   ];
 
   env.NIX_CFLAGS_COMPILE = toString [
@@ -41,9 +35,6 @@ buildPythonPackage rec {
     "-Wno-error=cast-function-type-mismatch"
     "-Wno-error=unused-command-line-argument"
   ];
-
-  # TODO: Clean up on `staging`.
-  env.NIX_CFLAGS_LINK = "-fuse-ld=lld";
 
   pythonImportsCheck = [ "objc" ];
 
@@ -54,4 +45,4 @@ buildPythonPackage rec {
     platforms = lib.platforms.darwin;
     maintainers = with lib.maintainers; [ samuela ];
   };
-}
+})

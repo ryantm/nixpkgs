@@ -2,32 +2,41 @@
   lib,
   rustPlatform,
   fetchFromGitHub,
+  pkg-config,
+  sqlite,
+  zstd,
   nixosTests,
   nix-update-script,
 }:
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "chhoto-url";
-  version = "7.4.10";
+  version = "7.11.7";
 
   src = fetchFromGitHub {
     owner = "SinTan1729";
     repo = "chhoto-url";
     tag = finalAttrs.version;
-    hash = "sha256-iZQFH+WoGu91DJT7X8FTs1qktf/SSrh6F9U4/OQWZiI=";
+    hash = "sha256-ZJLPZvelQZ47PuWF5a6AjmhTgwl9Z/xINJKSQBXi0Fs=";
     fetchLFS = true;
   };
 
   sourceRoot = "${finalAttrs.src.name}/backend";
 
   postPatch = ''
-    substituteInPlace src/{main.rs,services/get.rs,services/utils.rs} \
-      --replace-fail "./frontend/" "${placeholder "out"}/share/chhoto-url/frontend/"
-    substituteInPlace Cargo.toml \
-      --replace-fail 'rust-version = "1.96"' 'rust-version = "1.95"'
+    substituteInPlace src/utils.rs \
+      --replace-fail '("./frontend", "./frontend-final")' \
+        '("${placeholder "out"}/share/chhoto-url/frontend", "./frontend-final")'
   '';
 
-  cargoHash = "sha256-1q5WWNnqDILgDbd9Wztvm0pYDDtaufqOxixwHb4VifY=";
+  cargoHash = "sha256-AllA3dXFEDPlvVoGyGfKh5SdRQ/3lCOTNt9XpSnvFTI=";
+
+  nativeBuildInputs = [ pkg-config ];
+
+  buildInputs = [
+    sqlite
+    zstd
+  ];
 
   postInstall = ''
     mkdir -p $out/share/chhoto-url

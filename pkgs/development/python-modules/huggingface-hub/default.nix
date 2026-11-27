@@ -7,14 +7,14 @@
   setuptools,
 
   # dependencies
+  click,
   filelock,
   fsspec,
   hf-xet,
-  httpx,
+  httpx2,
   packaging,
   pyyaml,
   tqdm,
-  typer,
   typing-extensions,
 
   # optional-dependencies
@@ -28,48 +28,47 @@
   # gradio
   gradio,
   requests,
+  # oauth
+  authlib,
+  fastapi,
+  itsdangerous,
   # mcp
   mcp,
 
   # tests
   versionCheckHook,
+  writableTmpDirAsHomeHook,
 }:
 
 buildPythonPackage (finalAttrs: {
   pname = "huggingface-hub";
-  version = "1.10.2";
+  version = "2.4.0";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "huggingface";
     repo = "huggingface_hub";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-Q9N0QnxV8oJcxUsJzv4wX8Z6FkNdEfUH5BEVoZolsRY=";
+    hash = "sha256-EbKvIHuUUUcA24dfB4pFJlrAo6Q4WCIPbJps/KUZxXY=";
   };
 
   build-system = [ setuptools ];
 
   dependencies = [
+    click
     filelock
     fsspec
     hf-xet
-    httpx
+    httpx2
     packaging
     pyyaml
     tqdm
-    typer
     typing-extensions
   ];
 
   optional-dependencies = {
     all = [
-
     ];
-    torch = [
-      torch
-      safetensors
-    ]
-    ++ safetensors.optional-dependencies.torch;
     fastai = [
       toml
       fastai
@@ -85,14 +84,31 @@ buildPythonPackage (finalAttrs: {
     mcp = [
       mcp
     ];
+    oauth = [
+      authlib
+      fastapi
+      itsdangerous
+    ];
+    torch = [
+      torch
+      safetensors
+    ]
+    ++ safetensors.optional-dependencies.torch;
   };
 
   nativeCheckInputs = [
     versionCheckHook
+    writableTmpDirAsHomeHook
   ];
+  versionCheckKeepEnvironment = [ "HOME" ];
   versionCheckProgramArg = "version";
 
   pythonImportsCheck = [ "huggingface_hub" ];
+
+  passthru = {
+    # bulk updater uses wrong tag
+    skipBulkUpdate = true;
+  };
 
   meta = {
     description = "Download and publish models and other files on the huggingface.co hub";

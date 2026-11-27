@@ -6,17 +6,17 @@
 
 python3Packages.buildPythonApplication (finalAttrs: {
   pname = "pgsrip";
-  version = "0.1.12";
+  version = "0.3.0";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "ratoaq2";
     repo = "pgsrip";
     tag = finalAttrs.version;
-    hash = "sha256-8UzElhMdhjZERdogtAbkcfw67blk9lOTQ09vjF5SXm4=";
+    hash = "sha256-tv5Fd6B9Fni7LEXmnZ0D14pfbOOlkO286N9848Xq80I=";
   };
 
-  build-system = [ python3Packages.poetry-core ];
+  build-system = with python3Packages; [ hatchling ];
 
   dependencies = with python3Packages; [
     babelfish
@@ -30,16 +30,23 @@ python3Packages.buildPythonApplication (finalAttrs: {
     trakit
   ];
 
-  pythonRelaxDeps = [
-    "click"
-    "opencv-python"
-    "setuptools"
+  __darwinAllowLocalNetworking = true;
+
+  nativeCheckInputs = with python3Packages; [
+    pytestCheckHook
   ];
+
+  disabledTests = [
+    # fails to find the `git` dir, which is removed by the fetcher
+    "test_repository_knowledge_is_consistent"
+  ];
+
+  pythonImportsCheck = [ "pgsrip" ];
 
   meta = {
     description = "Rip your PGS subtitles";
     homepage = "https://github.com/ratoaq2/pgsrip";
-    changelog = "https://github.com/ratoaq2/pgsrip/blob/${finalAttrs.src.tag}/CHANGELOG.md";
+    changelog = "https://github.com/ratoaq2/pgsrip/blob/${finalAttrs.src.rev}/CHANGELOG.md";
     license = lib.licenses.mit;
     maintainers = with lib.maintainers; [ eljamm ];
     mainProgram = "pgsrip";

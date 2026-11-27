@@ -11,7 +11,10 @@
   nixosTests,
 
   defaultGemConfig,
-  ruby_3_3,
+  ruby_3_4,
+  pkg-config,
+  oniguruma,
+  fetchzip,
   gzip,
   gnutar,
   git,
@@ -39,7 +42,7 @@
   buildRubyGem,
   rustc,
   cargo,
-  pnpm_10,
+  pnpm_12,
   fetchPnpmDeps,
   pnpmConfigHook,
   svgo,
@@ -53,18 +56,18 @@
 }:
 
 let
-  version = "2026.1.4";
+  version = "2026.10.2";
 
   src = fetchFromGitHub {
     owner = "discourse";
     repo = "discourse";
-    rev = "v${version}";
-    sha256 = "sha256-kQYDKZIMsWByuCZQfUlwhoIew5QykVylRMh6xvrHIBY=";
+    tag = "v${version}";
+    hash = "sha256-MhNm5htlCXXO/oCKzyr2EZxXQczqsWhjtM0KUcJ/S1Q=";
   };
 
-  pnpm = pnpm_10;
+  pnpm = pnpm_12;
 
-  ruby = ruby_3_3;
+  ruby = ruby_3_4;
 
   runtimeDeps = [
     # For backups, themes and assets
@@ -98,6 +101,7 @@ let
   runtimeEnv = {
     HOME = "/run/discourse/home";
     RAILS_ENV = "production";
+    RAILS_LOG_TO_STDOUT = "1";
     UNICORN_LISTENER = "/run/discourse/sockets/unicorn.sock";
   };
 
@@ -176,128 +180,175 @@ let
             --chdir '${discourse}/share/discourse'
       '';
 
-  rubyEnv = bundlerEnv {
-    name = "discourse-ruby-env-${version}";
-    inherit version ruby;
-    gemdir = ./rubyEnv;
-    gemset = import ./rubyEnv/gemset.nix;
-    gemConfig = defaultGemConfig // {
-      mini_racer = attrs: {
-        buildInputs = [ icu ];
-        dontBuild = false;
-        NIX_LDFLAGS = "-licui18n";
+  rubyEnv =
+    let
+      # these hashes are auto-updated by update.py
+      dart-x64-hash = "sha256-pNK3ekjTYP/FCInhtb5uxDBDP/yA79fnE76avxoHt9k=";
+      dart-arm64-hash = "sha256-B6OWLvW7dM6DIeO5A6WbpQ0IHJca54HZCRLyAn2XKK0=";
+    in
+    bundlerEnv rec {
+      name = "discourse-ruby-env-${version}";
+      inherit version ruby;
+      gemdir = ./rubyEnv;
+      gemset = import (gemdir + "/gemset.nix") src;
+      passthru = {
+        # these MUST be passthru'd for update.py to function correctly (to update dart-dart-x64-hash and dart-arm64-hash)
+        inherit dart-x64-hash dart-arm64-hash gemset;
       };
-      libv8-node =
-        attrs:
-        let
-          noopScript = writeShellScript "noop" "exit 0";
-          linkFiles = writeShellScript "link-files" ''
-            cd ../..
-
-            mkdir -p vendor/v8/${stdenv.hostPlatform.system}/libv8/obj/
-            ln -s "${nodejs-slim_22.libv8}/lib/libv8.a" vendor/v8/${stdenv.hostPlatform.system}/libv8/obj/libv8_monolith.a
-
-            ln -s ${nodejs-slim_22.libv8}/include vendor/v8/include
-
-            mkdir -p ext/libv8-node
-            echo '--- !ruby/object:Libv8::Node::Location::Vendor {}' >ext/libv8-node/.location.yml
-          '';
-        in
-        {
+      gemConfig = defaultGemConfig // {
+        mini_racer = attrs: {
+          buildInputs = [ icu ];
           dontBuild = false;
+          NIX_LDFLAGS = "-licui18n";
+        };
+        libv8-node =
+          attrs:
+          let
+            noopScript = writeShellScript "noop" "exit 0";
+            linkFiles = writeShellScript "link-files" ''
+              cd ../..
+
+              mkdir -p vendor/v8/${stdenv.hostPlatform.system}/libv8/obj/
+              ln -s "${nodejs-slim_22.libv8}/lib/libv8.a" vendor/v8/${stdenv.hostPlatform.system}/libv8/obj/libv8_monolith.a
+
+              ln -s ${nodejs-slim_22.libv8}/include vendor/v8/include
+
+              mkdir -p ext/libv8-node
+              echo '--- !ruby/object:Libv8::Node::Location::Vendor {}' >ext/libv8-node/.location.yml
+            '';
+          in
+          {
+            dontBuild = false;
+            postPatch = ''
+              cp ${noopScript} libexec/build-libv8
+              cp ${noopScript} libexec/build-monolith
+              cp ${noopScript} libexec/download-node
+              cp ${noopScript} libexec/extract-node
+              cp ${linkFiles} libexec/inject-libv8
+            '';
+          };
+        mini_suffix = attrs: {
+          propagatedBuildInputs = [ libpsl ];
+          dontBuild = false;
+          # Use our libpsl instead of the vendored one, which isn't
+          # available for aarch64. It has to be called
+          # libpsl.x86_64.so or it isn't found.
           postPatch = ''
-            cp ${noopScript} libexec/build-libv8
-            cp ${noopScript} libexec/build-monolith
-            cp ${noopScript} libexec/download-node
-            cp ${noopScript} libexec/extract-node
-            cp ${linkFiles} libexec/inject-libv8
+            cp $(readlink -f ${lib.getLib libpsl}/lib/libpsl.so) vendor/libpsl.x86_64.so
           '';
         };
-      mini_suffix = attrs: {
-        propagatedBuildInputs = [ libpsl ];
-        dontBuild = false;
-        # Use our libpsl instead of the vendored one, which isn't
-        # available for aarch64. It has to be called
-        # libpsl.x86_64.so or it isn't found.
-        postPatch = ''
-          cp $(readlink -f ${lib.getLib libpsl}/lib/libpsl.so) vendor/libpsl.x86_64.so
-        '';
-      };
-      tokenizers = attrs: {
-        cargoDeps = rustPlatform.fetchCargoVendor {
-          inherit (buildRubyGem { inherit (attrs) gemName version source; })
-            name
-            src
-            unpackPhase
-            nativeBuildInputs
-            ;
-          hash = "sha256-Yxcerq4Wil1nrEzHoEmsTAj4VnUmrwRlA3WO2b72yOc=";
+        tokenizers = attrs: {
+          cargoDeps = rustPlatform.fetchCargoVendor {
+            inherit (buildRubyGem { inherit (attrs) gemName version source; })
+              name
+              src
+              unpackPhase
+              nativeBuildInputs
+              ;
+            hash = "sha256-BWOnHSgEkhK1yYcQIYMbGz8HyATuQ8tFk8QzoNiuML8=";
+          };
+
+          dontBuild = false;
+
+          nativeBuildInputs = [
+            cargo
+            rustc
+            pkg-config
+            rustPlatform.cargoSetupHook
+            rustPlatform.bindgenHook
+          ];
+
+          buildInputs = [
+            oniguruma
+          ];
+
+          disallowedReferences = [
+            rustc.unwrapped
+          ];
+
+          preInstall = ''
+            export CARGO_HOME="$PWD/../.cargo/"
+          '';
+
+          postInstall = ''
+            find $out -type f -name .rustc_info.json -delete
+          '';
         };
+        tiktoken_ruby = attrs: {
+          cargoDeps = rustPlatform.fetchCargoVendor {
+            inherit (buildRubyGem { inherit (attrs) gemName version source; })
+              name
+              src
+              unpackPhase
+              nativeBuildInputs
+              ;
+            hash = "sha256-2OITwITCGoAIahIXpemWP38iFGSlrycUV319pmdD1dY=";
+          };
 
-        dontBuild = false;
+          dontBuild = false;
 
-        nativeBuildInputs = [
-          cargo
-          rustc
-          rustPlatform.cargoSetupHook
-          rustPlatform.bindgenHook
-        ];
+          nativeBuildInputs = [
+            cargo
+            rustc
+            rustPlatform.cargoSetupHook
+            rustPlatform.bindgenHook
+          ];
 
-        disallowedReferences = [
-          rustc.unwrapped
-        ];
+          disallowedReferences = [
+            rustc.unwrapped
+          ];
 
-        preInstall = ''
-          export CARGO_HOME="$PWD/../.cargo/"
-        '';
+          preInstall = ''
+            export CARGO_HOME="$PWD/../.cargo/"
+          '';
 
-        postInstall = ''
-          find $out -type f -name .rustc_info.json -delete
-        '';
-      };
-      tiktoken_ruby = attrs: {
-        cargoDeps = rustPlatform.fetchCargoVendor {
-          inherit (buildRubyGem { inherit (attrs) gemName version source; })
-            name
-            src
-            unpackPhase
-            nativeBuildInputs
-            ;
-          hash = "sha256-zyGK+XJpMls6w0Uydegqsj4TH4IrVxANm0qmpR7+95I=";
+          postInstall = ''
+            #ls $GEM_HOME/gems/${attrs.gemName}-${attrs.version}/lib
+            #mv -v $GEM_HOME/gems/${attrs.gemName}-${attrs.version}/lib/{glfm_markdown/glfm_markdown.so,}
+            find $out -type f -name .rustc_info.json -delete
+          '';
         };
-
-        dontBuild = false;
-
-        nativeBuildInputs = [
-          cargo
-          rustc
-          rustPlatform.cargoSetupHook
-          rustPlatform.bindgenHook
-        ];
-
-        disallowedReferences = [
-          rustc.unwrapped
-        ];
-
-        preInstall = ''
-          export CARGO_HOME="$PWD/../.cargo/"
-        '';
-
-        postInstall = ''
-          #ls $GEM_HOME/gems/${attrs.gemName}-${attrs.version}/lib
-          #mv -v $GEM_HOME/gems/${attrs.gemName}-${attrs.version}/lib/{glfm_markdown/glfm_markdown.so,}
-          find $out -type f -name .rustc_info.json -delete
-        '';
+        sass-embedded = attrs: {
+          # pre-download dart sass with the version matching sass-embedded. this is the same behavior as sass-embedded does internally
+          # but packages don't get internet access during build so it can't do it itself
+          env =
+            let
+              system-code =
+                if stdenv.system == "x86_64-linux" then
+                  "linux-x64"
+                else if stdenv.system == "aarch64-linux" then
+                  "linux-arm64"
+                else
+                  "unsupported-system-triple-download-will-fail";
+              hash =
+                if stdenv.system == "x86_64-linux" then
+                  dart-x64-hash
+                else if stdenv.system == "aarch64-linux" then
+                  dart-arm64-hash
+                else
+                  "unsupported-system";
+            in
+            attrs.env or { }
+            // {
+              DART_SASS_VENDORED = fetchzip {
+                inherit hash;
+                url = "https://github.com/sass/dart-sass/releases/download/${attrs.version}/dart-sass-${attrs.version}-${system-code}.tar.gz";
+              };
+            };
+          dontBuild = false;
+          patches = [
+            ./sass_embedded_vendored_dart_sass.patch
+          ];
+        };
       };
+
+      groups = [
+        "default"
+        "assets"
+        "development"
+        "test"
+      ];
     };
-
-    groups = [
-      "default"
-      "assets"
-      "development"
-      "test"
-    ];
-  };
 
   assets = stdenv.mkDerivation {
     pname = "discourse-assets";
@@ -306,8 +357,8 @@ let
     pnpmDeps = fetchPnpmDeps {
       pname = "discourse-assets";
       inherit version src pnpm;
-      fetcherVersion = 3;
-      hash = "sha256-xft/2x0iti0yJ53uI9q2+FSvKgWWfKQzlMlPFz3RZsE=";
+      fetcherVersion = 4;
+      hash = "sha256-gi0mf6NtwhjeDE7zb5inCUg28V+bcbqq7AfuNWCOOYI=";
     };
 
     nativeBuildInputs = runtimeDeps ++ [
@@ -326,7 +377,7 @@ let
 
     outputs = [
       "out"
-      "node_modules"
+      "runtime_node_modules"
       "generated"
       "frontend"
     ];
@@ -345,10 +396,16 @@ let
       # assets precompilation task.
       ./assets_rake_command.patch
 
-      # Little does he know, so he decided there is no need to generate the
-      # theme-transpiler over and over again. Which at the same time allows the removal
-      # of javascript devDependencies from the runtime environment.
-      ./prebuild-asset-processor.patch
+      # Because the required dependencies to execute the build at runtime don't exist, and
+      # because we fail to copy tmp/ (the default directory where the asset processor is cached,
+      # see notes in the discourse `installPhase`) we need to change the directory to something under
+      # frontend/ which is moved over as expected.
+      ./include-precompiled-bundles.patch
+
+      # safe_exec.rb, which is used to execute ImageMagick among other things, restricts executable paths to standard FHS paths
+      # which breaks on nix. this patch adds the entire /nix/store to allowed paths, which is sub-optimal but
+      # still provides some benifits over disabling entirely.
+      ./safe-exec-from-nix-store.patch
     ];
 
     env.RAILS_ENV = "production";
@@ -398,6 +455,8 @@ let
       runHook preBuild
 
       patchShebangs script/
+      patchShebangs bin/
+      node script/copy_vendored_assets.mjs
       bundle exec rake assets:precompile
 
       runHook postBuild
@@ -408,18 +467,19 @@ let
 
       mv public/assets $out
 
-      mv node_modules $node_modules
+      # https://github.com/discourse/discourse/blob/v2026.10.2/.github/workflows/tests.yml#L294-L297
+      # cleanup node_modules the same way as discourse does it. This removes broken symlinks.
+      find . -name node_modules -type d -prune -not -path './tmp/*' -print0 | xargs -0 rm -rf
+      mv vendor/runtime_node_modules $runtime_node_modules
 
       mv app/assets/generated $generated
       mv frontend $frontend
 
       runHook postInstall
     '';
-
-    # The node_modules output by design has broken symlinks, as it refers to the source code.
-    # They are resolved in the primary discourse derivation.
-    dontCheckForBrokenSymlinks = true;
   };
+
+  voiceAssets = rubyEnv.gems.discourse_voice_assets;
 
   discourse = stdenv.mkDerivation {
     pname = "discourse";
@@ -441,10 +501,6 @@ let
       # Add the path to the CA cert bundle to make TLS work
       ./action_mailer_ca_cert.patch
 
-      # Log Unicorn messages to the journal and make request timeout
-      # configurable
-      ./unicorn_logging_and_timeout.patch
-
       # Use the Ruby API version in the plugin gem path, to match the
       # one constructed by bundlerEnv
       ./plugin_gem_api_version.patch
@@ -457,14 +513,33 @@ let
       # Make sure the notification email setting applies
       ./notification_email.patch
 
-      # Little does he know, so he decided there is no need to generate the
-      # theme-transpiler over and over again. Which at the same time allows the removal
-      # of javascript devDependencies from the runtime environment.
-      ./prebuild-asset-processor.patch
+      # Because the required dependencies to execute the build at runtime don't exist, and
+      # because we fail to copy tmp/ (the default directory where the asset processor is cached,
+      # see notes in the discourse `installPhase`) we need to change the directory to something under
+      # frontend/ which is moved over as expected.
+      ./include-precompiled-bundles.patch
+
+      # safe_exec.rb, which is used to execute ImageMagick among other things, restricts executable paths to standard FHS paths
+      # which breaks on nix. this patch adds the entire /nix/store to allowed paths, which is sub-optimal but
+      # still provides some benifits over disabling entirely.
+      ./safe-exec-from-nix-store.patch
 
       # Our app/assets/generated folder is a symlink, but the ruby File.mkdir_p doesn't allow
       # a symlink in the way to the last directory. This patch explicitly resolves the symlink.
       ./resolve_generated_assets_symlink.patch
+
+      # in the imagemagick sandbox, symlinks permissions are checked (as you would hope) but this causes other problems..
+      ./optimize-image-fix.patch
+
+      # Skip live plugin asset symlink removal/recreation at runtime.
+      ./live-plugin-assets.patch
+
+      # Change the location of the vips worker socket to
+      # /run/discourse/sockets/vips.sock because otherwise it tries to allocate
+      # it in the Nix store, which exceeds the maximum length (108 bytes) for
+      # UNIX socket path. Also prevents the code that spawn the socket from
+      # restricting permissions to the sockets directory
+      ./vips-socket-path.patch
     ];
 
     postPatch = ''
@@ -494,18 +569,29 @@ let
       cp -r . $out/share/discourse
       rm -r $out/share/discourse/log
       ln -sf /var/log/discourse $out/share/discourse/log
+      # we don't copy `tmp` from ${assets}, which means that any pre-cached content will be re-generated later
+      # however, we also can't copy `tmp` because then it would not be writeable by discourse, which it must be
+      # and we can't write to /var/lib/discourse/tmp, because you can't do that in a build. this sucks.
       ln -sf /var/lib/discourse/tmp $out/share/discourse/tmp
       ln -sf /run/discourse/config $out/share/discourse/config
       ln -sf /run/discourse/public $out/share/discourse/public
       ln -sf /run/discourse/assets-generated $out/share/discourse/app/assets/generated
-      ln -sf ${assets.node_modules} $out/share/discourse/node_modules
+      ln -sf ${assets.runtime_node_modules} $out/share/discourse/vendor/runtime_node_modules
       ln -sf ${assets} $out/share/discourse/public.dist/assets
-      # This needs to be copied because it contains symlinks to node_modules
+      # Discourse doesn't like when this is a symlink.
       rm -r $out/share/discourse/frontend
       cp -r ${assets.frontend} $out/share/discourse/frontend
       ${lib.concatMapStringsSep "\n" (
         p: "ln -sf ${p} $out/share/discourse/plugins/${p.pluginName or ""}"
       ) plugins}
+
+      # The voice plugin creates its asset symlink below its source tree. That
+      # works during the asset build, but the package source tree is read-only
+      # at runtime..
+      mkdir -p $out/share/discourse/plugins/live/public/javascripts
+      ln -sf \
+        ${voiceAssets}/lib/ruby/gems/${rubyEnv.ruby.version.libDir}/gems/discourse_voice_assets-${voiceAssets.version}/vendor \
+        $out/share/discourse/plugins/live/public/javascripts/${voiceAssets.version}
 
       runHook postInstall
     '';
@@ -534,7 +620,10 @@ let
     };
     meta = {
       homepage = "https://www.discourse.org/";
-      platforms = lib.platforms.linux;
+      platforms = [
+        "x86_64-linux"
+        "aarch64-linux"
+      ];
       maintainers = with lib.maintainers; [
         leona
         talyz

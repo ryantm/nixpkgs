@@ -11,11 +11,11 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "lbreakouthd";
-  version = "1.2.2";
+  version = "1.2.4";
 
   src = fetchurl {
     url = "mirror://sourceforge/lgames/lbreakouthd-${finalAttrs.version}.tar.gz";
-    hash = "sha256-b3zLZJ8lsPNK65d0NjwlP49/xAqaFUOw8dONGkuBpN4=";
+    hash = "sha256-RzLDhSugAw/symVolZGsWCyGr0axohsnRkD/xs2PyCY=";
   };
 
   # On macOS with a case-insensitive filesystem, "sdl.h" shadows <SDL.h>

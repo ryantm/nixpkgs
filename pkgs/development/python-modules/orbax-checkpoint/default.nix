@@ -27,6 +27,7 @@
   # tests
   aiosqlite,
   chex,
+  cloudpickle,
   fastapi,
   google-cloud-logging,
   greenlet,
@@ -42,15 +43,14 @@
 
 buildPythonPackage (finalAttrs: {
   pname = "orbax-checkpoint";
-  version = "0.12.1";
+  version = "0.12.11";
   pyproject = true;
-  __structuredAttrs = true;
 
   src = fetchFromGitHub {
     owner = "google";
     repo = "orbax";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-yE8M8f2c+4lTL56LrS57vU/MMM3NgYCZOuHZWbdODh0=";
+    hash = "sha256-xeTZKIen7rze0VjbhQs2oeKoi1QYleuMZZ7sH+LSfRE=";
   };
 
   sourceRoot = "${finalAttrs.src.name}/checkpoint";
@@ -75,11 +75,13 @@ buildPythonPackage (finalAttrs: {
     uvloop
   ]
   ++ etils.optional-dependencies.epath
+  ++ etils.optional-dependencies.epath-gcs
   ++ etils.optional-dependencies.epy;
 
   nativeCheckInputs = [
     aiosqlite
     chex
+    cloudpickle
     fastapi
     google-cloud-logging
     greenlet
@@ -126,12 +128,19 @@ buildPythonPackage (finalAttrs: {
     "test_memory_size"
     "test_number_of_broadcasts"
     "test_tree_memory_per_device"
+
+    # ValueError: cannot reshape array of size 1 into shape (2,0)
+    "CopyDeviceArraysForAsyncTransferTest"
+    "test_balance_arrays_across_replicas_rejects_local_checkpointing"
   ]
   ++ lib.optionals stdenv.hostPlatform.isDarwin [
     # Probably failing because of a filesystem impurity
     # self.assertFalse(os.path.exists(dst_dir))
     # AssertionError: True is not false
     "test_create_snapshot"
+
+    # AssertionError: Expected 'BasePyTreeCheckpointHandler' to have been called.
+    "test_memory_options_propagation"
   ];
 
   disabledTestPaths = [
@@ -178,6 +187,13 @@ buildPythonPackage (finalAttrs: {
     # which is not the same as the test file we want to collect:
     #   /build/source/checkpoint/orbax/checkpoint/experimental/v1/_src/metadata/serialization_test.py
     "orbax/checkpoint/experimental/v1/_src/metadata/serialization_test.py"
+
+    # import file mismatch:
+    # imported module 'deletion_test' has this __file__ attribute:
+    #   /build/source/checkpoint/orbax/checkpoint/experimental/v1/_src/deletion/deletion_test.py
+    # which is not the same as the test file we want to collect:
+    #   /build/source/checkpoint/orbax/checkpoint/experimental/v1/_src/training/deletion_test.py
+    "orbax/checkpoint/experimental/v1/_src/training/deletion_test.py"
 
     # E   FileNotFoundError: [Errno 2] No such file or directory:
     # '/build/absl_testing/DefaultSnapshotTest/runTest/root/path/to/source/data.txt'

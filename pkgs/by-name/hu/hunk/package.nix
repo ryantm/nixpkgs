@@ -5,18 +5,20 @@
   fetchFromGitHub,
   nix-update-script,
   versionCheckHook,
+  installAgentSkills,
+  installShellFiles,
   writableTmpDirAsHomeHook,
 }:
 
 let
   pname = "hunk";
-  version = "0.17.0";
+  version = "0.25.0";
 
   src = fetchFromGitHub {
     owner = "modem-dev";
     repo = "hunk";
     tag = "v${version}";
-    hash = "sha256-FlwCtcu2JRECyKC1balItY/DmQyb+obh+97wo7+06DU=";
+    hash = "sha256-aa1oxfN/310nNKnurTyKh5RsaFmgEOKf5n2DFm0vtKk=";
   };
 
   node_modules = stdenv.mkDerivation {
@@ -56,7 +58,7 @@ let
 
     dontFixup = true;
 
-    outputHash = "sha256-LkOAWScuNPx9/KOcG110ngLz0QmB4/S3VxIAb3EIH7I=";
+    outputHash = "sha256-M8JKWWwMSUaGkGO6n4Piqo2mNXgzicqb4pC1IqQAf04=";
     outputHashMode = "recursive";
   };
 in
@@ -68,6 +70,8 @@ stdenv.mkDerivation {
 
   nativeBuildInputs = [
     bun
+    installAgentSkills
+    installShellFiles
     writableTmpDirAsHomeHook
   ];
 
@@ -84,25 +88,31 @@ stdenv.mkDerivation {
   buildPhase = ''
     runHook preBuild
 
+    # Entry points mirror upstream's scripts/build/build-bin.ts.
     mkdir -p .bun-tmp .bun-install
     BUN_TMPDIR=$PWD/.bun-tmp \
     BUN_INSTALL=$PWD/.bun-install \
       bun build --compile \
         --no-compile-autoload-bunfig \
         --no-compile-autoload-dotenv \
-        src/main.tsx \
+        packages/hunk/src/main.tsx \
+        packages/hunk/src/highlightWorkerEntry.ts \
         --outfile hunk
 
     runHook postBuild
   '';
 
+  dontInstallAgentSkills = true;
   installPhase = ''
     runHook preInstall
 
-    install -Dm755 hunk $out/bin/hunk
-    mkdir -p $out/share/hunk
-    cp -R skills $out/share/hunk/skills
-    ln -s share/hunk/skills $out/skills
+    installBin hunk
+    for skill in packages/hunk/skills/*; do
+      installSkill "$skill"
+    done
+
+    # `hunk skill path` looks for skills/<name>/SKILL.md above the executable.
+    ln -s share/skills/${pname} $out/skills
 
     runHook postInstall
   '';
@@ -120,8 +130,8 @@ stdenv.mkDerivation {
   installCheckPhase = ''
     runHook preInstallCheck
 
-    $out/bin/hunk --version | grep -F ${version}
-    test -f "$($out/bin/hunk skill path)"
+    cmp "$out/share/skills/${pname}/hunk-review/SKILL.md" "$($out/bin/hunk skill path)"
+    cmp "$out/share/skills/${pname}/hunk-extensions/SKILL.md" "$($out/bin/hunk skill path hunk-extensions)"
 
     runHook postInstallCheck
   '';

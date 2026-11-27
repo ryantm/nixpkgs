@@ -8,16 +8,16 @@
 
 buildGoModule (finalAttrs: {
   pname = "resterm";
-  version = "0.44.6";
+  version = "1.18.2";
 
   src = fetchFromGitHub {
     owner = "unkn0wn-root";
     repo = "resterm";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-J8lvI5h3K7Ny8jkoBBLJX4qCSHkByDGWKHxDkVjAzUI=";
+    hash = "sha256-59AQWzNrGgcW1AZlCav0Y8mMxkrxROXVichQiuwYdGE=";
   };
 
-  vendorHash = "sha256-AjckKD6NScBa8w9nWMdVExuNadz3vHnK854XXg3nj84=";
+  vendorHash = "sha256-zkMcKNQPjM6IlnkttYfCwLhttVV9d56/DPN03JUen8E=";
 
   # modernc.org/libc (via modernc.org/sqlite) tries to read /etc/protocols
   modPostBuild = ''
@@ -26,6 +26,9 @@ buildGoModule (finalAttrs: {
   '';
 
   subPackages = [ "cmd/resterm" ];
+
+  # for tests binding 127.0.0.1:0 on darwin
+  __darwinAllowLocalNetworking = true;
 
   ldflags = [
     "-s"

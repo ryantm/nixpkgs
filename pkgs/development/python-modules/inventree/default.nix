@@ -7,10 +7,8 @@
   setuptools,
 
   # dependencies
-  coveralls,
-  invoke,
-  pillow,
   requests,
+  urllib3,
 
   # tests
   pytestCheckHook,
@@ -20,7 +18,6 @@ buildPythonPackage (finalAttrs: {
   pname = "inventree";
   version = "0.23.2";
   pyproject = true;
-  __structuredAttrs = true;
 
   src = fetchFromGitHub {
     owner = "inventree";
@@ -34,10 +31,8 @@ buildPythonPackage (finalAttrs: {
   ];
 
   dependencies = [
-    coveralls
-    invoke
-    pillow
     requests
+    urllib3
   ];
 
   nativeCheckInputs = [ pytestCheckHook ];

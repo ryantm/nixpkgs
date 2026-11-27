@@ -1,15 +1,14 @@
 {
   lib,
   copyDesktopItems,
-  electron_41,
+  electron_45,
   fetchFromGitHub,
   deltachat-rpc-server,
-  deltachat-tauri,
   makeDesktopItem,
   makeWrapper,
   nodejs,
   pkg-config,
-  pnpm_10,
+  pnpm_11,
   fetchPnpmDeps,
   pnpmConfigHook,
   python3,
@@ -22,38 +21,38 @@
 
 let
   deltachat-rpc-server' = deltachat-rpc-server.overrideAttrs rec {
-    version = "2.53.0";
+    version = "2.69.0";
     src = fetchFromGitHub {
       owner = "chatmail";
       repo = "core";
       tag = "v${version}";
-      hash = "sha256-W2Yh5+6MaJ47GqJioGKge2J3RetGGTcl+0YxPPlSdDo=";
+      hash = "sha256-clMsgJ0Qq4SI3hXwbl0mHMd7+lir9n624DR/ThteC9A=";
     };
     cargoDeps = rustPlatform.fetchCargoVendor {
       pname = "chatmail-core";
       inherit version src;
-      hash = "sha256-aoPc5XvjwwuA9aOTvIOpTm15wozC9glJGqn3vPqsJF4=";
+      hash = "sha256-g0V81l7FQFyQloHJ3hQAp3p+2QPjbIa/zBJEarrPU4g=";
     };
   };
-  electron = electron_41;
+  electron = electron_45;
 in
 stdenv.mkDerivation (finalAttrs: {
   pname = "deltachat-desktop";
-  version = "2.53.1";
+  version = "2.69.1";
   __structuredAttrs = true;
 
   src = fetchFromGitHub {
     owner = "deltachat";
     repo = "deltachat-desktop";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-UJ6005PeQBiL9Inj/VRZjgxZtR278Ky2RcD5MywcGD8=";
+    hash = "sha256-XAHOFCQGkTBsuWTGimxyIU1BAKo44myvj+0jYNPkezQ=";
   };
 
   pnpmDeps = fetchPnpmDeps {
     inherit (finalAttrs) pname version src;
-    pnpm = pnpm_10;
+    pnpm = pnpm_11;
     fetcherVersion = 4;
-    hash = "sha256-t5OHx1GCaTIgGo9193Z3Kkl+jHCBIgtRypcUaO6By3I=";
+    hash = "sha256-hWv0PnU/4qM3/u1XkCSNHu77+pgIOkx9L/f9U8e5Ugw=";
   };
 
   strictDeps = true;
@@ -64,7 +63,7 @@ stdenv.mkDerivation (finalAttrs: {
     nodejs
     pkg-config
     pnpmConfigHook
-    pnpm_10
+    pnpm_11
     python3
   ]
   ++ lib.optionals stdenv.hostPlatform.isLinux [
@@ -136,7 +135,7 @@ stdenv.mkDerivation (finalAttrs: {
       "InstantMessaging"
       "Chat"
     ];
-    startupWMClass = "DeltaChat";
+    startupWMClass = "deltachat-desktop";
     mimeTypes = [
       "application/x-webxdc"
       "x-scheme-handler/openpgp4fpr"
@@ -150,7 +149,6 @@ stdenv.mkDerivation (finalAttrs: {
     version = testers.testVersion {
       package = deltachat-desktop;
     };
-    inherit deltachat-tauri;
   };
 
   meta = {

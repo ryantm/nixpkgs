@@ -12,29 +12,31 @@
   zlib,
   zstd,
   versionCheckHook,
-  nix-update-script,
 }:
+let
+  hashes = {
+    "x86_64-linux" = "sha256-7e0pAXEhqFfJjUqRytWT9qngD0AQ6DBnm9OF9KXtuk0=";
+    "aarch64-linux" = "sha256-QEmDQf1rf2fY9v9LGhfHP1FoEfxhhKO9VU+bNEKpERU=";
+    "aarch64-darwin" = "sha256-6REkFdiUXC2tLLLuJp4a0un+029kZcMEa6xibIpSScQ=";
+  };
+  platformName = {
+    "x86_64-linux" = "linux-amd64";
+    "aarch64-linux" = "linux-arm64";
+    "aarch64-darwin" = "darwin";
+  };
+in
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "docker-sbx";
-  version = "0.34.0";
+  version = "0.54.0";
   src =
-    if stdenvNoCC.hostPlatform.system == "x86_64-linux" then
-      fetchurl {
-        url = "https://github.com/docker/sbx-releases/releases/download/v${finalAttrs.version}/DockerSandboxes-linux-amd64.tar.gz";
-        hash = "sha256-5H9LOyKi0/SBVJ0ld6OkcP1h9r9eHrAb4fsVVVdMusg=";
-      }
-    else if stdenvNoCC.hostPlatform.system == "aarch64-linux" then
-      fetchurl {
-        url = "https://github.com/docker/sbx-releases/releases/download/v${finalAttrs.version}/DockerSandboxes-linux-arm64.tar.gz";
-        hash = "sha256-dZ/ttnmaf62rA5Cs8YSmZGHVQoy9PQh3Ok/AnIjCqZ4=";
-      }
-    else if stdenvNoCC.hostPlatform.system == "aarch64-darwin" then
-      fetchurl {
-        url = "https://github.com/docker/sbx-releases/releases/download/v${finalAttrs.version}/DockerSandboxes-darwin.tar.gz";
-        hash = "sha256-aBh6NbtQ5o2zxuR+d1U1gZpm2bch/J3Y8GZ73DeUBUk=";
-      }
-    else
-      throw "Unsupported host platform ${stdenvNoCC.hostPlatform.system}";
+    let
+      throwPlat = throw "Unsupported platform ${stdenvNoCC.hostPlatform.system}";
+      p = platformName.${stdenvNoCC.hostPlatform.system} or throwPlat;
+    in
+    fetchurl {
+      url = "https://github.com/docker/sbx-releases/releases/download/v${finalAttrs.version}/DockerSandboxes-${p}.tar.gz";
+      hash = hashes.${stdenvNoCC.hostPlatform.system} or throwPlat;
+    };
 
   strictDeps = true;
   __structuredAttrs = true;
@@ -91,18 +93,19 @@ stdenvNoCC.mkDerivation (finalAttrs: {
       ''
         runHook preInstall
 
-        mkdir -pv $out
-        cp -rv bin libexec $out
+        mkdir -pv $out/Applications $out/bin
+        cp -rv Sbx.app $out/Applications
+        ln -sv $out/Applications/Sbx.app/Contents/MacOS/{sbx,llmman} $out/bin
 
         installShellCompletion \
-          --bash --name sbx.bash completions/bash/sbx \
-          --zsh  --name _sbx     completions/zsh/_sbx \
-          --fish --name sbx.fish completions/fish/sbx.fish
+          --bash --name sbx.bash Sbx.app/Contents/Resources/completions/bash/sbx \
+          --zsh  --name _sbx     Sbx.app/Contents/Resources/completions/zsh/_sbx \
+          --fish --name sbx.fish Sbx.app/Contents/Resources/completions/fish/sbx.fish
 
         runHook postInstall
       '';
 
-  passthru.updateScript = nix-update-script { };
+  passthru.updateScript = ./update.sh;
 
   meta = {
     description = "Safe environments for agents";
@@ -114,11 +117,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     homepage = "https://docs.docker.com/reference/cli/sbx/";
     changelog = "https://github.com/docker/sbx-releases/releases/tag/v${finalAttrs.version}";
     mainProgram = "sbx";
-    platforms = [
-      "x86_64-linux"
-      "aarch64-linux"
-      "aarch64-darwin"
-    ];
+    platforms = builtins.attrNames hashes;
     license = lib.licenses.unfree;
     maintainers = [
       lib.maintainers.skyesoss

@@ -25,17 +25,26 @@ let
   c-blosc' = c-blosc.override { snappySupport = true; };
   # H5Z-ZFP needs an 8-bit bitstream word so the compressed HDF5 data is byte-portable
   zfp' = zfp.override { bitStreamWordSize = 8; };
+  c-blosc2' = c-blosc2.override { zfp = zfp'; };
+
+  h5z-zfp.src = fetchFromGitHub {
+    owner = "LLNL";
+    repo = "H5Z-ZFP";
+    # hdf5plugin vendors 1.0.1, we update it to support newer zfp version
+    tag = "v1.1.1";
+    hash = "sha256-8uKR62cJTQZaxMuIUlcL5Oupxf4BHD9OoDG6mPrpHfU=";
+  };
 in
 buildPythonPackage (finalAttrs: {
   pname = "hdf5plugin";
-  version = "7.0.0";
+  version = "7.1.0";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "silx-kit";
     repo = "hdf5plugin";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-wi5EITlRI8tgAXUV5u/CA3eiWjNAVs5ynT+PUsqcqVA=";
+    hash = "sha256-xk8rnqZs6I/RoEF1rothdosORaLzkdCKyME0uVWg0d8=";
   };
 
   build-system = [
@@ -48,7 +57,7 @@ buildPythonPackage (finalAttrs: {
 
   buildInputs = [
     c-blosc'
-    c-blosc2
+    c-blosc2'
     bzip2
     charls
     lz4
@@ -57,14 +66,18 @@ buildPythonPackage (finalAttrs: {
     zstd
   ];
 
-  # devendor
   postPatch = ''
+    # devendor
     rm -rf lib/c-blosc
     rm -rf lib/c-blosc2
     rm -rf lib/bzip2
     rm -rf lib/charls
     rm -rf lib/zfp
     rm -rf lib/zstd
+
+    # update
+    rm -rf src/H5Z-ZFP
+    cp --recursive --no-preserve=mode ${h5z-zfp.src} src/H5Z-ZFP
   '';
 
   # opt-in to use use system libs instead

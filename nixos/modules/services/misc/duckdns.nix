@@ -7,7 +7,7 @@
 let
   cfg = config.services.duckdns;
   duckdns = pkgs.writeShellScriptBin "duckdns" ''
-    DRESPONSE=$(curl -sS --max-time 60 --no-progress-meter -k -K- <<< "url = \"https://www.duckdns.org/update?verbose=true&domains=$DUCKDNS_DOMAINS&token=$DUCKDNS_TOKEN&ip=\"")
+    DRESPONSE=$(curl -sS --max-time 60 --no-progress-meter -K- <<< "url = \"https://www.duckdns.org/update?verbose=true&domains=$DUCKDNS_DOMAINS&token=$DUCKDNS_TOKEN&ip=\"")
     IPV4=$(echo "$DRESPONSE" | awk 'NR==2')
     IPV6=$(echo "$DRESPONSE" | awk 'NR==3')
     RESPONSE=$(echo "$DRESPONSE" | awk 'NR==1')
@@ -96,7 +96,7 @@ in
       startAt = "*:0/5";
       path = [
         pkgs.gnused
-        pkgs.systemd
+        config.systemd.package
         pkgs.curl
         pkgs.gawk
         duckdns

@@ -3,22 +3,28 @@
   fetchFromGitHub,
   buildHomeAssistantComponent,
   pyopensprinkler,
+  suntime,
 }:
 
 buildHomeAssistantComponent rec {
   owner = "vinteo";
   domain = "opensprinkler";
-  version = "1.5.5";
+  version = "2.2.4";
 
   src = fetchFromGitHub {
     owner = "vinteo";
     repo = "hass-opensprinkler";
     tag = "v${version}";
-    hash = "sha256-P+VSnMioZGwdsQ053uNiqpZzrtDFPb80FQaKqr3pOT4=";
+    hash = "sha256-r7VtlV1Yo3wn6x8BuYrrr6OlIBKZA3hmfVrBCYLXArM=";
   };
 
   dependencies = [
     pyopensprinkler
+    suntime
+  ];
+
+  ignoreVersionRequirement = [
+    "suntime" # https://github.com/vinteo/hass-opensprinkler/issues/393
   ];
 
   meta = {

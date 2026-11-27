@@ -20,12 +20,16 @@
   dbus,
   xvfb-run,
   shared-mime-info,
+  glibcLocalesUtf8,
   testers,
 }:
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "gtksourceview";
-  version = "5.20.0";
+  version = "5.22.0";
+
+  __structuredAttrs = true;
+  strictDeps = true;
 
   outputs = [
     "out"
@@ -35,7 +39,7 @@ stdenv.mkDerivation (finalAttrs: {
 
   src = fetchurl {
     url = "mirror://gnome/sources/gtksourceview/${lib.versions.majorMinor finalAttrs.version}/gtksourceview-${finalAttrs.version}.tar.xz";
-    hash = "sha256-44vNI/UrhurfD+TYveaY46jKECMiuLTPGlGsKUpEjBs=";
+    hash = "sha256-PrzjPHgeZVkKRQ7NP/reSA2OMTW1LumW8WINbH3/u/8=";
   };
 
   patches = [
@@ -55,6 +59,7 @@ stdenv.mkDerivation (finalAttrs: {
     vala
     gi-docgen
     gtk4 # for gtk4-update-icon-cache checked during configure
+    libxml2 # xmllint
   ];
 
   buildInputs = [
@@ -75,6 +80,7 @@ stdenv.mkDerivation (finalAttrs: {
   nativeCheckInputs = [
     xvfb-run
     dbus
+    glibcLocalesUtf8
   ];
 
   mesonFlags = [
@@ -91,7 +97,7 @@ stdenv.mkDerivation (finalAttrs: {
       GTK_A11Y=none \
       xvfb-run -s '-screen 0 800x600x24' dbus-run-session \
         --config-file=${dbus}/share/dbus-1/session.conf \
-        meson test --no-rebuild --print-errorlogs
+        meson test --no-rebuild --print-errorlogs --timeout-multiplier=0
 
     runHook postCheck
   '';

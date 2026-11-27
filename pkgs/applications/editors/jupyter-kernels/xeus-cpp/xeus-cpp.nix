@@ -39,28 +39,6 @@ let
   useCling = backend == "cling";
   cppInterop = cpp-interop.override { inherit backend; };
 
-  # xeus-cpp 0.10.0 needs newer xeus / xeus-zmq than nixpkgs ships by default.
-  xeus_6 = xeus.overrideAttrs (old: {
-    version = "6.0.5";
-    src = fetchFromGitHub {
-      owner = "jupyter-xeus";
-      repo = "xeus";
-      tag = "6.0.5";
-      hash = "sha256-nbjq4dzrukVsZI6X3lWpr9oCZV5IUu/vkqSNKD7o3vo=";
-    };
-    doCheck = false;
-  });
-
-  xeus_zmq_4 = (xeus-zmq.override { xeus = xeus_6; }).overrideAttrs (old: {
-    version = "4.0.0";
-    src = fetchFromGitHub {
-      owner = "jupyter-xeus";
-      repo = "xeus-zmq";
-      tag = "4.0.0";
-      hash = "sha256-Ux8klPh33XWFu9eu+GTk5ZcqIcoP/GM4/J1uaz9xRHI=";
-    };
-  });
-
   # The interpreter behind CppInterOp must be told where the C/C++ standard
   # library and Clang builtin headers live: there is no system compiler to detect
   # at runtime in the Nix sandbox. We pass this set via CppInterOp's runtime
@@ -86,6 +64,7 @@ stdenv.mkDerivation (finalAttrs: {
 
   strictDeps = true;
   __structuredAttrs = true;
+  __darwinAllowLocalNetworking = true;
 
   nativeBuildInputs = [
     cmake
@@ -95,8 +74,8 @@ stdenv.mkDerivation (finalAttrs: {
 
   buildInputs = [
     cppInterop
-    xeus_6
-    xeus_zmq_4
+    xeus
+    xeus-zmq
     nlohmann_json
     argparse
     pugixml
@@ -105,6 +84,16 @@ stdenv.mkDerivation (finalAttrs: {
     libuuid
     curl
   ];
+
+  # xeus-cpp probes the host `c++` for its include search path and prepends the
+  # result, which shadows the hermetic paths we hand it (Xcode's libc++ and SDK
+  # win on any machine with Xcode). Skip the probe when those paths are supplied.
+  postPatch = ''
+    substituteInPlace src/xinterpreter.cpp --replace-fail \
+      "Cpp::DetectSystemCompilerIncludePaths(CxxSystemIncludes);" \
+      "if (const char* e = std::getenv(\"CPPINTEROP_EXTRA_INTERPRETER_ARGS\"); !e || !*e)
+    Cpp::DetectSystemCompilerIncludePaths(CxxSystemIncludes);"
+  '';
 
   cmakeFlags = [
     (lib.cmakeBool "XEUS_CPP_BUILD_TESTS" finalAttrs.finalPackage.doCheck)

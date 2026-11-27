@@ -56,14 +56,14 @@ stdenv.mkDerivation (finalAttrs: {
   version = "0.10.0";
 
   src = fetchFromGitHub {
-    owner = "darbyjohnston";
+    owner = "grizzlypeak3d";
     repo = "tlRender";
     tag = finalAttrs.version;
     hash = "sha256-TxiDZtMvNmrV1FKXZnekCZHnr/eCWZlsP6VJRnaoWg4=";
   };
 
   patches = [
-    # Minizip-ng 4 support: https://github.com/darbyjohnston/tlRender/pull/145
+    # Minizip-ng 4 support: https://github.com/grizzlypeak3d/tlRender/pull/145
     ./minizip-ng-4.patch
   ];
 
@@ -116,6 +116,9 @@ stdenv.mkDerivation (finalAttrs: {
   ++ lib.optionals enableUsd [ openusd ];
 
   cmakeFlags = [
+    # Match the upstream SuperBuild; GCC 16's default C++20 breaks u8string() conversions.
+    (lib.cmakeFeature "CMAKE_CXX_STANDARD" "17")
+
     (lib.cmakeBool "TLRENDER_NET" enableNet)
     (lib.cmakeBool "TLRENDER_OCIO" enableOcio)
     (lib.cmakeBool "TLRENDER_SDL2" enableSdl2)
@@ -147,7 +150,7 @@ stdenv.mkDerivation (finalAttrs: {
       image sequences, audio clips, and transitions. Examples are provided for
       integrating the library with Qt and OpenGL applications.
     '';
-    homepage = "https://github.com/darbyjohnston/tlRender";
+    homepage = "https://github.com/grizzlypeak3d/tlRender";
     license = lib.licenses.bsd3;
     maintainers = with lib.maintainers; [ yzx9 ];
     platforms = with lib.platforms; linux ++ darwin;

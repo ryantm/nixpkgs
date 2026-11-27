@@ -13,7 +13,7 @@
   cargo-tauri,
   nodejs,
   pkg-config,
-  pnpm,
+  pnpm_11,
   pnpmConfigHook,
 
   # buildInputs
@@ -25,7 +25,7 @@
   pango,
   # linux-only:
   alsa-lib,
-  libappindicator-gtk3,
+  libappindicator,
   libx11,
   libxi,
   libxkbcommon,
@@ -38,6 +38,8 @@
 }:
 
 let
+  pnpm = pnpm_11;
+
   parakeet-model = fetchzip {
     url = "https://github.com/Kieirra/murmure-model/releases/download/1.0.0/parakeet-tdt-0.6b-v3-int8.zip";
     hash = "sha256-rlV7mi5Y6qu/9jRWRPNBlABW8GxsvVAMCM6Ye2tVb2s=";
@@ -45,7 +47,7 @@ let
 in
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "murmure";
-  version = "1.10.0";
+  version = "1.10.1";
 
   __structuredAttrs = true;
 
@@ -53,7 +55,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
     owner = "Kieirra";
     repo = "murmure";
     tag = finalAttrs.version;
-    hash = "sha256-zJ9OvpAfREyDWDISKYKCUyQSWdkQlVrSzX+wvwKk6Yk=";
+    hash = "sha256-YTfpIkGHD6GPEfuTV1AahC08y4hJ6GSWQ+9C/6bTsJU=";
   };
 
   # The libappindicator_sys crate loads these libraries at runtime
@@ -70,6 +72,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
       version
       src
       ;
+    inherit pnpm;
     fetcherVersion = 4;
     hash = "sha256-ixBGVKYAk1FYcAayvKKJMT5v3JLjSK17ds0mrBEj850=";
   };
@@ -77,7 +80,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
   cargoRoot = "src-tauri";
   buildAndTestSubdir = finalAttrs.cargoRoot;
 
-  cargoHash = "sha256-wV0drkKgn58Yxjy+Mv2QLTQXTDwWk6/uEfk76HaMuow=";
+  cargoHash = "sha256-6G/ZHGjjv1U5MNLo+LAwXoM/nN2aCPOaSTJer7dUv9w=";
 
   env.OPENSSL_NO_VENDOR = true;
 
@@ -99,7 +102,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
   ]
   ++ lib.optionals stdenv.hostPlatform.isLinux [
     alsa-lib
-    libappindicator-gtk3
+    libappindicator
     libx11
     libxi
     libxkbcommon

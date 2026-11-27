@@ -2,7 +2,7 @@
   lib,
   stdenv,
   fetchFromGitHub,
-  fetchpatch,
+  fetchpatch2,
   cmake,
   libsodium,
   mbedtls,
@@ -28,11 +28,19 @@ stdenv.mkDerivation (finalAttrs: {
   # Git tag includes CMake build files which are much more convenient.
   src = fetchFromGitHub {
     owner = "shadowsocks";
-    repo = "shadowsocks-libev";
+    repo = "shadowsocks-c";
     tag = "v${finalAttrs.version}";
     hash = "sha256-XrS/qi4oAchdisvicrGmpe3jeDgYDACsvVU6iXQyQCM=";
     fetchSubmodules = true;
   };
+
+  patches = [
+    # Fix compilation with GCC 13.
+    (fetchpatch2 {
+      url = "https://github.com/shadowsocks/shadowsocks-c/commit/59a6aca7597c46cd1d079631d3061d952fbd0d6e.patch?full_index=1";
+      hash = "sha256-YWivyN9s1L7tZ8Fui7FprDQPOiX6j+1aG1D7UcLs4mA=";
+    })
+  ];
 
   buildInputs = [
     libsodium
@@ -52,9 +60,15 @@ stdenv.mkDerivation (finalAttrs: {
 
   cmakeFlags = [
     (lib.cmakeBool "WITH_STATIC" false)
-    (lib.cmakeBool "-DCMAKE_BUILD_WITH_INSTALL_NAME_DIR" true)
+    (lib.cmakeBool "CMAKE_BUILD_WITH_INSTALL_NAME_DIR" true)
     # RPATH of binary /nix/store/.../bin/... contains a forbidden reference to /build/
-    (lib.cmakeBool "-DCMAKE_SKIP_BUILD_RPATH" true)
+    (lib.cmakeBool "CMAKE_SKIP_BUILD_RPATH" true)
+  ]
+  ++ lib.optionals stdenv.hostPlatform.isStatic [
+    # Targets are explicitly marked SHARED which we can override like this
+    (lib.cmakeFeature "CMAKE_PROJECT_INCLUDE" "${builtins.toFile "disable-shared-libs.cmake" ''
+      set_property(GLOBAL PROPERTY TARGET_SUPPORTS_SHARED_LIBS FALSE)
+    ''}")
   ];
 
   postPatch = ''

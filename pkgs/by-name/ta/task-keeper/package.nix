@@ -3,40 +3,42 @@
   rustPlatform,
   fetchFromGitHub,
   just,
+  aws-lc,
   openssl,
   pkg-config,
   runCommand,
+  nix-update-script,
+  versionCheckHook,
 }:
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "task-keeper";
-  version = "0.33.0";
+  version = "0.35.7";
 
   src = fetchFromGitHub {
     owner = "linux-china";
     repo = "task-keeper";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-pSMF0ORwHUV9H6RAMRaEt/A61MVIj5cQcsY+wDDyAwk=";
+    hash = "sha256-bXKjduP7i0fBp0+Znxm9mn7vqJWlyMeeWd5XjMwkqS4=";
   };
-
-  patches = [
-    # https://github.com/linux-china/task-keeper/pull/20
-    ./version.patch
-  ];
 
   env = {
     OPENSSL_NO_VENDOR = 1;
   };
 
   nativeBuildInputs = [ pkg-config ];
-  buildInputs = [ openssl ];
+  buildInputs = [
+    aws-lc
+    openssl
+  ];
 
-  cargoHash = "sha256-leQpeB145seO2mPg+eqA3S5ATbRBzsXj9cWNsVpXF+U=";
+  cargoHash = "sha256-s0Q1IOHITUAS3ZFvBVROMA9KeGF9YE3UiODt1Kar1HA=";
 
   # tests depend on many packages (java, node, python, sbt, ...) - which I'm not currently willing to set up 😅
   doCheck = false;
 
   passthru = {
+    updateScript = nix-update-script { };
     tests = {
       makefile =
         runCommand "task-keeper-makefile-test"
@@ -74,8 +76,12 @@ rustPlatform.buildRustPackage (finalAttrs: {
     };
   };
 
+  nativeInstallCheckInputs = [ versionCheckHook ];
+  doInstallCheck = true;
+
   meta = {
     homepage = "https://github.com/linux-china/task-keeper";
+    changelog = "https://github.com/linux-china/task-keeper/releases/tag/v${finalAttrs.version}";
     description = "CLI to manage tasks from different task runners or package managers";
     license = lib.licenses.asl20;
     maintainers = with lib.maintainers; [

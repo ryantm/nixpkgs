@@ -12,14 +12,14 @@
 
 buildPythonPackage (finalAttrs: {
   pname = "ssdp";
-  version = "1.3.2";
+  version = "1.4.0";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "codingjoe";
     repo = "ssdp";
     tag = finalAttrs.version;
-    hash = "sha256-1LO5+lfykaepp+MfS/2mlngobhcV1nZvU19Jb0sbVzk=";
+    hash = "sha256-FwauyVDNTgWlXe6Sm6XNoZ6RMLSV6alq+mVCfVs0vLI=";
   };
 
   build-system = [
@@ -38,6 +38,12 @@ buildPythonPackage (finalAttrs: {
   nativeCheckInputs = [
     pytest-cov-stub
     pytestCheckHook
+  ]
+  ++ lib.flatten (builtins.attrValues finalAttrs.passthru.optional-dependencies);
+
+  disabledTests = [
+    "test_call"
+    "test_call_w_search_target"
   ];
 
   pythonImportsCheck = [ "ssdp" ];

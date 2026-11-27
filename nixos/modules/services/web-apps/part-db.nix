@@ -152,13 +152,12 @@ in
         user = "part-db";
         group = "part-db";
         phpPackage = cfg.phpPackage;
-        phpOptions = ''
-          log_errors = on
-        '';
+        phpOptions = {
+          log_errors = "on";
+        };
         settings = {
           "listen.mode" = lib.mkDefault "0660";
-          "listen.owner" = lib.mkDefault "part-db";
-          "listen.group" = lib.mkDefault "part-db";
+          "listen.owner" = lib.mkDefault config.services.nginx.user;
           "pm" = lib.mkDefault "dynamic";
           "pm.max_children" = lib.mkDefault 32;
           "pm.start_servers" = lib.mkDefault 2;
@@ -257,6 +256,7 @@ in
           ];
           wantedBy = [ "multi-user.target" ];
           serviceConfig = {
+            ExecStart = "${lib.getExe cfg.phpPackage} ${lib.getExe' cfg.package "console"} doctrine:migrations:migrate --no-interaction";
             Type = "oneshot";
             RemainAfterExit = true;
             User = "part-db";
@@ -264,10 +264,6 @@ in
           restartTriggers = [
             cfg.package
           ];
-          script = ''
-            set -euo pipefail
-            ${lib.getExe cfg.phpPackage} ${lib.getExe' cfg.package "console"} doctrine:migrations:migrate --no-interaction
-          '';
         };
 
         phpfpm-part-db = {
@@ -276,10 +272,6 @@ in
             "part-db-migrate.service"
             "postgresql.target"
           ];
-          # ensure nginx can access the php-fpm socket
-          postStart = ''
-            ${lib.getExe' pkgs.acl "setfacl"} -m 'u:${config.services.nginx.user}:rw' ${config.services.phpfpm.pools.part-db.socket}
-          '';
         };
       };
 

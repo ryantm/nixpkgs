@@ -10,13 +10,13 @@
 
 buildPythonPackage rec {
   pname = "llama-index-readers-weather";
-  version = "0.5.0";
+  version = "0.7.0";
   pyproject = true;
 
   src = fetchPypi {
     pname = "llama_index_readers_weather";
     inherit version;
-    hash = "sha256-bqvt09YSRD8BQfZjwnMlsO5oSscjh+piQXbUUZGeXbs=";
+    hash = "sha256-OrOCEr8/B7LD5wI9zf5WhjoeoN3BouGZDr/revTSW40=";
   };
 
   build-system = [ hatchling ];

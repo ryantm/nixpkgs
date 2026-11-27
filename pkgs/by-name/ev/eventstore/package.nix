@@ -73,7 +73,7 @@ buildDotnetModule rec {
   passthru.updateScript = nix-update-script { };
 
   meta = {
-    homepage = "https://geteventstore.com/";
+    homepage = "https://github.com/kurrent-io/KurrentDB";
     description = "Event sourcing database with processing logic in JavaScript";
     license = lib.licenses.bsd3;
     maintainers = with lib.maintainers; [
@@ -82,7 +82,6 @@ buildDotnetModule rec {
     ];
     platforms = [
       "x86_64-linux"
-      "x86_64-darwin"
     ];
     inherit mainProgram;
   };

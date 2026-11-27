@@ -99,6 +99,9 @@ lib.extendMkDerivation {
               cacert
             ];
 
+            strictDeps = true;
+            __structuredAttrs = true;
+
             inherit (finalAttrs) src modRoot goSum;
 
             # The following inheritance behavior is not trivial to expect, and some may
@@ -217,9 +220,8 @@ lib.extendMkDerivation {
       nativeBuildInputs = [ go ] ++ nativeBuildInputs;
 
       env = args.env or { } // {
-        inherit (go) GOOS GOARCH;
+        inherit (stdenv.hostPlatform.go) GOOS GOARCH;
 
-        GO111MODULE = "on";
         GOTOOLCHAIN = "local";
 
         CGO_ENABLED = args.env.CGO_ENABLED or go.CGO_ENABLED;
@@ -303,7 +305,7 @@ lib.extendMkDerivation {
 
                 if [ "$cmd" = "test" ]; then
                   flags+=(-vet=off)
-                  flags+=($checkFlags)
+                  concatTo flags checkFlags
                 fi
 
                 local OUT
@@ -320,10 +322,15 @@ lib.extendMkDerivation {
               }
 
               getGoDirs() {
-                local type;
-                type="$1"
-                if [ -n "$subPackages" ]; then
-                  echo "$subPackages" | sed "s,\(^\| \),\1./,g"
+                local -r type="$1"
+
+                # Support structuredAttrs, they are not space separated
+                local -a subPackagesArray
+                concatTo subPackagesArray subPackages
+
+                # Outputs each element prefixed with './' if the array is not empty
+                if [[ ''${#subPackagesArray[@]} -gt 0 ]]; then
+                  echo "''${subPackagesArray[*]/#/./}"
                 else
                   find . -type f -name \*$type.go -exec dirname {} \; | grep -v "/vendor/" | sort --unique | grep -v "$exclude"
                 fi

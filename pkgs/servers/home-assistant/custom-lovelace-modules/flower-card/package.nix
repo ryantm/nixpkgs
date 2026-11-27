@@ -6,16 +6,16 @@
 
 buildNpmPackage (finalAttrs: {
   pname = "flower-card";
-  version = "2026.6.1";
+  version = "2026.11.4";
 
   src = fetchFromGitHub {
     owner = "olen";
     repo = "lovelace-flower-card";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-mep8+72yEGICoBywKQ0MAYN/VPCEwEvY93jECvk6FeE=";
+    hash = "sha256-mIiV00hPzpxF0YaXtXTRI1bujB8+I/+a8dKQSl2VP5Y=";
   };
 
-  npmDepsHash = "sha256-vP5ShzHQdBa+TY11P4QadyGBjXSw68/rGODiiJKBbnQ=";
+  npmDepsHash = "sha256-tCoKpEg7Mo3G79q1WYYO9hZwLrtH2qxxJr+uEfixd2Q=";
 
   installPhase = ''
     runHook preInstall
@@ -30,7 +30,7 @@ buildNpmPackage (finalAttrs: {
     description = "Lovelace Flower Card to match the custom plant integration";
     homepage = "https://github.com/Olen/lovelace-flower-card";
     changelog = "https://github.com/Olen/lovelace-flower-card/releases/tag/${finalAttrs.src.tag}";
-    license = lib.licenses.mit;
+    license = lib.licenses.gpl3Only;
     maintainers = with lib.maintainers; [ SuperSandro2000 ];
     platforms = lib.platforms.all;
   };

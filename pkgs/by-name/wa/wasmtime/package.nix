@@ -5,9 +5,13 @@
   fetchFromGitHub,
   buildPackages,
   cmake,
+  pkg-config,
+  zstd,
   installShellFiles,
   versionCheckHook,
+  _experimental-update-script-combinators,
   nix-update-script,
+  python3,
   enableShared ? !stdenv.hostPlatform.isStatic,
   enableStatic ? stdenv.hostPlatform.isStatic,
   variant ? "main",
@@ -15,17 +19,24 @@
 let
   sources = {
     lts-36 = {
-      version = "36.0.12";
-      hash = "sha256-5hv7Hvw8nYfI/Q2IOMhXl0rYjp9GyUrBg/Y4vrb+r34=";
-      cargoHash = "sha256-EhuGBZchVyB9G5eRt/8QKN6grcP5AjFJMyGFdkfvT7g=";
+      version = "36.0.23";
+      hash = "sha256-OLZi2p67aLYw8lLajzR/vmBZ/Y+Z+jGkvpZE0GBqs6g=";
+      cargoHash = "sha256-+sDjlI1XHWrXZw50B11Y4A2bJwFCgFMgnCh26i5Jpfg=";
+    };
+    lts-48 = {
+      version = "48.0.10";
+      hash = "sha256-Pub0pqEMxmIxED/QEyz8mvyqTR7e0r40TnkZLETn8X0=";
+      cargoHash = "sha256-wLU/Y2rrOGW3pucBlhgShc1/pkN1Pm9L1u7x2alFUNE=";
     };
     main = {
-      version = "46.0.1";
-      hash = "sha256-rPIO+wQSu5KWT/v3Wbjs29p5Aoqpnpb+TwSTT5CRb6U=";
-      cargoHash = "sha256-cJD5iq342giBP+YdTem0/nOsMhI7DKRL4iiai5xayv8=";
+      version = "51.0.0";
+      hash = "sha256-hROwfTF1d8GqrTBiyzC6CZjGf4T2GlEAV8r7LJgXzlg=";
+      cargoHash = "sha256-58vWC7dGupYs+RUBD6dYxIIuki1CHkNm4t65lu2EC18=";
     };
   };
   source = sources.${variant};
+  # there is no LTS version of python3Packages.wasmtime yet
+  hasPythonBinding = variant == "main";
 in
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "wasmtime";
@@ -60,8 +71,11 @@ rustPlatform.buildRustPackage (finalAttrs: {
 
   nativeBuildInputs = [
     cmake
+    pkg-config
     installShellFiles
   ];
+
+  buildInputs = [ zstd ];
 
   doCheck =
     with stdenv.buildPlatform;
@@ -112,12 +126,24 @@ rustPlatform.buildRustPackage (finalAttrs: {
   doInstallCheck = true;
 
   passthru = {
-    updateScript = nix-update-script {
-      extraArgs = [
-        "--version-regex"
-        "^v(\\d+\\.\\d+\\.\\d+)$"
-      ];
+    tests = lib.optionalAttrs hasPythonBinding {
+      python3-wasmtime = python3.pkgs.wasmtime;
     };
+    updateScript = _experimental-update-script-combinators.sequence (
+      [
+        (nix-update-script {
+          extraArgs = [
+            "--version-regex"
+            "^v(\\d+\\.\\d+\\.\\d+)$"
+          ];
+        })
+      ]
+      ++ lib.optionals hasPythonBinding [
+        (nix-update-script {
+          attrPath = "python3.pkgs.wasmtime";
+        })
+      ]
+    );
   };
 
   meta = {

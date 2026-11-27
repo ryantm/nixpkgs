@@ -2,21 +2,27 @@
   lib,
   rustPlatform,
   fetchFromGitHub,
+  aws-lc,
+  pkg-config,
   versionCheckHook,
 }:
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "repro-env";
-  version = "0.4.4";
+  version = "0.4.5";
 
   src = fetchFromGitHub {
     owner = "kpcyrd";
     repo = "repro-env";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-d1PGEKEUSzCnXNhu/qkzl4uHnhRFULUP7aRbIsRFWn8=";
+    hash = "sha256-McmZ5KzWGJYx+f3rXTUQK9sVaAZW7RxA2w2o8f/3kvU=";
   };
 
-  cargoHash = "sha256-HaI5oE8WVnM1h6rVaVl2qGvTndhD5cKg+Dwf707I9DA=";
+  cargoHash = "sha256-0gTClY+jWfUpNa1aC/I5waSeZirB/sPGVno0qWYHTsA=";
+
+  nativeBuildInputs = [ pkg-config ];
+
+  buildInputs = [ aws-lc ];
 
   doInstallCheck = true;
   nativeInstallCheckInputs = [ versionCheckHook ];

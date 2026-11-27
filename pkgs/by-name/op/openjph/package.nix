@@ -10,13 +10,13 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "openjph";
-  version = "0.24.1";
+  version = "0.31.0";
 
   src = fetchFromGitHub {
     owner = "aous72";
     repo = "openjph";
     rev = finalAttrs.version;
-    hash = "sha256-4TodVzVK86UCrD1Q6EzIjsJhyOFQUryQHZmQ2DrXVTg=";
+    hash = "sha256-rMiWIu/D3zc80zX63jgorcY/JMJLfCBBXEAuDzzWc4I=";
   };
 
   nativeBuildInputs = [
@@ -34,6 +34,11 @@ stdenv.mkDerivation (finalAttrs: {
   ];
 
   strictDeps = true;
+
+  postFixup = ''
+    substituteInPlace $dev/lib/cmake/openjph/openjph-targets*.cmake \
+      --replace 'INTERFACE_INCLUDE_DIRECTORIES "''${_IMPORT_PREFIX}/include"' "INTERFACE_INCLUDE_DIRECTORIES \"$dev/include\""
+  '';
 
   passthru = {
     tests.pkg-config = testers.hasPkgConfigModules { package = finalAttrs.finalPackage; };

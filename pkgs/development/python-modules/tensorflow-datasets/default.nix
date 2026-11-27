@@ -66,7 +66,6 @@ buildPythonPackage (finalAttrs: {
   pname = "tensorflow-datasets";
   version = "4.9.10";
   pyproject = true;
-  __structuredAttrs = true;
 
   src = fetchFromGitHub {
     owner = "tensorflow";
@@ -74,6 +73,19 @@ buildPythonPackage (finalAttrs: {
     tag = "v${finalAttrs.version}";
     hash = "sha256-nq0c5hBTVwkxCRvWxtnfI+AHD+URY+nNfZAurEGaLXk=";
   };
+
+  patches = [
+    # Pillow 13 rejects `Image.fromarray(arr, mode=...)` when `mode` doesn't match the dtype
+    # ValueError: Invalid mode for data type
+    ./pillow-13-compat.patch
+  ];
+
+  postPatch =
+    # The git checkout ships the development `version.py`, which appends a `+nightly` suffix.
+    # Upstream replaces it with `version_stable.py` for stable releases.
+    ''
+      cp tensorflow_datasets/version_stable.py tensorflow_datasets/version.py
+    '';
 
   build-system = [
     packaging

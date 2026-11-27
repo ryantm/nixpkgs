@@ -23,7 +23,6 @@ let
       "x86_64-linux" = "ta6le";
       "x86-linux" = "ti3le";
       "aarch64-linux" = "tarm64le";
-      "x86_64-darwin" = "ta6osx";
       "aarch64-darwin" = "tarm64osx";
       "x86_64-windows" = "ta6nt";
       "aarch64-windows" = "tarm64nt";
@@ -52,7 +51,7 @@ stdenv.mkDerivation (finalAttrs: {
     lib.optionals stdenv.hostPlatform.isDarwin [
       cctools
     ]
-    ++ lib.optionals (stdenv.hostPlatform.isDarwin && stdenv.hostPlatform.isAarch64) [
+    ++ lib.optionals stdenv.hostPlatform.isDarwin [
       darwin.autoSignDarwinBinariesHook
     ];
 

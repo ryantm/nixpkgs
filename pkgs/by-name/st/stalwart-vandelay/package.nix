@@ -1,30 +1,50 @@
 {
   lib,
-  cacert,
   fetchFromGitHub,
   nix-update-script,
   rustPlatform,
   versionCheckHook,
+
+  aws-lc,
+  cacert,
+  pkg-config,
+  sqlite,
 }:
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "vandelay";
-  version = "1.0.5";
+  version = "1.0.15";
+
   src = fetchFromGitHub {
     owner = "stalwartlabs";
     repo = "vandelay";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-ePOh2lJWJvZ5sV8KQ4n9A5pV7UhDBkN+RQ37LLoMm+o=";
+    hash = "sha256-dOKnbdMwfJvVCGZWICfaVmMU+VHxVOodm7YDoSN6Kk0=";
   };
-  cargoHash = "sha256-KlAarYv8Vzp0bpR2jhC4bG0iVyG5YPGvsa8GHRsscJg=";
+  cargoHash = "sha256-AAbNeKB0Msyud1H/3s6vgPmkDoIM2+t0exvLNYx/AM8=";
+
   __structuredAttrs = true;
   __darwinAllowLocalNetworking = true;
+  strictDeps = true;
+
+  nativeBuildInputs = [
+    pkg-config
+  ];
+
+  buildInputs = [
+    aws-lc
+    sqlite
+  ];
+
   # called `Result::unwrap()` on an `Err` value: Tls("rustls platform verifier: unexpected error: No CA certificates were loaded from the system")
   nativeCheckInputs = [
     cacert
   ];
+
   doInstallCheck = true;
   nativeInstallCheckInputs = [ versionCheckHook ];
+
   passthru.updateScript = nix-update-script { };
+
   meta = {
     description = "JMAP importer-exporter (and backup tool)";
     longDescription = ''
@@ -34,7 +54,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
     changelog = "https://github.com/stalwartlabs/vandelay/blob/${finalAttrs.src.tag}/CHANGELOG.md";
     license = lib.licenses.OR [
       lib.licenses.mit
-      lib.licenses.apsl20
+      lib.licenses.asl20
     ];
     mainProgram = "vandelay";
     maintainers = with lib.maintainers; [

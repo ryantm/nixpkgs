@@ -5,8 +5,8 @@
   setuptools,
   fastcore,
   numpy,
-  fasthtml,
   ipython,
+  python-fasthtml,
 }:
 
 buildPythonPackage (finalAttrs: {
@@ -15,7 +15,7 @@ buildPythonPackage (finalAttrs: {
   pyproject = true;
 
   src = fetchFromGitHub {
-    owner = "fastai";
+    owner = "AnswerDotAI";
     repo = "fastprogress";
     tag = finalAttrs.version;
     hash = "sha256-KQ8CYS+SSTve905k695w3TjCFBdWxGR3PqDsYTV8b4k=";
@@ -26,8 +26,8 @@ buildPythonPackage (finalAttrs: {
   dependencies = [
     fastcore
     numpy
-    fasthtml
     ipython
+    python-fasthtml
   ];
 
   # no real tests
@@ -35,7 +35,7 @@ buildPythonPackage (finalAttrs: {
   pythonImportsCheck = [ "fastprogress" ];
 
   meta = {
-    homepage = "https://github.com/fastai/fastprogress";
+    homepage = "https://github.com/AnswerDotAI/fastprogress";
     changelog = "https://github.com/AnswerDotAI/fastprogress/blob/${finalAttrs.src.tag}/CHANGELOG.md";
     description = "Simple and flexible progress bar for Jupyter Notebook and console";
     license = lib.licenses.asl20;

@@ -30,16 +30,15 @@ let
 in
 buildPythonPackage (finalAttrs: {
   pname = "pytorch-tokenizers";
-  version = "1.3.0";
+  version = "1.5.0";
   pyproject = true;
-  __structuredAttrs = true;
 
   src = fetchFromGitHub {
     owner = "meta-pytorch";
     repo = "tokenizers";
     tag = "v${finalAttrs.version}";
     fetchSubmodules = true;
-    hash = "sha256-1G6mDUSwy4KXKgdtEimj9rrQDonGHdo8R8DvPQppvwE=";
+    hash = "sha256-cEt+1n4ORgixipx14vCuFBYDSeaDF0UupITlihLxsew=";
   };
 
   patches = [

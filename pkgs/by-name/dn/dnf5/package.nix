@@ -1,6 +1,7 @@
 {
   lib,
   stdenv,
+  fetchpatch2,
   fetchFromGitHub,
   appstream,
   cmake,
@@ -9,6 +10,7 @@
   gettext,
   help2man,
   pkg-config,
+  python3,
   python3Packages,
   cppunit,
   fmt,
@@ -26,7 +28,7 @@
   sdbus-cpp_2,
   sphinx,
   sqlite,
-  systemd,
+  systemdLibs,
   versionCheckHook,
   toml11,
   zchunk,
@@ -35,7 +37,7 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "dnf5";
-  version = "5.4.2.1";
+  version = "5.4.6.0";
 
   outputs = [
     "out"
@@ -46,8 +48,21 @@ stdenv.mkDerivation (finalAttrs: {
     owner = "rpm-software-management";
     repo = "dnf5";
     tag = finalAttrs.version;
-    hash = "sha256-Z+k47LC3gaBQ3y3090MLsSvPKlwPUVrYEBboKhskTik=";
+    hash = "sha256-7TWCPX7WmGWcDZ3wNaVnwIB5IDyeSzyjuPNAN3ecpdM=";
   };
+
+  patches = [
+    (fetchpatch2 {
+      # https://github.com/rpm-software-management/dnf5/issues/3033
+      # https://github.com/rpm-software-management/dnf5/pull/3034
+      name = "make-weror-overridable-from-cmdline.patch";
+      url = "https://github.com/rpm-software-management/dnf5/commit/a974a0bb759289a191f46b37ed9c7f1acc14c7d9.patch?full_index=1";
+      hash = "sha256-OMJZPjGZ0d4hYVMHwyGMg0DUeQTf9hxvU3479zTBcqs=";
+    })
+  ];
+
+  __structuredAttrs = true;
+  strictDeps = true;
 
   nativeBuildInputs = [
     cmake
@@ -56,11 +71,11 @@ stdenv.mkDerivation (finalAttrs: {
     gettext
     help2man
     pkg-config
+    rpm
     sphinx
   ]
   ++ (with python3Packages; [
     breathe
-    sphinx-autoapi
     sphinx-rtd-theme
   ]);
 
@@ -81,13 +96,10 @@ stdenv.mkDerivation (finalAttrs: {
     rpm
     sdbus-cpp_2
     sqlite
-    systemd
+    systemdLibs
     toml11
     zchunk
   ];
-
-  # workaround for https://gcc.gnu.org/bugzilla/show_bug.cgi?id=105329
-  env.NIX_CFLAGS_COMPILE = "-Wno-restrict -Wno-maybe-uninitialized";
 
   cmakeFlags = [
     (lib.cmakeBool "WITH_PERL5" false)
@@ -95,11 +107,17 @@ stdenv.mkDerivation (finalAttrs: {
     (lib.cmakeBool "WITH_RUBY" false)
     (lib.cmakeBool "WITH_SYSTEMD" false)
     (lib.cmakeBool "WITH_PLUGIN_RHSM" false) # Red Hat Subscription Manager plugin
+    # doc/atp.py preprocesses manpages, but upstream only runs
+    # find_package(Python3) from targets gated on WITH_PYTHON3.
+    (lib.cmakeFeature "Python3_EXECUTABLE" (lib.getExe python3))
     # the cmake package does not handle absolute CMAKE_INSTALL_INCLUDEDIR correctly
     # (setting it to an absolute path causes include files to go to $out/$out/include,
     #  because the absolute path is interpreted with root at $out).
     (lib.cmakeFeature "CMAKE_INSTALL_INCLUDEDIR" "include")
     (lib.cmakeFeature "CMAKE_INSTALL_LIBDIR" "lib")
+    # Upstream treats warnings as errors by default, but we don't want mere
+    # warnings, for example from a dependency, to abort the build.
+    "--compile-no-warning-as-error"
   ];
 
   postBuild = ''
@@ -107,6 +125,10 @@ stdenv.mkDerivation (finalAttrs: {
   '';
 
   prePatch = ''
+    # autoapi needs the swig-generated python bindings (WITH_PYTHON3),
+    # it is only used for the python API docs, not for the man pages.
+    substituteInPlace doc/conf.py.in \
+      --replace-fail "'autoapi.extension'," ""
     substituteInPlace CMakeLists.txt \
       --replace-fail "/usr/lib/systemd/system" "$out/lib/systemd/system"
     substituteInPlace dnf5daemon-server/dbus/CMakeLists.txt \

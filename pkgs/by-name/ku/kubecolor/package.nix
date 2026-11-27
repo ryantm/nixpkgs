@@ -9,16 +9,16 @@
 
 buildGoModule (finalAttrs: {
   pname = "kubecolor";
-  version = "0.6.0";
+  version = "0.9.0";
 
   src = fetchFromGitHub {
     owner = "kubecolor";
     repo = "kubecolor";
     rev = "v${finalAttrs.version}";
-    sha256 = "sha256-1eLt75w/l6AQDDUMhKIvWnaQox87r5M3c30AtpNyZFw=";
+    sha256 = "sha256-EtueXrmlSQJPV2IpvO8vZ7/TqF1FsF7MAcEL6LUhHUQ=";
   };
 
-  vendorHash = "sha256-oTeDByJ81eWCCsIHyuScQS+lhE9cHqiATIlw2UdUZNo=";
+  vendorHash = "sha256-AE2HYSk8o/HztgjPdRvgS4dWnH9GL5U+u/3AomzST/U=";
 
   ldflags = [
     "-s"

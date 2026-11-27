@@ -5,38 +5,38 @@
   copyDesktopItems,
   dart-sass,
   darwin,
-  electron_39,
+  electron_43,
   fetchFromGitHub,
   gnome-keyring,
   jq,
   makeDesktopItem,
   makeWrapper,
   nix-update-script,
-  nodejs_22,
+  nodejs_24,
   pkg-config,
   rustc,
   rustPlatform,
   stdenv,
+  sqlite,
   xcbuild,
 }:
 
 let
   icon = "bitwarden";
-  electron = electron_39;
+  electron = electron_43;
 in
 buildNpmPackage (finalAttrs: {
   pname = "bitwarden-desktop";
-  version = "2026.6.1";
+  version = "2026.11.0";
 
   src = fetchFromGitHub {
     owner = "bitwarden";
     repo = "clients";
     tag = "desktop-v${finalAttrs.version}";
-    hash = "sha256-ee+C58Y5pZWEmqbRO/w7rdY+e6gy4EL7Sn0S1AxGMXI=";
+    hash = "sha256-l/YdVJveeQC0dNCCzeM5ns19QKyOcSohUgA2RNP/VMU=";
   };
 
   patches = [
-    ./electron-builder-package-lock.patch
     ./dont-auto-setup-biometrics.patch
 
     # ensures `app.getPath("exe")` returns our wrapper, not ${electron}/bin/electron
@@ -64,7 +64,7 @@ buildNpmPackage (finalAttrs: {
     rm -r apps/cli
   '';
 
-  nodejs = nodejs_22;
+  nodejs = nodejs_24;
 
   makeCacheWritable = true;
   npmFlags = [
@@ -73,8 +73,8 @@ buildNpmPackage (finalAttrs: {
   ];
 
   npmWorkspace = "apps/desktop";
-  npmDepsFetcherVersion = 3;
-  npmDepsHash = "sha256-C5GLei/WWetd4qLv7obBJWbQR9LBy+Sqdbjko3/W7VY=";
+  npmDepsFetcherVersion = 2;
+  npmDepsHash = "sha256-I+8QA5r2cDhmGg8YxNmVurhyVU8vCwU4qXTDg4VelRQ=";
 
   cargoDeps = rustPlatform.fetchCargoVendor {
     inherit (finalAttrs)
@@ -84,7 +84,7 @@ buildNpmPackage (finalAttrs: {
       cargoRoot
       patches
       ;
-    hash = "sha256-xyK3+z2yfCG9K5XAB6LNEeyqMRknONi6ZfY/3oko7Z8=";
+    hash = "sha256-fUMCzkAUCiCdH0FdiyEQZIvcHJUGPv1YASwLOHEwN4E=";
   };
   cargoRoot = "apps/desktop/desktop_native";
 
@@ -106,6 +106,10 @@ buildNpmPackage (finalAttrs: {
   ++ lib.optionals stdenv.hostPlatform.isDarwin [
     xcbuild
     darwin.autoSignDarwinBinariesHook
+  ];
+
+  buildInputs = [
+    sqlite
   ];
 
   preBuild = ''
@@ -154,7 +158,7 @@ buildNpmPackage (finalAttrs: {
 
   checkFlags = [
     # fails in zbus
-    "--skip=password::password::tests::test"
+    "--skip=password::os::tests::test"
     # requires some debug feature to be enabled
     "--skip=storage::serialization::tests::test_keydata_from_corrupted_bytes"
     "--skip=storage::serialization::tests::test_keydata_from_empty_bytes"
@@ -197,7 +201,7 @@ buildNpmPackage (finalAttrs: {
     # Extract the polkit policy file from the multiline string in the source code.
     # This may break in the future but its better than copy-pasting it manually.
     mkdir -p $out/share/polkit-1/actions/
-    pushd apps/desktop/src/key-management/biometrics
+    pushd apps/desktop/src/key-management/biometrics/native-v2
     awk '/const polkitPolicy = `/{gsub(/^.*`/, ""); print; str=1; next} str{if (/`;/) str=0; gsub(/`;/, ""); print}' os-biometrics-linux.service.ts > $out/share/polkit-1/actions/com.bitwarden.Bitwarden.policy
     popd
 
@@ -246,7 +250,6 @@ buildNpmPackage (finalAttrs: {
     platforms = [
       "x86_64-linux"
       "aarch64-linux"
-      "x86_64-darwin"
       "aarch64-darwin"
     ];
     mainProgram = "bitwarden";

@@ -3,6 +3,7 @@
   stdenv,
   buildPythonPackage,
   fetchFromGitHub,
+  pythonAtLeast,
 
   # build-system
   setuptools,
@@ -10,38 +11,41 @@
   # dependencies
   gymnasium,
   numpy,
+  typing-extensions,
 
   # optional-dependencies
+  # atari:
   pygame-ce,
+  # butterfly:
   pymunk,
+  # classic:
   chess,
   rlcard,
   shimmy,
+  # other:
+  moviepy,
   pillow,
-  pybox2d,
+  # sisl
   scipy,
-  pre-commit,
-  pynput,
-  pytest,
-  pytest-cov-stub,
-  pytest-markdown-docs,
-  pytest-xdist,
+  pybox2d,
+  swig,
 
   # tests
+  pytest-markdown-docs,
+  pytest-xdist,
   pytestCheckHook,
 }:
 
 buildPythonPackage (finalAttrs: {
   pname = "pettingzoo";
-  version = "1.26.1";
+  version = "1.27.0";
   pyproject = true;
-  __structuredAttrs = true;
 
   src = fetchFromGitHub {
     owner = "Farama-Foundation";
     repo = "PettingZoo";
     tag = finalAttrs.version;
-    hash = "sha256-WrfjkDnmir6bZvtMD7MVQKVoGvK+lutlOoNe9SNQ8jU=";
+    hash = "sha256-fiaHuMmoaL6VweDcXZVLaQcvXHG3B0zcOrePlOajQzo=";
   };
 
   build-system = [
@@ -51,6 +55,7 @@ buildPythonPackage (finalAttrs: {
   dependencies = [
     gymnasium
     numpy
+    typing-extensions
   ];
 
   optional-dependencies = {
@@ -67,23 +72,21 @@ buildPythonPackage (finalAttrs: {
       pygame-ce
       rlcard
       shimmy
+      # open-spiel (unpackaged)
     ];
     mpe = [ pygame-ce ];
-    other = [ pillow ];
+    other = [
+      moviepy
+      pillow
+    ];
     sisl = [
-      pybox2d
       pygame-ce
       pymunk
       scipy
-    ];
-    testing = [
-      # autorom
-      pre-commit
-      pynput
-      pytest
-      pytest-cov-stub
-      pytest-markdown-docs
-      pytest-xdist
+      pybox2d
+    ]
+    ++ lib.optionals (pythonAtLeast "3.14") [
+      swig
     ];
   };
 
@@ -91,12 +94,15 @@ buildPythonPackage (finalAttrs: {
 
   nativeCheckInputs = [
     chess
+    moviepy
+    pybox2d
     pygame-ce
     pymunk
     pytest-markdown-docs
     pytest-xdist
     pytestCheckHook
     rlcard
+    scipy
   ];
 
   disabledTestPaths = [
@@ -109,6 +115,10 @@ buildPythonPackage (finalAttrs: {
   disabledTests = [
     # ImportError: cannot import name 'pytest_plugins' from 'pettingzoo.classic'
     "test_chess"
+
+    # pygame.error: No available video device
+    "test_kaz_obs_updates"
+    "test_rgb_array_render_does_not_init_audio"
   ]
   ++ lib.optionals stdenv.hostPlatform.isDarwin [
     # Crashes on darwin: `Fatal Python error: Aborted`

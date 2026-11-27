@@ -1,4 +1,5 @@
 {
+  stdenv,
   lib,
   buildPythonPackage,
   fetchFromGitHub,
@@ -17,6 +18,7 @@
   idna,
 
   # optional dependencies
+  backports-zstd,
   brotli,
   brotlicffi,
   click,
@@ -24,14 +26,16 @@
   pygments,
   rich,
   socksio,
-  zstandard,
+  wsproto,
 
   # tests
   chardet,
   pytestCheckHook,
   pytest-trio,
+  starlette,
   trustme,
   uvicorn,
+  websockets,
 
   # reverse deps
   httpx2,
@@ -39,14 +43,14 @@
 
 buildPythonPackage (finalAttrs: {
   pname = "httpx2";
-  version = "2.4.0";
+  version = "2.13.1";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "pydantic";
     repo = "httpx2";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-T5As4cdZRHkWszzaDZX8G8Z35TkaBsB/oy92FtOhuBY=";
+    hash = "sha256-XgjFiSwc4xCyPJcTB/Exh838fUOKsT0JRrha7s70C50=";
   };
 
   postPatch = ''
@@ -75,7 +79,8 @@ buildPythonPackage (finalAttrs: {
     ];
     http2 = [ h2 ];
     socks = [ socksio ];
-    zstd = lib.optionals (pythonOlder "3.14") [ zstandard ];
+    ws = [ wsproto ];
+    zstd = lib.optionals (pythonOlder "3.14") [ backports-zstd ];
   };
 
   pythonImportsCheck = [
@@ -89,10 +94,11 @@ buildPythonPackage (finalAttrs: {
   nativeCheckInputs = [
     chardet
     pytestCheckHook
-    # pytest-httpbin
     pytest-trio
+    (starlette.overridePythonAttrs { doCheck = false; })
     trustme
     uvicorn
+    websockets
   ]
   ++ lib.concatAttrValues finalAttrs.passthru.optional-dependencies;
 
@@ -102,6 +108,18 @@ buildPythonPackage (finalAttrs: {
     # network access
     "test_async_proxy_close"
     "test_sync_proxy_close"
+    "test_h2_timeout_during_request"
+    # uvicorn access logging mismatch
+    "test_logging_request"
+    "test_logging_redirect_chain"
+    # chardet shenanigans (Windows-1252 == WINDOWS-1252 cmp)
+    "test_client_decode_text_using_autodetect"
+    "test_client_decode_text_using_explicit_encoding"
+    "test_response_decode_text_using_autodetect"
+  ]
+  ++ lib.optionals stdenv.hostPlatform.isDarwin [
+    # TODO?
+    "test_keepalive_ping"
   ];
 
   passthru.tests = {
@@ -109,7 +127,6 @@ buildPythonPackage (finalAttrs: {
   };
 
   __darwinAllowLocalNetworking = true;
-  __structuredAttrs = true;
 
   meta = {
     description = "A next generation HTTP client for Python";

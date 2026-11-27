@@ -3,6 +3,7 @@
   rustPlatform,
   fetchFromGitHub,
   pkg-config,
+  aws-lc,
   protobuf,
   fontconfig,
   freetype,
@@ -17,17 +18,17 @@
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "objdiff";
-  version = "3.7.3";
+  version = "3.8.3";
   __structuredAttrs = true;
 
   src = fetchFromGitHub {
     owner = "encounter";
     repo = "objdiff";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-2Rzoj8JXv9MOGRHWiIodaBbP8ID+8RFJFuB3hzrodh8=";
+    hash = "sha256-KF37Y9D/vmGq1Y7017IjeoFZk/G7aK98vYYYQe5QxaU=";
   };
 
-  cargoHash = "sha256-Z9vyUj35nrHuUoOYM54RLCn7CzcQ6k3A6FsDYKCVqVM=";
+  cargoHash = "sha256-HERAeWyA8pDpMCGVAssY2r66i7AfbqmlvJ/4zbDDe2M=";
 
   nativeBuildInputs = [
     pkg-config
@@ -35,6 +36,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
   ];
 
   buildInputs = [
+    aws-lc
     fontconfig
     freetype
     libxkbcommon

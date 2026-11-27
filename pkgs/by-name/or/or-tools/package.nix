@@ -109,6 +109,11 @@ stdenv.mkDerivation (finalAttrs: {
     substituteInPlace CMakeLists.txt \
       --replace-fail 'set(BUILD_protobuf_matchers ON)' 'set(BUILD_protobuf_matchers OFF)'
   ''
+  # pkg_resources was dropped from setuptools and is unused in this file
+  + ''
+    substituteInPlace examples/contrib/check_dependencies.py \
+      --replace-fail 'from pkg_resources import parse_version' ""
+  ''
   # Patches from OpenSUSE:
   # https://build.opensuse.org/projects/science/packages/google-or-tools/files/google-or-tools.spec?expand=1
   + ''
@@ -116,6 +121,11 @@ stdenv.mkDerivation (finalAttrs: {
     find . -iname \*CMakeLists.txt -exec sed -i -e 's/pybind11_native_proto_caster/pybind11_protobuf::pybind11_native_proto_caster/' '{}' \;
     sed -i -e 's/TARGET pybind11_native_proto_caster/TARGET pybind11_protobuf::pybind11_native_proto_caster/' cmake/check_deps.cmake
     sed -i -e "/protobuf/ { s/.*,/'protobuf >= 5.26',/ }" ortools/python/setup.py.in
+  ''
+  # swig 4.5 dropped the Python 2 PyInt_* aliases
+  + ''
+    grep -rlE 'PyInt_(Check|AsLong|FromLong)\b' ortools \
+      | xargs sed -i -E 's/\bPyInt_(Check|AsLong|FromLong)\b/PyLong_\1/g'
   '';
 
   cmakeFlags = [
@@ -243,10 +253,5 @@ stdenv.mkDerivation (finalAttrs: {
     mainProgram = "fzn-cp-sat";
     maintainers = with lib.maintainers; [ andersk ];
     platforms = with lib.platforms; linux ++ darwin;
-
-    # Only version 9.15 adds support for Python 3.14: https://github.com/google/or-tools/releases/tag/v9.15
-    # Also this package is tied to pybind 2.13.6, and only 3.0.0 supports Python 3.14: https://github.com/pybind/pybind11/releases/tag/v3.0.0
-    # Also, nix review fails to build python314Packages.ortools
-    broken = python3.pythonAtLeast "3.14";
   };
 })

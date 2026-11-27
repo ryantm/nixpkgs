@@ -17,15 +17,20 @@
 
 buildPythonPackage (finalAttrs: {
   pname = "zigpy-znp";
-  version = "1.1.0";
+  version = "1.1.1";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "zigpy";
     repo = "zigpy-znp";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-JQe8A4pfKEBJInd0Fq91c2/UgAsQP1vbHy4wF/FO46c=";
+    hash = "sha256-+rTos8iSyS1b6iAHYbEbStwNH00XQP7SdCwAQBVNnYM=";
   };
+
+  patches = [
+    # https://github.com/zigpy/zigpy-znp/pull/291
+    ./zigpy-2.4.1.patch
+  ];
 
   postPatch = ''
     substituteInPlace pyproject.toml \
@@ -53,12 +58,6 @@ buildPythonPackage (finalAttrs: {
   ];
 
   pytestFlags = [ "--reruns=3" ];
-
-  disabledTests = [
-    # broken by https://github.com/zigpy/zigpy/pull/1635
-    "test_concurrency_auto_config"
-    "test_request_concurrency"
-  ];
 
   pythonImportsCheck = [ "zigpy_znp" ];
 

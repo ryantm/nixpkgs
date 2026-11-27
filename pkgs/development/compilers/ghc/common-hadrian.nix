@@ -118,6 +118,7 @@
         # While split sections are now enabled by default in ghc 8.8 for windows,
         # they seem to lead to `too many sections` errors when building base for
         # profiling.
+        # TODO(@alexfmpe): test split sections again with GHC 9.14.2
         ++ (if stdenv.targetPlatform.isWindows then [ "no_split_sections" ] else [ "split_sections" ]);
     in
     baseFlavour + lib.concatMapStrings (t: "+${t}") transformers,
@@ -254,6 +255,14 @@
               "sha256-vtjT+TL/7sYPu4rcVV3xCqJQ+uqkyBbf9l0KIi97j/0=";
         })
       ]
+      ++ lib.optionals (lib.versionAtLeast version "9.10" && lib.versionOlder version "9.12") [
+        # Fix LLVM backend split sections causing bin/out reference cycles: https://gitlab.haskell.org/ghc/ghc/-/issues/26770
+        (fetchpatch {
+          name = "ghc-llvm-fix-split-sections.patch";
+          url = "https://gitlab.haskell.org/ghc/ghc/-/commit/b18b2c42c32488ad6d3480a56a1fcd753cad2023.patch";
+          hash = "sha256-kEgZARwcdnWcvjuTfyqnn8V1zAUczZN0qiy/1WbCy1s=";
+        })
+      ]
       ++ lib.optionals (lib.versionOlder version "9.12") [
         (fetchpatch {
           name = "ghc-rts-Fix-compile-on-powerpc64-elf-v1.patch";
@@ -309,34 +318,35 @@
       ]
 
       # Fix docs build with Sphinx >= 9 https://gitlab.haskell.org/ghc/ghc/-/issues/26810
-      ++
-        lib.optionals
-          (
-            lib.versionOlder version "9.12.4"
-            || (lib.versionAtLeast version "9.14" && lib.versionOlder version "9.15.20260129")
-          )
-          [
-            ./ghc-9.6-or-later-docs-sphinx-9.patch
-          ]
+      ++ lib.optionals (lib.versionOlder version "9.12.4" || version == "9.14.1") [
+        ./ghc-9.6-or-later-docs-sphinx-9.patch
+      ]
 
       # Fixes rts/Types.h missing from the install when targeting javascript
       # See https://gitlab.haskell.org/ghc/ghc/-/merge_requests/15740, krank:ignore-line
       # https://gitlab.haskell.org/ghc/ghc/-/issues/27033. krank:ignore-line
-      ++
-        lib.optionals
-          (
-            version == "9.12.3"
-            # TODO(@sternenseemann): 9.14.2 will likely also have this patch
-            || (lib.versionAtLeast version "9.14" && lib.versionOlder version "9.15.20260127")
-          )
-          [
-            (fetchpatch {
-              name = "ghc-9.12.3-ghcjs-install-rts-types.h.patch";
-              url = "https://gitlab.haskell.org/ghc/ghc/-/commit/5b1be555be4f0989d78c274991c5046d7ac6d25e.patch";
-              hash = "sha256-pv4NDyQ6FlZgmTYZ4Ghis4qggt7nCDMhqGaFxTxVPac=";
-              includes = [ "rts/rts.cabal" ];
-            })
-          ]
+      ++ lib.optionals (version == "9.12.3" || version == "9.14.1") [
+        (fetchpatch {
+          name = "ghc-9.12.3-ghcjs-install-rts-types.h.patch";
+          url = "https://gitlab.haskell.org/ghc/ghc/-/commit/5b1be555be4f0989d78c274991c5046d7ac6d25e.patch";
+          hash = "sha256-pv4NDyQ6FlZgmTYZ4Ghis4qggt7nCDMhqGaFxTxVPac=";
+          includes = [ "rts/rts.cabal" ];
+        })
+      ]
+
+      # Enable GHCi on LoongArch64 (not in upstream's hardcoded platform list)
+      ++ lib.optionals stdenv.targetPlatform.isLoongArch64 [
+        (
+          if lib.versionOlder version "9.10" then
+            ./ghc-9.6-hadrian-Enable-GHCi-on-all-platforms.patch
+          else if lib.versionOlder version "9.12" then
+            ./ghc-9.10-hadrian-Enable-GHCi-on-all-platforms.patch
+          else if lib.versionOlder version "9.14" then
+            ./ghc-9.12-hadrian-Enable-GHCi-on-all-platforms.patch
+          else
+            null
+        )
+      ]
 
       ++ (import ./common-llvm-patches.nix { inherit lib version fetchpatch; });
 
@@ -769,7 +779,7 @@ stdenv.mkDerivation (
       # Tool used to update GHC's settings file in postInstall
       bootPkgs.ghc-settings-edit
     ]
-    ++ lib.optionals (stdenv.hostPlatform.isDarwin && stdenv.hostPlatform.isAarch64) [
+    ++ lib.optionals stdenv.hostPlatform.isDarwin [
       autoSignDarwinBinariesHook
     ]
     ++ lib.optionals enableDocs [
@@ -855,16 +865,6 @@ stdenv.mkDerivation (
     preInstall = ''
       pushd _build/bindist/*
 
-    ''
-    # the bindist configure script uses different env variables than the GHC configure script
-    # see https://github.com/NixOS/nixpkgs/issues/267250 krank:ignore-line
-    # https://gitlab.haskell.org/ghc/ghc/-/issues/24211  krank:ignore-line
-    + lib.optionalString (stdenv.targetPlatform.linker == "cctools") ''
-      export InstallNameToolCmd=$INSTALL_NAME_TOOL
-      export OtoolCmd=$OTOOL
-    ''
-    # Replicate configurePhase
-    + ''
       $configureScript "''${configureFlags[@]}"
     '';
 
@@ -927,6 +927,7 @@ stdenv.mkDerivation (
 
       inherit llvmPackages;
       inherit enableShared;
+      inherit enableProfiledLibs;
       inherit hasHaddock;
 
       # Expose hadrian used for bootstrapping, for debugging purposes
@@ -945,6 +946,9 @@ stdenv.mkDerivation (
       timeout = 24 * 3600;
       platforms = lib.platforms.all;
       inherit (bootPkgs.ghc.meta) license;
+    }
+    // lib.optionalAttrs (rev == null) {
+      changelog = "https://downloads.haskell.org/~ghc/${version}/docs/users_guide/${version}-notes.html";
     };
 
     dontStrip = targetPlatform.useAndroidPrebuilt || targetPlatform.isWasm;

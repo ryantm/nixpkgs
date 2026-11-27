@@ -32,7 +32,7 @@ let
   version = sources.version;
   format = "wheel";
   pyShortVersion = "cp${lib.replaceStrings [ "." ] [ "" ] python.pythonVersion}";
-  cudaVersion = "cu${lib.replaceStrings [ "." ] [ "" ] cudaPackages.cudatoolkit.version}";
+  cudaVersion = "cu${lib.replaceStrings [ "." ] [ "" ] cudaPackages.cudaMajorMinorVersion}";
 
   throwSystem = throw "Unsupported system: ${stdenv.hostPlatform.system}";
   systemSources = sources."${stdenv.hostPlatform.system}" or throwSystem;
@@ -48,7 +48,7 @@ let
   platform = sources.${stdenv.hostPlatform.system}.platform;
 
   src = fetchurl {
-    url = "https://paddle-whl.bj.bcebos.com/stable/${
+    url = "https://paddle-whl.cdn.bcebos.com/stable/${
       if cudaSupport then cudaVersion else "cpu"
     }/${pname}/${
       lib.replaceStrings [ "-" ] [ "_" ] pname
@@ -73,8 +73,29 @@ buildPythonPackage {
 
   buildInputs = lib.optionals cudaSupport [ rdma-core ];
 
+  # the cpu aarch64 wheels spell the requirement `opt-einsum`, all others `opt_einsum`
   pythonRelaxDeps = [
     "opt_einsum"
+    "opt-einsum"
+  ];
+
+  pythonRemoveDeps = lib.optionals cudaSupport [
+    "cuda-python"
+    "nvidia-cublas-cu12"
+    "nvidia-cuda-cccl-cu12"
+    "nvidia-cuda-cupti-cu12"
+    "nvidia-cuda-nvrtc-cu12"
+    "nvidia-cuda-runtime-cu12"
+    "nvidia-cudnn-cu12"
+    "nvidia-cufile-cu12"
+    "nvidia-cufft-cu12"
+    "nvidia-curand-cu12"
+    "nvidia-cusolver-cu12"
+    "nvidia-cusparse-cu12"
+    "nvidia-cusparselt-cu12"
+    "nvidia-nccl-cu12"
+    "nvidia-nvjitlink-cu12"
+    "nvidia-nvtx-cu12"
   ];
 
   dependencies = [
@@ -106,8 +127,12 @@ buildPythonPackage {
           ++ lib.optionals cudaSupport (
             with cudaPackages;
             [
-              cudatoolkit.lib
-              cudatoolkit.out
+              cuda_cudart
+              cuda_nvrtc
+              libcublas
+              libcurand
+              libcusolver
+              libcusparse
               cudnn
             ]
           )
@@ -144,7 +169,6 @@ buildPythonPackage {
     ]
     ++ lib.optionals (!cudaSupport) [
       "aarch64-linux"
-      "aarch64-darwin"
     ];
     sourceProvenance = with lib.sourceTypes; [ binaryNativeCode ];
   };

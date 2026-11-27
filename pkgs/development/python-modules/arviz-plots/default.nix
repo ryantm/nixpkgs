@@ -2,6 +2,7 @@
   lib,
   stdenv,
   buildPythonPackage,
+  arviz,
   fetchFromGitHub,
 
   # build-system
@@ -41,15 +42,14 @@
 
 buildPythonPackage (finalAttrs: {
   pname = "arviz-plots";
-  version = "1.2.0";
+  inherit (arviz) version;
   pyproject = true;
-  __structuredAttrs = true;
 
   src = fetchFromGitHub {
     owner = "arviz-devs";
     repo = "arviz-plots";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-C08HLWnCixreeMj5imN7iOnYgYUZZ3+XG0lPExL4O1c=";
+    hash = "sha256-FHhF/spTt1KPVG45Dtdkf/C41VbOU+CXUSoeCfOWR50=";
   };
 
   build-system = [

@@ -6,16 +6,16 @@
 
 buildGoModule (finalAttrs: {
   pname = "termsvg";
-  version = "0.10.0";
+  version = "0.13.0";
 
   src = fetchFromGitHub {
     owner = "MrMarble";
     repo = "termsvg";
     rev = "v${finalAttrs.version}";
-    hash = "sha256-tNvr8ptMortP7iI6GwT4AGbqTvNFposca8I2JribGnk=";
+    hash = "sha256-9IWSjOQBYKRaHL9YptjponIBegA84BrUgne/iH8Yl30=";
   };
 
-  vendorHash = "sha256-BoXRLWhQmfvMIN658MiXGCFMbnvuXfv/H/jCE6h4aWk=";
+  vendorHash = "sha256-CYyxhof8Rxmpp2mL+853iKm7z05dXu8mcjygnQqHQz8=";
 
   ldflags = [
     "-s"
@@ -24,6 +24,20 @@ buildGoModule (finalAttrs: {
     "-X=main.commit=${finalAttrs.src.rev}"
     "-X=main.date=1970-01-01T00:00:00Z"
   ];
+
+  checkFlags =
+    let
+      skippedTests = [
+        # fatal: not a git repository: .git
+        "TestSVGLayoutMatrixCapturesNineVariantsAtTwoFrameRates"
+
+        # writes and execute shell scripts that lack patchShebang
+        "TestUpdateFilesizeUsesConventionalReduction"
+        "TestUpdateFilesizeCountsOnlyTheCheckedOutHistory"
+        "TestUpdateFilesizeRefusesAShallowClone"
+      ];
+    in
+    [ "-skip=^${builtins.concatStringsSep "$|^" skippedTests}$" ];
 
   meta = {
     description = "Record, share and export your terminal as a animated SVG image";

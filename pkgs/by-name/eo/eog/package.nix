@@ -33,7 +33,7 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "eog";
-  version = "50.1";
+  version = "50.2";
 
   outputs = [
     "out"
@@ -43,7 +43,7 @@ stdenv.mkDerivation (finalAttrs: {
 
   src = fetchurl {
     url = "mirror://gnome/sources/eog/${lib.versions.major finalAttrs.version}/eog-${finalAttrs.version}.tar.xz";
-    hash = "sha256-b17m11ZUi4jiWph+DQbavDxsMlmPt99J+wiUXB/pSlU=";
+    hash = "sha256-xsKv3+QKg43gxrJkiEqA04jxwu+j9zoV7eCIJMRr4LM=";
   };
 
   patches = [
@@ -127,6 +127,7 @@ stdenv.mkDerivation (finalAttrs: {
     homepage = "https://gitlab.gnome.org/GNOME/eog";
     changelog = "https://gitlab.gnome.org/GNOME/eog/-/blob/${finalAttrs.version}/NEWS?ref_type=tags";
     license = lib.licenses.gpl2Plus;
+    identifiers.cpeParts = lib.meta.cpeFullVersionWithVendor "gnome" finalAttrs.version;
     teams = [ lib.teams.gnome ];
     platforms = lib.platforms.unix;
     mainProgram = "eog";

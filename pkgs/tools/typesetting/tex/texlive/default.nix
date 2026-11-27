@@ -6,7 +6,7 @@
 {
   lib,
   stdenv,
-  fetchpatch,
+  fetchpatch2,
   fetchurl,
   runCommand,
   writeShellScript,
@@ -46,12 +46,17 @@
   nixfmt,
   luajit,
   texinfo,
+  texlive,
   # for bin.nix
+  fetchpatch,
   gnum4,
   jdk_headless,
   perlPackages,
   python3Packages,
   pkg-config,
+  autoconf,
+  automake,
+  libtool,
   cmake,
   ninja,
   libpaper,
@@ -73,7 +78,6 @@
   unzip,
   fetchFromGitHub,
   buildPackages,
-  texlive,
   zlib,
   libiconv,
   libpng,
@@ -99,14 +103,14 @@ let
   overriddenTlpdb =
     let
       overrides = import ./tlpdb-overrides.nix {
+        inherit (texlive) pkgs;
         inherit
           stdenv
           lib
-          fetchpatch
+          fetchpatch2
           bin
           tlpdb
           tlpdbxz
-          tl
           installShellFiles
           coreutils
           findutils
@@ -128,6 +132,7 @@ let
           zip
           luajit
           texinfo
+          unzip
           ;
       };
     in
@@ -226,13 +231,15 @@ let
         inherit mirrors pname;
         fixedHashes = fixedHashes."${pname}-${toString revision}${extraRevision}" or { };
       }
-      // lib.optionalAttrs (args ? deps) { deps = map (n: tl.${n} or bin.${n}) (args.deps or [ ]); }
+      // lib.optionalAttrs (args ? deps) {
+        deps = map (n: texlive.pkgs.${n} or bin.${n}) (args.deps or [ ]);
+      }
     )
   ) overriddenTlpdb;
 
   # function for creating a working environment
   buildTeXEnv = import ./build-tex-env.nix {
-    inherit tl;
+    inherit (texlive) pkgs;
     inherit tlpdbVersion;
     ghostscript = ghostscript_headless;
     inherit
@@ -260,7 +267,7 @@ let
       drvWithoutDeps = removeAttrs drv [ "tlDeps" ];
       drvWithDeps =
         if (drv ? tlDeps) then
-          drv // { tlDeps = if builtins.isFunction drv.tlDeps then drv.tlDeps tl else drv.tlDeps; }
+          drv // { tlDeps = if builtins.isFunction drv.tlDeps then drv.tlDeps texlive.pkgs else drv.tlDeps; }
         else
           drv;
     in
@@ -320,10 +327,10 @@ let
   # function for creating a working environment from a set of TL packages
   # now a legacy wrapper around buildTeXEnv
   combine = import ./combine-wrapper.nix {
+    inherit (texlive) pkgs;
     inherit
       buildTeXEnv
       lib
-      tl
       toTLPkgList
       ;
   };
@@ -345,7 +352,6 @@ let
     scheme-basic = [
       cc-by-sa-40
       free
-      gfl
       gpl1Only
       gpl2Only
       gpl2Plus
@@ -364,7 +370,6 @@ let
       cc-by-sa-40
       fdl13Only
       free
-      gfl
       gpl1Only
       gpl2Only
       gpl2Plus
@@ -384,7 +389,6 @@ let
       eupl12
       fdl13Only
       free
-      gfl
       gfsl
       gpl1Only
       gpl2Only
@@ -422,7 +426,6 @@ let
       eupl12
       fdl13Only
       free
-      gfl
       gfsl
       gpl1Only
       gpl2Only
@@ -454,7 +457,6 @@ let
       eupl12
       fdl13Only
       free
-      gfl
       gfsl
       gpl1Only
       gpl2Only
@@ -490,7 +492,6 @@ let
       eupl12
       fdl13Only
       free
-      gfl
       gpl1Only
       gpl2Only
       gpl2Plus
@@ -531,7 +532,6 @@ let
       eupl12
       fdl13Only
       free
-      gfl
       gpl1Only
       gpl2Only
       gpl2Plus
@@ -564,7 +564,6 @@ let
       eupl12
       fdl13Only
       free
-      gfl
       gpl1Only
       gpl2Only
       gpl2Plus
@@ -668,7 +667,8 @@ allPkgLists
     bin
     // {
       # for backward compatibility
-      latexindent = tl.latexindent;
+      latexindent = texlive.pkgs.latexindent;
+      pygmentex = texlive.pkgs.pygmentex;
     };
 
   combine =

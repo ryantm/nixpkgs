@@ -6,6 +6,7 @@
 
   # build-system
   poetry-core,
+  pyprojectVersionPatchHook,
 
   # dependencies
   numpy,
@@ -20,19 +21,21 @@
 
 buildPythonPackage (finalAttrs: {
   pname = "gguf";
-  version = "9967";
+  version = "11707";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "ggml-org";
     repo = "llama.cpp";
     tag = "b${finalAttrs.version}";
-    hash = "sha256-HgptebnnT3xOU26/UJCqQ6FSrhcoybju7SKUy4pLOKA=";
+    hash = "sha256-OT3cnd8y8fTDdHTnCpNNA4PaMkbYZmh/p+XtsyMQwGo=";
   };
 
   sourceRoot = "${finalAttrs.src.name}/gguf-py";
 
   build-system = [ poetry-core ];
+
+  nativeBuildInputs = [ pyprojectVersionPatchHook ];
 
   dependencies = [
     numpy

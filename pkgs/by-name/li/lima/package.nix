@@ -5,13 +5,14 @@
   callPackage,
   installShellFiles,
   qemu,
+  symlinkJoin,
+  virtiofsd,
   darwin,
   makeWrapper,
   nix-update-script,
   apple-sdk_15,
   withAdditionalGuestAgents ? false,
   lima-additional-guestagents,
-  llvmPackages,
   writableTmpDirAsHomeHook,
   versionCheckHook,
   testers,
@@ -23,6 +24,22 @@
 
 let
   source = callPackage ./source.nix { };
+
+  # lima looks for virtiofsd through QEMU's vhost-user descriptor directory
+  # (<qemu-prefix>/share/qemu/vhost-user), which it derives from the path of the
+  # qemu-system-* binary it resolved. virtiofsd therefore has to share a prefix
+  # with qemu, or `mountType: virtiofs` fails with "failed to locate virtiofsd".
+  qemuWithVirtiofsd =
+    if stdenv.hostPlatform.isLinux then
+      symlinkJoin {
+        name = "qemu-with-virtiofsd";
+        paths = [
+          qemu
+          virtiofsd
+        ];
+      }
+    else
+      qemu;
 in
 buildGoModule (finalAttrs: {
   pname = "lima" + lib.optionalString withAdditionalGuestAgents "-full";
@@ -36,16 +53,7 @@ buildGoModule (finalAttrs: {
     # For checkPhase, and installPhase(required to build completion)
     writableTmpDirAsHomeHook
   ]
-  ++ lib.optionals stdenv.hostPlatform.isDarwin [
-    darwin.sigtool
-    # TODO: Remove when NixOS/nixpkgs#536365 reaches master.
-    llvmPackages.lld
-  ];
-
-  # TODO: Remove when NixOS/nixpkgs#536365 reaches master.
-  env = lib.optionalAttrs stdenv.hostPlatform.isDarwin {
-    NIX_CFLAGS_LINK = "-fuse-ld=${lib.getExe' llvmPackages.lld "ld64.lld"}";
-  };
+  ++ lib.optionals stdenv.hostPlatform.isDarwin [ darwin.sigtool ];
 
   buildInputs = lib.optionals stdenv.hostPlatform.isDarwin [ apple-sdk_15 ];
 
@@ -79,7 +87,7 @@ buildGoModule (finalAttrs: {
     mkdir -p $out
     cp -r _output/* $out
     wrapProgram $out/bin/limactl \
-      --prefix PATH : ${lib.makeBinPath [ qemu ]}
+      --prefix PATH : ${lib.makeBinPath [ qemuWithVirtiofsd ]}
   ''
   + lib.optionalString (stdenv.buildPlatform.canExecute stdenv.hostPlatform) ''
     installShellCompletion --cmd limactl \

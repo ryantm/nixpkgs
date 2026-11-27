@@ -8,6 +8,7 @@
   cmake,
   ninja,
   pkg-config,
+  buildPackages,
 
   double-conversion,
   fast-float,
@@ -41,7 +42,7 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "folly";
-  version = "2026.01.19.00";
+  version = "2026.07.27.00";
 
   # split outputs to reduce downstream closure sizes
   outputs = [
@@ -50,10 +51,10 @@ stdenv.mkDerivation (finalAttrs: {
   ];
 
   src = fetchFromGitHub {
-    owner = "facebook";
+    owner = "meta";
     repo = "folly";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-gfmN/9LizPdacUd1eJxFx79I63SwqX0NaWFgbe6vbFk=";
+    hash = "sha256-xxS1FU3thl8UA1DzumVEazelISayLioabFjKlXX67Yk=";
   };
 
   nativeBuildInputs = [
@@ -106,7 +107,14 @@ stdenv.mkDerivation (finalAttrs: {
     (lib.cmakeFeature "LIB_INSTALL_DIR" "${placeholder "out"}/lib")
     (lib.cmakeFeature "CMAKE_INSTALL_DIR" "${placeholder "dev"}/lib/cmake/folly")
     (lib.cmakeFeature "CMAKE_INSTALL_PREFIX" (placeholder "dev"))
-  ];
+  ]
+  ++
+    lib.optionals
+      (
+        !stdenv.buildPlatform.canExecute stdenv.hostPlatform
+        && stdenv.hostPlatform.emulatorAvailable buildPackages
+      )
+      [ (lib.cmakeFeature "CMAKE_CROSSCOMPILING_EMULATOR" (stdenv.hostPlatform.emulator buildPackages)) ];
 
   env.NIX_CFLAGS_COMPILE = lib.concatStringsSep " " (
     [
@@ -118,7 +126,7 @@ stdenv.mkDerivation (finalAttrs: {
     ]
   );
 
-  # https://github.com/facebook/folly/blob/main/folly/DiscriminatedPtr.h
+  # https://github.com/meta/folly/blob/main/folly/DiscriminatedPtr.h
   # error: #error "DiscriminatedPtr is x64, arm64, ppc64 and riscv64 specific code."
   doCheck =
     stdenv.hostPlatform.isx86_64
@@ -134,28 +142,11 @@ stdenv.mkDerivation (finalAttrs: {
     # `dev` output’s CMake files.
     ./install-test-certs.patch
 
-    # The base template for std::char_traits has been removed in LLVM 19
-    # https://releases.llvm.org/19.1.0/projects/libcxx/docs/ReleaseNotes.html
-    ./char_traits.patch
-
-    # <https://github.com/facebook/folly/issues/2171>
-    ./folly-fix-glog-0.7.patch
-
-    # https://github.com/facebook/folly/pull/2561
+    # https://github.com/meta/folly/pull/2561
     ./memset-memcpy-aarch64.patch
 
-    # `.align 64` is invalid on x86_64 Mach-O, where `.align` takes a
-    # power-of-two exponent (64 means 2^64). The guard only excluded
-    # aarch64, so add !__APPLE__ to also skip x86_64-darwin.
-    ./memset-benchmark-darwin.patch
-
-    # Use feature detection directly instead of private standard library
-    # macros to detect the presence of ASAN and otherwise fallback to
-    # _not_ having ASAN.
-    (fetchpatch2 {
-      url = "https://github.com/facebook/folly/commit/fdde9bc360d525a1b2889b9ba89d671c3a13e72e.patch?full_index=1";
-      hash = "sha256-+1XJRAl4o9YubjqdIgQZpyrMmcb2imBfQUmiHNmFMRE=";
-    })
+    # https://github.com/Homebrew/homebrew-core/blob/1bebfe2c3e393a65c27f3e74f254770219b126f3/Formula/f/folly.rb#L83
+    ./cmake-asm-shared-library.patch
   ];
 
   # https://github.com/NixOS/nixpkgs/issues/144170
@@ -167,19 +158,6 @@ stdenv.mkDerivation (finalAttrs: {
       --replace-fail \
         ${lib.escapeShellArg "\${prefix}/@CMAKE_INSTALL_INCLUDEDIR@"} \
         '@CMAKE_INSTALL_FULL_INCLUDEDIR@'
-  ''
-  # Fix duplicate symbol errors on aarch64-linux caused by both
-  # memcpy_aarch64 and memcpy_aarch64-use (same for memset) being linked
-  # into libfolly.so. Add EXCLUDE_FROM_MONOLITH to -use variants.
-  # https://github.com/facebook/folly/pull/2562
-  + lib.optionalString stdenv.hostPlatform.isAarch64 ''
-    substituteInPlace folly/external/aor/CMakeLists.txt \
-      --replace-fail \
-        "NAME memcpy_aarch64-use" \
-        "NAME memcpy_aarch64-use EXCLUDE_FROM_MONOLITH" \
-      --replace-fail \
-        "NAME memset_aarch64-use" \
-        "NAME memset_aarch64-use EXCLUDE_FROM_MONOLITH"
   '';
 
   disabledTests = [
@@ -212,10 +190,25 @@ stdenv.mkDerivation (finalAttrs: {
 
     # fails in containerized environments due to fork behavior
     "io_async_notification_queue_test.NotificationQueueTest.UseAfterFork"
+
+    # several tests in this suite bound on specific ranges of random numbers,
+    # which is not compatible with gcc 16's implementation of
+    # "P0952R2: A new specification for std::generate_canonical"
+    # https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2023/p0952r2.html
+    "stats_tdigest_test.*/DistributionTest.ReasonableError/*"
+
+    # https://github.com/facebook/folly/issues/2365
+    "executors_serial_executor_test.SerialExecutorTest/*.RecursiveAdd"
   ]
   ++ lib.optionals stdenv.hostPlatform.isLinux [
     "concurrency_cache_locality_test.CacheLocality.BenchmarkSysfs"
     "concurrency_cache_locality_test.CacheLocality.LinuxActual"
+  ]
+  ++ lib.optionals (stdenv.hostPlatform.isLinux && stdenv.hostPlatform.isAarch64) [
+    # very strict timing constraints, will fail under load
+    "futures_interrupt_test.Interrupt.futureWithinTimedOut"
+    "futures_interrupt_test.Interrupt.semiFutureWithinTimedOut"
+    "io_async_async_udp_socket_test.AsyncSocketIntegrationTest.PingPongNotifyMmsg"
   ]
   ++ lib.optionals stdenv.hostPlatform.isDarwin [
     # No idea why these fail.
@@ -236,9 +229,9 @@ stdenv.mkDerivation (finalAttrs: {
 
   meta = {
     description = "Open-source C++ library developed and used at Facebook";
-    homepage = "https://github.com/facebook/folly";
+    homepage = "https://github.com/meta/folly";
     license = lib.licenses.asl20;
-    # 32bit is not supported: https://github.com/facebook/folly/issues/103
+    # 32bit is not supported: https://github.com/meta/folly/issues/103
     platforms = lib.platforms.unix;
     badPlatforms = [ lib.systems.inspect.patterns.is32bit ];
     maintainers = with lib.maintainers; [

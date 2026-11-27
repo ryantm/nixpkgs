@@ -1,30 +1,44 @@
 {
   lib,
-  stdenv,
   callPackage,
   fetchFromGitHub,
   rustPlatform,
   pkg-config,
   perl,
   openssl,
+  zstd,
+  rust-jemalloc-sys,
+  libgit2,
   versionCheckHook,
   librusty_v8 ? callPackage ./librusty_v8.nix {
     inherit (callPackage ./fetchers.nix { }) fetchLibrustyV8;
   },
   nix-update-script,
+  writableTmpDirAsHomeHook,
+  coreutils,
 }:
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "spacetimedb";
-  version = "2.7.0-hotfix1";
+  version = "2.15.0";
 
   src = fetchFromGitHub {
     owner = "clockworklabs";
     repo = "spacetimedb";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-71/pt3OmjtGJboGIqACDQ6GwELHnS2Zs+8kD7IrIcmg=";
+    hash = "sha256-C007eKzhLcVoLoYvPBzmFe42bKsDhBX8+OaQiwpQRpY=";
   };
 
-  cargoHash = "sha256-KfgSYXHQprIX5BVvHWpTKaJg+h8TQkiW0HVjCXttIeQ=";
+  cargoPatches = [
+    ./update-git2.patch
+  ];
+
+  cargoHash = "sha256-XUjTuLsbwf8p6xgtYruVzR1rzx+pFbjYVyutgpazuwA=";
+
+  postPatch = ''
+    substituteInPlace crates/cli/src/schema_extract/tests.rs \
+      --replace-fail /bin/cat ${coreutils}/bin/cat \
+      --replace-fail /usr/bin/head ${coreutils}/bin/head
+  '';
 
   nativeBuildInputs = [
     pkg-config
@@ -34,37 +48,27 @@ rustPlatform.buildRustPackage (finalAttrs: {
 
   buildInputs = [
     openssl
+    zstd
+    rust-jemalloc-sys
+    libgit2
   ];
 
   cargoBuildFlags = [ "-p spacetimedb-standalone -p spacetimedb-cli" ];
 
-  preCheck = ''
-    # server tests require home dir
-    export HOME=$(mktemp -d)
-  '';
+  nativeCheckInputs = [ writableTmpDirAsHomeHook ];
+
+  __darwinAllowLocalNetworking = true;
 
   checkFlags = [
     # require wasm32-unknown-unknown target
     "--skip=codegen"
     "--skip=publish"
-  ]
-  ++ lib.optionals stdenv.hostPlatform.isDarwin [
-    # flakes on darwin in nix build sandbox, timing out waiting for listen addr
-    "--skip=cli_can_ping_spacetimedb_on_disk"
-    "--skip=cli_can_publish_spacetimedb_on_disk"
-    "--skip=cli_can_publish_no_conflict_does_not_delete_data"
-    "--skip=cli_can_publish_no_conflict_with_delete_data_flag"
-    "--skip=cli_can_publish_no_conflict_without_delete_data_flag"
-    "--skip=cli_can_publish_with_automigration_change"
-    "--skip=cli_cannot_publish_automigration_change_without_yes_break_clients"
-    "--skip=cli_can_publish_automigration_change_with_on_conflict_and_yes_break_clients"
-    "--skip=cli_cannot_publish_automigration_change_with_on_conflict_without_yes_break_clients"
-    "--skip=cli_can_publish_automigration_change_with_delete_data_always_without_yes_break_clients"
-    "--skip=cli_can_publish_automigration_change_with_delete_data_always_and_yes_break_clients"
-    "--skip=cli_cannot_publish_breaking_change_without_flag"
-    "--skip=cli_can_publish_breaking_change_with_delete_data_flag"
-    "--skip=cli_can_publish_breaking_change_with_on_conflict_flag"
   ];
+
+  # system-configuration needs configd: "Attempted to create a NULL object."
+  sandboxProfile = ''
+    (allow mach-lookup (global-name "com.apple.SystemConfiguration.configd"))
+  '';
 
   doInstallCheck = true;
 
@@ -72,8 +76,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
     RUSTY_V8_ARCHIVE = librusty_v8;
     # used by crates/cli/build.rs to set GIT_HASH at compile time
     SPACETIMEDB_NIX_BUILD_GIT_COMMIT = finalAttrs.src.rev;
-    # required to make jemalloc_tikv_sys build
-    CFLAGS = "-O";
+    RUSTFLAGS = "--cfg tokio_unstable";
   };
 
   nativeInstallCheckInputs = [ versionCheckHook ];
@@ -86,6 +89,11 @@ rustPlatform.buildRustPackage (finalAttrs: {
   passthru.updateScript = nix-update-script { };
 
   meta = {
+    platforms = [
+      "x86_64-linux"
+      "aarch64-linux"
+      "aarch64-darwin"
+    ];
     description = "Full-featured relational database system that lets you run your application logic inside the database";
     homepage = "https://github.com/clockworklabs/SpacetimeDB";
     license = lib.licenses.bsl11;

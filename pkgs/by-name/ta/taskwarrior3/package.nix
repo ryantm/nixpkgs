@@ -2,6 +2,7 @@
   lib,
   stdenv,
   fetchFromGitHub,
+  fetchpatch,
 
   # nativeBuildInputs
   cmake,
@@ -9,10 +10,12 @@
   rustc,
   cargo,
   installShellFiles,
+  pkg-config,
 
   # buildInputs
   corrosion,
   libuuid,
+  sqlite,
 
   # passthru.tests
   nixosTests,
@@ -25,18 +28,17 @@
 }:
 stdenv.mkDerivation (finalAttrs: {
   pname = "taskwarrior";
-  version = "3.4.2";
+  version = "3.6.0";
   src = fetchFromGitHub {
     owner = "GothenburgBitFactory";
     repo = "taskwarrior";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-Y0jnAW4OtPI9GCOSFRPf8/wo4qBB6O1FASj40S601+E=";
+    hash = "sha256-X2h87zC0LK+qxqF8jcXix2o5qRTNkL6HnXyc6Gy9JxE=";
     fetchSubmodules = true;
   };
   cargoDeps = rustPlatform.fetchCargoVendor {
-    name = "${finalAttrs.pname}-${finalAttrs.version}-cargo-deps";
-    inherit (finalAttrs) src;
-    hash = "sha256-03HG8AGe6PJ516zL23iNjGUYmGOZa8NuFljb1ll2pjs=";
+    inherit (finalAttrs) pname version src;
+    hash = "sha256-wPiXV0V6Yyoqm9oveDFd9qS3tdtxQiPOjRaC+sCPbeI=";
   };
 
   # The CMakeLists files used by upstream issue a `cargo install` command to
@@ -75,39 +77,36 @@ stdenv.mkDerivation (finalAttrs: {
     rustc
     cargo
     installShellFiles
+    pkg-config
   ];
 
   buildInputs = [
     corrosion
     libuuid
+    sqlite
   ];
 
-  doCheck = true;
+  # The test suite is run as an installCheck instead of a check: since
+  # https://github.com/GothenburgBitFactory/taskwarrior/commit/76537e107da1654e81df9713df25dbb8fadf4320
+  # (3.5.0) the default config includes `default.theme`, which `task` looks
+  # up at its compiled-in $out/share/doc/task/rc (TASK_RCDIR). That path is
+  # only populated once `installPhase` has run, so the tests need to run
+  # after install, not before.
+  doInstallCheck = true;
   # See:
   # https://github.com/GothenburgBitFactory/taskwarrior/blob/v3.4.1/doc/devel/contrib/development.md#run-the-test-suite
-  preCheck = ''
+  preInstallCheck = ''
     make test_runner
   '';
-  nativeCheckInputs = [
-    python3
-  ];
-
-  doInstallCheck = true;
-
+  installCheckTarget = "test";
   nativeInstallCheckInputs = [
+    python3
     versionCheckHook
   ];
 
   versionCheckProgram = "${placeholder "out"}/bin/${finalAttrs.meta.mainProgram}";
 
   postInstall = ''
-    # ZSH is installed automatically from some reason, only bash and fish need
-    # manual installation
-    installShellCompletion --cmd task \
-      --bash $out/share/doc/task/scripts/bash/task.sh \
-      --fish $out/share/doc/task/scripts/fish/task.fish
-    rm -r $out/share/doc/task/scripts/bash
-    rm -r $out/share/doc/task/scripts/fish
     # Install vim and neovim plugin
     mkdir -p $out/share/vim-plugins
     mv $out/share/doc/task/scripts/vim $out/share/vim-plugins/task
@@ -127,6 +126,7 @@ stdenv.mkDerivation (finalAttrs: {
       mlaradji
       doronbehar
       Necior
+      me-and
     ];
     mainProgram = "task";
     platforms = lib.platforms.unix;

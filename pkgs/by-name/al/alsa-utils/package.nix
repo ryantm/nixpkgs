@@ -5,6 +5,7 @@
   fetchurl,
   alsa-lib,
   alsa-plugins,
+  bashNonInteractive,
   gettext,
   makeWrapper,
   pkg-config,
@@ -45,6 +46,7 @@ stdenv.mkDerivation (finalAttrs: {
     pkg-config
   ];
   buildInputs = [
+    bashNonInteractive
     alsa-lib
     ncurses
     libsamplerate
@@ -85,6 +87,7 @@ stdenv.mkDerivation (finalAttrs: {
 
   meta = {
     homepage = "http://www.alsa-project.org/";
+    changelog = "https://github.com/alsa-project/alsa-utils/releases/tag/v${finalAttrs.version}";
     description = "ALSA, the Advanced Linux Sound Architecture utils";
     longDescription = ''
       The Advanced Linux Sound Architecture (ALSA) provides audio and

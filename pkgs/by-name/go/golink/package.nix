@@ -1,22 +1,22 @@
 {
-  git,
   lib,
   buildGoModule,
   fetchFromGitHub,
+  unstableGitUpdater,
 }:
 
-buildGoModule rec {
+buildGoModule {
   pname = "golink";
-  version = "1.0.0";
+  version = "1.0.0-unstable-2026-10-27";
 
   src = fetchFromGitHub {
     owner = "tailscale";
     repo = "golink";
-    tag = "v${version}";
-    hash = "sha256-cIml0ewF5j2cQySLHkMmV1rl7cVH8wuoPFeFDCARi1A=";
+    rev = "d02fb073fd1cb92f034aee40f1d3c6c846fecff1";
+    hash = "sha256-C0lov54z1bhkylLn/PnGV7kA/wq2c0cb+F4x2ZAJdgI=";
   };
 
-  vendorHash = "sha256-QIAkmqXWH3X2dIoWyVcqFXVHBwzyv1dNPfdkzD5LuSE=";
+  vendorHash = "sha256-eOQSpWazd6OoGxIKRfdzt/BG8LfnOPBoj2nTQD+FhOk=";
 
   overrideModAttrs = old: {
     # netdb.go allows /etc/protocols and /etc/services to not exist and happily proceeds, but it panic()s if they exist but return permission denied.
@@ -29,6 +29,8 @@ buildGoModule rec {
     "-s"
     "-w"
   ];
+
+  passthru.updateScript = unstableGitUpdater { };
 
   meta = {
     description = "Private shortlink service for tailnets";

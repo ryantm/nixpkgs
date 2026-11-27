@@ -21,13 +21,13 @@ let
 in
 stdenv.mkDerivation (finalAttrs: {
   pname = "Quake3e";
-  version = "2025-10-14";
+  version = "2026-10-14";
 
   src = fetchFromGitHub {
     owner = "ec-";
     repo = "Quake3e";
     tag = finalAttrs.version;
-    sha256 = "sha256-3Ij0GEPXdl7Lhp9o1Zdwg1tcLgFEay686QjhSlh8iAo=";
+    sha256 = "sha256-jEBjWjg5dJ3ZzxoQxF6YkEtIoWH1k9NFQ8vZ6bYqTMI=";
   };
 
   nativeBuildInputs = [
@@ -68,11 +68,16 @@ stdenv.mkDerivation (finalAttrs: {
     runHook postInstall
   '';
 
+  postInstall = ''
+    install -Dm644 code/unix/quake3.svg $out/share/icons/hicolor/scalable/apps/quake3e.svg
+  '';
+
   desktopItems = [
     (makeDesktopItem {
       name = "Quake3e";
       exec = "quake3e";
       desktopName = "Quake3e";
+      icon = "quake3e";
       categories = [ "Game" ];
     })
   ];

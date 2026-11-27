@@ -3,9 +3,9 @@
   stdenvNoCC,
   fetchurl,
   nixosTests,
-  nextcloud32Packages,
   nextcloud33Packages,
   nextcloud34Packages,
+  nextcloud35Packages,
 }:
 
 let
@@ -37,9 +37,7 @@ let
       '';
 
       passthru = {
-        tests = lib.filterAttrs (
-          key: _: (lib.hasSuffix (lib.versions.major version) key)
-        ) nixosTests.nextcloud;
+        tests = nixosTests.nextcloud."nextcloud${lib.versions.major version}";
         inherit packages;
       };
 
@@ -56,24 +54,24 @@ let
     };
 in
 {
-  nextcloud32 = generic {
-    version = "32.0.12";
-    hash = "sha256-rxWPclccjhXim8E2wjqSEYjOHVZoVQAK2U+JuAqPGAw=";
-    packages = nextcloud32Packages;
-  };
-
   nextcloud33 = generic {
-    version = "33.0.6";
-    hash = "sha256-eRghpVAplE3gQxnPyvysSujn71a0zR78JjG/MLedFt4=";
+    version = "33.0.11";
+    hash = "sha256-MmDtP7wtJV/1tBZCfBUyBlHrfrwfpsBg6RbtkHUiEgU=";
     packages = nextcloud33Packages;
   };
 
   nextcloud34 = generic {
-    version = "34.0.1";
-    hash = "sha256-BOnDL8P+Ofa2qKGJFe9a/SgKVrSn90Thj1+i7/+8SmM=";
+    version = "34.0.6";
+    hash = "sha256-Hs7eBue+iTiMjBF+srf+J6i1Fx0vWlfGvDJHKBpWY4k=";
     packages = nextcloud34Packages;
   };
 
+  nextcloud35 = generic {
+    version = "35.0.3";
+    hash = "sha256-WEAUQM6Bt/jURajCqAJ1crYW74NZL5axIf0V7Ioa7TU=";
+    packages = nextcloud35Packages;
+  };
+
   # tip: get the sha with:
-  # curl 'https://download.nextcloud.com/server/releases/nextcloud-${version}.tar.bz2.sha256'
+  # curl  "https://download.nextcloud.com/server/releases/nextcloud-${version}.tar.bz2.sha512" | grep '.tar.bz2'  | cut -f1 -d' ' | xargs nix hash convert --hash-algo sha512 --to sri
 }

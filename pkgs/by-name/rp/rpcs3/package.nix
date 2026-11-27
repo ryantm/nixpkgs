@@ -49,22 +49,27 @@ let
 in
 stdenv.mkDerivation (finalAttrs: {
   pname = "rpcs3";
-  version = "0.0.40-unstable-2026-04-25";
+  version = "0.0.43-unstable-2026-11-15";
 
   src = fetchFromGitHub {
     owner = "RPCS3";
     repo = "rpcs3";
-    rev = "96f73f4497fd6fdafd40dc50f24c95c90cd4acc9";
+    rev = "8d6b42e78adae5cc4685b45ecf2f370273e91810";
     postCheckout = ''
       cd $out/3rdparty
       git submodule update --init \
         fusion/fusion asmjit/asmjit yaml-cpp/yaml-cpp SoundTouch/soundtouch stblib/stb \
         feralinteractive/feralinteractive wolfssl/wolfssl
     '';
-    hash = "sha256-KTF2Oj1p+EplRgWQ/We8mqu60h161/1gniKWjVAvAso=";
+    hash = "sha256-r9juwS2tYDvFBR9HYg34LvNM9ZeuGnrBcNJVeAnYqTM=";
   };
 
-  passthru.updateScript = nix-update-script { extraArgs = [ "--version=branch" ]; };
+  passthru.updateScript = nix-update-script {
+    extraArgs = [
+      "--version=branch"
+      "--use-github-releases"
+    ];
+  };
 
   preConfigure = ''
     cat > ./rpcs3/git-version.h <<EOF
@@ -117,9 +122,7 @@ stdenv.mkDerivation (finalAttrs: {
     qtbase
     qtmultimedia
     openal
-    # RPCS3's X11 swap-interval path uses GLEW's GLXEW symbols, which
-    # are not provided in the default EGL-enabled GLEW build.
-    (glew.override { enableEGL = false; })
+    glew
     vulkan-headers
     vulkan-loader
     libpng

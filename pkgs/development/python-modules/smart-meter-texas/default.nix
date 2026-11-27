@@ -4,6 +4,7 @@
   fetchFromGitHub,
   aiohttp,
   asn1,
+  certifi,
   python-dateutil,
   setuptools,
   tenacity,
@@ -11,14 +12,14 @@
 
 buildPythonPackage rec {
   pname = "smart-meter-texas";
-  version = "0.5.5";
+  version = "0.6.0";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "grahamwetzler";
     repo = "smart-meter-texas";
     tag = "v${version}";
-    hash = "sha256-dHWcYrBtmKdEIU45rMy4KvoPX88hnRpd4KBlbJaNvgI=";
+    hash = "sha256-g0AqbI3YZaHw5oHj6QjlpiAS/jbA9ZbbCAvDrzSwb9c=";
   };
 
   postPatch = ''
@@ -31,6 +32,7 @@ buildPythonPackage rec {
   dependencies = [
     aiohttp
     asn1
+    certifi
     python-dateutil
     tenacity
   ];

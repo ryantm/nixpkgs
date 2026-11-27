@@ -24,19 +24,21 @@
 
 buildPythonPackage (finalAttrs: {
   pname = "langchain-xai";
-  version = "1.2.2";
+  version = "1.4.0";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "langchain-ai";
     repo = "langchain";
     tag = "langchain-xai==${finalAttrs.version}";
-    hash = "sha256-RUklm627HiwMcpKkm+0uWZgHp4iDtSsmEpLb9MxumqI=";
+    hash = "sha256-VRH+ugYi2tQVdl8/c5LR97PxEK85qr7DqXuGGPrSzvY=";
   };
 
   sourceRoot = "${finalAttrs.src.name}/libs/partners/xai";
 
   build-system = [ hatchling ];
+
+  pythonRelaxDeps = [ "langchain-core" ];
 
   dependencies = [
     aiohttp

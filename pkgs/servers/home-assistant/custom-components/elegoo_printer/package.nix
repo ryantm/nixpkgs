@@ -11,6 +11,7 @@
   websockets,
 
   # tests
+  pytest-asyncio,
   pytestCheckHook,
   aiohttp,
   home-assistant,
@@ -19,13 +20,13 @@
 buildHomeAssistantComponent rec {
   owner = "danielcherubini";
   domain = "elegoo_printer";
-  version = "2.10.2";
+  version = "2.15.0";
 
   src = fetchFromGitHub {
     owner = "danielcherubini";
     repo = "elegoo-homeassistant";
     tag = "v${version}";
-    hash = "sha256-+bL43ACj/8dI7dNVNQ+3n2WvDaYhuh3tiwX98yXmTm4=";
+    hash = "sha256-AA3unv5dLdkR1yJ6f7YsAfpsOQyQ0696RGAHi4wMdIY=";
   };
 
   dependencies = [
@@ -37,9 +38,15 @@ buildHomeAssistantComponent rec {
   ];
 
   nativeCheckInputs = [
+    pytest-asyncio
     pytestCheckHook
     aiohttp
     home-assistant
+  ];
+
+  disabledTestPaths = [
+    # multicast is not available in the nix sandbox
+    "custom_components/elegoo_printer/tests/test_config_flow_cc2_options.py::TestManualIpWithProxyHost::test_blank_proxy_host_runs_discovery_as_before"
   ];
 
   meta = {

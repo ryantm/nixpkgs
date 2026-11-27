@@ -10,11 +10,11 @@
 
 buildDunePackage (finalAttrs: {
   pname = "mariadb";
-  version = "1.3.0";
+  version = "2.2.1";
 
   src = fetchurl {
-    url = "https://github.com/ocaml-community/ocaml-mariadb/releases/download/${finalAttrs.version}/mariadb-${finalAttrs.version}.tbz";
-    hash = "sha256-mYktFTUDaA///SzTMgQDNXtYiXxnkMrf4EujijpmjMY=";
+    url = "https://github.com/ocaml-community/ocaml-mariadb/releases/download/v${finalAttrs.version}/mariadb-v${finalAttrs.version}.tbz";
+    hash = "sha256-ztKZMrfdD3tncRGYtVlx58kmlyj1NBhaBk/sLSdYPy0=";
   };
 
   buildInputs = [

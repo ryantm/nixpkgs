@@ -1,6 +1,7 @@
 {
   lib,
   stdenv,
+  config,
   newScope,
   fetchFromGitHub,
   fetchFromGitLab,
@@ -20,7 +21,15 @@
   installShellFiles,
   buildPackages,
   cmake,
-  wasmtime_36,
+  validatePkgConfig,
+  # dependencies for wasmSupport
+  wasmtime_48,
+  binaryen,
+  llvmPackages,
+  makeWrapper,
+  pkgsCross,
+  symlinkJoin,
+
   enableShared ? !stdenv.hostPlatform.isStatic,
   enableStatic ? stdenv.hostPlatform.isStatic,
   wasmSupport ? false,
@@ -75,9 +84,16 @@ let
   */
   builtGrammars = lib.mapAttrs (_: lib.makeOverridable buildGrammar) grammars;
 
+  hasTreeSitterPrefix = lib.hasPrefix "tree-sitter-";
+  grammarAliases = import ./grammars/aliases.nix { inherit lib; };
+
   grammarDerivationsFrom = lib.filterAttrs (
-    name: value: lib.hasPrefix "tree-sitter-" name && lib.isDerivation value
+    name: value: hasTreeSitterPrefix name && lib.isDerivation value
   );
+
+  removeTreesitterPrefix = lib.strings.removePrefix "tree-sitter-";
+  removeGrammarSuffix = lib.strings.removeSuffix "-grammar";
+  replaceHyphens = lib.strings.replaceStrings [ "-" ] [ "_" ];
 
   mkGrammarLinkFarm =
     grammars:
@@ -88,11 +104,7 @@ let
           name = lib.strings.getName drv;
         in
         {
-          name =
-            (lib.strings.replaceStrings [ "-" ] [ "_" ] (
-              lib.strings.removePrefix "tree-sitter-" (lib.strings.removeSuffix "-grammar" name)
-            ))
-            + ".so";
+          name = (replaceHyphens (removeTreesitterPrefix (removeGrammarSuffix name))) + ".so";
           path = "${drv}/parser";
         }
       ) grammars
@@ -116,6 +128,7 @@ let
   grammarsScope = lib.makeScope newScope (
     self:
     builtGrammars
+    // lib.optionalAttrs config.allowAliases (grammarAliases self builtGrammars)
     // {
       derivations = grammarDerivationsFrom self;
       allGrammars = lib.filter (p: !(p.meta.broken or false)) (
@@ -126,39 +139,58 @@ let
   );
 
   isWasi = stdenv.hostPlatform.isWasi;
-
+  # create a `TREE_SITTER_WASI_SDK_PATH` environment where
+  # `clang -> wasm32-unknown-wasip1-clang` so tree-sitter can find it
+  wasiCC = pkgsCross.wasi32.stdenv.cc;
+  wasiSdk = symlinkJoin {
+    name = "wasi-sdk";
+    paths = [ wasiCC ];
+    postBuild = ''
+      ln -s ${wasiCC.targetPrefix}clang $out/bin/clang
+    '';
+  };
 in
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "tree-sitter";
-  version = "0.26.9";
+  version = "0.27.1";
+
+  __structuredAttrs = true;
 
   src = fetchFromGitHub {
     owner = "tree-sitter";
     repo = "tree-sitter";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-ohVhW4AEKX5VspqBePtfxbJGkjmJnNkf5ntU3RUxF+0=";
+    hash = "sha256-KbPqA6pfplWRUtwRgbNXUF7aivj/n4shJqWbjNO93nQ=";
     fetchSubmodules = true;
   };
 
-  cargoHash = "sha256-3egxdusYHQs8PadxGZ44+VWtlTcGBrcqlWMUyUzpWnY=";
+  cargoHash = "sha256-GbW/qFq8X0UNi9LIepTIAKSAqCXM/gdy6XV6s5YO8r0=";
 
   cargoBuildFeatures = lib.optionals wasmSupport [ "wasm" ];
+
+  outputs = [
+    "out"
+    "dev"
+    "lib"
+  ];
 
   buildInputs = [
     installShellFiles
   ]
   ++ lib.optionals wasmSupport [
-    wasmtime_36
+    wasmtime_48
   ]
   ++ lib.optionals webUISupport [
     openssl
   ];
   nativeBuildInputs = [
     rustPlatform.bindgenHook
+    validatePkgConfig
     which
   ]
   ++ lib.optionals wasmSupport [
     cmake
+    makeWrapper
   ]
   ++ lib.optionals webUISupport [
     emscripten
@@ -177,7 +209,17 @@ rustPlatform.buildRustPackage (finalAttrs: {
   ];
 
   postPatch =
-    lib.optionalString webUISupport ''
+    # tree-sitter tries to concatenate $libdir/$includedir to $prefix,
+    # having multiple outputs on different paths requires patching this.
+    ''
+      substituteInPlace lib/tree-sitter.pc.in \
+          --replace-fail 'libdir=''${prefix}/@CMAKE_INSTALL_LIBDIR@' 'libdir=@CMAKE_INSTALL_FULL_LIBDIR@' \
+          --replace-fail 'includedir=''${prefix}/@CMAKE_INSTALL_INCLUDEDIR@' 'includedir=@CMAKE_INSTALL_FULL_INCLUDEDIR@'
+      substituteInPlace ./Makefile \
+          --replace-fail 's|@CMAKE_INSTALL_LIBDIR@|$(LIBDIR:$(PREFIX)/%=%)|' 's|@CMAKE_INSTALL_FULL_LIBDIR@|$(LIBDIR)|' \
+          --replace-fail 's|@CMAKE_INSTALL_INCLUDEDIR@|$(INCLUDEDIR:$(PREFIX)/%=%)|' 's|@CMAKE_INSTALL_FULL_INCLUDEDIR@|$(INCLUDEDIR)|'
+    ''
+    + lib.optionalString webUISupport ''
       substituteInPlace crates/xtask/src/build_wasm.rs \
           --replace-fail 'let emcc_name = if cfg!(windows) { "emcc.bat" } else { "emcc" };' 'let emcc_name = "${lib.getExe' emscripten "emcc"}";'
     ''
@@ -187,16 +229,23 @@ rustPlatform.buildRustPackage (finalAttrs: {
     + lib.optionalString stdenv.hostPlatform.isStatic ''
       substituteInPlace ./Makefile \
           --replace-fail 'all: libtree-sitter.a libtree-sitter.$(SOEXT) tree-sitter.pc' 'all: libtree-sitter.a tree-sitter.pc'
-      sed -i '/^install:/,/^[^[:space:]]/ { /$(SOEXT/d; }' ./Makefile
+      sed -i '/^install:/,/^uninstall:/ { /$(SOEXT/d; }' ./Makefile
+    ''
+    # rquickjs-sys passes the raw rust target to clang, which does not know riscv64gc
+    + lib.optionalString stdenv.hostPlatform.isRiscV64 ''
+      substituteInPlace $cargoDepsCopy/source-*/rquickjs-sys-*/build.rs \
+        --replace-fail \
+          'let mut cflags = vec![format!("--target={}", target)];' \
+          'let mut cflags = vec![format!("--target={}", target.replace("riscv64gc", "riscv64"))];'
     '';
 
   # The Makefile install can't enable the wasm feature.
   cmakeFlags = lib.optionals wasmSupport [
     (lib.cmakeBool "TREE_SITTER_FEATURE_WASM" true)
-    (lib.cmakeFeature "WASMTIME_INCLUDE_DIR" "${lib.getDev wasmtime_36}/include")
-    (lib.cmakeFeature "WASMTIME_LIBRARY" "${lib.getLib wasmtime_36}/lib/libwasmtime${stdenv.hostPlatform.extensions.sharedLibrary}")
-    (lib.cmakeFeature "CMAKE_INSTALL_INCLUDEDIR" "include")
-    (lib.cmakeFeature "CMAKE_INSTALL_LIBDIR" "lib")
+    (lib.cmakeFeature "WASMTIME_INCLUDE_DIR" "${lib.getDev wasmtime_48}/include")
+    (lib.cmakeFeature "WASMTIME_LIBRARY" "${lib.getLib wasmtime_48}/lib/libwasmtime${stdenv.hostPlatform.extensions.library}")
+    (lib.cmakeFeature "CMAKE_INSTALL_FULL_INCLUDEDIR" "${placeholder "dev"}/include")
+    (lib.cmakeFeature "CMAKE_INSTALL_FULL_LIBDIR" "${placeholder "lib"}/lib")
   ];
 
   # Compile web assembly with emscripten. The --debug flag prevents us from
@@ -209,14 +258,20 @@ rustPlatform.buildRustPackage (finalAttrs: {
   '';
 
   postInstall = ''
-    PREFIX=$out make install
+    make install PREFIX=$out LIBDIR=$lib/lib INCLUDEDIR=$dev/include
   ''
+  # supply the nix paths for the Wasi SDK & `wasm-opt`: https://tree-sitter.github.io/tree-sitter/6-contributing.html#wasm-stdlib
+  # lld is required for the linker phase in `tree-sitter build --wasm`
   + lib.optionalString wasmSupport ''
     cmake --install $cmakeBuildDir
+    wrapProgram $out/bin/tree-sitter \
+      --set-default TREE_SITTER_BINARYEN_PATH "${binaryen}" \
+      --set-default TREE_SITTER_WASI_SDK_PATH "${wasiSdk}" \
+      --prefix PATH : "${lib.makeBinPath [ llvmPackages.lld ]}"
   ''
   + ''
-    ${lib.optionalString (!enableShared) "rm -f $out/lib/*.so{,.*}"}
-    ${lib.optionalString (!enableStatic) "rm -f $out/lib/*.a"}
+    ${lib.optionalString (!enableShared) "rm -f $lib/lib/*.so{,.*}"}
+    ${lib.optionalString (!enableStatic) "rm -f $lib/lib/*.a"}
 
     mv docs/src/assets/schemas/config.schema.json $out/
   ''

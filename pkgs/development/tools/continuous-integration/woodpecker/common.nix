@@ -1,8 +1,8 @@
 { lib, fetchFromGitHub }:
 let
-  version = "3.16.0";
-  vendorHash = "sha256-z87enzlH2jVq/BI6uVbpLG6jKsO5Wr2alJOcFjt/+MM=";
-  nodeModulesHash = "sha256-zj8InXWu8hRgJaN0dkb6K16kWvXAhAzUPUU1OQcw0Yo=";
+  version = "3.20.1";
+  vendorHash = "sha256-FUHqdjuOv+ojg686YfQ6YdAdXivYvHOW0iM4h5I4Wdc=";
+  nodeModulesHash = "sha256-x0hwU8hlUMQ1AH9dz0G1sKoXYLSMKI8wNq7hE0CrJ+M=";
 in
 {
   inherit version vendorHash nodeModulesHash;
@@ -11,7 +11,7 @@ in
     owner = "woodpecker-ci";
     repo = "woodpecker";
     tag = "v${version}";
-    hash = "sha256-9Bc7225CZFELgra5gnmo7KeNeY4X7+YpyvVGG/Y+sAs=";
+    hash = "sha256-vGAgZKz0zWS+xXid2uJUjbLnCB40TTg2KRT3cuWAR6Y=";
   };
 
   postInstall = ''

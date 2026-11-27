@@ -37,7 +37,6 @@ let
     ;
   # Upstream uses a different naming scheme for platforms
   systemMap = {
-    "x86_64-darwin" = "darwin.x86_64";
     "aarch64-darwin" = "darwin.arm64";
     "aarch64-linux" = "linux.arm64";
     "x86_64-linux" = "linux.x86_64";
@@ -69,7 +68,7 @@ stdenvNoCC.mkDerivation (
 
         set -e
 
-        dirname="pkgs/development/tools/gauge/plugins/${pname}"
+        dirname="pkgs/by-name/ga/gauge/plugins/${pname}"
 
         currentVersion=$(nix eval --raw -f default.nix gaugePlugins.${pname}.version)
 

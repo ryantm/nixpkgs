@@ -3,7 +3,6 @@
   buildHomeAssistantComponent,
   fetchFromGitHub,
   nix-update-script,
-  # Test dependencies
   pytestCheckHook,
   pytest-homeassistant-custom-component,
   pytest-asyncio,
@@ -12,13 +11,13 @@
 buildHomeAssistantComponent rec {
   owner = "Pirate-Weather";
   domain = "pirateweather";
-  version = "1.8.9";
+  version = "1.9.5";
 
   src = fetchFromGitHub {
     inherit owner;
     repo = "pirate-weather-ha";
     tag = "v${version}";
-    hash = "sha256-QcTRLQ/jFH3lacnFu/cIGyAf74HaoG35iGKf8FQIlVo=";
+    hash = "sha256-Uxt9IpqgpqTwfQX3qREzUCaxTkVxfuR3OC+9QI662Z4=";
   };
 
   nativeCheckInputs = [

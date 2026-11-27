@@ -8,7 +8,7 @@
 
 buildGoModule (finalAttrs: {
   pname = "git-pages-cli";
-  version = "1.10.0";
+  version = "1.13.1";
 
   __structuredAttrs = true;
 
@@ -16,10 +16,10 @@ buildGoModule (finalAttrs: {
     owner = "git-pages";
     repo = "git-pages-cli";
     rev = "v${finalAttrs.version}";
-    hash = "sha256-GIZ6kdCd8BIBEZxBw4Srwnbbl3PtpS2IRyA+Hx5PbAc=";
+    hash = "sha256-ZzoGIDt4tUxNLlQkPVJeGmSqNPhTL6HfX+3gnKnbvY4=";
   };
 
-  vendorHash = "sha256-SNLSkz38AgLfjpKaEYawBLdWznKWOz62bNzuaquk7Rs=";
+  vendorHash = "sha256-gmMKG0m/XRuH0x4vRZFAbC+5ouO8r/6Ji7suHiv7jiA=";
 
   ldflags = [
     "-X"

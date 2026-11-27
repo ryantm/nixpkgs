@@ -20,19 +20,19 @@ let
 in
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "incus-ui-canonical";
-  version = "0.21.4";
+  version = "0.23.1.0";
 
   src = fetchFromGitHub {
     owner = "zabbly";
     repo = "incus-ui-canonical";
     # only use tags prefixed by incus- they are the tested fork versions
     tag = "incus-${finalAttrs.version}";
-    hash = "sha256-EMf723WZKyVYDpvdmzjdp61rIZVsoj6gRMiMF323K/A=";
+    hash = "sha256-/2Xr3LehD6btk73LRzjeLE5UWvh6fUhC7WRJWkqcu7E=";
   };
 
   offlineCache = fetchYarnDeps {
     yarnLock = "${finalAttrs.src}/yarn.lock";
-    hash = "sha256-61z48VlhImykD/GJ5581Z95dIn7pv2ODZJfFKydGSPs=";
+    hash = "sha256-57QwpgyiIT/Qx8rhEPbkE7CVnruJEi6tidcWGK6+s8w=";
   };
 
   nativeBuildInputs = [

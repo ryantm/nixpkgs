@@ -2,8 +2,8 @@
   lib,
   buildPythonPackage,
   fetchFromGitHub,
-  poetry-core,
   lookyloo-models,
+  poetry-core,
   pydantic,
   requests,
   urllib3,
@@ -11,14 +11,14 @@
 
 buildPythonPackage (finalAttrs: {
   pname = "pylookyloo";
-  version = "1.40.0";
+  version = "1.43.2";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "Lookyloo";
     repo = "PyLookyloo";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-2SeEAzVMS4tyOU2WZw7wx+fOgyKnrQxMb6dJRjbSplU=";
+    hash = "sha256-Nrdo9QW/ewigVtudhmud2XUgiHqsoz7VqTGU6jQ+AJQ=";
   };
 
   build-system = [ poetry-core ];

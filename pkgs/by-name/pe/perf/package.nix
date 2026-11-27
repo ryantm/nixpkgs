@@ -28,13 +28,13 @@
   numactl,
   zlib,
   babeltrace,
-  withGtk ? false,
-  gtk2,
   withZstd ? true,
   zstd,
   withLibcap ? true,
   libcap,
   withPython ? true,
+  withBpf ? true,
+  linuxHeaders,
   buildPackages,
 }:
 let
@@ -50,6 +50,8 @@ let
     installPhase = ''
       install -D -m 0755 -t $out/share/d3-flame-graph/ ./dist/templates/*
     '';
+
+    meta.license = lib.licenses.asl20;
   };
 in
 
@@ -59,7 +61,10 @@ stdenv.mkDerivation {
 
   strictDeps = true;
 
-  depsBuildBuild = [ buildPackages.stdenv.cc ];
+  depsBuildBuild = [
+    buildPackages.stdenv.cc
+  ]
+  ++ lib.optional withBpf buildPackages.llvmPackages.clang-unwrapped;
 
   postPatch = ''
     # Linux scripts
@@ -86,8 +91,8 @@ stdenv.mkDerivation {
     "ASCIIDOC8=1"
     "ARCH=${stdenv.hostPlatform.linuxArch}"
     "CROSS_COMPILE=${stdenv.cc.targetPrefix}"
+    "NO_GTK2=1"
   ]
-  ++ lib.optional (!withGtk) "NO_GTK2=1"
   ++ lib.optional (!withZstd) "NO_LIBZSTD=1"
   ++ lib.optional (!withLibcap) "NO_LIBCAP=1"
   ++ lib.optional (!withPython) "NO_LIBPYTHON=1";
@@ -124,7 +129,6 @@ stdenv.mkDerivation {
     libpfm
   ]
   ++ lib.optional (lib.meta.availableOn stdenv.hostPlatform systemtap-unwrapped) systemtap-unwrapped
-  ++ lib.optional withGtk gtk2
   ++ lib.optional withZstd zstd
   ++ lib.optional withLibcap libcap
   ++ lib.optionals withPython [
@@ -132,12 +136,17 @@ stdenv.mkDerivation {
     python3.pkgs.setuptools
   ];
 
-  env.NIX_CFLAGS_COMPILE = toString [
-    "-Wno-error=cpp"
-    "-Wno-error=bool-compare"
-    "-Wno-error=deprecated-declarations"
-    "-Wno-error=stringop-truncation"
-  ];
+  env = {
+    NIX_CFLAGS_COMPILE = toString [
+      "-Wno-error=cpp"
+      "-Wno-error=bool-compare"
+      "-Wno-error=deprecated-declarations"
+      "-Wno-error=stringop-truncation"
+    ];
+  }
+  // lib.optionalAttrs withBpf {
+    EXTRA_BPF_FLAGS = "-I${linuxHeaders}/include";
+  };
 
   doCheck = false; # requires "sparse"
 
@@ -175,5 +184,6 @@ stdenv.mkDerivation {
     mainProgram = "perf";
     maintainers = with lib.maintainers; [ tobim ];
     platforms = lib.platforms.linux;
+    inherit (linux_latest.meta) license;
   };
 }

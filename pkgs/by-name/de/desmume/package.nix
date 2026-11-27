@@ -6,22 +6,16 @@
   SDL2,
   agg,
   alsa-lib,
-  desktop-file-utils,
   wrapGAppsHook3,
   gtk3,
-  intltool,
-  libGLU,
-  libxmu,
   libpcap,
-  libtool,
-  lua,
   meson,
   ninja,
   openal,
   pkg-config,
   soundtouch,
-  tinyxml,
   zlib,
+  versionCheckHook,
 }:
 
 stdenv.mkDerivation (finalAttrs: {
@@ -51,10 +45,6 @@ stdenv.mkDerivation (finalAttrs: {
 
   nativeBuildInputs = [
     wrapGAppsHook3
-    desktop-file-utils
-    intltool
-    libtool
-    lua
     meson
     ninja
     pkg-config
@@ -65,12 +55,9 @@ stdenv.mkDerivation (finalAttrs: {
     agg
     alsa-lib
     gtk3
-    libGLU
-    libxmu
     libpcap
     openal
     soundtouch
-    tinyxml
     zlib
   ];
 
@@ -81,10 +68,16 @@ stdenv.mkDerivation (finalAttrs: {
   '';
 
   mesonFlags = [
-    "-Db_pie=true"
     "-Dopenal=true"
     "-Dwifi=true"
+    "-Dgdb-stub=true"
   ];
+
+  nativeInstallCheckInputs = [
+    versionCheckHook
+  ];
+
+  doInstallCheck = true;
 
   meta = {
     homepage = "https://www.github.com/TASEmulators/desmume/";
@@ -96,6 +89,7 @@ stdenv.mkDerivation (finalAttrs: {
       demo nds roms. DeSmuME is also able to emulate nearly all of the
       commercial nds rom titles which other DS Emulators aren't.
     '';
+    mainProgram = "desmume";
     license = lib.licenses.gpl2Plus;
     maintainers = [ ];
     platforms = lib.platforms.unix;

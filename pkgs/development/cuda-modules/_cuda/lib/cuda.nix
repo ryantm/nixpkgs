@@ -73,14 +73,14 @@
     lowerBoundSatisfied && upperBoundSatisfied;
 
   /**
-    Generates a CUDA variant name from a version.
+    Generates CUDA variant names from a version.
 
     NOTE: No guarantees are made about this function's stability. You may use it at your own risk.
 
     # Type
 
     ```
-    _mkCudaVariant :: (version :: String) -> String
+    _mkCudaVariants :: (version :: String) -> [ String ]
     ```
 
     # Inputs
@@ -92,15 +92,101 @@
     # Examples
 
     :::{.example}
-    ## `_cuda.lib._mkCudaVariant` usage examples
+    ## `_cuda.lib._mkCudaVariants` usage examples
 
     ```nix
-    _mkCudaVariant "11.0"
-    => "cuda11"
+    _mkCudaVariants "13.2.2"
+    => [ "cuda13.2.2" "cuda13.2" "cuda13" ]
     ```
     :::
   */
-  _mkCudaVariant = version: "cuda${lib.versions.major version}";
+  _mkCudaVariants =
+    cudaMajorMinorPatchVersion:
+    lib.map (f: "cuda" + (f cudaMajorMinorPatchVersion)) [
+      lib.id
+      lib.versions.majorMinor
+      lib.versions.major
+    ];
+
+  /**
+    Returns whether a list of CUDA capabilities includes any architecture-specific capability.
+
+    NOTE: No guarantees are made about this function's stability. You may use it at your own risk.
+
+    # Type
+
+    ```
+    _cudaCapabilitiesIncludeArchitectureSpecific :: (cudaCapabilities :: [CudaCapability]) -> Bool
+    ```
+
+    # Inputs
+
+    `cudaCapabilities`
+
+    : The list of CUDA capabilities to check
+  */
+  _cudaCapabilitiesIncludeArchitectureSpecific =
+    cudaCapabilities:
+    lib.intersectLists _cuda.db.architectureSpecificCudaCapabilities cudaCapabilities != [ ];
+
+  /**
+    Returns whether a list of CUDA capabilities includes any family-specific capability.
+
+    NOTE: No guarantees are made about this function's stability. You may use it at your own risk.
+
+    # Type
+
+    ```
+    _cudaCapabilitiesIncludeFamilySpecific :: (cudaCapabilities :: [CudaCapability]) -> Bool
+    ```
+
+    # Inputs
+
+    `cudaCapabilities`
+
+    : The list of CUDA capabilities to check
+  */
+  _cudaCapabilitiesIncludeFamilySpecific =
+    cudaCapabilities:
+    lib.intersectLists _cuda.db.familySpecificCudaCapabilities cudaCapabilities != [ ];
+
+  /**
+    Returns whether a list of CUDA capabilities includes any Jetson capability.
+
+    NOTE: No guarantees are made about this function's stability. You may use it at your own risk.
+
+    # Type
+
+    ```
+    _cudaCapabilitiesIncludeJetson :: (cudaCapabilities :: [CudaCapability]) -> Bool
+    ```
+
+    # Inputs
+
+    `cudaCapabilities`
+
+    : The list of CUDA capabilities to check
+  */
+  _cudaCapabilitiesIncludeJetson =
+    cudaCapabilities: _cuda.lib.getJetsonCudaCapabilities cudaCapabilities != [ ];
+
+  /**
+    Returns the Jetson capabilities within a list of CUDA capabilities.
+
+    # Type
+
+    ```
+    getJetsonCudaCapabilities :: (cudaCapabilities :: [CudaCapability]) -> [CudaCapability]
+    ```
+
+    # Inputs
+
+    `cudaCapabilities`
+
+    : The list of CUDA capabilities to filter
+  */
+  getJetsonCudaCapabilities =
+    cudaCapabilities: lib.intersectLists _cuda.db.jetsonCudaCapabilities cudaCapabilities;
 
   /**
     A predicate which, given a package, returns true if the package has a free license or one of NVIDIA's licenses.
@@ -115,13 +201,29 @@
   */
   allowUnfreeCudaPredicate =
     let
-      cudaLicenseNames = [
-        lib.licenses.nvidiaCuda.shortName
-      ]
-      ++ lib.map (license: license.shortName) (lib.attrValues _cuda.lib.licenses);
+      cudaLicenses = [
+        lib.licenses.nvidiaCuda
+        lib.licenses.nvidiaCudaRedist
+        lib.licenses.nvidiaCudaPython
+        lib.licenses.nvidiaCudnn
+        lib.licenses.nvidiaCusparse_lt
+        lib.licenses.nvidiaCutensor
+        lib.licenses.nvidiaCutlassDsl
+        lib.licenses.nvidiaTensorrt
+        lib.licenses.nvidiaMath_sdk_sla
+        lib.licenses.nvidiaCudaRedist
+      ];
+      cudaLicenseNames = lib.map (license: license.shortName) cudaLicenses;
     in
     package:
-    lib.all (license: license.free || lib.elem (license.shortName or null) cudaLicenseNames) (
-      lib.toList package.meta.license
-    );
+    # new compound licenses
+    if lib.isAttrs package.meta.license && lib.hasAttr "licenseType" package.meta.license then
+      lib.licenses.evaluateProperty (
+        license: (license.free or false) || lib.elem license cudaLicenses
+      ) true (package.meta.license or [ ])
+    else
+      # old license list
+      lib.all (
+        license: (license.free or false) || lib.elem (license.shortName or null) cudaLicenseNames
+      ) (lib.toList package.meta.license);
 }

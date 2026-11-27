@@ -83,9 +83,6 @@ locally, and clients have to fetch them directly from the source server.
 
 ```nix
 {
-  # Enable nginx slice module distributed with Tengine
-  services.nginx.package = pkgs.tengine;
-
   # Enable media proxy
   services.akkoma.config.":pleroma".":media_proxy" = {
     enabled = true;
@@ -173,7 +170,7 @@ derivation.
   services.akkoma.frontends.primary.package =
     pkgs.runCommand "akkoma-fe"
       {
-        config = builtins.toJSON {
+        configPath = (pkgs.formats.json { }).generate "config.json" {
           expertLevel = 1;
           collapseMessageWithSubject = false;
           stopGifs = false;
@@ -189,14 +186,13 @@ derivation.
           jq
           lndir
         ];
-        passAsFile = [ "config" ];
       }
       ''
         mkdir $out
         lndir ${pkgs.akkoma-frontends.akkoma-fe} $out
 
         rm $out/static/config.json
-        jq -s add ${pkgs.akkoma-frontends.akkoma-fe}/static/config.json ${config} \
+        jq -s add ${pkgs.akkoma-frontends.akkoma-fe}/static/config.json $configPath \
           >$out/static/config.json
       '';
 }

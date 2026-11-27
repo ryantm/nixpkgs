@@ -1,44 +1,27 @@
 {
-  _experimental-update-script-combinators,
   erlang,
   fetchFromGitHub,
   fetchMixDeps,
-  gnused,
   lib,
   mixRelease,
   nix-update-script,
-  nurl,
-  writeShellApplication,
 }:
-let
-  version = "0.1.6";
+
+mixRelease (finalAttrs: {
+  pname = "expert";
+  version = "0.2.4";
 
   src = fetchFromGitHub {
     owner = "expert-lsp";
     repo = "expert";
-    tag = "v${version}";
-    hash = "sha256-25ADJtvwZ5hkS9+x9BYsPDnvXIXU+UV+3CoIpFJkziA=";
+    tag = "v${finalAttrs.version}";
+    hash = "sha256-AV1s6RhG54D4Juij7uRa/zeGgoa2t0MdaA73hrkL2QE=";
   };
-
-  engineDeps = fetchMixDeps {
-    pname = "mix-deps-expert-engine";
-
-    inherit src version;
-    hash = "sha256-evYg/yRk6ymV75kuWpY0pFODWWopozjnFHUa9MOFN/A=";
-
-    preConfigure = ''
-      cd apps/engine
-    '';
-  };
-in
-mixRelease rec {
-  pname = "expert";
-  inherit src version;
 
   mixFodDeps = fetchMixDeps {
-    pname = "mix-deps-${pname}";
-    inherit src version;
-    hash = "sha256-N2krs4NNWytrN3K8lR5IGGroXVNuBzjks6IoD9D1rPM=";
+    pname = "mix-deps-${finalAttrs.pname}";
+    inherit (finalAttrs) src version;
+    hash = "sha256-loVliZ5HTLQHUqpL02vFZYcTPEJzQW86GqGO9hYeUQg=";
 
     preConfigure = ''
       cd apps/expert
@@ -47,8 +30,19 @@ mixRelease rec {
 
   mixReleaseName = "plain";
 
+  engineDeps = fetchMixDeps {
+    pname = "mix-deps-expert-engine";
+
+    inherit (finalAttrs) src version;
+    hash = "sha256-ELLpCr47FGjs3K0nu5RWGgoEdWbDtm6Fx8jutg9Enmo=";
+
+    preConfigure = ''
+      cd apps/engine
+    '';
+  };
+
   preConfigure = ''
-    ln -sv ${engineDeps} apps/engine/deps
+    ln -sv ${finalAttrs.engineDeps} apps/engine/deps
 
     cd apps/expert
   '';
@@ -62,30 +56,14 @@ mixRelease rec {
   removeCookie = false;
 
   passthru = {
-    inherit engineDeps;
-
-    updateScript = _experimental-update-script-combinators.sequence [
-      (nix-update-script { })
-      (lib.getExe (writeShellApplication {
-        name = "expert-update-engine";
-        runtimeInputs = [
-          gnused
-          nurl
-        ];
-        text = ''
-          nixpkgs="$(git rev-parse --show-toplevel)"
-          engineHashOld=${engineDeps.hash}
-          engineHashNew=$(nurl -e "(import $nixpkgs/. { }).$UPDATE_NIX_ATTR_PATH.engineDeps")
-          echo "$UPDATE_NIX_ATTR_PATH.engineDeps.hash" >&2
-          sed -i "s|$engineHashOld|$engineHashNew|" "$nixpkgs"/pkgs/development/beam-modules/expert/default.nix
-        '';
-      }))
-    ];
+    updateScript = nix-update-script {
+      extraArgs = [ "--subpackage=engineDeps" ];
+    };
   };
 
   meta = {
     homepage = "https://github.com/expert-lsp/expert";
-    changelog = "https://github.com/expert-lsp/expert/blob/v0.1.1/CHANGELOG.md";
+    changelog = "https://github.com/expert-lsp/expert/blob/v${finalAttrs.version}/CHANGELOG.md";
     description = "Official Elixir Language Server Protocol implementation";
     longDescription = ''
       Expert is the official language server implementation for the Elixir programming language.
@@ -95,4 +73,4 @@ mixRelease rec {
     mainProgram = "expert";
     teams = [ lib.teams.beam ];
   };
-}
+})

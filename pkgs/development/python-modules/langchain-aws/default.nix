@@ -8,16 +8,19 @@
 
   # dependencies
   boto3,
-  langchain,
   langchain-core,
   numpy,
   pydantic,
+
+  # tests
+  langchain,
 
   # optional-dependencies
   anthropic,
   langchain-anthropic,
 
   # tests
+  langchain-openai,
   langchain-tests,
   pytest-asyncio,
   pytest-cov-stub,
@@ -29,15 +32,14 @@
 
 buildPythonPackage (finalAttrs: {
   pname = "langchain-aws";
-  version = "1.6.2";
+  version = "1.10.0";
   pyproject = true;
-  __structuredAttrs = true;
 
   src = fetchFromGitHub {
     owner = "langchain-ai";
     repo = "langchain-aws";
     tag = "langchain-aws==${finalAttrs.version}";
-    hash = "sha256-MFlC9/9ZC1b5jAkvLRy2alcSYU5+KETJ6rIW05nLR5I=";
+    hash = "sha256-Zrjl+u4l4C2EIjA6jYjo3CpvnR9/tlVU9b+OZBfEwas=";
   };
 
   postPatch = ''
@@ -51,7 +53,6 @@ buildPythonPackage (finalAttrs: {
 
   dependencies = [
     boto3
-    langchain
     langchain-core
     numpy
     pydantic
@@ -60,6 +61,7 @@ buildPythonPackage (finalAttrs: {
   pythonRelaxDeps = [
     # Boto3 spec has outstripped the version requirement
     "boto3"
+    "langchain-core"
   ];
 
   optional-dependencies = {
@@ -70,6 +72,8 @@ buildPythonPackage (finalAttrs: {
 
   nativeCheckInputs = [
     anthropic
+    langchain
+    langchain-openai
     langchain-tests
     pytest-asyncio
     pytest-cov-stub
@@ -82,6 +86,11 @@ buildPythonPackage (finalAttrs: {
   disabledTests = [
     # Fails when langchain-core gets ahead of this package
     "test_serdes"
+    # Requires aws-bedrock-token-generator (not packaged)
+    "test_bedrock_api_key_provider"
+    "test_installed_provider_mints_token_when_called"
+    # botocore added new content block keys
+    "test__bedrock_content_block_keys_match_botocore"
   ];
 
   pythonImportsCheck = [ "langchain_aws" ];

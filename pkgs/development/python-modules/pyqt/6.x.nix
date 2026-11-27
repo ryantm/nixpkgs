@@ -3,6 +3,7 @@
   stdenv,
   buildPythonPackage,
   fetchPypi,
+  fetchpatch,
   pkg-config,
   dbus,
   lndir,
@@ -41,6 +42,10 @@ buildPythonPackage (finalAttrs: {
     ./pyqt6-fix-dbus-mainloop-support.patch
     # confirm license when installing via pyqt6_sip
     ./pyqt5-confirm-license.patch
+    (fetchpatch {
+      url = "https://gitlab.archlinux.org/archlinux/packaging/packages/pyqt6/-/raw/29d72ada23513ab0ece1b9980059c39f677e5d32/qt-6.12.patch";
+      hash = "sha256-ZOFmSeS1bDUZjsqo3ENPXRvvt/6aI+ePSiZoqh9vnTk=";
+    })
   ];
 
   build-system = [
@@ -63,10 +68,13 @@ buildPythonPackage (finalAttrs: {
 
     substituteInPlace pyproject.toml \
       --replace-fail 'version = "${finalAttrs.version}"' 'version = "${lib.versions.pad 3 finalAttrs.version}"'
+
+    substituteInPlace qpy/QtCore/qpycore_qrangemodel.h \
+      --replace-fail '#include <qglobal.h>' '#include <QtCore/qglobal.h>'
   '';
 
   enableParallelBuilding = true;
-  # HACK: paralellize compilation of make calls within pyqt's setup.py
+  # HACK: parallelize compilation of make calls within pyqt's setup.py
   # pkgs/stdenv/generic/setup.sh doesn't set this for us because
   # make gets called by python code and not its build phase
   # format=pyproject means the pip-build-hook hook gets used to build this project

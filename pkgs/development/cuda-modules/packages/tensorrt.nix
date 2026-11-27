@@ -10,7 +10,7 @@
   patchelf,
 }:
 let
-  inherit (backendStdenv) cudaCapabilities hostRedistSystem;
+  inherit (backendStdenv) cudaCapabilities hasJetsonCudaCapability hostRedistSystem;
   inherit (lib.lists) optionals;
   inherit (lib.strings) concatStringsSep optionalString;
 in
@@ -46,7 +46,7 @@ buildRedist (
     ++ optionals (tensorrtOlder "10.14.1") [
       "samples"
     ]
-    ++ [
+    ++ optionals (tensorrtOlder "11.0.0") [
       "static"
       # "stubs" removed in postInstall
     ];
@@ -156,9 +156,47 @@ buildRedist (
       patchelf \
         "''${!outputBin:?}/bin/trtexec" \
         --add-needed libnvinfer_plugin.so.${majorVersion}
+    ''
+    # From 11.2.1, TensorRT ships CMake package configuration files in a top-level cmake directory, which
+    # find_package does not search on Unix, and which locate everything relative to the root of the archive.
+    + optionalString (tensorrtAtLeast "11.2.1") ''
+      nixLog "moving CMake package configuration files to ''${!outputDev:?}/lib/cmake/TensorRT-Enterprise"
+      mkdir -p "''${!outputDev:?}/lib/cmake"
+      mv --verbose "''${!outputDev:?}/cmake" "''${!outputDev:?}/lib/cmake/TensorRT-Enterprise"
+
+      nixLog "patching CMake package configuration files to use absolute paths to outputs"
+      for cmakeFile in "''${!outputDev:?}"/lib/cmake/TensorRT-Enterprise/TensorRT-Enterprise*Targets*.cmake; do
+        substituteInPlace "$cmakeFile" \
+          --replace-quiet '${"$"}{_IMPORT_PREFIX}/bin' "''${!outputBin:?}/bin" \
+          --replace-quiet '${"$"}{_IMPORT_PREFIX}/include' "''${!outputInclude:?}/include" \
+          --replace-quiet '${"$"}{_IMPORT_PREFIX}/lib' "''${!outputLib:?}/lib"
+        if grep -q '${"$"}{_IMPORT_PREFIX}/' "$cmakeFile"; then
+          nixErrorLog "failed to patch all uses of _IMPORT_PREFIX in $cmakeFile"
+          exit 1
+        fi
+      done
+      unset -v cmakeFile
+    ''
+    # In 11.5, the Windows libraries have their own optional component. Remove its targets along with the libraries.
+    + optionalString (tensorrtAtLeast "11.5") ''
+      nixLog "removing CMake targets for Windows libraries"
+      rm --force --verbose "''${!outputDev:?}"/lib/cmake/TensorRT-Enterprise/TensorRT-Enterprise-WinBuilderResourceTargets*.cmake
+    ''
+    # Earlier versions put the Windows libraries in the main export. Drop its checks for the removed files.
+    + optionalString (tensorrtAtLeast "11.2.1" && tensorrtOlder "11.5") ''
+      nixLog "removing CMake import checks for Windows libraries"
+      sed -i '/_cmake_import_check_.*TRT::[A-Za-z_]*_win_/d' \
+        "''${!outputDev:?}"/lib/cmake/TensorRT-Enterprise/TensorRT-EnterpriseTargets-*.cmake
     '';
 
     # NOTE: Like cuDNN, NVIDIA offers forward compatibility within a major releases of CUDA.
+    # TensorRT 11.4.1 supports Jetson Orin and Thor with JetPack 7.2.2 or newer, using the Linux SBSA CUDA 13.4 build.
+    # https://docs.nvidia.com/deeplearning/tensorrt/latest/getting-started/release-notes-11/11.4.1.html
+    # NOTE: The support matrix lists only CUDA 13.2 Update 1 for the linux-sbsa and JetPack release of 10.16.1, which
+    # supports Jetson Orin (8.7) and Thor (11.0).
+    # NOTE: The support matrix lists CUDA 13.3 for the linux-sbsa release of 11.1.0 (built with CUDA 13.3) and CUDA 13.2
+    # for its JetPack release, which uses the same archive and supports Jetson Orin (8.7) and Thor (11.0).
+    # https://docs.nvidia.com/deeplearning/tensorrt/latest/getting-started/support-matrix.html
     platformAssertions = [
       {
         message =
@@ -186,6 +224,12 @@ buildRedist (
           + " support CUDA compute capabilities 7.5 and newer (found ${cudaCapabilitiesJSON})";
         assertion = tensorrtAtLeast105 -> allCCNewerThan75;
       }
+      {
+        message = "TensorRT ${finalAttrs.version} does not support Jetson devices (found ${cudaCapabilitiesJSON})";
+        assertion =
+          tensorrtAtLeast "11.2.1" && _cuda.lib.majorMinorPatch finalAttrs.version != "11.4.1"
+          -> !hasJetsonCudaCapability;
+      }
     ];
 
     meta = {
@@ -200,7 +244,7 @@ buildRedist (
       # the redistributables do. As such, we need to specify downloadPage manually.
       downloadPage = "https://developer.nvidia.com/downloads/compute/machine-learning/tensorrt";
       changelog = "https://docs.nvidia.com/deeplearning/tensorrt/latest/getting-started/release-notes.html#release-notes";
-      license = _cuda.lib.licenses.tensorrt;
+      license = lib.licenses.nvidiaTensorrt;
 
       knownVulnerabilities =
         # https://github.com/NixOS/nixpkgs/issues/522570

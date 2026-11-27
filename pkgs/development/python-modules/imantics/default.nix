@@ -10,7 +10,7 @@
   pytestCheckHook,
 }:
 
-buildPythonPackage {
+buildPythonPackage (finalAttrs: {
   pname = "imantics";
   version = "0.1.12";
   pyproject = true;
@@ -18,8 +18,8 @@ buildPythonPackage {
   src = fetchFromGitHub {
     owner = "jsbroks";
     repo = "imantics";
-    rev = "76d81036d8f92854d63ad9938dd76c718f8b482e";
-    sha256 = "1zv2gj8cbakhh2fyr2611cbqhfk37a56x973ny9n43y70n26pzm8";
+    tag = "v${finalAttrs.version}";
+    hash = "sha256-QsNpLkltXLsxYL0ddPyGJrE19b08uVwCsN37hzqy2WI=";
   };
 
   build-system = [ setuptools ];
@@ -36,9 +36,9 @@ buildPythonPackage {
   pythonImportsCheck = [ "imantics" ];
 
   meta = {
-    description = "Convert and visualize many annotation formats for object dectection and localization";
+    description = "Convert and visualize many annotation formats for object detection and localization";
     homepage = "https://github.com/jsbroks/imantics";
-    license = with lib.licenses; [ mit ];
+    license = lib.licenses.mit;
     maintainers = [ lib.maintainers.rakesh4g ];
   };
-}
+})

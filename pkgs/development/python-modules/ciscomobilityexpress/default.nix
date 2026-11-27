@@ -4,15 +4,13 @@
   fetchPypi,
   setuptools,
   requests,
-  python,
+  pytestCheckHook,
 }:
 
 buildPythonPackage (finalAttrs: {
   pname = "ciscomobilityexpress";
   version = "1.0.2";
   pyproject = true;
-
-  __structuredAttrs = true;
 
   src = fetchPypi {
     inherit (finalAttrs) pname version;
@@ -23,10 +21,7 @@ buildPythonPackage (finalAttrs: {
 
   dependencies = [ requests ];
 
-  # tests directory is set up, but has no tests
-  checkPhase = ''
-    ${python.interpreter} -m unittest
-  '';
+  nativeCheckInputs = [ pytestCheckHook ];
 
   pythonImportsCheck = [ "ciscomobilityexpress" ];
 

@@ -7,14 +7,14 @@
 
 buildPythonPackage (finalAttrs: {
   pname = "hstspreload";
-  version = "2026.7.1";
+  version = "2026.11.1";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "sethmlarson";
     repo = "hstspreload";
     tag = finalAttrs.version;
-    hash = "sha256-nq9dr8Jd+OvRCXLOQbarXTnUg4QISEty7wvi/P2YUU8=";
+    hash = "sha256-DCoaWr+io5muRDF78sfG6LnTgfASpgVkVrGvTLJaMWQ=";
   };
 
   build-system = [ setuptools ];

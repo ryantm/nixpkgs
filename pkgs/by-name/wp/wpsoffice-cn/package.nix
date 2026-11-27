@@ -21,6 +21,7 @@
   unixodbc,
   libmysqlclient,
   libsForQt5,
+  libva,
   libxv,
   libxtst,
   libxdamage,
@@ -79,7 +80,6 @@ let
     homepage = "https://www.wps.cn";
     platforms = [
       "aarch64-darwin"
-      "x86_64-darwin"
       "x86_64-linux"
     ];
     sourceProvenance = with lib.sourceTypes; [ binaryNativeCode ];
@@ -134,6 +134,8 @@ else
 
     nativeBuildInputs = [ autoPatchelfHook ];
 
+    autoPatchelfIgnoreMissingDeps = [ "libksailite.so" ];
+
     buildInputs = [
       alsa-lib
       libjpeg
@@ -146,6 +148,7 @@ else
       libusb1
       unixodbc
       libsForQt5.qtbase
+      libva
       libxdamage
       libxtst
       libxv

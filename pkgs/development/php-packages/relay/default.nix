@@ -16,36 +16,36 @@
 }:
 
 let
-  version = "0.30.0";
+  version = "0.61.1";
   hashes = {
     "aarch64-darwin" = {
       platform = "darwin-arm64";
       hash = {
-        "8.1" = "sha256-71TLrF9HvuocMLei89bGIibJIC1sD59RB9Vb6FBS49U=";
-        "8.2" = "sha256-WFrJ0+gun1qs77s3URFTha/tZA8gSeqlGLT26twnjko=";
-        "8.3" = "fiduW1NKScDDY3k3lvw98r8KqaD0jPR4En8dNvdglFA=";
-        "8.4" = "sha256-SQ9+/zD6n49e2/9nH6hotyIJ/xsQMX5A78hFTPK4/hg=";
-        "8.5" = "+n+fE5soEbruH+L35B+bapU/Z7rSjjOD/4BgRmr3MVc=";
+        "8.1" = "sha256-9QRkBKQ5p6R9DaiWa5wWjRvzXwVl514Ywt9qN9XhhDk=";
+        "8.2" = "sha256-JI/ibOEMHbZZ6oTFLMWHKoJlfShzssgcPO8aOZOMDl0=";
+        "8.3" = "kyvnlPIuldZa3WmC7eoou7jBrCqi+ZNkvwCl3Yzgwd0=";
+        "8.4" = "sha256-YoOpHY53pPJ4d4dhrM7/OiNEhTlgOCraPxgvOHdxQ+w=";
+        "8.5" = "86WH9u/+5A5qVEbzUbFHbhpoXRXcE7J+UGdDHq6qjYs=";
       };
     };
     "aarch64-linux" = {
       platform = "debian-aarch64+libssl3";
       hash = {
-        "8.1" = "sha256-hetG8fEmMJccYWMQwPb3hml5thNeY2L6Y4gCDQmbDlo=";
-        "8.2" = "sha256-HufvcT4QSkuoxDcaCWD+hmG1fORyTUBh1Vsfnv7krng=";
-        "8.3" = "sha256-LV4coud7YNqB+s1sHoKXNVLAUrLjDMDpulS9fGVXDsg=";
-        "8.4" = "em1nZgGD1fAtvMxVeJBU4RZaA71/qMVLi0KCRAbilpM=";
-        "8.5" = "d0f3PzvZZn1KmXy1Gm0gm5f3f58kt+/LTc3yWZqto2I=";
+        "8.1" = "sha256-Bhlp5sknuwYj89t8ZV5pI4gVC4xtCocfhUp54MSKwQ0=";
+        "8.2" = "sha256-tNriT4trLc0AjOr+4verVQcCj4pNFB0vK5Yp5rbCf/I=";
+        "8.3" = "sha256-IiFXTjC1tGiC7mGulAeX81RU8Pg6U+66ld6ks5mdqcA=";
+        "8.4" = "DFjV43ZhBV7JWtiHSR2btxG8izpH60DplYetyEvKhCQ=";
+        "8.5" = "9x84xOJ3QMC0CP0EyGqA3cOqT8e+vK3hcFrfdnP6lME=";
       };
     };
     "x86_64-linux" = {
       platform = "debian-x86-64+libssl3";
       hash = {
-        "8.1" = "sha256-La/TQDnQ0hqNhPMtLlwfw5cKtXCpjxBMTd6yvZM2O2M=";
-        "8.2" = "sha256-+FavbnliF071lWFU55rhFNq6X2wpW9mHSstwQQTbnwQ=";
-        "8.3" = "sha256-G6nfKMObVMtY45J7DaKg0LdHwV+lfCUa1Pkfp66+apY=";
-        "8.4" = "x9YXGxtqN3EL1lWCqAkIKKrO0b40BFalO6GExhF3p4c=";
-        "8.5" = "8hU5Ft9i3L6pf2XY7rRLmSbQmZ3z1wjI+7sjiq/GHUU=";
+        "8.1" = "sha256-zkymXwjIITXkoKIUKHtOmTf8Nu+9JCMKGF9sAUQtcEk=";
+        "8.2" = "sha256-S5Tw19mKF1shWHn7+FS63KqEPVh/RpDYOqPYOq5CB0s=";
+        "8.3" = "sha256-tNYh6bzacO1AEvIALML3NJbXJvRtdi7GeQQ4VMkJkaU=";
+        "8.4" = "1FAkSPvs0ykyxRSWtv1nAaY7CSoe200KpnX2y4MuuP0=";
+        "8.5" = "XqzYRp6VimTLfKMCeNGFV2TRM5JgSPeaeaC2iqt2gs0=";
       };
     };
   };
@@ -98,52 +98,28 @@ stdenv.mkDerivation (finalAttrs: {
   ''
   + (
     if stdenv.hostPlatform.isDarwin then
-      let
-        args =
-          lib.concatMapStrings
-            (
-              v:
-              let
-                targetName = if v ? to then v.to else builtins.baseNameOf v.from;
-              in
-              " -change ${v.from} ${lib.strings.makeLibraryPath [ v.pkg ]}/${targetName}"
-            )
-            [
-              {
-                from = "/opt/homebrew/opt/concurrencykit/lib/libck.0.dylib";
-                pkg = libck;
-              }
-              {
-                from = "/opt/homebrew/opt/openssl@3/lib/libssl.3.dylib";
-                pkg = openssl;
-              }
-              {
-                from = "/opt/homebrew/opt/openssl@3/lib/libcrypto.3.dylib";
-                pkg = openssl;
-              }
-              {
-                from = "/opt/homebrew/opt/zstd/lib/libzstd.1.dylib";
-                pkg = zstd;
-              }
-              {
-                from = "/opt/homebrew/opt/lz4/lib/liblz4.1.dylib";
-                pkg = lz4;
-              }
-              {
-                from = "/opt/homebrew/opt/hiredis/lib/libhiredis.1.3.0.dylib";
-                pkg = hiredis;
-                to = "libhiredis.1.1.0.dylib";
-              }
-              {
-                from = "/opt/homebrew/opt/hiredis/lib/libhiredis_ssl.1.3.0.dylib";
-                pkg = hiredis;
-                to = "libhiredis_ssl.dylib.1.1.0";
-              }
-            ];
-      in
-      # fixDarwinDylibNames can't be used here because we need to completely remap .dylibs, not just add absolute paths
+      # fixDarwinDylibNames can't be used here because we need to completely remap .dylibs, not just add
+      # absolute paths. Rather than hardcoding the Homebrew paths and versions relay.so happens to be
+      # linked against (which silently goes stale whenever relay or one of these libraries updates),
+      # discover the actual references via otool and remap them by matching their basename.
       ''
-        install_name_tool${args} $out/lib/php/extensions/relay.so
+        for dylib in $(otool -L $out/lib/php/extensions/relay.so | tail -n +2 | awk '{print $1}' | grep '^/opt/homebrew/'); do
+          base=$(basename "$dylib")
+          case "$base" in
+            libhiredis_ssl.*) dir="${lib.makeLibraryPath [ hiredis ]}" ;;
+            libhiredis.*) dir="${lib.makeLibraryPath [ hiredis ]}" ;;
+            libssl.*) dir="${lib.makeLibraryPath [ openssl ]}" ;;
+            libcrypto.*) dir="${lib.makeLibraryPath [ openssl ]}" ;;
+            libzstd.*) dir="${lib.makeLibraryPath [ zstd ]}" ;;
+            liblz4.*) dir="${lib.makeLibraryPath [ lz4 ]}" ;;
+            libck.*) dir="${lib.makeLibraryPath [ libck ]}" ;;
+            *)
+              echo "relay.so references unrecognized Homebrew library $dylib; add a mapping for it" >&2
+              exit 1
+              ;;
+          esac
+          install_name_tool -change "$dylib" "$dir/$base" $out/lib/php/extensions/relay.so
+        done
       ''
     else
       ""
@@ -220,7 +196,6 @@ stdenv.mkDerivation (finalAttrs: {
     platforms = [
       "x86_64-linux"
       "aarch64-linux"
-      "x86_64-darwin"
       "aarch64-darwin"
     ];
   };

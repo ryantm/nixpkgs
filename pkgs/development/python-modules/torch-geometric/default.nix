@@ -79,16 +79,22 @@
 
 buildPythonPackage (finalAttrs: {
   pname = "torch-geometric";
-  version = "2.8.0";
+  version = "2.8.1";
   pyproject = true;
-  __structuredAttrs = true;
 
   src = fetchFromGitHub {
     owner = "pyg-team";
     repo = "pytorch_geometric";
     tag = finalAttrs.version;
-    hash = "sha256-O2W/68DtVimDR4wQb5UVJcqzuZv7GG+CxCj7rqNu9iE=";
+    hash = "sha256-GqKDNmetxBND33+ctd12PpxzCgwaF4Id+Pjr7kjQUSs=";
   };
+
+  postPatch = ''
+    substituteInPlace pyproject.toml \
+      --replace-fail \
+        'version="2.8.0.post1"' \
+        'version="${finalAttrs.version}"'
+  '';
 
   build-system = [
     flit-core

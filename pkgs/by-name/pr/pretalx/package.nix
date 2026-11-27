@@ -14,7 +14,20 @@ let
   python = python314.override {
     self = python;
     packageOverrides = final: prev: {
-      django = prev.django_6;
+      django = prev.django_6_0;
+
+      django-hierarkey = prev.django-hierarkey.overrideAttrs (oldAttrs: {
+        version = "2.0.1";
+
+        src = fetchFromGitHub {
+          owner = "raphaelm";
+          repo = "django-hierarkey";
+          tag = "2.0.1";
+          hash = "sha256-zIz7aokOGLGXV/xJnYcz8lBP7b2rxLrfaD3i/DLpFR8=";
+        };
+
+        postPatch = null;
+      });
     };
   };
 in
@@ -22,8 +35,6 @@ python.pkgs.buildPythonApplication (finalAttrs: {
   pname = "pretalx";
   version = "2026.2.1";
   pyproject = true;
-
-  __structuredAttrs = true;
 
   src = fetchFromGitHub {
     owner = "pretalx";
@@ -72,11 +83,13 @@ python.pkgs.buildPythonApplication (finalAttrs: {
     "django-formset-js-improved"
     "django-formtools"
     "django-i18nfield"
+    "django-scopes"
     "djangorestframework"
     "markdown"
     "pillow"
     "publicsuffixlist"
     "python-dateutil"
+    "redis"
     "reportlab"
     "requests"
     "rules"
@@ -131,7 +144,8 @@ python.pkgs.buildPythonApplication (finalAttrs: {
       psycopg2
     ];
   };
-  postBuild = ''
+
+  preBuild = ''
     # Generate all static files and translations, see
     # https://docs.pretalx.org/administrator/commands.html#python-m-pretalx-rebuild
     PYTHONPATH=$PYTHONPATH:./src python -m pretalx rebuild

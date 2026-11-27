@@ -13,8 +13,6 @@ buildPythonPackage (finalAttrs: {
   version = "1.6.1";
   pyproject = true;
 
-  __structuredAttrs = true;
-
   src = fetchFromGitHub {
     owner = "bridgecrewio";
     repo = "jsonpath-ng";
@@ -42,7 +40,7 @@ buildPythonPackage (finalAttrs: {
     description = "JSONPath implementation for Python";
     mainProgram = "bc_jsonpath_ng";
     homepage = "https://github.com/bridgecrewio/jsonpath-ng";
-    license = with lib.licenses; [ asl20 ];
+    license = lib.licenses.asl20;
     maintainers = with lib.maintainers; [ fab ];
   };
 })

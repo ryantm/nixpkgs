@@ -4,7 +4,9 @@
   fetchFromGitHub,
   stdenv,
   pkg-config,
+  aws-lc,
   openssl,
+  sqlite,
   libGL,
   libxkbcommon,
   wayland,
@@ -19,23 +21,27 @@
 
 rustPlatform.buildRustPackage {
   pname = "par-lang";
-  version = "0-unstable-2026-06-24";
+  version = "0-unstable-2026-11-15";
 
   src = fetchFromGitHub {
     owner = "par-team";
     repo = "par-lang";
-    rev = "fb93d7dd2c21a7825a57c74d6f22b250bb25d9bc";
-    hash = "sha256-9NKBjOMyemgPX/r7ot/RLut1FqWl8RfuuHhXUnkv1IM=";
+    rev = "df2a3641f8cef6f7cc01757e7dbc548391268083";
+    hash = "sha256-8Z7KHyqVwahzHCqecV96dY2Gx1yq7L/sidVu2kMsEy8=";
   };
 
-  cargoHash = "sha256-8lG+cKN3/W+LYWhmOfDwGiq6u3nlLJaD5uNABaY0zRY=";
+  cargoHash = "sha256-9+iNzC+1n3UT5NBo8ZuutAr0Z7iQPqIKgLD2FWwC10g=";
 
   nativeBuildInputs = [
     pkg-config
     copyDesktopItems
   ];
 
-  buildInputs = [ openssl ];
+  buildInputs = [
+    aws-lc
+    openssl
+    sqlite
+  ];
 
   postFixup =
     let

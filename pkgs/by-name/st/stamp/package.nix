@@ -11,6 +11,8 @@
   webkitgtk_6_0,
   blueprint-compiler,
   evolution-data-server-gtk4,
+  glib-networking,
+  gpgme,
   gst_all_1,
   libportal-gtk4,
   libpsl,
@@ -19,7 +21,7 @@
 
 stdenv.mkDerivation {
   pname = "stamp";
-  version = "0-unstable-2026-07-13";
+  version = "0-unstable-2026-10-16";
   __structuredAttrs = true;
   strictDeps = true;
 
@@ -27,8 +29,8 @@ stdenv.mkDerivation {
     domain = "gitlab.gnome.org";
     owner = "jbrummer";
     repo = "stamp";
-    rev = "9bce220c9e094c4d616009ebc87499a68ffc14aa";
-    hash = "sha256-mplowqsBTT9ibLxD8pbaIeLSd1pindgXLSPKBjseul8=";
+    rev = "75ad9f05528b92eece237565846c933dec22e79f";
+    hash = "sha256-MgiiB2vmoPybVBU3uP47TYTHOcs3NevkpgKxwFEUxpA=";
   };
 
   dontUseCmakeConfigure = true;
@@ -44,6 +46,8 @@ stdenv.mkDerivation {
 
   buildInputs = [
     evolution-data-server-gtk4
+    glib-networking
+    gpgme
     gst_all_1.gstreamer
     libadwaita
     libportal-gtk4
@@ -59,7 +63,7 @@ stdenv.mkDerivation {
     description = "Modern GTK4 email client for the GNOME ecosystem";
     homepage = "https://gitlab.gnome.org/jbrummer/stamp";
     maintainers = with lib.maintainers; [ onny ];
-    license = with lib.licenses; [ gpl3Plus ];
+    license = lib.licenses.gpl3Plus;
     platforms = lib.platforms.linux;
     mainProgram = "stamp";
   };

@@ -11,14 +11,19 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "level-zero";
-  version = "1.31.0";
+  version = "1.34.0";
 
   src = fetchFromGitHub {
     owner = "oneapi-src";
     repo = "level-zero";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-/3HVvivHKSwvrrFEU7LHP2H/6bHDBDyI1SVr/3A6Ie0=";
+    hash = "sha256-YX+fE+FXMQlml2H5oGOOJMy9ESM042EvRO/n0QLouWQ=";
   };
+
+  patches = [
+    # The loader checks for drivers in fixed directories before dlopen, ignoring RUNPATH
+    ./search-run-opengl-driver.patch
+  ];
 
   nativeBuildInputs = [
     cmake
@@ -35,7 +40,7 @@ stdenv.mkDerivation (finalAttrs: {
     tests = {
       inherit intel-compute-runtime openvino;
     };
-    updateScript = nix-update-script { };
+    updateScript = nix-update-script { extraArgs = [ "--use-github-releases" ]; };
   };
 
   meta = {
@@ -44,6 +49,9 @@ stdenv.mkDerivation (finalAttrs: {
     changelog = "https://github.com/oneapi-src/level-zero/blob/v${finalAttrs.version}/CHANGELOG.md";
     license = lib.licenses.mit;
     platforms = lib.platforms.linux;
-    maintainers = [ lib.maintainers.ziguana ];
+    maintainers = with lib.maintainers; [
+      ziguana
+      recutita
+    ];
   };
 })

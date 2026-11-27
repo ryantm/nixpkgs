@@ -3,26 +3,35 @@
   fetchFromGitHub,
   rustPlatform,
   mold,
+  pkg-config,
+  aws-lc,
   nix-update-script,
   versionCheckHook,
   rustc,
 }:
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "bencher-cli";
-  version = "0.6.8";
+  version = "0.6.17";
   __structuredAttrs = true;
-  strictDeps = true;
 
   src = fetchFromGitHub {
     owner = "bencherdev";
     repo = "bencher";
     rev = "v${finalAttrs.version}";
-    hash = "sha256-MlRj56QXRrvfBxi6+B6vpEKlDWMFB+V1CzQYOiGFpHE=";
+    hash = "sha256-UNB0hYMuipHslLu4gItT3TDrKvH3aVa80T6CYPv4eOc=";
   };
 
-  cargoHash = "sha256-biCHEePgVxrnGUj94bwWrp9GVhspiMjcMRdp3A7O2h0=";
+  cargoHash = "sha256-Iy68RcNmS93F24EHv4ChTAobSUqO0r+m6Ie00rli3BE=";
 
-  nativeBuildInputs = [ mold ];
+  nativeBuildInputs = [
+    pkg-config
+    mold
+  ];
+
+  buildInputs = [
+    aws-lc
+  ];
+
   nativeInstallCheckInputs = [ versionCheckHook ];
   doInstallCheck = true;
 
@@ -66,6 +75,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
       The Nix derivation does not compile the proprietary features.
     '';
     homepage = "https://bencher.dev";
+    changelog = "https://github.com/bencherdev/bencher/releases/tag/v${finalAttrs.version}";
     license =
       if finalAttrs.buildNoDefaultFeatures then
         lib.licenses.OR [

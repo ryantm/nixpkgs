@@ -7,25 +7,30 @@
 }:
 buildGoModule (finalAttrs: {
   pname = "ketch";
-  version = "0.10.0";
+  version = "0.21.0";
 
   __structuredAttrs = true;
-  strictDeps = true;
 
   src = fetchFromGitHub {
     owner = "1broseidon";
     repo = "ketch";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-m6KEPbNd13eJsNigJyGGlV2dt0bcZTZcDBCBh/l5rjY=";
+    hash = "sha256-+jPPb9/BKhWm8ABecOOdF8k1Y6JC6LbYvRkHSn5tzWg=";
   };
 
-  vendorHash = "sha256-UsTR7+GSuxUQ0aBq8fv1M18LegeDqf/XoiyASQKe5EI=";
+  vendorHash = "sha256-ixmodeSZIWoJXLP2XvyktYpGgVEpeWLnSd4/kT+s+iw=";
 
   ldflags = [
     "-s"
     "-w"
     "-X github.com/1broseidon/ketch/cmd.version=${finalAttrs.version}"
   ];
+
+  # fixes failing test https://github.com/1broseidon/ketch/blob/3722f58c1ff5c6b14b687ca3f925587996033536/cmd/config_golden_test.go#L33
+  # precedent: https://github.com/NixOS/nixpkgs/blob/bbc4e5521d1a4c19312d0ada5ac3e5c214ea0fa0/pkgs/by-name/gr/grype/package.nix#L80
+  preCheck = ''
+    unset ldflags
+  '';
 
   doInstallCheck = true;
   nativeInstallCheckInputs = [ versionCheckHook ];

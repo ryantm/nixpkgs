@@ -13,13 +13,13 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "svt-av1-hdr";
-  version = "4.1.0";
+  version = "4.3.1";
 
   src = fetchFromGitHub {
     owner = "juliobbv-p";
     repo = "svt-av1-hdr";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-n66RPDTfBsPCR/4y8dpU3Au1WZHpkpln899e2+LKxto=";
+    hash = "sha256-GmTXVO6otyhUtpvlwwWn4eWWwcvS7ba86vn+AN0qovk=";
   };
 
   strictDeps = true;

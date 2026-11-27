@@ -1,14 +1,9 @@
 {
-  gnupg,
-  gpgme,
   isLuaJIT,
   lib,
-  libgit2,
-  libgpg-error,
   lua,
   lux-cli,
   nix,
-  openssl,
   perl,
   pkg-config,
   rustPlatform,
@@ -25,27 +20,20 @@ toLuaModule (
   rustPlatform.buildRustPackage rec {
     pname = "lux-lua";
 
-    version = lux-cli.version;
-
-    src = lux-cli.src;
+    inherit (lux-cli)
+      version
+      src
+      cargoHash
+      buildInputs
+      ;
 
     buildAndTestSubdir = "lux-lua";
     buildNoDefaultFeatures = true;
     buildFeatures = [ luaFeature ];
 
-    cargoHash = lux-cli.cargoHash;
-
     nativeBuildInputs = [
       perl
       pkg-config
-    ];
-
-    buildInputs = [
-      gnupg
-      gpgme
-      libgit2
-      libgpg-error
-      openssl
     ];
 
     propagatedBuildInputs = [
@@ -60,7 +48,6 @@ toLuaModule (
     ];
 
     env = {
-      LIBGIT2_NO_VENDOR = 1;
       LIBSSH2_SYS_USE_PKG_CONFIG = 1;
       LUX_SKIP_IMPURE_TESTS = 1; # Disable impure unit tests
       # Allow undefined symbols on Darwin - they must be provided by the Lua runtime

@@ -10,6 +10,12 @@
 
   # nativeBuildInputs
   which,
+  rustPlatform,
+  cargo,
+  rustc,
+  protobuf,
+  pkg-config,
+  openssl,
 
   # build-system
   cmake,
@@ -19,30 +25,31 @@
   packaging,
   setuptools,
   setuptools-scm,
+  setuptools-rust,
 
   # buildInputs
+  oniguruma,
   onednn,
+  zstd,
   numactl,
   llvmPackages,
 
   # dependencies
   aioprometheus,
-  amdsmi,
   anthropic,
   bitsandbytes,
   blake3,
   cachetools,
   cbor2,
   compressed-tensors,
-  datasets,
   depyf,
   einops,
   fastapi,
-  gguf,
   grpcio,
   grpcio-reflection,
   ijson,
   importlib-metadata,
+  kaldi-native-fbank,
   llguidance,
   lm-format-enforcer,
   mcp,
@@ -57,11 +64,12 @@
   opentelemetry-api,
   opentelemetry-exporter-otlp,
   opentelemetry-sdk,
+  opentelemetry-semantic-conventions-ai,
   outlines,
   pandas,
   partial-json-parser,
-  peft,
   prometheus-fastapi-instrumentator,
+  psutil,
   py-cpuinfo,
   pyarrow,
   pybase64,
@@ -73,22 +81,32 @@
   sentencepiece,
   setproctitle,
   tiktoken,
-  timm,
   tokenizers,
   torch,
   torchaudio,
   torchvision,
   transformers,
   uvicorn,
-  xformers,
   xgrammar,
   # linux-only
-  psutil,
   py-libnuma,
   # cuda-only
   cupy,
-  flashinfer,
+  flashinfer-cubin,
+  flashinfer-python,
+  nvidia-cudnn-frontend,
   nvidia-ml-py,
+  tokenspeed-mla,
+  # cuda or rocm only
+  xformers,
+  # rocm-only
+  amd-aiter,
+  amd-quark,
+  amdsmi,
+  bash,
+  datasets,
+  peft,
+  timm,
 
   # optional-dependencies
   # audio
@@ -103,6 +121,7 @@
   rocmSupport ? torch.rocmSupport,
   rocmPackages ? { },
   gpuTargets ? [ ],
+  emptyDevice ? false,
 }:
 
 let
@@ -123,22 +142,28 @@ let
     name = "cutlass-source";
     owner = "NVIDIA";
     repo = "cutlass";
-    tag = "v4.2.1";
-    hash = "sha256-iP560D5Vwuj6wX1otJhwbvqe/X4mYVeKTpK533Wr5gY=";
+    tag = "v4.7.1";
+    hash = "sha256-z/jASQGRj9fYwgyJKvzWgowG7j2zNKb3xeFUzYwwLQA=";
   };
 
-  # FlashMLA's Blackwell (SM100) kernels were developed against CUTLASS v3.9.0
-  # (since https://github.com/vllm-project/FlashMLA/commit/9c5dfab6d1746b4a27af14f440e7afd5c01ece68)
-  # and are currently incompatible with CUTLASS v4.x APIs. The rest of the vLLM
-  # build uses a newer CUTLASS, so we package both versions.
-  # See upstream issue: https://github.com/vllm-project/vllm/issues/27425
+  # FlashMLA pins its own CUTLASS version (git submodule), different from the one used by vLLM.
   # See git submodule commit at:
-  # https://github.com/vllm-project/FlashMLA/tree/${flashmla.src.rev}/csrc
+  # https://github.com/vllm-project/FlashMLA/tree/${flashmla.src.rev}/csrc/3rdparty
   cutlass-flashmla = fetchFromGitHub {
     owner = "NVIDIA";
     repo = "cutlass";
-    rev = "147f5673d0c1c3dcf66f78d677fd647e4a020219";
-    hash = "sha256-dHQto08IwTDOIuFUp9jwm1MWkFi8v2YJ/UESrLuG71g=";
+    tag = "v4.3.5";
+    hash = "sha256-H8jTxjv2hXO3gmxBipacSJGYr46WO96NyWQfUHjcL1E=";
+  };
+
+  # grep for DEEPGEMM_UPSTREAM_TAG in the following file
+  # https://github.com/vllm-project/vllm/blob/v${version}/cmake/external_projects/deepgemm.cmake
+  deepgemm = fetchFromGitHub {
+    owner = "vllm-project";
+    repo = "DeepGEMM";
+    rev = "82ca617e5879d0efb0aba5b91b1c81852588af6f";
+    hash = "sha256-t7nv2O8f+1Ur+COG7yuimV0LG+9fMXkOy0Cj8CoL7Bs=";
+    fetchSubmodules = true;
   };
 
   flashmla = stdenv.mkDerivation {
@@ -152,16 +177,16 @@ let
       name = "FlashMLA-source";
       owner = "vllm-project";
       repo = "FlashMLA";
-      rev = "c2afa9cb93e674d5a9120a170a6da57b89267208";
-      hash = "sha256-pKlwxV6G9iHag/jbu3bAyvYvnu5TbrQwUMFV0AlGC3s=";
+      rev = "847ef308bb7a6828c8117301f5a5a84a095a90e8";
+      hash = "sha256-eFxa+J8gLz1sWi0aTJWNeoSu0Oco26Jeie2Xl+kvfcg=";
     };
 
     dontConfigure = true;
 
     # flashmla normally relies on `git submodule update` to fetch cutlass
     buildPhase = ''
-      rm -rf csrc/cutlass
-      ln -sf ${cutlass-flashmla} csrc/cutlass
+      rm -rf csrc/3rdparty/cutlass
+      ln -sf ${cutlass-flashmla} csrc/3rdparty/cutlass
     '';
 
     installPhase = ''
@@ -169,23 +194,55 @@ let
     '';
   };
 
-  # grep for DEFAULT_TRITON_KERNELS_TAG in the following file
+  # grep for GIT_TAG in the following file
+  # https://github.com/vllm-project/vllm/blob/v${version}/cmake/external_projects/fmha_sm100.cmake
+  fmha-sm100 = fetchFromGitHub {
+    owner = "vllm-project";
+    repo = "MSA";
+    rev = "51f4f5ce2d42783450579ed389d48b6028039192";
+    hash = "sha256-m0P0T+oLzWkt/XiW2vGH1JM9i+Eig9F+muf6BUcLR20=";
+    fetchSubmodules = true;
+  };
+
+  # grep for TRITON_KERNELS_TAG in the following file
   # https://github.com/vllm-project/vllm/blob/v${version}/cmake/external_projects/triton_kernels.cmake
   triton-kernels = fetchFromGitHub {
     owner = "triton-lang";
     repo = "triton";
-    tag = "v3.5.0";
-    hash = "sha256-F6T0n37Lbs+B7UHNYzoIQHjNNv3TcMtoXjNrT8ZUlxY=";
+    tag = "v3.6.0";
+    hash = "sha256-JFSpQn+WsNnh7CAPlcpOcUp0nyKXNbJEANdXqmkt4Tc=";
   };
 
   # grep for GIT_TAG in the following file
-  # https://github.com/vllm-project/vllm/blob/v${version}/cmake/external_projects/qutlass.cmake
-  qutlass = fetchFromGitHub {
-    name = "qutlass-source";
-    owner = "IST-DASLab";
-    repo = "qutlass";
-    rev = "830d2c4537c7396e14a02a46fbddd18b5d107c65";
-    hash = "sha256-aG4qd0vlwP+8gudfvHwhtXCFmBOJKQQTvcwahpEqC84=";
+  # https://github.com/vllm-project/vllm/blob/v${version}/cmake/external_projects/tml_fa4.cmake
+  tml-fa4 = fetchFromGitHub {
+    name = "tml-fa4-source";
+    owner = "vllm-project";
+    repo = "tml-fa4";
+    rev = "75765e76a9c2c012c1f6ecd64577eb646eb4d303";
+    hash = "sha256-zw19GAgsA0+5XzJNGLInIMN4GMRXqJsLkiVViRkv6fI=";
+  };
+
+  # grep for GIT_TAG in the following file
+  # https://github.com/vllm-project/vllm/blob/v${version}/cmake/external_projects/flashkda.cmake
+  flashkda = fetchFromGitHub {
+    name = "FlashKDA-source";
+    owner = "vllm-project";
+    repo = "FlashKDA";
+    rev = "9d9e928edc42475a67a523dd37814540d105f51c";
+    hash = "sha256-B6YvcOxZYPudEK/WjC9/MelNUjI1bjPwNJmanvDB6d4=";
+    fetchSubmodules = true;
+  };
+
+  # grep for GIT_TAG in the following file
+  # https://github.com/vllm-project/vllm/blob/v${version}/cmake/external_projects/deepselect.cmake
+  deepselect = fetchFromGitHub {
+    name = "DeepSelect-source";
+    owner = "vllm-project";
+    repo = "DeepSelect";
+    rev = "d96d33afe1fab0d6066da49cdc91e64c2bee65ea";
+    hash = "sha256-4515RDdI1fYfeK5igyR970FjlgusbHDYxTcpcqPwQoI=";
+    fetchSubmodules = true;
   };
 
   vllm-flash-attn' = lib.defaultTo (stdenv.mkDerivation {
@@ -199,21 +256,16 @@ let
       name = "flash-attention-source";
       owner = "vllm-project";
       repo = "flash-attention";
-      rev = "188be16520ceefdc625fdf71365585d2ee348fe2";
-      hash = "sha256-Osec+/IF3+UDtbIhDMBXzUeWJ7hDJNb5FpaVaziPSgM=";
+      rev = "d8dca8f06c7458a0c0e79dd9400c0446a4e77b9c";
+      hash = "sha256-Zg27uUNacbyQuDdmKVgf/OgtKY95D8hW0iAik0xSG1w=";
     };
 
     patches = [
       # fix Hopper build failure
       # https://github.com/Dao-AILab/flash-attention/pull/1719
-      # https://github.com/Dao-AILab/flash-attention/pull/1723
       (fetchpatch {
         url = "https://github.com/Dao-AILab/flash-attention/commit/dad67c88d4b6122c69d0bed1cebded0cded71cea.patch";
         hash = "sha256-JSgXWItOp5KRpFbTQj/cZk+Tqez+4mEz5kmH5EUeQN4=";
-      })
-      (fetchpatch {
-        url = "https://github.com/Dao-AILab/flash-attention/commit/e26dd28e487117ee3e6bc4908682f41f31e6f83a.patch";
-        hash = "sha256-NkCEowXSi+tiWu74Qt+VPKKavx0H9JeteovSJKToK9A=";
       })
     ];
 
@@ -234,7 +286,7 @@ let
     '';
   }) vllm-flash-attn;
 
-  cpuSupport = !cudaSupport && !rocmSupport;
+  cpuSupport = !cudaSupport && !rocmSupport && !emptyDevice;
 
   # https://github.com/pytorch/pytorch/blob/v2.9.1/torch/utils/cpp_extension.py#L2407-L2410
   supportedTorchCudaCapabilities =
@@ -309,7 +361,7 @@ let
     libcurand # curand_kernel.h
     libcusparse # cusparse.h
     libcusolver # cusolverDn.h
-    cuda_nvtx
+    nvtx
     cuda_nvrtc
     # cusparselt # cusparseLt.h
     libcublas
@@ -335,51 +387,72 @@ in
 
 buildPythonPackage.override { stdenv = torch.stdenv; } (finalAttrs: {
   pname = "vllm";
-  version = "0.16.0";
+  version = "0.34.0";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "vllm-project";
     repo = "vllm";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-7E67xVRlKmm+Hbp5nphhwH8SQC9LpCFNBfF2ZAOt79k=";
+    hash = "sha256-zuiF2fzeD6UBfd01PNdnCwVOVlI7GfAtDk6uAkxV+9U=";
+  };
+
+  cargoRoot = "rust";
+  cargoDeps = rustPlatform.fetchCargoVendor {
+    inherit (finalAttrs)
+      pname
+      version
+      src
+      cargoRoot
+      ;
+    hash = "sha256-XCll/r1RVMbRZtb6AV3ItIE3L0ahemx0Dvzao+NbZkM=";
   };
 
   patches = [
     ./0002-setup.py-nix-support-respect-cmakeFlags.patch
     ./0003-propagate-pythonpath.patch
-    ./0005-drop-intel-reqs.patch
+    ./0005-drop-cpu-extra-reqs.patch
     ./0006-drop-rocm-extra-reqs.patch
   ];
 
-  postPatch = ''
+  postPatch =
     # Remove vendored pynvml entirely
-    rm vllm/third_party/pynvml.py
-    substituteInPlace tests/utils.py \
-      --replace-fail \
-        "from vllm.third_party.pynvml import" \
-        "from pynvml import"
-    substituteInPlace vllm/utils/import_utils.py \
-      --replace-fail \
-        "import vllm.third_party.pynvml as pynvml" \
-        "import pynvml"
-
+    ''
+      rm vllm/third_party/pynvml.py
+      substituteInPlace tests/utils.py \
+        --replace-fail \
+          "from vllm.third_party.pynvml import" \
+          "from pynvml import"
+      substituteInPlace vllm/utils/import_utils.py \
+        --replace-fail \
+          "import vllm.third_party.pynvml as pynvml" \
+          "import pynvml"
+    ''
     # pythonRelaxDeps does not cover build-system
-    substituteInPlace pyproject.toml \
-      --replace-fail "torch ==" "torch >=" \
-      --replace-fail "setuptools>=77.0.3,<81.0.0" "setuptools" \
-      --replace-fail "grpcio-tools==1.78.0" "grpcio"
-
+    + ''
+      substituteInPlace pyproject.toml \
+        --replace-fail "torch ==" "torch >=" \
+        --replace-fail "setuptools>=77.0.3,<81.0.0" "setuptools"
+    ''
     # Ignore the python version check because it hard-codes minor versions and
     # lags behind `ray`'s python interpreter support
-    substituteInPlace CMakeLists.txt \
-      --replace-fail \
-        'set(PYTHON_SUPPORTED_VERSIONS' \
-        'set(PYTHON_SUPPORTED_VERSIONS "${lib.versions.majorMinor python.version}"'
-  '';
+    + ''
+      substituteInPlace CMakeLists.txt \
+        --replace-fail \
+          'set(PYTHON_SUPPORTED_VERSIONS' \
+          'set(PYTHON_SUPPORTED_VERSIONS "${lib.versions.majorMinor python.version}"'
+
+      substituteInPlace tools/build_rust.py \
+        --replace-fail 'features=["native-tls-vendored"],' ""
+    '';
 
   nativeBuildInputs = [
     which
+    rustPlatform.cargoSetupHook
+    cargo
+    rustc
+    protobuf
+    pkg-config
   ]
   ++ lib.optionals rocmSupport [
     rocmPackages.hipcc
@@ -400,48 +473,84 @@ buildPythonPackage.override { stdenv = torch.stdenv; } (finalAttrs: {
     packaging
     setuptools
     setuptools-scm
+    setuptools-rust
     torch
   ];
 
-  buildInputs =
-    lib.optionals cpuSupport [
-      onednn
+  buildInputs = [
+    oniguruma
+    openssl
+    zstd
+  ]
+  ++ lib.optionals cpuSupport [
+    onednn
+    # libgomp.so
+    (lib.getLib torch.stdenv.cc.cc)
+  ]
+  ++ lib.optionals (cpuSupport && stdenv.hostPlatform.isLinux) [
+    numactl
+  ]
+  ++ lib.optionals cudaSupport (
+    mergedCudaLibraries
+    ++ (with cudaPackages; [
+      nccl
+      cudnn
+      libcufile
+    ])
+  )
+  ++ lib.optionals rocmSupport (
+    with rocmPackages;
+    [
+      clr
+      rocthrust
+      rocprim
+      hipsparse
+      hipblas
+      rocrand
+      hiprand
+      rocblas
+      miopen-hip
+      hipfft
+      hipcub
+      hipsolver
+      rocsolver
+      hipblaslt
+      rocm-runtime
+      rccl
+      rocshmem
+      rocm-smi
+      hipsparselt
     ]
-    ++ lib.optionals (cpuSupport && stdenv.hostPlatform.isLinux) [
-      numactl
-    ]
-    ++ lib.optionals cudaSupport (
-      mergedCudaLibraries
-      ++ (with cudaPackages; [
-        nccl
-        cudnn
-        libcufile
-      ])
-    )
-    ++ lib.optionals rocmSupport (
-      with rocmPackages;
-      [
-        clr
-        rocthrust
-        rocprim
-        hipsparse
-        hipblas
-        rocrand
-        hiprand
-        rocblas
-        miopen-hip
-        hipfft
-        hipcub
-        hipsolver
-        rocsolver
-        hipblaslt
-        rocm-runtime
-      ]
-    )
-    ++ lib.optionals stdenv.cc.isClang [
-      llvmPackages.openmp
-    ];
+  )
+  ++ lib.optionals stdenv.cc.isClang [
+    llvmPackages.openmp
+  ];
 
+  # fastapi and many other packages are pinned strictly in vllm
+  pythonRelaxDeps = true;
+
+  pythonRemoveDeps = [
+    # Not packaged in nixpkgs.
+    "apache-tvm-ffi" # vllm does not depend on it directly, its version is only pinned for compatibility with tilelang (also removed).
+    "tilelang"
+    "fastsafetensors"
+    "instanttensor"
+
+    # QuACK and Cutlass DSL seem to be added only for FA4
+    # which in our case handles its own deps
+    "nvidia-cutlass-dsl"
+    "quack-kernels"
+
+    # Optional Humming kernels for quantization
+    "humming-kernels"
+
+    # Not packaged in nixpkgs. Fork of openai-harmony (which we use instead) providing the same
+    # `openai_harmony` module, but with embedded tiktoken vocabularies.
+    "oss-harmony"
+
+    # ROCm-only, not packaged in nixpkgs
+    "mooncake-transfer-engine-rocm"
+  ];
   dependencies = [
     aioprometheus
     anthropic
@@ -453,11 +562,11 @@ buildPythonPackage.override { stdenv = torch.stdenv; } (finalAttrs: {
     depyf
     einops
     fastapi
-    gguf
     grpcio
     grpcio-reflection
     ijson
     importlib-metadata
+    kaldi-native-fbank
     llguidance
     lm-format-enforcer
     mcp
@@ -472,10 +581,12 @@ buildPythonPackage.override { stdenv = torch.stdenv; } (finalAttrs: {
     opentelemetry-api
     opentelemetry-exporter-otlp
     opentelemetry-sdk
+    opentelemetry-semantic-conventions-ai
     outlines
     pandas
     partial-json-parser
     prometheus-fastapi-instrumentator
+    psutil
     py-cpuinfo
     pyarrow
     pybase64
@@ -495,21 +606,27 @@ buildPythonPackage.override { stdenv = torch.stdenv; } (finalAttrs: {
     torchvision
     transformers
     uvicorn
-    xformers
     xgrammar
   ]
   ++ uvicorn.optional-dependencies.standard
   ++ aioprometheus.optional-dependencies.starlette
   ++ lib.optionals stdenv.targetPlatform.isLinux [
-    psutil
     py-libnuma
   ]
   ++ lib.optionals cudaSupport [
     cupy
-    flashinfer
+    flashinfer-cubin
+    flashinfer-python
+    nvidia-cudnn-frontend
     nvidia-ml-py
+    tokenspeed-mla
+  ]
+  ++ lib.optionals (cudaSupport || rocmSupport) [
+    xformers # Only depended on by Pixtral. Removed in vllm-project/vllm#52185.
   ]
   ++ lib.optionals rocmSupport [
+    amd-aiter
+    amd-quark
     rocmPackages.rocminfo
     amdsmi
     datasets
@@ -530,10 +647,13 @@ buildPythonPackage.override { stdenv = torch.stdenv; } (finalAttrs: {
   cmakeFlags = [
   ]
   ++ lib.optionals cudaSupport [
-    (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_CUTLASS" "${lib.getDev cutlass}")
-    (lib.cmakeFeature "FLASH_MLA_SRC_DIR" "${lib.getDev flashmla}")
-    (lib.cmakeFeature "VLLM_FLASH_ATTN_SRC_DIR" "${lib.getDev vllm-flash-attn'}")
-    (lib.cmakeFeature "QUTLASS_SRC_DIR" "${lib.getDev qutlass}")
+    (lib.cmakeFeature "DEEPGEMM_SRC_DIR" (lib.getDev deepgemm).outPath)
+    (lib.cmakeFeature "DEEPSELECT_SRC_DIR" (lib.getDev deepselect).outPath)
+    (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_CUTLASS" (lib.getDev cutlass).outPath)
+    (lib.cmakeFeature "FLASH_KDA_SRC_DIR" (lib.getDev flashkda).outPath)
+    (lib.cmakeFeature "FLASH_MLA_SRC_DIR" (lib.getDev flashmla).outPath)
+    (lib.cmakeFeature "FMHA_SM100_SRC_DIR" (lib.getDev fmha-sm100).outPath)
+    (lib.cmakeFeature "VLLM_FLASH_ATTN_SRC_DIR" (lib.getDev vllm-flash-attn').outPath)
     (lib.cmakeFeature "TORCH_CUDA_ARCH_LIST" "${gpuTargetString}")
     (lib.cmakeFeature "CUTLASS_NVCC_ARCHS_ENABLED" "${cudaPackages.flags.cmakeCudaArchitecturesString}")
     (lib.cmakeFeature "CUDA_TOOLKIT_ROOT_DIR" "${symlinkJoin {
@@ -545,25 +665,33 @@ buildPythonPackage.override { stdenv = torch.stdenv; } (finalAttrs: {
     (lib.cmakeFeature "CUTLASS_ENABLE_CUBLAS" "ON")
   ];
 
-  env =
-    lib.optionalAttrs cudaSupport {
-      VLLM_TARGET_DEVICE = "cuda";
-      CUDA_HOME = "${lib.getDev cudaPackages.cuda_nvcc}";
-      TRITON_KERNELS_SRC_DIR = "${lib.getDev triton-kernels}/python/triton_kernels/triton_kernels";
-    }
-    // lib.optionalAttrs rocmSupport {
-      VLLM_TARGET_DEVICE = "rocm";
-      PYTORCH_ROCM_ARCH = gpuTargetString;
-      # vLLM's CMake logic checks `ROCM_PATH` to decide whether HIP/ROCm is available.
-      ROCM_PATH = "${rocmPackages.clr}";
-      TRITON_KERNELS_SRC_DIR = "${lib.getDev triton-kernels}/python/triton_kernels/triton_kernels";
-      HIPFLAGS = rocmExtraIncludeFlags;
-      CXXFLAGS = rocmExtraIncludeFlags;
-    }
-    // lib.optionalAttrs cpuSupport {
-      VLLM_TARGET_DEVICE = "cpu";
-      FETCHCONTENT_SOURCE_DIR_ONEDNN = "${onednn.src}";
-    };
+  env = {
+    VLLM_REQUIRE_RUST_FRONTEND = "1";
+    VLLM_VERSION_OVERRIDE = finalAttrs.version;
+  }
+  // lib.optionalAttrs cudaSupport {
+    VLLM_TARGET_DEVICE = "cuda";
+    CUDA_HOME = "${lib.getDev cudaPackages.cuda_nvcc}";
+    TRITON_KERNELS_SRC_DIR = "${lib.getDev triton-kernels}/python/triton_kernels/triton_kernels";
+    TML_FA4_SRC_DIR = "${lib.getDev tml-fa4}";
+  }
+  // lib.optionalAttrs rocmSupport {
+    VLLM_TARGET_DEVICE = "rocm";
+    PYTORCH_ROCM_ARCH = gpuTargetString;
+    # vLLM's CMake logic checks `ROCM_PATH` to decide whether HIP/ROCm is available.
+    ROCM_PATH = "${rocmPackages.clr}";
+    TRITON_KERNELS_SRC_DIR = "${lib.getDev triton-kernels}/python/triton_kernels/triton_kernels";
+    HIPFLAGS = rocmExtraIncludeFlags;
+    CXXFLAGS = rocmExtraIncludeFlags;
+  }
+  // lib.optionalAttrs cpuSupport {
+    VLLM_TARGET_DEVICE = "cpu";
+    VLLM_VERSION_OVERRIDE = "${finalAttrs.version}+cpu";
+    FETCHCONTENT_SOURCE_DIR_ONEDNN = "${onednn.src}";
+  }
+  // lib.optionalAttrs emptyDevice {
+    VLLM_TARGET_DEVICE = "empty";
+  };
 
   preConfigure = ''
     # See: https://github.com/vllm-project/vllm/blob/v0.7.1/setup.py#L75-L109
@@ -571,9 +699,27 @@ buildPythonPackage.override { stdenv = torch.stdenv; } (finalAttrs: {
     export MAX_JOBS="$NIX_BUILD_CORES"
   '';
 
-  pythonRelaxDeps = true;
-
   pythonImportsCheck = [ "vllm" ];
+
+  # vLLM detects the CPU platform from the "+cpu" suffix.
+  dontCheckPythonMetadata = cpuSupport;
+
+  makeWrapperArgs =
+    lib.optionals (cudaSupport && cudaPackages ? nccl) [
+      "--set"
+      "VLLM_NCCL_SO_PATH"
+      "${cudaPackages.nccl}/lib/libnccl.so"
+    ]
+    ++ lib.optionals rocmSupport [
+      "--set"
+      "HIP_DEVICE_LIB_PATH"
+      "${rocmPackages.rocm-device-libs}/amdgcn/bitcode"
+
+      "--prefix"
+      "PATH"
+      ":"
+      "${rocmPackages.clr}/bin:${bash}/bin"
+    ];
 
   passthru = {
     # make internal dependency available to overlays
@@ -587,6 +733,7 @@ buildPythonPackage.override { stdenv = torch.stdenv; } (finalAttrs: {
     changelog = "https://github.com/vllm-project/vllm/releases/tag/${finalAttrs.src.tag}";
     homepage = "https://github.com/vllm-project/vllm";
     license = lib.licenses.asl20;
+    mainProgram = "vllm";
     maintainers = with lib.maintainers; [
       happysalada
       lach
@@ -594,32 +741,14 @@ buildPythonPackage.override { stdenv = torch.stdenv; } (finalAttrs: {
       LunNova # esp. for ROCm
     ];
     badPlatforms = [
+      # error: could not find git for clone of arm_compute-populate
+      "aarch64-linux"
+
       # CMake Error at cmake/cpu_extension.cmake:188 (message):
       #   vLLM CPU backend requires AVX512, AVX2, Power9+ ISA, S390X ISA, ARMv8 or
       #   RISC-V support.
       "aarch64-darwin"
-
-      # CMake Error at cmake/cpu_extension.cmake:78 (find_isa):
-      # find_isa Function invoked with incorrect arguments for function named:
-      # find_isa
-      "x86_64-darwin"
     ];
-    knownVulnerabilities = [
-      "CVE-2026-25960"
-      "CVE-2026-27893"
-      "CVE-2026-41523"
-      "CVE-2026-44222"
-      "CVE-2026-44223"
-      "CVE-2026-47155"
-      "CVE-2026-48746"
-      "CVE-2026-53923"
-      "CVE-2026-54232"
-      "CVE-2026-54233"
-      "CVE-2026-54234"
-      "CVE-2026-54235"
-      "CVE-2026-54236"
-      "CVE-2026-55514"
-      "CVE-2026-55574"
-    ];
+    broken = cudaSupport;
   };
 })

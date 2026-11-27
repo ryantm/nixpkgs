@@ -1,48 +1,52 @@
 {
   lib,
   stdenv,
-  fetchurl,
-  autoPatchelfHook,
-  curl,
-  common-updater-scripts,
-  jq,
+  rustPlatform,
+  fetchFromGitHub,
   keyutils,
   libgcc,
   makeBinaryWrapper,
+  openssl,
+  pkg-config,
+  sqlcipher,
   versionCheckHook,
-  writeShellScript,
+  nix-update-script,
 }:
 
-stdenv.mkDerivation (finalAttrs: {
+rustPlatform.buildRustPackage (finalAttrs: {
   pname = "proton-pass-cli";
-  version = "2.2.3";
+  version = "2.7.1";
 
   __structuredAttrs = true;
-  strictDeps = true;
 
-  src = finalAttrs.passthru.sources.${stdenv.hostPlatform.system};
+  src = fetchFromGitHub {
+    owner = "protonpass";
+    repo = "pass-cli";
+    tag = finalAttrs.version;
+    hash = "sha256-ZhpWbw6vM3j7s5fcYzJ7lC9vI74lcjTSWycXwvidaS0=";
+  };
+
+  cargoHash = "sha256-kih+CY2l89FTaMy/HPar1FxYfi6WKTg6S+90gHH5wSI=";
+
+  # pass-uniffi-bindgen generates the Python bindings via maturin; its source
+  # directory is not published in the GitHub repo, so it can't be a member
+  postPatch = ''
+    sed -i '/uniffi-bindgen/d' Cargo.toml
+  '';
 
   nativeBuildInputs = [
     makeBinaryWrapper
-  ]
-  ++ lib.optionals stdenv.hostPlatform.isLinux [
-    autoPatchelfHook
+    pkg-config
   ];
 
-  buildInputs = lib.optionals stdenv.hostPlatform.isLinux [
+  buildInputs = [
+    openssl
+    sqlcipher
+  ]
+  ++ lib.optionals stdenv.hostPlatform.isLinux [
     keyutils
     libgcc
   ];
-
-  dontUnpack = true;
-
-  installPhase = ''
-    runHook preInstall
-
-    install -Dm755 $src $out/bin/pass-cli
-
-    runHook postInstall
-  '';
 
   postFixup = ''
     wrapProgram $out/bin/pass-cli --set PROTON_PASS_NO_UPDATE_CHECK 1
@@ -53,52 +57,17 @@ stdenv.mkDerivation (finalAttrs: {
     versionCheckHook
   ];
 
-  passthru = {
-    sources = {
-      "aarch64-darwin" = fetchurl {
-        url = "https://proton.me/download/pass-cli/${finalAttrs.version}/pass-cli-macos-aarch64";
-        hash = "sha256-gxjlrznYmXgCFOxixtHCz9x2KLsgNtuo9yr3TJpjxzI=";
-      };
-      "aarch64-linux" = fetchurl {
-        url = "https://proton.me/download/pass-cli/${finalAttrs.version}/pass-cli-linux-aarch64";
-        hash = "sha256-NdBabzetuIJEbu81Rfg3hUVEw8BJ2A3Who/i08/qwMs=";
-      };
-      "x86_64-darwin" = fetchurl {
-        url = "https://proton.me/download/pass-cli/${finalAttrs.version}/pass-cli-macos-x86_64";
-        hash = "sha256-K6vfr0ut8cQo1mrNeEN35akxLIo1sftt6hnn6wUa6Dk=";
-      };
-      "x86_64-linux" = fetchurl {
-        url = "https://proton.me/download/pass-cli/${finalAttrs.version}/pass-cli-linux-x86_64";
-        hash = "sha256-cYjwKnweeahg9xZq0sNPei5slhJltwZ34nBPIW3Rdtk=";
-      };
-    };
-    updateScript = writeShellScript "update-proton-pass-cli" ''
-      set -o errexit
-      export PATH="${
-        lib.makeBinPath [
-          curl
-          jq
-          common-updater-scripts
-        ]
-      }"
-      NEW_VERSION=$(curl --silent https://proton.me/download/pass-cli/versions.json | jq '.passCliVersions.version' --raw-output)
-      if [[ "${finalAttrs.version}" = "$NEW_VERSION" ]]; then
-          echo "No update available."
-          exit 0
-      fi
-      for platform in ${lib.escapeShellArgs finalAttrs.meta.platforms}; do
-        update-source-version "proton-pass-cli" "$NEW_VERSION" --ignore-same-version --source-key="sources.$platform"
-      done
-    '';
-  };
+  __darwinAllowLocalNetworking = true;
+
+  passthru.updateScript = nix-update-script { };
 
   meta = {
     description = "Command-line interface for managing your Proton Pass vaults, items, and secrets";
     homepage = "https://github.com/protonpass/pass-cli";
-    license = lib.licenses.unfree;
+    license = lib.licenses.gpl3Plus;
     mainProgram = "pass-cli";
     maintainers = with lib.maintainers; [ delafthi ];
-    platforms = lib.attrNames finalAttrs.passthru.sources;
-    sourceProvenance = with lib.sourceTypes; [ binaryNativeCode ];
+    platforms = lib.platforms.unix;
+    sourceProvenance = with lib.sourceTypes; [ fromSource ];
   };
 })

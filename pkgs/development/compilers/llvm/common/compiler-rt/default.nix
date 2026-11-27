@@ -14,6 +14,7 @@
   libcxx,
   linuxHeaders,
   freebsd,
+  openbsd,
 
   # Some platforms have switched to using compiler-rt, but still want a
   # libgcc.a for ABI compat purposes. The use case would be old code that
@@ -36,7 +37,8 @@
   # implementation of the routines instead of the implementation
   # using ad-hoc mutexes (which doesn't depend on libc at all).
   # Use of pthreads helps code play better with sanitizers.
-  withAtomicsPthread ? lib.versionAtLeast release_version "19" && stdenv.cc.libc != null,
+  withAtomicsPthread ?
+    lib.versionAtLeast release_version "19" && stdenv.cc.libc != null && !stdenv.hostPlatform.isMinGW,
 
   # In recent releases, the compiler-rt build seems to produce
   # many `libclang_rt*` libraries, but not a single unified
@@ -59,6 +61,14 @@ let
   isDarwinStatic = stdenv.hostPlatform.isDarwin && stdenv.hostPlatform.isStatic;
   inherit (stdenv.hostPlatform) isMusl isAarch64 isWindows;
   noSanitizers = !haveLibc || bareMetal || isMusl || isDarwinStatic || isWindows;
+  havePython3 =
+    # Python is not available for the following reasons:
+    # static build on aarch64-darwin breaks with:
+    # configure: error: C compiler cannot create executables
+    !(stdenv.hostPlatform.isDarwin && stdenv.hostPlatform.isStatic)
+    &&
+      # mingw patches only apply to Python 3.11 currently
+      !stdenv.hostPlatform.isWindows;
 in
 
 stdenv.mkDerivation (finalAttrs: {
@@ -67,19 +77,25 @@ stdenv.mkDerivation (finalAttrs: {
 
   src =
     if monorepoSrc != null then
-      runCommand "compiler-rt-src-${version}" { inherit (monorepoSrc) passthru; } (
-        ''
-          mkdir -p "$out"
-          cp -r ${monorepoSrc}/cmake "$out"
-        ''
-        + lib.optionalString (lib.versionAtLeast release_version "21") ''
-          cp -r ${monorepoSrc}/third-party "$out"
-        ''
-        + ''
-          cp -r ${monorepoSrc}/compiler-rt "$out"
-          cp -r ${monorepoSrc}/llvm "$out"
-        ''
-      )
+      runCommand "compiler-rt-src-${version}"
+        {
+          inherit (monorepoSrc) passthru;
+          strictDeps = true;
+          __structuredAttrs = true;
+        }
+        (
+          ''
+            mkdir -p "$out"
+            cp -r ${monorepoSrc}/cmake "$out"
+          ''
+          + lib.optionalString (lib.versionAtLeast release_version "21") ''
+            cp -r ${monorepoSrc}/third-party "$out"
+          ''
+          + ''
+            cp -r ${monorepoSrc}/compiler-rt "$out"
+            cp -r ${monorepoSrc}/llvm "$out"
+          ''
+        )
     else
       src;
 
@@ -107,6 +123,12 @@ stdenv.mkDerivation (finalAttrs: {
     url = "https://github.com/llvm/llvm-project/commit/59978b21ad9c65276ee8e14f26759691b8a65763.patch";
     hash = "sha256-ys5SMLfO3Ay9nCX9GV5yRCQ6pLsseFu/ZY6Xd6OL4p0=";
     relative = "compiler-rt";
+  })
+  # Linux removed `linux/scc.h`, which breaks building compiler-rt. Upstream LLVM has fixed it in LLVM 22 and 23.
+  ++ lib.optional (lib.strings.versionOlder version "22.1.5") (fetchpatch {
+    url = "https://github.com/llvm/llvm-project/commit/3dc4fd6dd41100f051a63642f449b16324389c96.patch?full_index=1";
+    hash = "sha256-Av6CN95XjdUagIKh3AAjD0UK8r01fDz0cD0BLjZ70dg=";
+    relative = "compiler-rt";
   });
 
   nativeBuildInputs = [
@@ -116,8 +138,17 @@ stdenv.mkDerivation (finalAttrs: {
   ]
   ++ lib.optionals stdenv.hostPlatform.isDarwin [ jq ];
   buildInputs =
-    lib.optional (stdenv.hostPlatform.isLinux && stdenv.hostPlatform.isRiscV) linuxHeaders
+    lib.optionals
+      # python3 is only used to patch shebangs for helper scripts, only include it if possible
+      # Using it in cross-compilation causes infinite recursion through stdenv
+      (havePython3 && !stdenv.hostPlatform.useLLVM && stdenv.hostPlatform == stdenv.buildPlatform)
+      [
+        python3
+      ]
+    ++ lib.optional (stdenv.hostPlatform.isLinux && stdenv.hostPlatform.isRiscV) linuxHeaders
     ++ lib.optional (stdenv.hostPlatform.isFreeBSD) freebsd.include;
+
+  strictDeps = true;
 
   env = {
     NIX_CFLAGS_COMPILE = toString (
@@ -131,6 +162,10 @@ stdenv.mkDerivation (finalAttrs: {
         # be able to #include <assert.h> in the first place; perhaps it's in the
         # wrong, or perhaps there is a way to provide an assert.h.
         "-Wno-error=implicit-function-declaration"
+      ]
+      ++ lib.optionals (!haveLibc && stdenv.hostPlatform.isOpenBSD) [
+        # Bootstrap headers must not propagate into libc++ consumers through pkgsStatic.
+        "-idirafter ${lib.getDev openbsd.include}/include"
       ]
     );
 
@@ -155,12 +190,28 @@ stdenv.mkDerivation (finalAttrs: {
   ++ lib.optionals noSanitizers [
     (lib.cmakeBool "COMPILER_RT_BUILD_SANITIZERS" false)
   ]
-  ++ lib.optionals ((useLLVM && !haveLibcxx) || !haveLibc || bareMetal || isMusl || isDarwinStatic) [
-    (lib.cmakeBool "COMPILER_RT_BUILD_XRAY" false)
-    (lib.cmakeBool "COMPILER_RT_BUILD_LIBFUZZER" false)
-    (lib.cmakeBool "COMPILER_RT_BUILD_MEMPROF" false)
-    (lib.cmakeBool "COMPILER_RT_BUILD_ORC" false) # may be possible to build with musl if necessary
-  ]
+  ++
+    lib.optionals
+      (
+        (useLLVM && !haveLibcxx)
+        || !haveLibc
+        || bareMetal
+        || isMusl
+        || isDarwinStatic
+        # On Darwin, `darwin.libcxx` is the libcxx shipped inside the Apple SDK,
+        # so it is bumped together with the SDK. In libcxx 21 (Apple SDK 26.4+),
+        # the fallbacks for `__builtin_ctzg`/`__builtin_clzg` were removed because
+        # clang 18 support was dropped: https://github.com/llvm/llvm-project/pull/133920
+        # Clang 18 itself doesn't recognize those builtins, so the C++ components
+        # of compiler-rt 18 (which include `<algorithm>` etc.) fail to compile.
+        || (lib.versions.major release_version == "18" && stdenv.hostPlatform.isDarwin)
+      )
+      [
+        (lib.cmakeBool "COMPILER_RT_BUILD_XRAY" false)
+        (lib.cmakeBool "COMPILER_RT_BUILD_LIBFUZZER" false)
+        (lib.cmakeBool "COMPILER_RT_BUILD_MEMPROF" false)
+        (lib.cmakeBool "COMPILER_RT_BUILD_ORC" false) # may be possible to build with musl if necessary
+      ]
   ++ lib.optionals (!haveLibc || bareMetal) [
     (lib.cmakeBool "COMPILER_RT_BUILD_PROFILE" false)
     (lib.cmakeBool "CMAKE_C_COMPILER_WORKS" true)
@@ -208,7 +259,7 @@ stdenv.mkDerivation (finalAttrs: {
       # Fixes https://github.com/NixOS/nixpkgs/issues/393603
       (lib.cmakeBool "COMPILER_RT_DISABLE_AARCH64_FMV" true)
   ++ lib.optionals withAtomics [
-    (lib.cmakeBool "COMPILER_RT_EXCLUDE_ATOMIC_BUILTIN" (!withAtomicsLib))
+    (lib.cmakeBool "COMPILER_RT_EXCLUDE_ATOMIC_BUILTIN" withAtomicsLib)
     (lib.cmakeBool "COMPILER_RT_BUILD_STANDALONE_LIBATOMIC" withAtomicsLib)
     (lib.cmakeBool "COMPILER_RT_LIBATOMIC_USE_PTHREAD" withAtomicsPthread)
   ]
@@ -233,10 +284,27 @@ stdenv.mkDerivation (finalAttrs: {
         substituteInPlace lib/builtins/int_util.c \
           --replace-fail "#include <stdlib.h>" ""
       ''
-      + (lib.optionalString (!stdenv.hostPlatform.isFreeBSD)
-        # On FreeBSD, assert/static_assert are macros and allowing them to be implicitly declared causes link errors.
+      +
+        lib.optionalString
+          (
+            stdenv.hostPlatform.isLinux
+            && stdenv.hostPlatform.isAarch64
+            && lib.versionAtLeast release_version "22"
+          )
+          # LLVM 22 dropped the __has_include guard around <sys/auxv.h> in the
+          # AArch64 LSE/FMV feature detection (llvm/llvm-project#161751). Without
+          # a libc the header does not exist, so restore the LLVM 21 behaviour:
+          # skip the auxv-based detection and leave __aarch64_have_lse_atomics
+          # false. Only the __linux__ branches are touched, so keep the Darwin
+          # derivations (built without a libc too) unchanged.
+          ''
+            substituteInPlace lib/builtins/cpu_model/aarch64.c \
+              --replace-fail "#elif defined(__linux__)" "#elif defined(__linux__) && __has_include(<sys/auxv.h>)"
+          ''
+      + (lib.optionalString (!(stdenv.hostPlatform.isFreeBSD || stdenv.hostPlatform.isOpenBSD))
+        # On FreeBSD and OpenBSD, assert/static_assert are macros and allowing them to be implicitly declared causes link errors.
         # see description above for why we're nuking assert.h normally but that doesn't work here.
-        # instead, we add the freebsd.include dependency explicitly
+        # instead, we add the freebsd.include or openbsd.include dependency explicitly
         ''
           substituteInPlace lib/builtins/clear_cache.c \
             --replace-fail "#include <assert.h>" ""
@@ -285,11 +353,23 @@ stdenv.mkDerivation (finalAttrs: {
     + lib.optionalString forceLinkCompilerRt ''
       ln -s $out/lib/*/libclang_rt.builtins-*.a $out/lib/libcompiler_rt.a
     ''
-    + lib.optionalString (withAtomics && withAtomicsLib) ''
-      ln -s $out/lib/*/libclang_rt.atomic-*.so $out/lib/libatomic.so
-      # create a link with the original soname as well, so it's found at runtime
-      ln -s $out/lib/*/libclang_rt.atomic-*.so $out/lib/
-    '';
+    + lib.optionalString (withAtomics && withAtomicsLib) (
+      let
+        isMinGW = stdenv.hostPlatform.isMinGW;
+        sharedLibrary = stdenv.hostPlatform.extensions.sharedLibrary;
+        linkLibrarySuffix = lib.optionalString isMinGW ".a";
+        runtimeDirectory = if isMinGW then "$out/bin" else "$out/lib";
+        atomicLibrary = "libclang_rt.atomic" + lib.optionalString isMinGW "_dynamic" + "-*${sharedLibrary}";
+      in
+      ''
+        mkdir -p ${runtimeDirectory}
+        ln -s $out/lib/*/${atomicLibrary}${linkLibrarySuffix} $out/lib/libatomic${sharedLibrary}${linkLibrarySuffix}
+        # Link the original runtime name where the loader searches for shared libraries.
+        ln -s $out/lib/*/${atomicLibrary} ${runtimeDirectory}/
+      ''
+    );
+
+  __structuredAttrs = true;
 
   meta = llvm_meta // {
     homepage = "https://compiler-rt.llvm.org/";

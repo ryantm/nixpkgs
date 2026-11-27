@@ -12,6 +12,9 @@
   pybind11,
   torch,
 
+  # build-system
+  setuptools_80,
+
   # dependencies
   addict,
   mmengine,
@@ -58,6 +61,13 @@ buildPythonPackage (finalAttrs: {
       substituteInPlace setup.py \
         --replace-fail "cpu_use = 4" "cpu_use = $NIX_BUILD_CORES" \
         --replace-fail "return locals()['__version__']" "return '${finalAttrs.version}'"
+    ''
+    # torch >= 2.15 requires C++20
+    + ''
+      substituteInPlace setup.py \
+        --replace-fail \
+          "-std=c++17" \
+          "-std=c++20"
     '';
 
   nativeBuildInputs = [
@@ -79,6 +89,10 @@ buildPythonPackage (finalAttrs: {
       libcusparse # cusparse.h
     ]
   );
+
+  # https://github.com/open-mmlab/mmengine/issues/1616
+  # also applies here
+  build-system = [ setuptools_80 ];
 
   dependencies = [
     addict
@@ -140,17 +154,13 @@ buildPythonPackage (finalAttrs: {
     "test_ycbcr2rgb"
     "test_ycbcr2bgr"
     "test_tensor2imgs"
-  ]
-  ++ lib.optionals (stdenv.hostPlatform.isDarwin && stdenv.hostPlatform.isx86_64) [
-    # Fatal Python error: Segmentation fault
-    "test_transform"
   ];
 
   meta = {
     description = "Foundational Library for Computer Vision Research";
     homepage = "https://github.com/open-mmlab/mmcv";
     changelog = "https://github.com/open-mmlab/mmcv/releases/tag/${finalAttrs.src.tag}";
-    license = with lib.licenses; [ asl20 ];
+    license = lib.licenses.asl20;
     maintainers = with lib.maintainers; [ rxiao ];
   };
 })

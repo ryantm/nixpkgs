@@ -19,7 +19,6 @@ buildPythonPackage (finalAttrs: {
   pname = "seaborn";
   version = "0.13.2";
   pyproject = true;
-  __structuredAttrs = true;
 
   src = fetchFromGitHub {
     owner = "mwaskom";
@@ -96,7 +95,7 @@ buildPythonPackage (finalAttrs: {
     description = "Statistical data visualization";
     homepage = "https://seaborn.pydata.org/";
     changelog = "https://github.com/mwaskom/seaborn/blob/${finalAttrs.src.tag}/doc/whatsnew/${finalAttrs.src.tag}.rst";
-    license = with lib.licenses; [ bsd3 ];
+    license = lib.licenses.bsd3;
     maintainers = with lib.maintainers; [ miniharinn ];
   };
 })

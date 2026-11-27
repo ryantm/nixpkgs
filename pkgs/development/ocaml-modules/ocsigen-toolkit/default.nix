@@ -1,57 +1,44 @@
 {
-  stdenv,
   lib,
+  buildDunePackage,
   fetchFromGitHub,
-  ocaml,
-  findlib,
-  opaline,
   calendar,
   eliom,
   js_of_ocaml-ppx_deriving_json,
+  ocsigen-ppx-rpc,
+  ocsigen-dune-rules,
 }:
 
-stdenv.mkDerivation rec {
+buildDunePackage (finalAttrs: {
   pname = "ocsigen-toolkit";
-  name = "ocaml${ocaml.version}-${pname}-${version}";
-  version = "4.2.0";
-
-  propagatedBuildInputs = [
-    calendar
-    js_of_ocaml-ppx_deriving_json
-    eliom
-  ];
-  nativeBuildInputs = [
-    ocaml
-    findlib
-    opaline
-    eliom
-  ];
-
-  strictDeps = true;
-
-  installPhase = ''
-    runHook preInstall
-    mkdir -p $OCAMLFIND_DESTDIR
-    export OCAMLPATH=$out/lib/ocaml/${ocaml.version}/site-lib/:$OCAMLPATH
-    make install
-    opaline -prefix $out
-    runHook postInstall
-  '';
+  version = "4.3.0+git-2026-11-01";
 
   src = fetchFromGitHub {
     owner = "ocsigen";
     repo = "ocsigen-toolkit";
-    tag = version;
-    hash = "sha256-wken+5hUewE0Nktl2PY1xMmVveSs8X0ihWD+MK4pzRQ=";
+    rev = "3866538e5b23e40cb4bcfb4ca180bc27e4194ce1";
+    hash = "sha256-+wSpkNputuWwOS/RKvzqNRNlByxqqWZ+2G4o+CpSvtk=";
   };
+
+  nativeBuildInputs = [
+    ocsigen-dune-rules
+  ];
+
+  buildInputs = [
+    js_of_ocaml-ppx_deriving_json
+    ocsigen-ppx-rpc
+  ];
+
+  propagatedBuildInputs = [
+    calendar
+    eliom
+  ];
 
   meta = {
     homepage = "http://ocsigen.org/ocsigen-toolkit/";
     description = "User interface widgets for Ocsigen applications";
     license = lib.licenses.lgpl21;
     maintainers = [ lib.maintainers.gal_bolle ];
-    inherit (ocaml.meta) platforms;
-    broken = true;
   };
 
-}
+})

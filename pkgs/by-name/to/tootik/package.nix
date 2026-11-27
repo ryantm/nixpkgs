@@ -1,23 +1,28 @@
 {
   lib,
   stdenv,
-  buildGoModule,
+  buildGo127Module,
   fetchFromGitHub,
   openssl,
+  versionCheckHook,
+  nix-update-script,
 }:
 
-buildGoModule (finalAttrs: {
+buildGo127Module (finalAttrs: {
   pname = "tootik";
-  version = "0.20.2";
+  version = "0.25.6";
 
   src = fetchFromGitHub {
     owner = "dimkr";
     repo = "tootik";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-zkKkHzgIBHg0FH07KNr7jGNZU4QUbl6udoD7hLaDOL0=";
+    hash = "sha256-oqpAW+FGuNTS+tazslvawSDG+GrVIapw+3A+TH0yRI8=";
   };
 
-  vendorHash = "sha256-UZQw63KPs7GzOv5Ls69DLqJqc/taWwC5UCYdNlq9fXc=";
+  proxyVendor = true;
+  vendorHash = "sha256-twehiGKoLt0h2+TUzPDWbwpk5lZpgXG5SKq+xvLa3/o=";
+
+  subPackages = [ "cmd/tootik" ];
 
   nativeBuildInputs = [ openssl ];
 
@@ -29,7 +34,12 @@ buildGoModule (finalAttrs: {
 
   tags = [ "fts5" ];
 
-  doCheck = !(stdenv.hostPlatform.isDarwin && stdenv.hostPlatform.isAarch64);
+  doCheck = !stdenv.hostPlatform.isDarwin;
+
+  nativeInstallCheckInputs = [ versionCheckHook ];
+  doInstallCheck = true;
+
+  passthru.updateScript = nix-update-script { };
 
   __darwinAllowLocalNetworking = true;
 

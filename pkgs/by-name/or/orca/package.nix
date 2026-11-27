@@ -20,34 +20,46 @@
   dbus,
   xkbcomp,
   procps,
-  gnugrep,
-  coreutils,
+  cargo,
+  rustc,
+  rustPlatform,
   gsettings-desktop-schemas,
   speechd-minimal,
   brltty,
   liblouis,
   gst_all_1,
+  common-updater-scripts,
+  _experimental-update-script-combinators,
 }:
 
 python3.pkgs.buildPythonApplication (finalAttrs: {
   pname = "orca";
-  version = "50.2";
+  version = "51.1";
 
   pyproject = false;
 
   src = fetchurl {
     url = "mirror://gnome/sources/orca/${lib.versions.major finalAttrs.version}/orca-${finalAttrs.version}.tar.xz";
-    hash = "sha256-BxRCHN6OxLr0fxjktKErTlxKPP47FhVp4HD+A3cT/QQ=";
+    hash = "sha256-IoKTlEdOn95/3UawOpjJqY61lRBrIftxr9vi+CQ2B3s=";
   };
 
   patches = [
     (replaceVars ./fix-paths.patch {
-      cat = "${coreutils}/bin/cat";
-      grep = "${gnugrep}/bin/grep";
       pgrep = "${procps}/bin/pgrep";
       xkbcomp = "${xkbcomp}/bin/xkbcomp";
     })
   ];
+
+  cargoRoot = "subprojects/mathcat-py";
+  cargoDeps = rustPlatform.fetchCargoVendor {
+    inherit (finalAttrs)
+      src
+      pname
+      version
+      cargoRoot
+      ;
+    hash = "sha256-XxdIfDqb/0eoB3dOHbBW104yxkiCX6oKnvOTqCALBvg=";
+  };
 
   # needed for cross-compilation
   depsBuildBuild = [ pkg-config ];
@@ -62,6 +74,9 @@ python3.pkgs.buildPythonApplication (finalAttrs: {
     ninja
     wrapGAppsHook3
     pkg-config
+    cargo
+    rustc
+    rustPlatform.cargoSetupHook
     gettext
     yelp-tools
     itstool
@@ -71,7 +86,6 @@ python3.pkgs.buildPythonApplication (finalAttrs: {
   pythonPath = with python3.pkgs; [
     dasbus
     pygobject3
-    dbus-python
     pyxdg
     brltty
     liblouis
@@ -79,6 +93,7 @@ python3.pkgs.buildPythonApplication (finalAttrs: {
     speechd-minimal
     gst-python
     setproctitle
+    at-spi2-core
   ];
 
   strictDeps = false;
@@ -95,10 +110,31 @@ python3.pkgs.buildPythonApplication (finalAttrs: {
     gst_all_1.gst-plugins-good
   ];
 
+  nativeCheckInputs = with python3.pkgs; [
+    pytest
+  ];
+
+  checkInputs = with python3.pkgs; [
+    pytest-mock
+  ];
+
+  postPatch = ''
+    # Disable broken tests
+    substituteInPlace tests/meson.build \
+      --replace-fail "  'unit_tests/test_preferences_grid_base.py'," "" \
+      --replace-fail "  'unit_tests/test_braille_presenter.py'," "" \
+      --replace-fail "  'unit_tests/test_profile_manager.py'," ""
+  '';
+
   # Help GI find typelibs during Meson's configure step in cross builds
   preConfigure = lib.optionalString (stdenv.buildPlatform != stdenv.hostPlatform) ''
     export GI_TYPELIB_PATH=${buildPackages.gtk3}/lib/girepository-1.0''${GI_TYPELIB_PATH:+:$GI_TYPELIB_PATH}
   '';
+
+  # `buildPythonPackage` uses `installCheckPhase` and leaves `checkPhase`
+  # empty. It renames `doCheck` from its arguments, but not `checkPhase`.
+  # See: https://github.com/NixOS/nixpkgs/issues/47390
+  installCheckPhase = "mesonCheckPhase";
 
   dontWrapGApps = true; # Prevent double wrapping
 
@@ -108,9 +144,33 @@ python3.pkgs.buildPythonApplication (finalAttrs: {
   '';
 
   passthru = {
-    updateScript = gnome.updateScript {
-      packageName = "orca";
-    };
+    updateScript =
+      let
+        updateSource = gnome.updateScript {
+          packageName = "orca";
+        };
+
+        updateLockfile = {
+          command = [
+            "sh"
+            "-c"
+            ''
+              PATH=${
+                lib.makeBinPath [
+                  common-updater-scripts
+                ]
+              }
+              update-source-version orca --ignore-same-version --source-key=cargoDeps.vendorStaging > /dev/null
+            ''
+          ];
+          # Experimental feature: do not copy!
+          supportedFeatures = [ "silent" ];
+        };
+      in
+      _experimental-update-script-combinators.sequence [
+        updateSource
+        updateLockfile
+      ];
   };
 
   meta = {

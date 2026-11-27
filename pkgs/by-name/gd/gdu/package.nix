@@ -9,16 +9,16 @@
 
 buildGoModule (finalAttrs: {
   pname = "gdu";
-  version = "5.36.1";
+  version = "5.39.0";
 
   src = fetchFromGitHub {
     owner = "dundee";
     repo = "gdu";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-jtIVfXCIuJPsw3ryJiMI9W0L2uMeCGKt/7dWCS519fI=";
+    hash = "sha256-TNfUjSycutde9zEvnt1SR5SHNesQsfBIy+pe7vYK8to=";
   };
 
-  vendorHash = "sha256-L3nuVoxr+LqBT/9TrwAxJEOxOr53KlXH8rWsFTt2SNc=";
+  vendorHash = "sha256-C32y1JEKWmQHjB2Y29rC/hnohPDcDPO0yRS9HQvTY/U=";
 
   nativeBuildInputs = [
     installShellFiles
@@ -63,7 +63,7 @@ buildGoModule (finalAttrs: {
     '';
     homepage = "https://github.com/dundee/gdu";
     changelog = "https://github.com/dundee/gdu/releases/tag/${finalAttrs.src.tag}";
-    license = with lib.licenses; [ mit ];
+    license = lib.licenses.mit;
     maintainers = with lib.maintainers; [
       fab
       zowoq

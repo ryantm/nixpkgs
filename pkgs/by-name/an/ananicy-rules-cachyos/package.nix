@@ -7,13 +7,13 @@
 
 stdenvNoCC.mkDerivation {
   pname = "ananicy-rules-cachyos";
-  version = "0-unstable-2026-07-11";
+  version = "0-unstable-2026-11-22";
 
   src = fetchFromGitHub {
     owner = "CachyOS";
     repo = "ananicy-rules";
-    rev = "c59d59711268395b324fa5d4af149f2f94f17b4f";
-    hash = "sha256-+hDuzZtsKkoP5mD0VmzO/mXNjP0RPLz+hzK2XFUBvpc=";
+    rev = "a781d2c5d962c375ba189dec49f6e6633eaebc5a";
+    hash = "sha256-5Hl/yLXgc0Mk26K3zFkJFL6YQqP6n1Yn8Sz2ZmdS2sY=";
   };
 
   dontConfigure = true;

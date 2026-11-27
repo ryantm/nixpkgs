@@ -7,16 +7,19 @@
 
 buildGoModule (finalAttrs: {
   pname = "pebble";
-  version = "2.6.0";
+  version = "2.10.1";
 
   src = fetchFromGitHub {
     owner = "letsencrypt";
     repo = "pebble";
     rev = "v${finalAttrs.version}";
-    hash = "sha256-YPU/bl7h6rOWg+5ut0Thn2UupeKpJ7u4KXc2svIeZEM=";
+    hash = "sha256-O9lVC/GhbN3R7RuWZzr1kznbz0ffr+qdNSa/FpVTWzY=";
   };
 
   vendorHash = null;
+
+  # Tests bind UDP listeners on localhost
+  __darwinAllowLocalNetworking = true;
 
   ldflags = [
     "-s"
@@ -33,7 +36,7 @@ buildGoModule (finalAttrs: {
     homepage = "https://github.com/letsencrypt/pebble";
     description = "Small RFC 8555 ACME test server";
     longDescription = "Miniature version of Boulder, Pebble is a small RFC 8555 ACME test server not suited for a production CA";
-    license = [ lib.licenses.mpl20 ];
+    license = lib.licenses.mpl20;
     mainProgram = "pebble";
     teams = [ lib.teams.acme ];
   };

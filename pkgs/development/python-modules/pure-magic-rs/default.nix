@@ -8,19 +8,19 @@
 
 buildPythonPackage (finalAttrs: {
   pname = "pure-magic-rs";
-  version = "0.3.3";
+  version = "0.6.2";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "qjerome";
     repo = "magic-rs";
-    tag = "pure-magic-v${finalAttrs.version}";
-    hash = "sha256-cvCAiZSyB+9tNydfco9YGU5NA6Ja/SCsVeYJvuKitGo=";
+    tag = "pure-magic-rs-v${finalAttrs.version}";
+    hash = "sha256-4U1utVYq+A7A7oniA9mewV1hCzB6sCIXlTID5N5C62s=";
   };
 
   cargoDeps = rustPlatform.fetchCargoVendor {
     inherit (finalAttrs) pname version src;
-    hash = "sha256-wysI/3fxHJ+W6q36hFm7D0Jtimq5+tyLAb1KYUYQ6/U=";
+    hash = "sha256-q5igPjOE/gsGH/f0Id5jUp3wezZ8eIhawvsq58OjrQU=";
   };
 
   buildAndTestSubdir = "python";
@@ -30,15 +30,21 @@ buildPythonPackage (finalAttrs: {
     maturinBuildHook
   ];
 
-  nativeCheckInputs = [ pytestCheckHook ];
+  nativeCheckInputs = [
+    pytestCheckHook
+  ];
 
   pythonImportsCheck = [ "pure_magic_rs" ];
 
   meta = {
     description = "Safe Rust implementation of libmagic";
     homepage = "https://github.com/qjerome/magic-rs";
-    license = lib.licenses.gpl3Only;
+    license =
+      with lib.licenses;
+      OR [
+        gpl3Only
+        bsd2
+      ];
     maintainers = with lib.maintainers; [ fab ];
-    mainProgram = "pure-magic-rs";
   };
 })

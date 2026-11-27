@@ -5,8 +5,8 @@
   fetchurl,
   bash,
   gcc,
-  musl,
   binutils,
+  gnupatch,
   gnumake,
   gnused,
   gnugrep,
@@ -19,12 +19,15 @@
 let
   inherit (import ./common.nix { inherit lib; }) meta;
   pname = "gawk-static";
-  version = "5.3.2";
+  version = "5.4.1";
 
   src = fetchurl {
     url = "mirror://gnu/gawk/gawk-${version}.tar.gz";
-    hash = "sha256-hjmhqI+0EaG+AmY3OdA+kCptMTtcb+Ak0L/rM0GhmhE=";
+    hash = "sha256-izsOqDkwMRo/MJBdPOiY0yxhA8L+INapC0A0EXGxdN4=";
   };
+  patches = [
+    ./node-struct-without-gmp-mpfr.patch
+  ];
 in
 bash.runCommand "${pname}-${version}"
   {
@@ -32,8 +35,8 @@ bash.runCommand "${pname}-${version}"
 
     nativeBuildInputs = [
       gcc
-      musl
       binutils
+      gnupatch
       gnumake
       gnused
       gnugrep
@@ -57,6 +60,9 @@ bash.runCommand "${pname}-${version}"
     tar xf ${src}
     cd gawk-${version}
 
+    # Patch
+    ${lib.concatMapStringsSep "\n" (f: "patch -Np1 -i ${f}") patches}
+
     # Configure
     bash ./configure \
       --prefix=$out \
@@ -66,9 +72,7 @@ bash.runCommand "${pname}-${version}"
       --disable-extensions \
       --disable-mpfr \
       --disable-nls \
-      --disable-pma \
-      CC=musl-gcc \
-      CFLAGS=-static
+      --disable-pma
 
     # Build
     make -j $NIX_BUILD_CORES

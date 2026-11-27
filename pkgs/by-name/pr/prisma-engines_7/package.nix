@@ -2,6 +2,8 @@
   fetchFromGitHub,
   lib,
   openssl,
+  zstd,
+  sqlite,
   pkg-config,
   rustPlatform,
 }:
@@ -11,23 +13,27 @@
 # function correctly.
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "prisma-engines_7";
-  version = "7.8.0";
+  version = "7.10.1";
 
   src = fetchFromGitHub {
     owner = "prisma";
     repo = "prisma-engines";
     tag = finalAttrs.version;
-    hash = "sha256-nquIcOmFz+ikD0x/YEPZ5NVKCFPCdR5MSCHldn+b9jI=";
+    hash = "sha256-Hzsim5lb36lib6ym+2Twd2VQo3QKU3x5rq867RuvSXQ=";
   };
 
-  cargoHash = "sha256-uiFvzxwVJXCW9LUDFRC6ZkzSa7LQk+9ZJcaJw8mrBX4=";
+  cargoHash = "sha256-zLl2ErsCTXZVShPFLH94GLJ0q2FrMnfnecnfKD7VDL4=";
 
   # Use system openssl.
   env.OPENSSL_NO_VENDOR = 1;
 
   nativeBuildInputs = [ pkg-config ];
 
-  buildInputs = [ openssl ];
+  buildInputs = [
+    openssl
+    zstd
+    sqlite
+  ];
 
   preBuild = ''
     export OPENSSL_DIR=${lib.getDev openssl}

@@ -5,6 +5,7 @@
   hash,
   patches ? [ ],
   fetchFromGitHub,
+  buildPackages,
 
   cmake,
   ninja,
@@ -18,6 +19,7 @@
 stdenv.mkDerivation rec {
   pname = "mbedtls";
   inherit version;
+  __structuredAttrs = true;
 
   src = fetchFromGitHub {
     owner = "Mbed-TLS";
@@ -87,6 +89,10 @@ stdenv.mkDerivation rec {
     "-DCMAKE_C_FLAGS=-fzero-init-padding-bits=unions"
   ];
 
+  env = lib.optionalAttrs (stdenv.buildPlatform != stdenv.hostPlatform) {
+    HOSTCC = lib.getExe buildPackages.stdenv.cc;
+  };
+
   doCheck = true;
 
   # Parallel checking causes test failures
@@ -97,8 +103,8 @@ stdenv.mkDerivation rec {
     homepage = "https://www.trustedfirmware.org/projects/mbed-tls/";
     changelog = "https://github.com/Mbed-TLS/mbedtls/blob/${pname}-${version}/ChangeLog";
     description = "Portable cryptographic and TLS library, formerly known as PolarSSL";
-    license = [
-      lib.licenses.asl20 # or
+    license = lib.licenses.OR [
+      lib.licenses.asl20
       lib.licenses.gpl2Plus
     ];
     platforms = lib.platforms.all;

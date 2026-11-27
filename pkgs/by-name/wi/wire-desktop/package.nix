@@ -8,6 +8,7 @@
   yarn-berry_3,
   makeWrapper,
   makeDesktopItem,
+  copyDesktopItems,
   darwin,
   zip,
   jq,
@@ -27,7 +28,7 @@ let
         hash = "sha256-pNu+/JKvaKSqHxNeDL8RcDy+FiY3aynQH06t05qgXrA=";
       };
     };
-    x86_64-darwin = rec {
+    aarch64-darwin = rec {
       version = "3.42.5489";
       src = fetchFromGitHub {
         owner = "wireapp";
@@ -37,7 +38,6 @@ let
       };
     };
     aarch64-linux = x86_64-linux;
-    aarch64-darwin = x86_64-darwin;
   };
   web-config = fetchFromGitHub {
     owner = "wireapp";
@@ -71,6 +71,7 @@ stdenv.mkDerivation (finalAttrs: {
     yarn-berry.yarnBerryConfigHook
     yarn-berry
     makeWrapper
+    copyDesktopItems
   ]
   ++ lib.optionals stdenv.hostPlatform.isDarwin [
     jq
@@ -153,21 +154,23 @@ stdenv.mkDerivation (finalAttrs: {
     runHook postInstall
   '';
 
-  desktopItem = makeDesktopItem {
-    categories = [
-      "Network"
-      "InstantMessaging"
-      "Chat"
-      "VideoConference"
-    ];
-    comment = "Secure messenger for everyone";
-    desktopName = "Wire";
-    exec = "wire-desktop %U";
-    genericName = "Secure messenger";
-    icon = "wire-desktop";
-    name = "wire-desktop";
-    startupWMClass = "Wire";
-  };
+  desktopItems = [
+    (makeDesktopItem {
+      categories = [
+        "Network"
+        "InstantMessaging"
+        "Chat"
+        "VideoConference"
+      ];
+      comment = "Secure messenger for everyone";
+      desktopName = "Wire";
+      exec = "wire-desktop %U";
+      genericName = "Secure messenger";
+      icon = "wire-desktop";
+      name = "wire-desktop";
+      startupWMClass = "Wire";
+    })
+  ];
 
   meta = {
     description = "Modern, secure messenger for everyone";
@@ -193,7 +196,6 @@ stdenv.mkDerivation (finalAttrs: {
     platforms = [
       "x86_64-linux"
       "aarch64-linux"
-      "x86_64-darwin"
       "aarch64-darwin"
     ];
   };

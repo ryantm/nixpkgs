@@ -2,15 +2,15 @@
   stdenv,
   buildPlatform,
   hostPlatform,
-  callPackage,
+  lib,
   fetchgit,
   fetchurl,
   writeText,
   runCommand,
   darwin,
   writeShellScriptBin,
-  depot_toolsCommit ? "580b4ff3f5cd0dcaa2eacda28cefe0f45320e8f7",
-  depot_toolsHash ? "sha256-k+XQSYJQYc9vAUjwrRxaAlX/sK74W45m5byS31hSpwc=",
+  depot_toolsCommit ? "4be4e4628e093c4ad50210db5dcfa05a88280bda",
+  depot_toolsHash ? "sha256-OcqlbkciC0J8ShQqI5lMK/TeqNr9AkCjjckfmfIBvWA=",
   cipdCommit ? "7120a6a515089a3ff5d1f61ff4ee17750dc038af",
   cipdHashes ? {
     "linux-386" = "sha256-CshLfw49uglvWNwWE4K7ucBUF+IZlXDaIQsTXtFEJ8U=";
@@ -34,9 +34,66 @@
   },
 }:
 let
-  constants = callPackage ./constants.nix { platform = buildPlatform; };
-  host-constants = callPackage ./constants.nix { platform = hostPlatform; };
-  stdenv-constants = callPackage ./constants.nix { platform = stdenv.hostPlatform; };
+  # Pure function computing the CIPD platform string for a given nixpkgs
+  # platform. Previously lived in ./constants.nix, which was removed together
+  # with the flutterPackages-source mechanism (#546540).
+  mkConstants =
+    platform:
+    let
+      os =
+        if platform.isLinux then
+          "linux"
+        else if platform.isDarwin then
+          "macos"
+        else if platform.isWindows then
+          "windows"
+        else
+          throw "Unsupported OS \"${platform.parsed.kernel.name}\"";
+
+      alt-os = if platform.isDarwin then "mac" else os;
+
+      arch =
+        if platform.isx86_64 then
+          "amd64"
+        else if platform.isx86 && platform.is32bit then
+          "386"
+        else if platform.isAarch64 then
+          "arm64"
+        else if platform.isMips && platform.parsed.cpu.significantByte == "littleEndian" then
+          "mipsle"
+        else if platform.isMips64 then
+          "mips64${lib.optionalString (platform.parsed.cpu.significantByte == "littleEndian") "le"}"
+        else if platform.isPower64 then
+          "ppc64${lib.optionalString (platform.parsed.cpu.significantByte == "littleEndian") "le"}"
+        else if platform.isS390x then
+          "s390x"
+        else if platform.isRiscV64 then
+          "riscv64"
+        else
+          throw "Unsupported CPU \"${platform.parsed.cpu.name}\"";
+
+      alt-arch =
+        if platform.isx86_64 then
+          "x64"
+        else if platform.isAarch64 then
+          "arm64"
+        else
+          platform.parsed.cpu.name;
+    in
+    {
+      inherit
+        os
+        alt-os
+        arch
+        alt-arch
+        ;
+      platform = "${os}-${arch}";
+      alt-platform = "${os}-${alt-arch}";
+    };
+
+  constants = mkConstants buildPlatform;
+  host-constants = mkConstants hostPlatform;
+  stdenv-constants = mkConstants stdenv.hostPlatform;
 in
 {
   depot_tools = fetchgit {

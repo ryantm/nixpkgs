@@ -18,11 +18,11 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "dwm";
-  version = "6.6";
+  version = "6.8";
 
   src = fetchzip {
     url = "https://dl.suckless.org/dwm/dwm-${finalAttrs.version}.tar.gz";
-    hash = "sha256-fD97OpObSOBTAMc3teejS0u2h4hCkMVYJrNZ6F4IaFs=";
+    hash = "sha256-mkMFmqV9NVGTdDGqW8f+T7r0YQNU1KDsn6uRcacoNco=";
   };
 
   nativeBuildInputs = lib.optional stdenv.hostPlatform.isStatic pkg-config;
@@ -34,14 +34,15 @@ stdenv.mkDerivation (finalAttrs: {
   ]
   ++ extraLibs;
 
-  preBuild = ''
-    makeFlagsArray+=(
-      "PREFIX=$out"
-      "CC=$CC"
-      ${lib.optionalString stdenv.hostPlatform.isStatic ''
-        LDFLAGS="$(${stdenv.cc.targetPrefix}pkg-config --static --libs x11 xinerama xft)"
-      ''}
-    )
+  strictDeps = true;
+
+  makeFlags = [
+    "PREFIX=$(out)"
+    "CC:=$(CC)"
+  ];
+
+  preBuild = lib.optionalString stdenv.hostPlatform.isStatic ''
+    makeFlags+=(LDFLAGS="$(${stdenv.cc.targetPrefix}pkg-config --static --libs x11 xinerama xft)")
   '';
 
   # Allow users set their own list of patches
@@ -59,6 +60,8 @@ stdenv.mkDerivation (finalAttrs: {
     url = "git://git.suckless.org/dwm";
   };
 
+  __structuredAttrs = true;
+
   meta = {
     homepage = "https://dwm.suckless.org/";
     description = "Extremely fast, small, and dynamic window manager for X";
@@ -74,5 +77,8 @@ stdenv.mkDerivation (finalAttrs: {
     license = lib.licenses.mit;
     platforms = lib.platforms.all;
     mainProgram = "dwm";
+    maintainers = with lib.maintainers; [
+      gepbird
+    ];
   };
 })

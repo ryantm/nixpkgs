@@ -2,6 +2,7 @@
   lib,
   buildGoModule,
   fetchFromGitea,
+  gitMinimal,
   installShellFiles,
   stdenv,
   writableTmpDirAsHomeHook,
@@ -9,43 +10,41 @@
 
 buildGoModule (finalAttrs: {
   pname = "tea";
-  version = "0.14.0";
+  version = "0.16.0";
 
   src = fetchFromGitea {
     domain = "gitea.com";
     owner = "gitea";
     repo = "tea";
-    rev = "v${finalAttrs.version}";
-    sha256 = "sha256-FLaOhU9oDZhpRJnWrXgIV3Cup6L9i5JHP5xWiu9aZkI=";
+    tag = "v${finalAttrs.version}";
+    hash = "sha256-wAs0L3UOwsyElrQ9n5BKV8rDZHzj42xL11HT1CFre8k=";
   };
 
-  vendorHash = "sha256-7FLDDJB5ms9miAaxQJ26MCBfRxQZN/RlXyMJweTk7SE=";
+  vendorHash = "sha256-QzJai1AmdXz5pYg1SEEFOetWJkkUhDZoQbJkhkz8UD4=";
 
   ldflags = [
     "-s"
     "-w"
-    "-X code.gitea.io/tea/modules/version.Version=${finalAttrs.version}"
-    "-X code.gitea.io/tea/modules/version.Tags=nixpkgs"
-    "-X code.gitea.io/tea/modules/version.SDK=0.23.2"
-  ];
-
-  checkFlags = [
-    # requires a git repository
-    "-skip=TestRepoFromPath_Worktree"
+    "-X gitea.dev/tea/modules/version.Version=${finalAttrs.version}"
+    "-X gitea.dev/tea/modules/version.Tags=nixpkgs"
+    "-X gitea.dev/tea/modules/version.SDK=1.2.0"
   ];
 
   nativeBuildInputs = [ installShellFiles ];
 
-  nativeCheckInputs = [ writableTmpDirAsHomeHook ];
+  __darwinAllowLocalNetworking = true;
+
+  nativeCheckInputs = [
+    gitMinimal
+    writableTmpDirAsHomeHook
+  ];
 
   postInstall = lib.optionalString (stdenv.buildPlatform.canExecute stdenv.hostPlatform) ''
     installShellCompletion --cmd tea \
       --bash <($out/bin/tea completion bash) \
       --fish <($out/bin/tea completion fish) \
+      --powershell <($out/bin/tea completion pwsh) \
       --zsh <($out/bin/tea completion zsh)
-
-    mkdir $out/share/powershell/ -p
-    $out/bin/tea completion pwsh > $out/share/powershell/tea.Completion.ps1
 
     $out/bin/tea man --out $out/share/man/man1/tea.1
   '';
@@ -53,6 +52,7 @@ buildGoModule (finalAttrs: {
   meta = {
     description = "Gitea official CLI client";
     homepage = "https://gitea.com/gitea/tea";
+    changelog = "https://gitea.com/gitea/tea/releases/tag/${finalAttrs.src.tag}";
     license = lib.licenses.mit;
     maintainers = with lib.maintainers; [
       j4m3s

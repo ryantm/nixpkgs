@@ -2,24 +2,30 @@
   lib,
   stdenv,
   fetchFromGitHub,
+
   qt5,
   openssl,
+  fmt_9,
+  tor,
+
   # https://github.com/blueprint-freespeech/ricochet-refresh/issues/178
   protobuf_21,
   pkg-config,
   cmake,
+
+  gitUpdater,
 }:
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "ricochet-refresh";
-  version = "3.0.39";
+  version = "3.0.47";
 
   src = fetchFromGitHub {
     owner = "blueprint-freespeech";
     repo = "ricochet-refresh";
     tag = "v${finalAttrs.version}-release";
     fetchSubmodules = true;
-    hash = "sha256-bKleUuR3dnvZETnMx7FSpVflPB8rcijMhJbuH/MuTWE=";
+    hash = "sha256-UFo3oz+A2/yiRx42W2KoxEtilxtZtKPW6v3gje/N9tY=";
   };
 
   sourceRoot = "${finalAttrs.src.name}/src";
@@ -35,6 +41,7 @@ stdenv.mkDerivation (finalAttrs: {
       qtwayland
     ])
     ++ [
+      fmt_9
       openssl
       protobuf_21
     ];
@@ -46,6 +53,14 @@ stdenv.mkDerivation (finalAttrs: {
     qt5.wrapQtAppsHook
   ];
 
+  # Ricochet Refresh expects the Tor executable to be available in PATH.
+  qtWrapperArgs = [
+    "--prefix"
+    "PATH"
+    ":"
+    (lib.makeBinPath [ tor ])
+  ];
+
   enableParallelBuilding = true;
 
   cmakeBuildType = "MinSizeRel";
@@ -53,8 +68,13 @@ stdenv.mkDerivation (finalAttrs: {
   # https://github.com/blueprint-freespeech/ricochet-refresh/blob/main/BUILDING.md
   cmakeFlags = [
     (lib.cmakeBool "RICOCHET_REFRESH_INSTALL_DESKTOP" true)
-    (lib.cmakeBool "USE_SUBMODULE_FMT" true)
+    (lib.cmakeBool "USE_SUBMODULE_FMT" false)
   ];
+
+  passthru.updateScript = gitUpdater {
+    rev-prefix = "v";
+    rev-suffix = "-release";
+  };
 
   meta = {
     description = "Secure chat without DNS or WebPKI";
@@ -79,5 +99,6 @@ stdenv.mkDerivation (finalAttrs: {
     downloadPage = "https://github.com/blueprint-freespeech/ricochet-refresh/releases";
     license = lib.licenses.bsd3;
     platforms = lib.platforms.linux;
+    teams = with lib.teams; [ ngi ];
   };
 })

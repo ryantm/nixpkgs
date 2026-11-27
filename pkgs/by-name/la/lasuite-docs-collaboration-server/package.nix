@@ -13,20 +13,20 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "lasuite-docs-collaboration-server";
-  version = "5.4.1";
+  version = "6.1.0";
 
   src = fetchFromGitHub {
     owner = "suitenumerique";
     repo = "docs";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-Xomq2i1t1POgggcAR8FAWf+Lr0y6YOKGvANFOv/BH20=";
+    hash = "sha256-H43DGVYqUnhi3K7hKZhJBZ5Lfx2RczB7S9yO8Oe19ZQ=";
   };
 
   sourceRoot = "${finalAttrs.src.name}/src/frontend";
 
   offlineCache = fetchYarnDeps {
     yarnLock = "${finalAttrs.src}/src/frontend/yarn.lock";
-    hash = "sha256-r4uROroadFHALG8uHFPcvs8tCEdObx2rSVmxISxyyS8=";
+    hash = "sha256-HFKvnYr74cA0KKlhbRenEIIK7ER+Xrvtr6zBJ7yQ9lc=";
   };
 
   nativeBuildInputs = [
@@ -41,6 +41,10 @@ stdenv.mkDerivation (finalAttrs: {
   yarnBuildScript = "COLLABORATION_SERVER";
   yarnBuildFlags = "run build";
 
+  preInstall = ''
+    yarn install --force --ignore-scripts --production=true --offline --ignore-engines --frozen-lockfile
+  '';
+
   installPhase = ''
     runHook preInstall
 
@@ -50,6 +54,11 @@ stdenv.mkDerivation (finalAttrs: {
     makeWrapper ${lib.getExe nodejs} "$out/bin/docs-collaboration-server" \
       --add-flags "$out/lib/servers/y-provider/dist/start-server.js" \
       --set NODE_PATH "$out/lib/node_modules"
+
+    # Rm broken symlinks
+    rm \
+      $out/lib/node_modules/@sentry/nextjs/node_modules/@sentry/bundler-plugins/node_modules/.bin/webpack \
+      $out/lib/node_modules/@sentry/nextjs/node_modules/@sentry/bundler-plugins/node_modules/.bin/rollup
 
     runHook postInstall
   '';

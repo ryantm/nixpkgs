@@ -1,47 +1,58 @@
 {
   alcobar,
   buildDunePackage,
+  bytesrw,
+  cmdliner,
   dune-build-info,
   fetchFromGitHub,
-  lambdasoup,
+  fmt,
   lib,
   logs,
+  markup,
   mdx,
-  memtrace,
+  mtime,
   psq,
-  uutf,
+  python3,
+  uri,
 }:
 
 buildDunePackage (finalAttrs: {
   pname = "cascade";
-  version = "0-unstable-2026-06-26";
+  version = "1.2.1";
   minimalOCamlVersion = "5.2";
   __structuredAttrs = true;
 
   src = fetchFromGitHub {
     owner = "samoht";
     repo = "cascade";
-    rev = "434c07be7ec1a63213a234946d57937e4d080feb";
-    hash = "sha256-6g8UKsXdR0PxihrOiMVC36q7+bomMByPDbmuISL7h4U=";
+    tag = finalAttrs.version;
+    hash = "sha256-rjuySiVqOq6Ywrozkt2mNaWyXQkXuSynBj8ebv9TLpE=";
   };
 
   propagatedBuildInputs = [
     dune-build-info
+    fmt
     logs
+    markup
+    mtime
     psq
-    uutf
+    uri
   ];
   buildInputs = [
-    lambdasoup
-    memtrace
+    cmdliner
   ];
 
-  nativeCheckInputs = [ mdx.bin ];
+  nativeCheckInputs = [
+    mdx.out
+    python3
+  ];
   checkInputs = [
     (mdx.override { inherit logs; })
     alcobar
+    bytesrw
   ];
-  doCheck = true;
+  # Some checks fail: linking error related to bytesrw
+  doCheck = false;
 
   meta = {
     description = "CSS generation and manipulation library for OCaml";

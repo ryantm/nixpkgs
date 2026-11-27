@@ -6,20 +6,23 @@
   lib,
   pytest-asyncio,
   pytestCheckHook,
+  pyprojectVersionPatchHook,
   setuptools,
 }:
 
 buildPythonPackage rec {
   pname = "idasen-ha";
-  version = "2.7.0";
+  version = "3.0.2";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "abmantis";
     repo = "idasen-ha";
     tag = version;
-    hash = "sha256-1BciJ3Hox9Ky1HuNw+8jWGaMX3amAhGNTGAXqwWEDX8=";
+    hash = "sha256-yTuHiLJX26D4QSUAqigrqs/83GVlqmUvpL2hrfWoQPY=";
   };
+
+  nativeBuildInputs = [ pyprojectVersionPatchHook ];
 
   build-system = [ setuptools ];
 

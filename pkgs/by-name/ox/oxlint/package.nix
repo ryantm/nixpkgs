@@ -3,10 +3,11 @@
   stdenv,
   fetchFromGitHub,
   fetchPnpmDeps,
+  pnpm_11,
   pnpmConfigHook,
-  pnpm_10,
+  pnpmBuildHook,
   nodejs_24,
-  nodejs-slim,
+  nodejs-slim_24,
   rustPlatform,
   cargo,
   rustc,
@@ -16,35 +17,44 @@
   rust-jemalloc-sys,
   tsgolint,
   versionCheckHook,
+  darwin,
 }:
 
+let
+  pnpm = pnpm_11;
+in
 # Build with pnpm instead of buildRustPackage because the upstream npm CLI is the
 # JS-plugin-capable runtime. The standalone Rust `oxlint` binary intentionally
 # runs without an external linter, which leaves `jsPlugins` configs inert.
 stdenv.mkDerivation (finalAttrs: {
+  __structuredAttrs = true;
+  strictDeps = true;
+
   pname = "oxlint";
-  version = "1.73.0";
+  version = "1.94.0";
 
   src = fetchFromGitHub {
     owner = "oxc-project";
     repo = "oxc";
     tag = "oxlint_v${finalAttrs.version}";
-    hash = "sha256-sENfR27kqr/S25+43NiFEJsQrwYLqmuvTC/AhJETGsk=";
+    hash = "sha256-yhA51CwgFXFUaxIbupoDc/7oyMF46BPoJS9pJco+Sac=";
   };
 
   cargoDeps = rustPlatform.fetchCargoVendor {
     inherit (finalAttrs) pname version src;
-    hash = "sha256-RkZ6e07SnJArjL0CNo5Qfo/hYrw1HIM4g8bvMJm9ypE=";
+    hash = "sha256-KX/eU+QgIUs8dtNnbWAjOGRGXWWRkzYb5Zppwohgwmc=";
   };
 
   pnpmDeps = fetchPnpmDeps {
     inherit (finalAttrs) pname version src;
-    pnpm = pnpm_10;
-    fetcherVersion = 3;
-    hash = "sha256-eSPMGwkgpNgyPS4eebGoGi+gu9xqw8OWGvK7DK2goMk=";
+    inherit pnpm;
+    fetcherVersion = 5;
+    hash = "sha256-7PH0zHBmcpIt4OOmG5oZA0WJzeLYPh/5axZQeUNWCWs=";
   };
 
   dontUseCmakeConfigure = true;
+
+  pnpmWorkspaces = [ "oxlint-app" ];
 
   nativeBuildInputs = [
     cargo
@@ -52,7 +62,8 @@ stdenv.mkDerivation (finalAttrs: {
     makeBinaryWrapper
     nodejs_24
     pnpmConfigHook
-    pnpm_10
+    pnpmBuildHook
+    pnpm
     rustPlatform.cargoSetupHook
     rustc
   ];
@@ -61,12 +72,15 @@ stdenv.mkDerivation (finalAttrs: {
 
   env.OXC_VERSION = finalAttrs.version;
 
-  buildPhase = ''
-    runHook preBuild
-
-    pnpm --workspace-concurrency=1 --filter oxlint-app run build
-
-    runHook postBuild
+  # Use store paths for napi's lock identity probes; Darwin's sandbox blocks
+  # execution of the hardcoded host tools.
+  preBuild = lib.optionalString stdenv.hostPlatform.isDarwin ''
+    for cli in node_modules/.pnpm/@napi-rs+cli@*/node_modules/@napi-rs/cli/dist/cli.js; do
+      substituteInPlace "$cli" \
+        --replace-fail '"/bin/ps"' '"${lib.getExe' darwin.adv_cmds.ps "ps"}"' \
+        --replace-fail '"/usr/sbin/ioreg"' '"${lib.getExe' darwin.IOKitTools "ioreg"}"' \
+        --replace-fail '"/usr/sbin/sysctl"' '"${lib.getExe' darwin.system_cmds "sysctl"}"'
+    done
   '';
 
   installPhase = ''
@@ -81,7 +95,7 @@ stdenv.mkDerivation (finalAttrs: {
 
     chmod +x "$packageRoot/bin/oxlint"
 
-    makeBinaryWrapper "${lib.getExe nodejs-slim}" "$out/bin/oxlint" \
+    makeBinaryWrapper "${lib.getExe nodejs-slim_24}" "$out/bin/oxlint" \
       --add-flags "$packageRoot/bin/oxlint" \
       --prefix PATH : "${lib.makeBinPath [ tsgolint ]}"
 
@@ -94,79 +108,39 @@ stdenv.mkDerivation (finalAttrs: {
   installCheckPhase = ''
     runHook preInstallCheck
 
-    pluginTestDir="$(mktemp -d)"
-    cat > "$pluginTestDir/plugin.mjs" <<'EOF'
-    const plugin = {
+    expectFail() {
+      local needle="$1"; shift
+      local output
+      output="$("$@" 2>&1)" && {
+        printf 'expected `%s` to fail\n%s\n' "$*" "$output" >&2
+        exit 1
+      }
+      grep -Fq "$needle" <<<"$output"
+    }
+
+    cd "$(mktemp -d)"
+
+    cat >plugin.mjs <<'EOF'
+    export default {
       meta: { name: "smoke-plugin" },
       rules: {
         "always-error": {
-          create(context) {
-            return {
-              Program(node) {
-                context.report({ node, message: "plugin-smoke-ok" });
-              },
-            };
-          },
+          create: (context) => ({
+            Program(node) {
+              context.report({ node, message: "plugin-smoke-ok" });
+            },
+          }),
         },
       },
     };
-    export default plugin;
     EOF
-    cat > "$pluginTestDir/.oxlintrc.jsonc" <<'EOF'
-    {
-      "jsPlugins": ["./plugin.mjs"],
-      "rules": {
-        "smoke-plugin/always-error": "error"
-      }
-    }
-    EOF
-    printf 'const value = 1;\n' > "$pluginTestDir/input.js"
+    echo '{"jsPlugins":["./plugin.mjs"],"rules":{"smoke-plugin/always-error":"error"}}' >plugin.jsonc
+    echo 'void 0;' >plugin.js
+    expectFail plugin-smoke-ok "$out/bin/oxlint" -c plugin.jsonc plugin.js
 
-    (
-      cd "$pluginTestDir"
-      set +e
-      pluginOutput="$($out/bin/oxlint input.js 2>&1)"
-      pluginStatus=$?
-      set -e
-      test "$pluginStatus" -ne 0
-      printf '%s\n' "$pluginOutput" | grep -F "plugin-smoke-ok" > /dev/null
-    )
-
-    typeAwareTestDir="$(mktemp -d)"
-    cat > "$typeAwareTestDir/.oxlintrc.jsonc" <<'EOF'
-    {
-      "rules": {
-        "typescript/no-unnecessary-type-assertion": "error"
-      }
-    }
-    EOF
-    cat > "$typeAwareTestDir/tsconfig.json" <<'EOF'
-    {
-      "compilerOptions": {
-        "target": "es2024",
-        "lib": ["ES2024", "DOM"],
-        "module": "es2022",
-        "strict": true,
-        "skipLibCheck": true
-      }
-    }
-    EOF
-    cat > "$typeAwareTestDir/input.ts" <<'EOF'
-    const str: string = "hello";
-    const redundant = str as string;
-
-    export {};
-    EOF
-
-    (
-      cd "$typeAwareTestDir"
-      set +e
-      typeAwareOutput="$($out/bin/oxlint --type-aware input.ts 2>&1)"
-      typeAwareStatus=$?
-      set -e
-      test "$typeAwareStatus" -ne 0
-      printf '%s\n' "$typeAwareOutput" | grep -F "no-unnecessary-type-assertion" > /dev/null
-    )
+    echo 'const s: string = ""; const _: string = s as string;' >type-aware.ts
+    expectFail no-unnecessary-type-assertion \
+      "$out/bin/oxlint" -D typescript/no-unnecessary-type-assertion --type-aware type-aware.ts
 
     runHook postInstallCheck
   '';
@@ -176,12 +150,12 @@ stdenv.mkDerivation (finalAttrs: {
   };
 
   meta = {
-    description = "Collection of JavaScript tools written in Rust";
+    description = "High-performance linter for JavaScript and TypeScript";
     homepage = "https://github.com/oxc-project/oxc";
     changelog = "https://github.com/oxc-project/oxc/releases/tag/${finalAttrs.src.tag}";
     license = lib.licenses.mit;
     maintainers = with lib.maintainers; [ iamanaws ];
     mainProgram = "oxlint";
-    inherit (nodejs-slim.meta) platforms;
+    inherit (nodejs-slim_24.meta) platforms;
   };
 })

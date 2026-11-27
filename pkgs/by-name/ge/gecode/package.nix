@@ -2,8 +2,8 @@
   lib,
   stdenv,
   fetchFromGitHub,
-  fetchpatch,
   bison,
+  cmake,
   flex,
   perl,
   gmp,
@@ -12,30 +12,22 @@
   enableGist ? true,
 }:
 
-stdenv.mkDerivation rec {
+stdenv.mkDerivation (finalAttrs: {
   pname = "gecode";
-  version = "6.2.0";
+  version = "6.6.0";
 
   src = fetchFromGitHub {
     owner = "Gecode";
     repo = "gecode";
-    rev = "release-${version}";
-    sha256 = "0b1cq0c810j1xr2x9y9996p894571sdxng5h74py17c6nr8c6dmk";
+    tag = "release-${finalAttrs.version}";
+    hash = "sha256-k9zUA5plo2t7TUHq6FEXfiziY2G9UQu6Zhb9N34+xB4=";
   };
-
-  patches = [
-    # https://github.com/Gecode/gecode/pull/74
-    (fetchpatch {
-      name = "fix-const-weights-clang.patch";
-      url = "https://github.com/Gecode/gecode/commit/c810c96b1ce5d3692e93439f76c4fa7d3daf9fbb.patch";
-      sha256 = "0270msm22q5g5sqbdh8kmrihlxnnxqrxszk9a49hdxd72736p4fc";
-    })
-  ];
 
   enableParallelBuilding = true;
   dontWrapQtApps = true;
   nativeBuildInputs = [
     bison
+    cmake
     flex
   ];
   buildInputs = [
@@ -52,4 +44,4 @@ stdenv.mkDerivation rec {
     platforms = lib.platforms.all;
     maintainers = [ ];
   };
-}
+})

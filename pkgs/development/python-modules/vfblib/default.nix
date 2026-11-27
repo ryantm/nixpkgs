@@ -4,8 +4,7 @@
   gitUpdater,
   buildPythonPackage,
   pytestCheckHook,
-  setuptools,
-  setuptools-scm,
+  uv-build,
   fonttools,
   orjson,
   typing-extensions,
@@ -16,24 +15,23 @@
 
 buildPythonPackage rec {
   pname = "vfblib";
-  version = "0.11.1";
+  version = "0.12.3";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "LucasFonts";
     repo = "vfbLib";
     tag = "v${version}";
-    hash = "sha256-AXZKJgZADE0J4WHB6pn/b6K3Jwawyq6j0tRt6HyRkpk=";
+    hash = "sha256-/jPck5hfEXOcYWsatmoQYHBKQLSH4Efw3NMOQuv9ppw=";
   };
 
   postPatch = ''
     substituteInPlace pyproject.toml \
-      --replace-fail "setuptools-scm[toml]>=9.2.0" "setuptools-scm"
+      --replace-fail "uv_build>=0.13.7,<0.14" "uv_build"
   '';
 
   build-system = [
-    setuptools
-    setuptools-scm
+    uv-build
   ];
 
   dependencies = [
@@ -47,6 +45,7 @@ buildPythonPackage rec {
 
   pythonRelaxDeps = [
     "ufonormalizer"
+    "fonttools"
   ];
 
   nativeCheckInputs = [ pytestCheckHook ];

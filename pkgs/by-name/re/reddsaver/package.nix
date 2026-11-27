@@ -22,16 +22,15 @@ rustPlatform.buildRustPackage (finalAttrs: {
   nativeBuildInputs = [ pkg-config ];
   buildInputs = [ openssl ];
 
-  # package does not contain tests as of v0.3.3
-  docCheck = false;
-
   meta = {
     description = "CLI tool to download saved media from Reddit";
     homepage = "https://github.com/manojkarthick/reddsaver";
-    license = with lib.licenses; [
-      mit # or
-      asl20
-    ];
+    license =
+      with lib.licenses;
+      OR [
+        mit
+        asl20
+      ];
     maintainers = [ lib.maintainers.manojkarthick ];
     mainProgram = "reddsaver";
   };

@@ -11,18 +11,18 @@
 }:
 
 let
-  stdenvOpts = {
-    targetPlatform.system = "aarch64-none-elf";
-    targetPlatform.rust.rustcTarget = "${stdenv.hostPlatform.parsed.cpu.name}-unknown-none-softfloat";
-    targetPlatform.rust.rustcTargetSpec = "${stdenv.hostPlatform.parsed.cpu.name}-unknown-none-softfloat";
+  # m1n1's Rust code targets bare-metal AArch64 without an FPU.
+  targetPlatform = lib.systems.elaborate {
+    config = "${stdenv.hostPlatform.parsed.cpu.name}-none-elf";
+    rust.rustcTarget = "${stdenv.hostPlatform.parsed.cpu.name}-unknown-none-softfloat";
   };
   rust = buildPackages.rust.override {
-    stdenv = lib.recursiveUpdate buildPackages.stdenv stdenvOpts;
+    stdenv = buildPackages.stdenv.override { inherit targetPlatform; };
   };
   rustPackages = rust.packages.stable.overrideScope (
     f: p: {
       rustc-unwrapped = p.rustc-unwrapped.override {
-        stdenv = lib.recursiveUpdate p.rustc-unwrapped.stdenv stdenvOpts;
+        stdenv = p.rustc-unwrapped.stdenv.override { inherit targetPlatform; };
       };
     }
   );
@@ -31,21 +31,20 @@ let
 in
 stdenv.mkDerivation (finalAttrs: {
   pname = "m1n1";
-  version = "1.6.0";
+  version = "2.0.1";
 
   src = fetchFromGitHub {
     owner = "AsahiLinux";
     repo = "m1n1";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-yYXB2DhLcLqxaqwP5mII+j2PMIoXdZ35bpx/d0WSZA8=";
-    fetchSubmodules = true;
+    hash = "sha256-gDRCgDEOl87EbbZh0QMOQHPgY2YZSpLFgNsg8XzRuMk=";
   };
 
   cargoDeps = rustPlatform.fetchCargoVendor {
     inherit (finalAttrs) pname version;
     src = "${finalAttrs.src}/rust";
     sourceRoot = "rust";
-    hash = "sha256-iuiRp2FA5jnb3uh/p1gpc7Sznt1s4/UR91wEtXTf97o=";
+    hash = "sha256-7G9aTQEiQ8ocsY0gSoBg9A2cusfqR4a1nhFikpWMXAA=";
   };
   cargoRoot = "rust";
 
@@ -132,8 +131,10 @@ stdenv.mkDerivation (finalAttrs: {
       # m1n1 embeds several libraries, all of which cannot be
       # unvendored easily.
 
-      # m1n1, minlzma, musl-libc
-      mit
+      # m1n1
+      gpl2Plus
+      # minlzma: MIT
+      # musl-libc: MIT
       # libfdt: dual BSD2 and GPL-2-or-later
       # tinf: zlib
       # arm-trusted-firmware: BSD3
@@ -141,15 +142,18 @@ stdenv.mkDerivation (finalAttrs: {
       # PDCLib: CC0
       # Source Code Pro: OFL1.1
       # dwc3: BSD3 and GPL-2-or-later
+      mit
       cc0
       ofl
       zlib
       bsd2
-      gpl2Plus
       bsd3
       asl20
     ];
-    maintainers = with lib.maintainers; [ sempiternal-aurora ];
+    maintainers = with lib.maintainers; [
+      flokli
+      sempiternal-aurora
+    ];
     platforms = [ "aarch64-linux" ];
   };
 })

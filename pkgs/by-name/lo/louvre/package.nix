@@ -35,6 +35,8 @@ stdenv.mkDerivation (finalAttrs: {
 
   sourceRoot = "${finalAttrs.src.name}/src";
 
+  patches = [ ./missing-includes.patch ];
+
   postPatch = ''
     substituteInPlace examples/meson.build \
       --replace-fail "/usr/local/share/wayland-sessions" "${placeholder "out"}/share/wayland-sessions"
@@ -79,5 +81,6 @@ stdenv.mkDerivation (finalAttrs: {
     mainProgram = "louvre-views";
     maintainers = [ ];
     platforms = lib.platforms.linux;
+    license = lib.licenses.lgpl21Only;
   };
 })

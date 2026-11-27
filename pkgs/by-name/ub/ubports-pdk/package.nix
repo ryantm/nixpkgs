@@ -15,13 +15,13 @@
 
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "ubports-pdk";
-  version = "0-unstable-2026-02-20";
+  version = "0-unstable-2026-11-04";
 
   src = fetchFromGitHub {
     owner = "ubports";
     repo = "ubports-pdk";
-    rev = "b0c0832167a4cd7d9db6fd47475e6c71143a7b89";
-    hash = "sha256-c5+v5RDADJO6gJvzI2j8LXtF1JDEYaLJWYMS/ndcFYo=";
+    rev = "79dbd66f3cbe4c37c0227d12766f0d130fb0fe49";
+    hash = "sha256-AfLf8cAbKjfU5UFS8ZkyR704d9K9hA/FltBQim/GEjE=";
   };
 
   strictDeps = true;

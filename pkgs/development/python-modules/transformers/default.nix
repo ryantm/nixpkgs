@@ -79,13 +79,11 @@
   mistral-common,
   # chat_template
   jinja2,
-  jmespath,
   # quality
   ruff,
   gitpython,
   urllib3,
   libcst,
-  tomli,
   # opentelemetry
   opentelemetry-api,
   opentelemetry-exporter-otlp,
@@ -94,14 +92,14 @@
 
 buildPythonPackage (finalAttrs: {
   pname = "transformers";
-  version = "5.5.4";
+  version = "5.22.1";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "huggingface";
     repo = "transformers";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-ZqynYPj8VxH6BmvxHuw3lq16e2FFi3p8pw5of+vkz40=";
+    hash = "sha256-mAo8RhoEWOkCI7XD5LDdN8fiptAN2ljWwd1RR6MGLyo=";
   };
 
   build-system = [ setuptools ];
@@ -183,7 +181,6 @@ buildPythonPackage (finalAttrs: {
     mistral-common = [ mistral-common ] ++ mistral-common.optional-dependencies.image;
     chat-template = [
       jinja2
-      jmespath
     ];
     quality = [
       datasets
@@ -192,7 +189,6 @@ buildPythonPackage (finalAttrs: {
       urllib3
       libcst
       rich
-      tomli
     ];
     docs = [
       # hf-docs-builder
@@ -211,6 +207,11 @@ buildPythonPackage (finalAttrs: {
   doCheck = false;
 
   pythonImportsCheck = [ "transformers" ];
+
+  passthru = {
+    # bulk updater uses wrong tag
+    skipBulkUpdate = true;
+  };
 
   meta = {
     homepage = "https://github.com/huggingface/transformers";

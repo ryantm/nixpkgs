@@ -2,7 +2,10 @@
   lib,
   python3Packages,
   fetchFromGitHub,
+
+  # tests
   addBinToPathHook,
+  versionCheckHook,
 }:
 
 python3Packages.buildPythonApplication (finalAttrs: {
@@ -22,20 +25,21 @@ python3Packages.buildPythonApplication (finalAttrs: {
   ];
 
   dependencies = with python3Packages; [
-    numpy
-    scipy
-    matplotlib
-    pysam
-    numpydoc
-    pybigwig
-    py2bit
-    plotly
     deeptoolsintervals
+    matplotlib
+    numpy
+    numpydoc
+    plotly
+    py2bit
+    pybigwig
+    pysam
+    scipy
   ];
 
-  nativeCheckInputs = with python3Packages; [
-    pytestCheckHook
+  nativeCheckInputs = [
     addBinToPathHook
+    python3Packages.pytestCheckHook
+    versionCheckHook
   ];
 
   disabledTestPaths = [
@@ -44,6 +48,12 @@ python3Packages.buildPythonApplication (finalAttrs: {
     "deeptools/test/test_bigwigCompare_and_multiBigwigSummary.py"
     "deeptools/test/test_heatmapper.py"
     "deeptools/test/test_multiBamSummary.py"
+  ];
+
+  disabledTests = [
+    # Numerical error:
+    #   AssertionError: Error: Image files did not match
+    "test_plotCoverage_default"
   ];
 
   meta = {
@@ -61,5 +71,6 @@ python3Packages.buildPythonApplication (finalAttrs: {
       mit
       bsd3
     ];
+    mainProgram = "deeptools";
   };
 })

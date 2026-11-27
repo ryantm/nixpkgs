@@ -17,16 +17,17 @@
   gtk3,
   gst_all_1,
   nix-update-script,
+  sqlite,
 }:
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "quantframe";
-  version = "1.6.12";
+  version = "1.6.28";
 
   src = fetchFromGitHub {
     owner = "Kenya-DK";
     repo = "quantframe-react";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-IF+8filOXG+4nWpivyYknkT+hAg8nhG10Hfm79/m3Uc=";
+    hash = "sha256-TbkdfIPn/i+ocgJ0r7i6CJi+rr9eE8QK1798piuSJio=";
   };
 
   postPatch = ''
@@ -34,12 +35,11 @@ rustPlatform.buildRustPackage (finalAttrs: {
       --replace-fail "libayatana-appindicator3.so.1" "${libayatana-appindicator}/lib/libayatana-appindicator3.so.1"
 
     substituteInPlace src-tauri/tauri.conf.json \
-      --replace-fail '"createUpdaterArtifacts": "v1Compatible"' '"createUpdaterArtifacts": false'
+      --replace-fail '"createUpdaterArtifacts": true' '"createUpdaterArtifacts": false'
   '';
 
   patches = [
     ./0001-disable-telemetry.patch
-    ./0002-sync-node-packages.patch
   ];
 
   pnpmDeps = fetchPnpmDeps {
@@ -51,10 +51,10 @@ rustPlatform.buildRustPackage (finalAttrs: {
       ;
     pnpm = pnpm_10;
     fetcherVersion = 3;
-    hash = "sha256-omomvnHUiEfGVJn6LApWOnRwSVO8kpMLN3Jz0MhwPpQ=";
+    hash = "sha256-TAghp3rBySgNpzZ8ruG9jBO0BLcR3QhWK2XJ9C7VcuA=";
   };
 
-  cargoHash = "sha256-Ffy7dutFVQNZUFm9/iW0qPqUJ9bbRW6PeuC3eNNqfk8=";
+  cargoHash = "sha256-UH1JP2HBQ5RetdJRpWlIXU7Oui+Zm4uTxQqMDVAlFo4=";
 
   nativeBuildInputs = [
     cargo-tauri.hook
@@ -75,6 +75,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
     gst_all_1.gstreamer
     gst_all_1.gst-plugins-base
     gst_all_1.gst-plugins-good
+    sqlite
   ];
 
   cargoRoot = "src-tauri";
@@ -84,7 +85,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
 
   meta = {
     description = "Warframe Market listings and transactions manager";
-    mainProgram = "quantframe";
+    mainProgram = "Quantframe";
     homepage = "https://quantframe.app/";
     license = lib.licenses.mit;
     platforms = lib.platforms.linux;

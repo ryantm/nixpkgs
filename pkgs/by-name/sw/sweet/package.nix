@@ -2,8 +2,7 @@
   lib,
   stdenvNoCC,
   fetchurl,
-  unzip,
-  gtk-engine-murrine,
+  gitUpdater,
   colorVariants ? [ ], # default: install all icons
 }:
 
@@ -83,10 +82,6 @@ lib.checkListOfEnum "${pname}: color variants" colorVariantList colorVariants
       })
     ];
 
-    nativeBuildInputs = [ unzip ];
-
-    propagatedUserEnvPkgs = [ gtk-engine-murrine ];
-
     sourceRoot = ".";
 
     installPhase = ''
@@ -98,13 +93,15 @@ lib.checkListOfEnum "${pname}: color variants" colorVariantList colorVariants
       runHook postInstall
     '';
 
+    passthru.updateScript = gitUpdater { };
+
     meta = {
       description = "Light and dark colorful Gtk3.20+ theme";
       homepage = "https://github.com/EliverLara/Sweet";
       license = lib.licenses.gpl3Plus;
       maintainers = with lib.maintainers; [
-        fuzen
+        d3vil0p3r
       ];
-      platforms = lib.platforms.unix;
+      platforms = lib.platforms.linux;
     };
   })

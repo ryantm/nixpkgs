@@ -114,12 +114,16 @@ let
         description = "Compiler for GObject type system";
         homepage = "https://vala.dev";
         license = lib.licenses.lgpl21Plus;
+        identifiers.cpeParts = lib.meta.cpeFullVersionWithVendor "gnome" version;
         platforms = lib.platforms.unix;
         maintainers = with lib.maintainers; [
           antono
           jtojnar
         ];
-        teams = [ lib.teams.pantheon ];
+        teams = [
+          lib.teams.gnome
+          lib.teams.pantheon
+        ];
       };
     }
   );
@@ -127,8 +131,8 @@ let
 in
 rec {
   vala_0_56 = generic {
-    version = "0.56.18";
-    hash = "sha256-8q/+fUCrY9uOe57MP2vcnC/H4xNMhP8teV9IL+kmo4I=";
+    version = "0.56.19";
+    hash = "sha256-WtfLv8wN5htAPWeXye9gRVv769jhYq7DO1sLCXrfudU=";
   };
 
   vala = vala_0_56;

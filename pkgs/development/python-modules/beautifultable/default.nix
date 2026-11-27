@@ -12,8 +12,6 @@ buildPythonPackage (finalAttrs: {
   version = "1.1.0";
   pyproject = true;
 
-  __structuredAttrs = true;
-
   src = fetchFromGitHub {
     owner = "pri22296";
     repo = "beautifultable";
@@ -34,7 +32,7 @@ buildPythonPackage (finalAttrs: {
   meta = {
     description = "Python package for printing visually appealing tables";
     homepage = "https://github.com/pri22296/beautifultable";
-    license = with lib.licenses; [ mit ];
+    license = lib.licenses.mit;
     maintainers = with lib.maintainers; [ fab ];
   };
 })

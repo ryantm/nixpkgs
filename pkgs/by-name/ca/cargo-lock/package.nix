@@ -6,14 +6,14 @@
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "cargo-lock";
-  version = "11.0.1";
+  version = "11.1.0";
 
   src = fetchCrate {
     inherit (finalAttrs) pname version;
-    hash = "sha256-l8B98ycfC17vUY29BbFoucGeAn8mapchCvjdMCNhKqc=";
+    hash = "sha256-FyFCNXOn30K5zbQUpKNZKGIKrwurwl/Zvi+7ELg6DwE=";
   };
 
-  cargoHash = "sha256-l76udCsgloW5tZ8TgNMOT47un2Epun0B3UjaHCWdZjE=";
+  cargoHash = "sha256-Cco9KksibnQMeqyrNnr6ImxFZKo/OyVc2jL7pKMKYTk=";
 
   buildFeatures = [ "cli" ];
 
@@ -22,10 +22,12 @@ rustPlatform.buildRustPackage (finalAttrs: {
     mainProgram = "cargo-lock";
     homepage = "https://github.com/rustsec/rustsec/tree/main/cargo-lock";
     changelog = "https://github.com/rustsec/rustsec/blob/cargo-lock/v${finalAttrs.version}/cargo-lock/CHANGELOG.md";
-    license = with lib.licenses; [
-      asl20 # or
-      mit
-    ];
+    license =
+      with lib.licenses;
+      OR [
+        asl20
+        mit
+      ];
     maintainers = with lib.maintainers; [
       matthiasbeyer
     ];

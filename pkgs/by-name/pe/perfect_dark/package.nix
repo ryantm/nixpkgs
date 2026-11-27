@@ -22,13 +22,13 @@ assert lib.assertOneOf "romID" romID roms;
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "perfect_dark";
-  version = "0-unstable-2026-05-29";
+  version = "0-unstable-2026-10-27";
 
   src = fetchFromGitHub {
     owner = "perfect-dark-pc-port";
     repo = "perfect_dark";
-    rev = "514bf7affd3259b7919165201342ff81a026d92c";
-    hash = "sha256-J0n3hBxNZeLaFcR6NMIHO9QWEpKje5aORZOwn4vJG6M=";
+    rev = "a4b58e6dd14d5842d588e9841efa8bceb8b86fc3";
+    hash = "sha256-aa27mRZ3tzLuo5uDJmB9t/jfujZByEGBGRK+yk202Lo=";
 
     postFetch = ''
       pushd $out
@@ -60,7 +60,7 @@ stdenv.mkDerivation (finalAttrs: {
   ];
 
   postPatch =
-    # The project uses Git to retrieve version informations but our
+    # The project uses Git to retrieve version information but our
     # fetcher deletes the .git directory, so we replace the commands
     # with the correct data directly.
     ''

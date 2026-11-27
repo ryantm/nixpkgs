@@ -34,12 +34,12 @@
 
 buildPythonPackage (finalAttrs: {
   pname = "streamlit";
-  version = "1.58.0";
+  version = "1.67.0";
   pyproject = true;
 
   src = fetchPypi {
     inherit (finalAttrs) pname version;
-    hash = "sha256-eKIucIWwU6985UREK/S2cHceaMUJuhvaoFa6Bwj0nD0=";
+    hash = "sha256-WBWdrhGZISJQv6X7ugdAmWEpADJmwsN9RlFR73bEjzs=";
   };
 
   build-system = [ setuptools ];
@@ -47,6 +47,7 @@ buildPythonPackage (finalAttrs: {
   pythonRelaxDeps = [
     "packaging"
     "protobuf"
+    "websockets"
   ];
 
   dependencies = [

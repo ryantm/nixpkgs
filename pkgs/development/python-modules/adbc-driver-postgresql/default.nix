@@ -15,14 +15,15 @@
 
 buildPythonPackage (finalAttrs: {
   pname = "adbc-driver-postgresql";
-  version = "1.11.0";
+  version = "1.13.0";
   pyproject = true;
-  __structuredAttrs = true;
 
+  # Updates should be correlated with arrow-adbc top-level attribute, so:
+  # nixpkgs-update: no auto update
   src = fetchPypi {
     pname = "adbc_driver_postgresql";
     inherit (finalAttrs) version;
-    hash = "sha256-9WiLhkiseobYuJNAIxuzaGrF31buldHKC4ddrV1StIo=";
+    hash = "sha256-7Ou/MuSEHUh0IpYUyY99z2DsZXiCZB1ssgzVSyp0I78=";
   };
 
   build-system = [

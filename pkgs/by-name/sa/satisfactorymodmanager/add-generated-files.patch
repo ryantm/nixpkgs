@@ -1,9 +1,9 @@
 diff --git a/frontend/src/lib/generated/graphql/graphql.schema.urql.json b/frontend/src/lib/generated/graphql/graphql.schema.urql.json
 new file mode 100644
-index 0000000..b8e497a
+index 0000000..afa2991
 --- /dev/null
 +++ b/frontend/src/lib/generated/graphql/graphql.schema.urql.json
-@@ -0,0 +1,3576 @@
+@@ -0,0 +1,3646 @@
 +{
 +  "__schema": {
 +    "queryType": {
@@ -16,6 +16,32 @@ index 0000000..b8e497a
 +    },
 +    "subscriptionType": null,
 +    "types": [
++      {
++        "kind": "OBJECT",
++        "name": "AIUseDisclosureInfo",
++        "fields": [
++          {
++            "name": "disclosure_type",
++            "type": {
++              "kind": "NON_NULL",
++              "ofType": {
++                "kind": "SCALAR",
++                "name": "Any"
++              }
++            },
++            "args": []
++          },
++          {
++            "name": "message",
++            "type": {
++              "kind": "SCALAR",
++              "name": "Any"
++            },
++            "args": []
++          }
++        ],
++        "interfaces": []
++      },
 +      {
 +        "kind": "OBJECT",
 +        "name": "Announcement",
@@ -87,6 +113,18 @@ index 0000000..b8e497a
 +        "name": "CompatibilityInfo",
 +        "fields": [
 +          {
++            "name": "Controller",
++            "type": {
++              "kind": "NON_NULL",
++              "ofType": {
++                "kind": "OBJECT",
++                "name": "ControllerCompatibility",
++                "ofType": null
++              }
++            },
++            "args": []
++          },
++          {
 +            "name": "EA",
 +            "type": {
 +              "kind": "NON_NULL",
@@ -106,6 +144,32 @@ index 0000000..b8e497a
 +                "kind": "OBJECT",
 +                "name": "Compatibility",
 +                "ofType": null
++              }
++            },
++            "args": []
++          }
++        ],
++        "interfaces": []
++      },
++      {
++        "kind": "OBJECT",
++        "name": "ControllerCompatibility",
++        "fields": [
++          {
++            "name": "note",
++            "type": {
++              "kind": "SCALAR",
++              "name": "Any"
++            },
++            "args": []
++          },
++          {
++            "name": "state",
++            "type": {
++              "kind": "NON_NULL",
++              "ofType": {
++                "kind": "SCALAR",
++                "name": "Any"
 +              }
 +            },
 +            "args": []
@@ -549,6 +613,15 @@ index 0000000..b8e497a
 +        "name": "Mod",
 +        "fields": [
 +          {
++            "name": "ai_use_disclosure",
++            "type": {
++              "kind": "OBJECT",
++              "name": "AIUseDisclosureInfo",
++              "ofType": null
++            },
++            "args": []
++          },
++          {
 +            "name": "approved",
 +            "type": {
 +              "kind": "NON_NULL",
@@ -719,6 +792,14 @@ index 0000000..b8e497a
 +            "args": []
 +          },
 +          {
++            "name": "network_use_disclosure",
++            "type": {
++              "kind": "SCALAR",
++              "name": "Any"
++            },
++            "args": []
++          },
++          {
 +            "name": "popularity",
 +            "type": {
 +              "kind": "NON_NULL",
@@ -765,17 +846,6 @@ index 0000000..b8e497a
 +          },
 +          {
 +            "name": "toggle_explicit_content",
-+            "type": {
-+              "kind": "NON_NULL",
-+              "ofType": {
-+                "kind": "SCALAR",
-+                "name": "Any"
-+              }
-+            },
-+            "args": []
-+          },
-+          {
-+            "name": "toggle_network_use",
 +            "type": {
 +              "kind": "NON_NULL",
 +              "ofType": {
@@ -3583,10 +3653,10 @@ index 0000000..b8e497a
 \ No newline at end of file
 diff --git a/frontend/src/lib/generated/graphql/graphql.ts b/frontend/src/lib/generated/graphql/graphql.ts
 new file mode 100644
-index 0000000..93bc403
+index 0000000..5912146
 --- /dev/null
 +++ b/frontend/src/lib/generated/graphql/graphql.ts
-@@ -0,0 +1,1007 @@
+@@ -0,0 +1,1046 @@
 +/* eslint-disable */
 +import type { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
 +export type Maybe<T> = T | null;
@@ -3619,6 +3689,23 @@ index 0000000..93bc403
 +  VirustotalID: { input: any; output: any; }
 +};
 +
++export type AiUseDisclosureInfo = {
++  __typename?: 'AIUseDisclosureInfo';
++  disclosure_type: AiUseDisclosureType;
++  message?: Maybe<Scalars['String']['output']>;
++};
++
++export type AiUseDisclosureInput = {
++  disclosure_type: AiUseDisclosureType;
++  message?: InputMaybe<Scalars['String']['input']>;
++};
++
++export enum AiUseDisclosureType {
++  AiUsage = 'ai_usage',
++  NoAiUsage = 'no_ai_usage',
++  RuntimeAiUsage = 'runtime_ai_usage'
++}
++
 +export type Announcement = {
 +  __typename?: 'Announcement';
 +  id: Scalars['AnnouncementID']['output'];
@@ -3641,11 +3728,13 @@ index 0000000..93bc403
 +
 +export type CompatibilityInfo = {
 +  __typename?: 'CompatibilityInfo';
++  Controller: ControllerCompatibility;
 +  EA: Compatibility;
 +  EXP: Compatibility;
 +};
 +
 +export type CompatibilityInfoInput = {
++  Controller: ControllerCompatibilityInput;
 +  EA: CompatibilityInput;
 +  EXP: CompatibilityInput;
 +};
@@ -3659,6 +3748,25 @@ index 0000000..93bc403
 +  Broken = 'Broken',
 +  Damaged = 'Damaged',
 +  Works = 'Works'
++}
++
++export type ControllerCompatibility = {
++  __typename?: 'ControllerCompatibility';
++  note?: Maybe<Scalars['String']['output']>;
++  state: ControllerCompatibilityState;
++};
++
++export type ControllerCompatibilityInput = {
++  note?: InputMaybe<Scalars['String']['input']>;
++  state: ControllerCompatibilityState;
++};
++
++export enum ControllerCompatibilityState {
++  Implicit = 'Implicit',
++  Partial = 'Partial',
++  Supported = 'Supported',
++  Unsupported = 'Unsupported',
++  Untested = 'Untested'
 +}
 +
 +export type CreateVersionResponse = {
@@ -3749,6 +3857,7 @@ index 0000000..93bc403
 +
 +export type Mod = {
 +  __typename?: 'Mod';
++  ai_use_disclosure?: Maybe<AiUseDisclosureInfo>;
 +  approved: Scalars['Boolean']['output'];
 +  authors: Array<UserMod>;
 +  compatibility?: Maybe<CompatibilityInfo>;
@@ -3765,12 +3874,12 @@ index 0000000..93bc403
 +  logo_thumbhash?: Maybe<Scalars['String']['output']>;
 +  mod_reference: Scalars['ModReference']['output'];
 +  name: Scalars['String']['output'];
++  network_use_disclosure?: Maybe<Scalars['String']['output']>;
 +  popularity: Scalars['Int']['output'];
 +  short_description: Scalars['String']['output'];
 +  source_url?: Maybe<Scalars['String']['output']>;
 +  tags?: Maybe<Array<Tag>>;
 +  toggle_explicit_content: Scalars['Boolean']['output'];
-+  toggle_network_use: Scalars['Boolean']['output'];
 +  updated_at: Scalars['Date']['output'];
 +  version?: Maybe<Version>;
 +  versions: Array<Version>;
@@ -4062,7 +4171,6 @@ index 0000000..93bc403
 +  source_url?: InputMaybe<Scalars['String']['input']>;
 +  tagIDs?: InputMaybe<Array<Scalars['TagID']['input']>>;
 +  toggle_explicit_content?: InputMaybe<Scalars['Boolean']['input']>;
-+  toggle_network_use?: InputMaybe<Scalars['Boolean']['input']>;
 +};
 +
 +export type NewSatisfactoryVersion = {
@@ -4345,6 +4453,7 @@ index 0000000..93bc403
 +};
 +
 +export type UpdateMod = {
++  ai_use_disclosure?: InputMaybe<AiUseDisclosureInput>;
 +  authors?: InputMaybe<Array<UpdateUserMod>>;
 +  compatibility?: InputMaybe<CompatibilityInfoInput>;
 +  full_description?: InputMaybe<Scalars['String']['input']>;
@@ -4352,11 +4461,11 @@ index 0000000..93bc403
 +  logo?: InputMaybe<Scalars['Upload']['input']>;
 +  mod_reference?: InputMaybe<Scalars['ModReference']['input']>;
 +  name?: InputMaybe<Scalars['String']['input']>;
++  network_use_disclosure?: InputMaybe<Scalars['String']['input']>;
 +  short_description?: InputMaybe<Scalars['String']['input']>;
 +  source_url?: InputMaybe<Scalars['String']['input']>;
 +  tagIDs?: InputMaybe<Array<Scalars['TagID']['input']>>;
 +  toggle_explicit_content?: InputMaybe<Scalars['Boolean']['input']>;
-+  toggle_network_use?: InputMaybe<Scalars['Boolean']['input']>;
 +};
 +
 +export type UpdateSatisfactoryVersion = {
@@ -4520,7 +4629,7 @@ index 0000000..93bc403
 +}>;
 +
 +
-+export type GetModDetailsQuery = { __typename?: 'Query', mod?: { __typename?: 'Mod', name: string, logo?: string | null, logo_thumbhash?: string | null, mod_reference: string, full_description?: string | null, created_at: any, last_version_date?: any | null, downloads: number, views: number, hidden: boolean, id: string, compatibility?: { __typename?: 'CompatibilityInfo', EA: { __typename?: 'Compatibility', state: CompatibilityState, note?: string | null }, EXP: { __typename?: 'Compatibility', state: CompatibilityState, note?: string | null } } | null, authors: Array<{ __typename?: 'UserMod', role: string, user: { __typename?: 'User', id: string, username: string, avatar?: string | null } }>, versions: Array<{ __typename?: 'Version', id: string, version: string, size?: number | null, changelog: string }> } | null };
++export type GetModDetailsQuery = { __typename?: 'Query', mod?: { __typename?: 'Mod', name: string, logo?: string | null, logo_thumbhash?: string | null, mod_reference: string, full_description?: string | null, created_at: any, last_version_date?: any | null, downloads: number, views: number, hidden: boolean, network_use_disclosure?: string | null, id: string, compatibility?: { __typename?: 'CompatibilityInfo', Controller: { __typename?: 'ControllerCompatibility', state: ControllerCompatibilityState, note?: string | null }, EA: { __typename?: 'Compatibility', state: CompatibilityState, note?: string | null }, EXP: { __typename?: 'Compatibility', state: CompatibilityState, note?: string | null } } | null, ai_use_disclosure?: { __typename?: 'AIUseDisclosureInfo', disclosure_type: AiUseDisclosureType, message?: string | null } | null, authors: Array<{ __typename?: 'UserMod', role: string, user: { __typename?: 'User', id: string, username: string, avatar?: string | null } }>, versions: Array<{ __typename?: 'Version', id: string, version: string, size?: number | null, changelog: string }> } | null };
 +
 +export type ModKeyFragment = { __typename?: 'Mod', id: string, mod_reference: string };
 +
@@ -4585,7 +4694,7 @@ index 0000000..93bc403
 +export const GetAnnouncementsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetAnnouncements"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getAnnouncements"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"message"}},{"kind":"Field","name":{"kind":"Name","value":"importance"}}]}}]}}]} as unknown as DocumentNode<GetAnnouncementsQuery, GetAnnouncementsQueryVariables>;
 +export const SmrHealthcheckDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"SMRHealthcheck"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getMods"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]} as unknown as DocumentNode<SmrHealthcheckQuery, SmrHealthcheckQueryVariables>;
 +export const GetModCountDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetModCount"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getMods"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}}]} as unknown as DocumentNode<GetModCountQuery, GetModCountQueryVariables>;
-+export const GetModDetailsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetModDetails"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"modReference"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ModReference"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"mod"},"name":{"kind":"Name","value":"getModByReference"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"modReference"},"value":{"kind":"Variable","name":{"kind":"Name","value":"modReference"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ModKey"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"logo"}},{"kind":"Field","name":{"kind":"Name","value":"logo_thumbhash"}},{"kind":"Field","name":{"kind":"Name","value":"mod_reference"}},{"kind":"Field","name":{"kind":"Name","value":"full_description"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"last_version_date"}},{"kind":"Field","name":{"kind":"Name","value":"downloads"}},{"kind":"Field","name":{"kind":"Name","value":"views"}},{"kind":"Field","name":{"kind":"Name","value":"hidden"}},{"kind":"Field","name":{"kind":"Name","value":"compatibility"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"EA"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"state"}},{"kind":"Field","name":{"kind":"Name","value":"note"}}]}},{"kind":"Field","name":{"kind":"Name","value":"EXP"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"state"}},{"kind":"Field","name":{"kind":"Name","value":"note"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"authors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"avatar"}}]}},{"kind":"Field","name":{"kind":"Name","value":"role"}}]}},{"kind":"Field","name":{"kind":"Name","value":"versions"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"filter"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"100"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"version"}},{"kind":"Field","name":{"kind":"Name","value":"size"}},{"kind":"Field","name":{"kind":"Name","value":"changelog"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ModKey"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Mod"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"mod_reference"}}]}}]} as unknown as DocumentNode<GetModDetailsQuery, GetModDetailsQueryVariables>;
++export const GetModDetailsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetModDetails"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"modReference"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ModReference"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","alias":{"kind":"Name","value":"mod"},"name":{"kind":"Name","value":"getModByReference"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"modReference"},"value":{"kind":"Variable","name":{"kind":"Name","value":"modReference"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ModKey"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"logo"}},{"kind":"Field","name":{"kind":"Name","value":"logo_thumbhash"}},{"kind":"Field","name":{"kind":"Name","value":"mod_reference"}},{"kind":"Field","name":{"kind":"Name","value":"full_description"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"last_version_date"}},{"kind":"Field","name":{"kind":"Name","value":"downloads"}},{"kind":"Field","name":{"kind":"Name","value":"views"}},{"kind":"Field","name":{"kind":"Name","value":"hidden"}},{"kind":"Field","name":{"kind":"Name","value":"compatibility"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"Controller"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"state"}},{"kind":"Field","name":{"kind":"Name","value":"note"}}]}},{"kind":"Field","name":{"kind":"Name","value":"EA"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"state"}},{"kind":"Field","name":{"kind":"Name","value":"note"}}]}},{"kind":"Field","name":{"kind":"Name","value":"EXP"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"state"}},{"kind":"Field","name":{"kind":"Name","value":"note"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"ai_use_disclosure"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"disclosure_type"}},{"kind":"Field","name":{"kind":"Name","value":"message"}}]}},{"kind":"Field","name":{"kind":"Name","value":"network_use_disclosure"}},{"kind":"Field","name":{"kind":"Name","value":"authors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"avatar"}}]}},{"kind":"Field","name":{"kind":"Name","value":"role"}}]}},{"kind":"Field","name":{"kind":"Name","value":"versions"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"filter"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"limit"},"value":{"kind":"IntValue","value":"100"}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"version"}},{"kind":"Field","name":{"kind":"Name","value":"size"}},{"kind":"Field","name":{"kind":"Name","value":"changelog"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ModKey"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Mod"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"mod_reference"}}]}}]} as unknown as DocumentNode<GetModDetailsQuery, GetModDetailsQueryVariables>;
 +export const GetModNameDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetModName"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"modReference"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ModReference"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getModByReference"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"modReference"},"value":{"kind":"Variable","name":{"kind":"Name","value":"modReference"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ModKey"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ModKey"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Mod"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"mod_reference"}}]}}]} as unknown as DocumentNode<GetModNameQuery, GetModNameQueryVariables>;
 +export const GetModNamesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetModNames"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"modReferences"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getMods"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"filter"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"references"},"value":{"kind":"Variable","name":{"kind":"Name","value":"modReferences"}}}]}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"mods"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ModKey"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ModKey"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Mod"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"mod_reference"}}]}}]} as unknown as DocumentNode<GetModNamesQuery, GetModNamesQueryVariables>;
 +export const GetModReferenceDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetModReference"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"modIdOrReference"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getModByIdOrReference"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"modIdOrReference"},"value":{"kind":"Variable","name":{"kind":"Name","value":"modIdOrReference"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ModKey"}},{"kind":"Field","name":{"kind":"Name","value":"mod_reference"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ModKey"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Mod"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"mod_reference"}}]}}]} as unknown as DocumentNode<GetModReferenceQuery, GetModReferenceQueryVariables>;
@@ -4597,10 +4706,10 @@ index 0000000..93bc403
 \ No newline at end of file
 diff --git a/frontend/src/lib/generated/i18n/de.json b/frontend/src/lib/generated/i18n/de.json
 new file mode 100644
-index 0000000..fa255a5
+index 0000000..b6f132e
 --- /dev/null
 +++ b/frontend/src/lib/generated/i18n/de.json
-@@ -0,0 +1,313 @@
+@@ -0,0 +1,353 @@
 +{
 +  "announcement" : {
 +    "go-offline" : "Offline gehen ",
@@ -4670,8 +4779,8 @@ index 0000000..fa255a5
 +    "possibly-incompatible-mods" : "{versionPossiblyCompatible, plural, one {Eine Mod   {versionPossiblyCompatible, plural, one {ist} other {sind}} wie es aussieht, nicht mit deinem Spiel kompatibel} other {# Mod {versionPossiblyCompatible, plural, one {ist} other {sind}} wie es aussieht, nicht mit deinem Spiel kompatibel}}",
 +    "profile-change-queued" : "Es wurden noch keine Änderungen an deinen Mod-Dateien vorgenommen. Klicke auf die Schaltfläche oben, um das neue Profil anzuwenden.\n\n(Du befindest dich in der Warteschlange im Modus „Manuell starten“)",
 +    "ready" : "Du bist \"ready to rumble\"!\n\nHinweis: Der Mod-Manager hat die Installation der Mod-Dateien für dich bereits abgeschlossen. Du könntest das Spiel mit deinem üblichen Spiel Launcher starten und die Mods würden trotzdem geladen werden.",
-+    "reported-incompatible-mods" : "{reportedIncompatible, plural, one {Eine Mod} other {# Mods}} that {reportedIncompatible, plural, one {ist} other {sind}} bei dieser Spielversion als fehlerhaft gemeldet. Lies die {versionIncompatible, plural, one {Mod's} other {Mod's}} Beschreibung oder Kompatibilitätshinweise für weitere Informationen.",
-+    "reported-possibly-compatible-mods" : "{reportedPossiblyCompatible, plural, one {Eine Mod} other {# Mods}} die {reportedPossiblyCompatible, plural, one {ist} other {sind}} bei dieser Spielversion als fehlerhaft gemeldet. Lesen Sie die {versionIncompatible, plural, one {Mod's} other {Mod's}} Beschreibung oder Kompatibilitätshinweise für weitere Informationen.",
++    "reported-incompatible-mods" : "{reportedIncompatible, plural, one {Eine Mod} other {# Mods}} that {reportedIncompatible, plural, one {ist} other {sind}} bei dieser Spielversion als fehlerhaft gemeldet. Lies die {reportedIncompatible, plural, one {Mod's} other {Mod's}} Beschreibung oder Kompatibilitätshinweise für weitere Informationen.",
++    "reported-possibly-compatible-mods" : "{reportedPossiblyCompatible, plural, one {Eine Mod} other {# Mods}} die {reportedPossiblyCompatible, plural, one {ist} other {sind}} bei dieser Spielversion als fehlerhaft gemeldet. Lesen Sie die {reportedPossiblyCompatible, plural, one {Mod's} other {Mod's}} Beschreibung oder Kompatibilitätshinweise für weitere Informationen.",
 +    "you-have-warning-mods" : "Du hast:"
 +  },
 +  "left-bar" : {
@@ -4679,6 +4788,9 @@ index 0000000..fa255a5
 +    "ficsit-app" : "ficsit.app (Mod Verzeichnis)",
 +    "game-version" : "Spielinstallation auswählen",
 +    "help" : "Hilfe",
++    "install-info" : {
++      "server" : null
++    },
 +    "install-invalid" : "ungültig",
 +    "install-invalid-tooltip" : "Status: SMM kann diese Installation nicht verwalten",
 +    "install-loading" : "Lade...",
@@ -4700,12 +4812,36 @@ index 0000000..fa255a5
 +    "title" : "<1>{mod}</1> Changelog"
 +  },
 +  "mod-details" : {
++    "ai-disclosure" : null,
++    "ai-disclosure-no-usage" : null,
++    "ai-disclosure-runtime-usage" : null,
++    "ai-disclosure-unspecified" : null,
++    "ai-disclosure-usage" : null,
++    "buttons" : {
++      "compatibility-note-none" : null,
++      "compatibility-warning" : null,
++      "dependency" : null,
++      "disable" : null,
++      "disable-queued" : null,
++      "enable" : null,
++      "enable-queued" : null,
++      "hidden" : null,
++      "install" : null,
++      "install-tooltip" : null,
++      "not-installable" : null,
++      "queued" : null,
++      "queued-install" : null,
++      "queued-uninstall" : null,
++      "uninstall" : null,
++      "wait" : null
++    },
 +    "change-version" : "Version ändern ",
 +    "change-version-any" : "Jede",
 +    "change-version-or-newer" : "oder neuer",
 +    "changelogs" : "Changelogs",
 +    "compatibility" : "Kompatibilität",
 +    "compatibility-branch" : "Diese Mod wurde gemeldet als {state} auf {branch}.",
++    "compatibility-controller" : null,
 +    "compatibility-unknown" : "unbekannt",
 +    "compatibility-unknown-tooltip" : "Es wurden noch keine Kompatibilitätsinformationen für diese Mod gemeldet. Probiere es aus und kontaktiere uns im Discord, damit diese aktualisiert werden können!",
 +    "contributors" : "Mitwirkende <1>{authors}</1>",
@@ -4714,6 +4850,10 @@ index 0000000..fa255a5
 +    "installed-version" : "Installierte Version",
 +    "latest-version" : "Letzte Version ",
 +    "mod-author" : "Eine Mod von: ",
++    "network-disclosure-no-usage" : null,
++    "network-disclosure-usage" : null,
++    "network-use-disclosure" : null,
++    "network-use-disclosure-unspecified" : null,
 +    "offline-mode" : "Der Offline-Modus ist aktiviert. Changelogs und Beschreibungen sind nicht verfügbar.",
 +    "size" : "Größe",
 +    "updated" : "Aktualisiert",
@@ -4765,9 +4905,17 @@ index 0000000..fa255a5
 +      "last-updated" : "zuletzt aktuallisiert",
 +      "name" : "Name",
 +      "popularity" : "Bekanntheit",
++      "search" : null,
 +      "views" : "Aufrufe"
 +    },
-+    "search" : "Durchsuche Mods"
++    "search" : "Durchsuche Mods",
++    "tag" : {
++      "button-label" : null,
++      "match-all" : null,
++      "match-any" : null,
++      "match-mode" : null,
++      "none-available" : null
++    }
 +  },
 +  "mods-list" : {
 +    "no-mods-filtered" : "Keine Mods entsprechen deinen Filtern",
@@ -4805,6 +4953,7 @@ index 0000000..fa255a5
 +    "add" : "hinzufügen ",
 +    "advanced-note" : "Beachte, dass du möglicherweise bestimmte Zeichen im Benutzernamen und im Passwort auslassen musst.",
 +    "advanced-path-placeholder" : "user:pass@host:port/path",
++    "connect-and-select-folder" : null,
 +    "existing-servers" : {
 +      "none-yet" : null,
 +      "title" : null
@@ -4917,10 +5066,10 @@ index 0000000..fa255a5
 \ No newline at end of file
 diff --git a/frontend/src/lib/generated/i18n/en.json b/frontend/src/lib/generated/i18n/en.json
 new file mode 100644
-index 0000000..30e33be
+index 0000000..b42cada
 --- /dev/null
 +++ b/frontend/src/lib/generated/i18n/en.json
-@@ -0,0 +1,313 @@
+@@ -0,0 +1,353 @@
 +{
 +  "announcement" : {
 +    "go-offline" : "Go Offline",
@@ -4990,8 +5139,8 @@ index 0000000..30e33be
 +    "possibly-incompatible-mods" : "{versionPossiblyCompatible, plural, one {One mod that {versionPossiblyCompatible, plural, one {is} other {are}} likely incompatible with your game} other {# mods that {versionPossiblyCompatible, plural, one {is} other {are}} likely incompatible with your game}}",
 +    "profile-change-queued" : "Changes have not yet been made to your mod files. Click the button below to apply the new profile.\n\n(You're in Queue \"Start manually\" mode)",
 +    "ready" : "You're ready to rumble!\n\nNote: The Mod Manager has already finished installing the mod files for you. You could launch the game using your usual game launcher and mods would still be loaded.",
-+    "reported-incompatible-mods" : "{reportedIncompatible, plural, one {One mod} other {# mods}} that {reportedIncompatible, plural, one {is} other {are}} reported as Broken on this game version. Read the {versionIncompatible, plural, one {mod's} other {mods'}} description or compatibility notes for more information",
-+    "reported-possibly-compatible-mods" : "{reportedPossiblyCompatible, plural, one {One mod} other {# mods}} that {reportedPossiblyCompatible, plural, one {is} other {are}} reported as Damaged on this game version. Read the {versionIncompatible, plural, one {mod's} other {mods'}} description or compatibility notes for more information",
++    "reported-incompatible-mods" : "{reportedIncompatible, plural, one {One mod} other {# mods}} that {reportedIncompatible, plural, one {is} other {are}} reported as Broken on this game version. Read the {reportedIncompatible, plural, one {mod's} other {mods''}} description or compatibility notes for more information",
++    "reported-possibly-compatible-mods" : "{reportedPossiblyCompatible, plural, one {One mod} other {# mods}} that {reportedPossiblyCompatible, plural, one {is} other {are}} reported as Damaged on this game version. Read the {reportedPossiblyCompatible, plural, one {mod's} other {mods''}} description or compatibility notes for more information",
 +    "you-have-warning-mods" : "You have:"
 +  },
 +  "left-bar" : {
@@ -4999,6 +5148,9 @@ index 0000000..30e33be
 +    "ficsit-app" : "ficsit.app (Mod Repository)",
 +    "game-version" : "Select Game Installation",
 +    "help" : "Help",
++    "install-info" : {
++      "server" : "Server"
++    },
 +    "install-invalid" : "Invalid",
 +    "install-invalid-tooltip" : "Status: SMM cannot manage this install",
 +    "install-loading" : "Loading...",
@@ -5020,12 +5172,36 @@ index 0000000..30e33be
 +    "title" : "<1>{mod}</1> Changelog"
 +  },
 +  "mod-details" : {
++    "ai-disclosure" : "AI disclosure",
++    "ai-disclosure-no-usage" : "No generative AI was used in creating this mod.",
++    "ai-disclosure-runtime-usage" : "The user can interact with generative AI while using this mod.",
++    "ai-disclosure-unspecified" : "Unspecified",
++    "ai-disclosure-usage" : "Generative AI was used in this mod's creation.",
++    "buttons" : {
++      "compatibility-note-none" : " (None specified)",
++      "compatibility-warning" : "There are problems reported with this mod, but you can try to install it anyways. Details:",
++      "dependency" : "This mod is already installed as a dependency of another mod. It cannot be uninstalled as long as other mods depend on it.",
++      "disable" : "This mod is Enabled on this profile. Click to Disable it, which prevents it from loading when you start the game, but still keeps it a part of this profile.",
++      "disable-queued" : "This mod is queued to be Disabled. Click to cancel the operation.",
++      "enable" : "Click to enable this mod.",
++      "enable-queued" : "This mod is queued to be Enabled. Click to cancel the operation.",
++      "hidden" : "This mod was hidden by the author.",
++      "install" : "Install",
++      "install-tooltip" : "Click to install this mod.",
++      "not-installable" : "You can't install this mod. Reason:",
++      "queued" : "This mod is already queued for another operation.",
++      "queued-install" : "This mod is queued to be installed. Click to cancel the operation.",
++      "queued-uninstall" : "This mod is queued to be uninstalled. Click to cancel the operation.",
++      "uninstall" : "This mod is installed on this profile. Click to uninstall this mod.",
++      "wait" : "Wait for the current operation to complete."
++    },
 +    "change-version" : "Change version",
 +    "change-version-any" : "Any",
 +    "change-version-or-newer" : "or newer",
 +    "changelogs" : "Changelogs",
 +    "compatibility" : "Compatibility",
 +    "compatibility-branch" : "This mod has been reported as {state} on {branch}.",
++    "compatibility-controller" : "This mod has been reported as {state} for controller support.",
 +    "compatibility-unknown" : "Unknown",
 +    "compatibility-unknown-tooltip" : "No compatibility information has been reported for this mod yet. Try it out and contact us on the Discord so it can be updated!",
 +    "contributors" : "Contributors <1>({authors})</1>",
@@ -5034,6 +5210,10 @@ index 0000000..30e33be
 +    "installed-version" : "Installed version",
 +    "latest-version" : "Latest version",
 +    "mod-author" : "A mod by:",
++    "network-disclosure-no-usage" : "The mod developer confirms that this mod makes no connections to external networks.",
++    "network-disclosure-usage" : "The mod developer says this about the mod's external network connectivity:",
++    "network-use-disclosure" : "Network use",
++    "network-use-disclosure-unspecified" : "Unspecified",
 +    "offline-mode" : "Offline mode is enabled. Changelogs and descriptions are not available.",
 +    "size" : "Size",
 +    "updated" : "Updated",
@@ -5085,9 +5265,17 @@ index 0000000..30e33be
 +      "last-updated" : "Last updated",
 +      "name" : "Name",
 +      "popularity" : "Popularity",
++      "search" : "Search",
 +      "views" : "Views"
 +    },
-+    "search" : "Search mods"
++    "search" : "Search mods",
++    "tag" : {
++      "button-label" : "Filter by tags",
++      "match-all" : "Match all",
++      "match-any" : "Match any",
++      "match-mode" : "Match mode",
++      "none-available" : "No tags available"
++    }
 +  },
 +  "mods-list" : {
 +    "no-mods-filtered" : "No mods matching your search",
@@ -5125,6 +5313,7 @@ index 0000000..30e33be
 +    "add" : "Add",
 +    "advanced-note" : "Note that you might have to escape certain characters in the username and password",
 +    "advanced-path-placeholder" : "user:pass@host:port/path",
++    "connect-and-select-folder" : "Connect and select server folder",
 +    "existing-servers" : {
 +      "none-yet" : "No servers added yet. Add one below!",
 +      "title" : "Manage Existing Servers"
@@ -5237,10 +5426,10 @@ index 0000000..30e33be
 \ No newline at end of file
 diff --git a/frontend/src/lib/generated/i18n/es.json b/frontend/src/lib/generated/i18n/es.json
 new file mode 100644
-index 0000000..a2a9cc4
+index 0000000..dbe5f94
 --- /dev/null
 +++ b/frontend/src/lib/generated/i18n/es.json
-@@ -0,0 +1,313 @@
+@@ -0,0 +1,353 @@
 +{
 +  "announcement" : {
 +    "go-offline" : "Desconectarse",
@@ -5310,8 +5499,8 @@ index 0000000..a2a9cc4
 +    "possibly-incompatible-mods" : "{versionPossiblyCompatible, plural, one {Un mod que '{versionPosiblementeCompatible, plurales, uno {es} otro {son}}' probablemente incompatible con tu juego} other {#mods que '{versionPosiblementeCompatible, plurales, uno {es} otro {son}}' probablemente incompatibles con tu juego}}",
 +    "profile-change-queued" : "No se han realizado cambios a los archivos de tus mods. Haz clic en el botón de abajo para aplicar el nuevo perfil.\n\n(Estás en el modo \"Iniciar manualmente\" de la cola)",
 +    "ready" : "¡Estás listo para la acción!\n\nNota: El Gestor de Mods ya ha terminado de instalar los archivos de mods por ti. Puedes iniciar el juego con tu launcher habitual y los mods seguirán cargados.",
-+    "reported-incompatible-mods" : "{reportedIncompatible, plural, one {Un mod} other {# mods}} que {reportedIncompatible, plural, one {is} other {are}} reportados como Rotos en esta versión del juego. Lee la descripción o las notas de compatibilidad de {versionIncompatible, plural, un {mod's} otro {mods'}} para obtener más información.",
-+    "reported-possibly-compatible-mods" : "{reportedPossiblyCompatible, plural, one {Un mod} other {# mods}} que {reportedPossiblyCompatible, plural, one {is} other {are}} reportados como Dañados en esta versión del juego. Lee la descripción o las notas de compatibilidad de {versionIncompatible, plural, un {mod's} otro {mods'}} para obtener más información.",
++    "reported-incompatible-mods" : "{reportedIncompatible, plural, one {Un mod} other {# mods}} que {reportedIncompatible, plural, one {is} other {are}} reportados como Rotos en esta versión del juego. Lee la descripción o las notas de compatibilidad de {reportedIncompatible, plural, un {mod's} otro {mods''}} para obtener más información.",
++    "reported-possibly-compatible-mods" : "{reportedPossiblyCompatible, plural, one {Un mod} other {# mods}} que {reportedPossiblyCompatible, plural, one {is} other {are}} reportados como Dañados en esta versión del juego. Lee la descripción o las notas de compatibilidad de {reportedPossiblyCompatible, plural, un {mod's} otro {mods''}} para obtener más información.",
 +    "you-have-warning-mods" : "Tienes:"
 +  },
 +  "left-bar" : {
@@ -5319,6 +5508,9 @@ index 0000000..a2a9cc4
 +    "ficsit-app" : "ficsit.app (Repositorio de Mods)",
 +    "game-version" : "Selecciona la instalación del juego",
 +    "help" : "Ayuda",
++    "install-info" : {
++      "server" : null
++    },
 +    "install-invalid" : "No válido",
 +    "install-invalid-tooltip" : "Estado: SMM no puede gestionar esta instalación",
 +    "install-loading" : "Cargando...",
@@ -5340,12 +5532,36 @@ index 0000000..a2a9cc4
 +    "title" : "<1>{mod}</1> Lista de cambios"
 +  },
 +  "mod-details" : {
++    "ai-disclosure" : null,
++    "ai-disclosure-no-usage" : null,
++    "ai-disclosure-runtime-usage" : null,
++    "ai-disclosure-unspecified" : null,
++    "ai-disclosure-usage" : null,
++    "buttons" : {
++      "compatibility-note-none" : null,
++      "compatibility-warning" : null,
++      "dependency" : null,
++      "disable" : null,
++      "disable-queued" : null,
++      "enable" : null,
++      "enable-queued" : null,
++      "hidden" : null,
++      "install" : null,
++      "install-tooltip" : null,
++      "not-installable" : null,
++      "queued" : null,
++      "queued-install" : null,
++      "queued-uninstall" : null,
++      "uninstall" : null,
++      "wait" : null
++    },
 +    "change-version" : "Cambiar versión",
 +    "change-version-any" : "Cualquiera",
 +    "change-version-or-newer" : "o más nuevo",
 +    "changelogs" : "Listas de cambios",
 +    "compatibility" : "Compatibilidad",
 +    "compatibility-branch" : "Este mod ha sido reportado como {state} en {branch}.",
++    "compatibility-controller" : null,
 +    "compatibility-unknown" : "Desconocido",
 +    "compatibility-unknown-tooltip" : "Aún no se ha informado de la compatibilidad de este mod. ¡Pruébalo y ponte en contacto con nosotros en Discord para que podamos actualizarlo!",
 +    "contributors" : "Colaboradores <1>({authors})</1>",
@@ -5354,6 +5570,10 @@ index 0000000..a2a9cc4
 +    "installed-version" : "Versión instalada",
 +    "latest-version" : "Última versión",
 +    "mod-author" : "Mod hecho por:",
++    "network-disclosure-no-usage" : null,
++    "network-disclosure-usage" : null,
++    "network-use-disclosure" : null,
++    "network-use-disclosure-unspecified" : null,
 +    "offline-mode" : "El modo sin conexión está activado. Los registros de cambios y las descripciones no están disponibles.",
 +    "size" : "Tamaño",
 +    "updated" : "Actualizado",
@@ -5405,9 +5625,17 @@ index 0000000..a2a9cc4
 +      "last-updated" : "Últimos actualizados.",
 +      "name" : "Nombre",
 +      "popularity" : "Popularidad",
++      "search" : null,
 +      "views" : "Visitas"
 +    },
-+    "search" : "Buscar mods"
++    "search" : "Buscar mods",
++    "tag" : {
++      "button-label" : null,
++      "match-all" : null,
++      "match-any" : null,
++      "match-mode" : null,
++      "none-available" : null
++    }
 +  },
 +  "mods-list" : {
 +    "no-mods-filtered" : "No hay mods que coincidan con tus filtros",
@@ -5445,6 +5673,7 @@ index 0000000..a2a9cc4
 +    "add" : "Añadir",
 +    "advanced-note" : "Tenga en cuenta que es posible que tenga que evitar ciertos caracteres en el nombre de usuario y la contraseña",
 +    "advanced-path-placeholder" : "usuario:contraseña@host:puerto/ruta",
++    "connect-and-select-folder" : null,
 +    "existing-servers" : {
 +      "none-yet" : "No hay servidores aún. ¡Añade uno abajo!",
 +      "title" : "Gestionar servidores existentes"
@@ -5557,10 +5786,10 @@ index 0000000..a2a9cc4
 \ No newline at end of file
 diff --git a/frontend/src/lib/generated/i18n/fr.json b/frontend/src/lib/generated/i18n/fr.json
 new file mode 100644
-index 0000000..bb1c128
+index 0000000..35835da
 --- /dev/null
 +++ b/frontend/src/lib/generated/i18n/fr.json
-@@ -0,0 +1,313 @@
+@@ -0,0 +1,353 @@
 +{
 +  "announcement" : {
 +    "go-offline" : "Passer hors-ligne",
@@ -5621,7 +5850,7 @@ index 0000000..bb1c128
 +    "are-you-sure-warning" : "Êtes-vous sûr de vouloir lancer ?",
 +    "cant-launch" : "SMM ne peut pas lancer cette installation",
 +    "cant-launch-tooltip" : "Le Gestionnaire de Mods n'est pas capable de lancer ce type d'installation, mais va toujours gérer les fichiers de mods pour vous. Lancer Satisfactory avec votre lanceur habituel.",
-+    "changes-queued" : "Les modifications n'ont pas encore été faites à vos fichiers. Cliquez sur le bouton ci-dessus pour appliquer les modification en attente. ",
++    "changes-queued" : "Changements non pris en compte. Cliquez sur le bouton ci-dessous pour appliquer les changements en attente.\n\n(Vous êtes en mode « Démarrage manuel » dans la file d'attente)",
 +    "game-running" : "Votre lanceur du jeu nous rapporte que le jeu est déjà lancé (ou encore en train de se fermer)",
 +    "incompatible-mods" : "{versionIncompatible, plural, one {{versionIncompatible} mod incompatible qui ne se chargera pas ou fera planter le jeu} other {{versionIncompatible} mods incompatibles qui ne se chargeront pas ou feront planter le jeu}}",
 +    "launch-in-progress" : "Lancement en cours...",
@@ -5630,8 +5859,8 @@ index 0000000..bb1c128
 +    "possibly-incompatible-mods" : "{versionPossiblyCompatible, plural, one {Un mod {versionPossiblyCompatible, plural, one {n'est} other {ne sont}} probablement pas compatibles avec votre jeu} other {# Des mods {versionPossiblyCompatible, plural, one {n'est} other {ne sont}} probablement pas compatibles avec votre jeu}}",
 +    "profile-change-queued" : "Les modifications n'ont pas encore été faites à vos fichiers. Cliquez sur le bouton ci-dessus pour appliquer les modification en attente. ",
 +    "ready" : "Vous êtes prêt pour jouer !\n\nNote : Le Gestionnaire de Mod à déjà fini d'installer les fichiers de mod pour vous. Vous pouvez désormais lancer le jeu avec votre lanceur habituel et vos mods se chargeront toujours.",
-+    "reported-incompatible-mods" : "{reportedIncompatible, plural, one {Un mod} other {# mods}} {reportedIncompatible, plural, one {est} other {sont}} signalé.s en tant qu'incompatible.s. Lisez la description ou les notes de comptabilité {versionIncompatible, plural, one {du mod} other {des mods}} pour plus d'informations.",
-+    "reported-possibly-compatible-mods" : "{reportedIncompatible, plural, one {Un mod} other {# mods}} {reportedIncompatible, plural, one {est} other {sont}} signalé.s en tant qu'endommagé.s. Lisez la description ou les notes de comptabilité {versionIncompatible, plural, one {du mod} other {des mods}} pour plus d'informations.",
++    "reported-incompatible-mods" : "{reportedIncompatible, plural, one {Un mod} other {# mods}} {reportedIncompatible, plural, one {est} other {sont}} signalé.s en tant qu'incompatible.s. Lisez la description ou les notes de comptabilité {reportedIncompatible, plural, one {du mod} other {des mods}} pour plus d'informations.",
++    "reported-possibly-compatible-mods" : "{reportedPossiblyCompatible, plural, one {Un mod} other {# mods}} {reportedPossiblyCompatible, plural, one {est} other {sont}} signalé.s en tant qu'endommagé.s. Lisez la description ou les notes de comptabilité {reportedPossiblyCompatible, plural, one {du mod} other {des mods}} pour plus d'informations.",
 +    "you-have-warning-mods" : "Vous avez :"
 +  },
 +  "left-bar" : {
@@ -5639,6 +5868,9 @@ index 0000000..bb1c128
 +    "ficsit-app" : "ficsit.app (Dépôt de Mods)",
 +    "game-version" : "Sélectionnez l'installation du jeu",
 +    "help" : "Aide",
++    "install-info" : {
++      "server" : null
++    },
 +    "install-invalid" : "Invalide",
 +    "install-invalid-tooltip" : "Statut : SMM ne peut pas gérer cette installation",
 +    "install-loading" : "Chargement...",
@@ -5660,12 +5892,36 @@ index 0000000..bb1c128
 +    "title" : "<1>{mod}</1> Journal des modifications"
 +  },
 +  "mod-details" : {
++    "ai-disclosure" : null,
++    "ai-disclosure-no-usage" : null,
++    "ai-disclosure-runtime-usage" : null,
++    "ai-disclosure-unspecified" : null,
++    "ai-disclosure-usage" : null,
++    "buttons" : {
++      "compatibility-note-none" : null,
++      "compatibility-warning" : null,
++      "dependency" : null,
++      "disable" : null,
++      "disable-queued" : null,
++      "enable" : null,
++      "enable-queued" : null,
++      "hidden" : null,
++      "install" : null,
++      "install-tooltip" : null,
++      "not-installable" : null,
++      "queued" : null,
++      "queued-install" : null,
++      "queued-uninstall" : null,
++      "uninstall" : null,
++      "wait" : null
++    },
 +    "change-version" : "Changer la version",
 +    "change-version-any" : "Toutes",
 +    "change-version-or-newer" : "Ou plus récent",
 +    "changelogs" : "Journal des modifications",
 +    "compatibility" : "Comptabilité",
 +    "compatibility-branch" : "Ce mod à été signalé en tant que {state} sur {branch}.",
++    "compatibility-controller" : null,
 +    "compatibility-unknown" : "Inconnu",
 +    "compatibility-unknown-tooltip" : "Aucune information de comptabilité n'a encore été reporté pour ce mod. Essayez le et contacte-nous sur le Discord pour qu'il puisse être mis à jour !",
 +    "contributors" : "Contributeurs <1>({authors})</1>",
@@ -5674,6 +5930,10 @@ index 0000000..bb1c128
 +    "installed-version" : "Version installé",
 +    "latest-version" : "Dernière version",
 +    "mod-author" : "Auteur(s) : ",
++    "network-disclosure-no-usage" : null,
++    "network-disclosure-usage" : null,
++    "network-use-disclosure" : null,
++    "network-use-disclosure-unspecified" : null,
 +    "offline-mode" : "Le mode hors-ligne est activé. Les journaux des modification et les descriptions ne seront pas disponibles.",
 +    "size" : "Taille",
 +    "updated" : "Mis à jour le ",
@@ -5685,7 +5945,7 @@ index 0000000..bb1c128
 +    "compatibility-note" : "Ce mod a été signalé en tant que {state} sur cette version du jeu.",
 +    "compatibility-note-none" : "(Aucun spécifié)",
 +    "compatibility-warning" : "Il y a eu des problèmes liés à ce mod, mais vous pouvez quand même essayer de l'installer. Détails :",
-+    "dependency" : "Ce mod est installé en tant que dépendance d'un autre mod. Il ne peut pas être installé ou supprimé seul.",
++    "dependency" : "Ce mod est déjà installé en tant que dépendance d'un autre mod. Il ne peut pas être désinstallé tant que d'autres mods en dépendent.",
 +    "disable" : "Ce mod est activé dans le profil actuel. Cliquez pour le désactiver, ce qui l'empêchera de se charger quand vous lancerez le jeu, mais il sera toujours présent dans ce profil.",
 +    "disable-queued" : "Ce mod est en attente de désactivation. Cliquez pour annuler.",
 +    "disabled-tooltip" : "Le mod est désactivé. Cliquez sur l'icone de pause pour l'activer.",
@@ -5725,15 +5985,23 @@ index 0000000..bb1c128
 +      "last-updated" : "Dernier mis à jour",
 +      "name" : "Nom",
 +      "popularity" : "Popularité",
++      "search" : null,
 +      "views" : "Vues"
 +    },
-+    "search" : "Rechercher un mod"
++    "search" : "Rechercher un mod",
++    "tag" : {
++      "button-label" : "Filtrer par étiquettes",
++      "match-all" : "Tout associer",
++      "match-any" : "Associer n’importe lequel",
++      "match-mode" : "Mode d’association",
++      "none-available" : "Aucune étiquette disponible"
++    }
 +  },
 +  "mods-list" : {
-+    "no-mods-filtered" : "Aucun mod trouvés avec ces filtres",
++    "no-mods-filtered" : "Aucun mods trouvés",
 +    "no-mods-found" : "Aucuns mods trouvé",
-+    "remove-search-filters" : null,
-+    "remove-search-text" : null,
++    "remove-search-filters" : "Supprimer les filtres de recherche",
++    "remove-search-text" : "Supprimer le texte de recherche",
 +    "show-all" : "Tout montrer"
 +  },
 +  "profiles" : {
@@ -5765,6 +6033,7 @@ index 0000000..bb1c128
 +    "add" : "Ajouter",
 +    "advanced-note" : "Notez que vous devrez peut être éviter certain caractères dans l'identifiant et le mot de passe",
 +    "advanced-path-placeholder" : "utilisateur:MotDePasse@hôte:port/chemin",
++    "connect-and-select-folder" : null,
 +    "existing-servers" : {
 +      "none-yet" : "Aucun serveur ajouté. Ajoutez en un ci-dessous!",
 +      "title" : "Gérer les serveurs existants"
@@ -5877,10 +6146,10 @@ index 0000000..bb1c128
 \ No newline at end of file
 diff --git a/frontend/src/lib/generated/i18n/hu.json b/frontend/src/lib/generated/i18n/hu.json
 new file mode 100644
-index 0000000..623e0af
+index 0000000..39cf3fb
 --- /dev/null
 +++ b/frontend/src/lib/generated/i18n/hu.json
-@@ -0,0 +1,313 @@
+@@ -0,0 +1,353 @@
 +{
 +  "announcement" : {
 +    "go-offline" : "Válts Offline módba",
@@ -5950,8 +6219,8 @@ index 0000000..623e0af
 +    "possibly-incompatible-mods" : "{versionPossiblyCompatible, plural, one {Egy mod, amely '{versionPossiblyCompatible, plural, one {valószínűleg inkompatibilis} other {valószínűleg inkompatibilisek}' a játékoddal.} other {# Modok, amelyek '{versionPossiblyCompatible, plural, one {valószínűleg inkompatibilisek} other {valószínűleg inkompatibilisek}' a játékoddal.}}",
 +    "profile-change-queued" : "A mod fájljain még nem történt módosítás. Kattintson a fenti gombra az új profil alkalmazásához.\n\n(A \"Kézi indítás\" sor módban van)",
 +    "ready" : "A játék készen áll!\n\nMegjegyzés: A Mod Manager már befejezte a mod fájlok telepítését számodra. Indíthatod a játékot a megszokott játékindítód segítségével, és a modok továbbra is betöltődnek.",
-+    "reported-incompatible-mods" : "{reportedIncompatible, plural, one {Egy mod} other {# mod}} amely {reportedIncompatible, plural, one {be van jelentve} other {be vannak jelentve} töröttnek ezen a játékverzión. Olvasd el a {versionIncompatible, plural, one {mod} other {modok}} leírását vagy kompatibilitási megjegyzéseit a további információkért.",
-+    "reported-possibly-compatible-mods" : "{reportedPossiblyCompatible, plural, one {Egy mod} other {# mod}} amely {reportedPossiblyCompatible, plural, one {be van jelentve} other {be vannak jelentve} sérültnek ezen a játékverzión. Olvasd el a {versionIncompatible, plural, one {mod} other {modok}} leírását vagy kompatibilitási megjegyzéseit a további információkért.",
++    "reported-incompatible-mods" : "{reportedIncompatible, plural, one {Egy mod} other {# mod}} amely {reportedIncompatible, plural, one {be van jelentve} other {be vannak jelentve} töröttnek ezen a játékverzión. Olvasd el a {reportedIncompatible, plural, one {mod} other {modok}} leírását vagy kompatibilitási megjegyzéseit a további információkért.",
++    "reported-possibly-compatible-mods" : "{reportedPossiblyCompatible, plural, one {Egy mod} other {# mod}} amely {reportedPossiblyCompatible, plural, one {be van jelentve} other {be vannak jelentve} sérültnek ezen a játékverzión. Olvasd el a {reportedPossiblyCompatible, plural, one {mod} other {modok}} leírását vagy kompatibilitási megjegyzéseit a további információkért.",
 +    "you-have-warning-mods" : "Neked van:\n\n"
 +  },
 +  "left-bar" : {
@@ -5959,6 +6228,9 @@ index 0000000..623e0af
 +    "ficsit-app" : "ficsit.app (Mod tároló)",
 +    "game-version" : "Válaszd ki a Játék Telepítést\n\n\n\n\n\n\n",
 +    "help" : "Segítség",
++    "install-info" : {
++      "server" : null
++    },
 +    "install-invalid" : "Érvénytelen",
 +    "install-invalid-tooltip" : "Állapot: Az SMM nem tudja kezelni ezt a telepítést.\n\n\n\n\n\n\n",
 +    "install-loading" : "Betöltés...",
@@ -5980,12 +6252,36 @@ index 0000000..623e0af
 +    "title" : "<1>{mod}</1> Változási naplója"
 +  },
 +  "mod-details" : {
++    "ai-disclosure" : null,
++    "ai-disclosure-no-usage" : null,
++    "ai-disclosure-runtime-usage" : null,
++    "ai-disclosure-unspecified" : null,
++    "ai-disclosure-usage" : null,
++    "buttons" : {
++      "compatibility-note-none" : null,
++      "compatibility-warning" : null,
++      "dependency" : null,
++      "disable" : null,
++      "disable-queued" : null,
++      "enable" : null,
++      "enable-queued" : null,
++      "hidden" : null,
++      "install" : null,
++      "install-tooltip" : null,
++      "not-installable" : null,
++      "queued" : null,
++      "queued-install" : null,
++      "queued-uninstall" : null,
++      "uninstall" : null,
++      "wait" : null
++    },
 +    "change-version" : "Verzió változtatása",
 +    "change-version-any" : "Bármennyi",
 +    "change-version-or-newer" : "vagy újabb",
 +    "changelogs" : "Változási naplók\n\n\n",
 +    "compatibility" : "Kompatibilitás",
 +    "compatibility-branch" : "Ez a mod be lett jelentve mint {state} {branch}-on.",
++    "compatibility-controller" : null,
 +    "compatibility-unknown" : "Ismeretlen",
 +    "compatibility-unknown-tooltip" : "Még nincs bejelentett kompatibilitási információ erről a modról. Próbáld ki, és vedd fel velünk a kapcsolatot a Discordon, hogy frissíthessük!",
 +    "contributors" : "Hozzájárulok <1>({authors})</1>",
@@ -5994,6 +6290,10 @@ index 0000000..623e0af
 +    "installed-version" : "Letöltött verziók",
 +    "latest-version" : "Legújabb verzió",
 +    "mod-author" : "A mod létrehozója: ",
++    "network-disclosure-no-usage" : null,
++    "network-disclosure-usage" : null,
++    "network-use-disclosure" : null,
++    "network-use-disclosure-unspecified" : null,
 +    "offline-mode" : "Az offline mód be van kapcsolva. Változási naplók és leírások nem elérhetők.\n",
 +    "size" : "Méret",
 +    "updated" : "Frissítve",
@@ -6045,9 +6345,17 @@ index 0000000..623e0af
 +      "last-updated" : "Utolsó frissítés",
 +      "name" : "Név",
 +      "popularity" : "Népszerűség",
++      "search" : null,
 +      "views" : "Megtekintések"
 +    },
-+    "search" : "Modok keresése"
++    "search" : "Modok keresése",
++    "tag" : {
++      "button-label" : null,
++      "match-all" : null,
++      "match-any" : null,
++      "match-mode" : null,
++      "none-available" : null
++    }
 +  },
 +  "mods-list" : {
 +    "no-mods-filtered" : "Nincsenek modok, amelyek megfelelnek a szűrőidnek.",
@@ -6085,6 +6393,7 @@ index 0000000..623e0af
 +    "add" : "Hozzáadás",
 +    "advanced-note" : "Vedd figyelembe, hogy bizonyos karaktereket lehet, hogy escape-elni kell a felhasználónévben és a jelszóban.",
 +    "advanced-path-placeholder" : "felhasználó:jelszó@host:port/út\n",
++    "connect-and-select-folder" : null,
 +    "existing-servers" : {
 +      "none-yet" : null,
 +      "title" : null
@@ -6241,10 +6550,10 @@ index 0000000..f00e903
 +};
 diff --git a/frontend/src/lib/generated/i18n/it.json b/frontend/src/lib/generated/i18n/it.json
 new file mode 100644
-index 0000000..638a182
+index 0000000..a61492b
 --- /dev/null
 +++ b/frontend/src/lib/generated/i18n/it.json
-@@ -0,0 +1,313 @@
+@@ -0,0 +1,353 @@
 +{
 +  "announcement" : {
 +    "go-offline" : "Vai Offline",
@@ -6314,8 +6623,8 @@ index 0000000..638a182
 +    "possibly-incompatible-mods" : "{versionPossiblyCompatible, plural, one {Una mod {versionPossiblyCompatible, plural, one {è probabilmente incompatibile} other {sono probabilmente incompatibili}} con il tuo gioco} other {# mod {versionPossiblyCompatible, plural, one {è probabilmente incompatibile} other {sono probabilmente incompatibili}} con il tuo gioco}}",
 +    "profile-change-queued" : "Le modifiche devono essere ancora confermate. Premi il pulsante qui sotto per applicarle al profilo.",
 +    "ready" : "Sei pronto a rombare!\n\nNota: il Mod Manager ha finito di installare i file delle mod per te. Puoi lanciare il gioco usando il tuo solito launcher, le mod verranno comunque caricate.",
-+    "reported-incompatible-mods" : "{reportedIncompatible, plural, one {Una mod} other {# Alcune mods}} {reportedIncompatible, plural, one {è stata} other {sono state}}riportate NON FUNZIONANTI in questa versione di gioco. Leggi {versionIncompatible, plural, one {la descrizione della mod} other {le descrizioni delle mods'}} o le note di compatibilità per maggiori informazioni",
-+    "reported-possibly-compatible-mods" : "{reportedPossiblyCompatible, plural, one {Una mod} other {# Alcune mods}} {reportedPossiblyCompatible, plural, one {è stata} other {sono state}} riportate DANNEGGIATE in questa versione di gioco. Leggi {versionIncompatible, plural, one {la descrizione della mod} other {le descrizioni delle mods'}} o le note di compatibilità per maggiori informazioni",
++    "reported-incompatible-mods" : "{reportedIncompatible, plural, one {Una mod} other {# Alcune mods}} {reportedIncompatible, plural, one {è stata} other {sono state}}riportate NON FUNZIONANTI in questa versione di gioco. Leggi {reportedIncompatible, plural, one {la descrizione della mod} other {le descrizioni delle mods''}} o le note di compatibilità per maggiori informazioni",
++    "reported-possibly-compatible-mods" : "{reportedPossiblyCompatible, plural, one {Una mod} other {# Alcune mods}} {reportedPossiblyCompatible, plural, one {è stata} other {sono state}} riportate DANNEGGIATE in questa versione di gioco. Leggi {reportedPossiblyCompatible, plural, one {la descrizione della mod} other {le descrizioni delle mods''}} o le note di compatibilità per maggiori informazioni",
 +    "you-have-warning-mods" : "Hai:"
 +  },
 +  "left-bar" : {
@@ -6323,6 +6632,9 @@ index 0000000..638a182
 +    "ficsit-app" : "ficsit.app (Repository delle Mod)",
 +    "game-version" : "Seleziona Installazione del Gioco",
 +    "help" : "Aiuto",
++    "install-info" : {
++      "server" : null
++    },
 +    "install-invalid" : "Invalido",
 +    "install-invalid-tooltip" : "Stato: SMM non può gestire questa installazione",
 +    "install-loading" : "Caricamento...",
@@ -6344,12 +6656,36 @@ index 0000000..638a182
 +    "title" : "Changelog di <1>{mod}</1>"
 +  },
 +  "mod-details" : {
++    "ai-disclosure" : null,
++    "ai-disclosure-no-usage" : null,
++    "ai-disclosure-runtime-usage" : null,
++    "ai-disclosure-unspecified" : null,
++    "ai-disclosure-usage" : null,
++    "buttons" : {
++      "compatibility-note-none" : null,
++      "compatibility-warning" : null,
++      "dependency" : null,
++      "disable" : null,
++      "disable-queued" : null,
++      "enable" : null,
++      "enable-queued" : null,
++      "hidden" : null,
++      "install" : null,
++      "install-tooltip" : null,
++      "not-installable" : null,
++      "queued" : null,
++      "queued-install" : null,
++      "queued-uninstall" : null,
++      "uninstall" : null,
++      "wait" : null
++    },
 +    "change-version" : "Cambia versione",
 +    "change-version-any" : "Qualsiasi",
 +    "change-version-or-newer" : "o più recente",
 +    "changelogs" : "Modifiche",
 +    "compatibility" : "Compatibilità",
 +    "compatibility-branch" : "Questa mod è stata segnalata come {state} su {branch}",
++    "compatibility-controller" : null,
 +    "compatibility-unknown" : "Sconosciuto",
 +    "compatibility-unknown-tooltip" : "Non sono ancora state riportate informazioni sulla compatibilità per questa mod. Provala e contattaci su Discord affinché possa essere aggiornata!",
 +    "contributors" : "Autori <1>({authors})</1>",
@@ -6358,6 +6694,10 @@ index 0000000..638a182
 +    "installed-version" : "Versione installata",
 +    "latest-version" : "Ultima versione",
 +    "mod-author" : "Una mod di:",
++    "network-disclosure-no-usage" : null,
++    "network-disclosure-usage" : null,
++    "network-use-disclosure" : null,
++    "network-use-disclosure-unspecified" : null,
 +    "offline-mode" : "La modalità offline è attiva. Changelog e descrizioni non sono disponibili.",
 +    "size" : "Dimensione",
 +    "updated" : "Aggiornata",
@@ -6409,9 +6749,17 @@ index 0000000..638a182
 +      "last-updated" : "Ultimo aggiornamento",
 +      "name" : "Nome",
 +      "popularity" : "Popolarità",
++      "search" : null,
 +      "views" : "Visualizzazioni"
 +    },
-+    "search" : "Cerca mod"
++    "search" : "Cerca mod",
++    "tag" : {
++      "button-label" : null,
++      "match-all" : null,
++      "match-any" : null,
++      "match-mode" : null,
++      "none-available" : null
++    }
 +  },
 +  "mods-list" : {
 +    "no-mods-filtered" : "Nessuna mod corrisponde ai tuoi filtri",
@@ -6449,6 +6797,7 @@ index 0000000..638a182
 +    "add" : "Aggiungi",
 +    "advanced-note" : "Tieni presente che potresti dover eseguire l'escape di alcuni caratteri nel nome utente e nella password",
 +    "advanced-path-placeholder" : "utente:password@dominio:porta/percorso",
++    "connect-and-select-folder" : null,
 +    "existing-servers" : {
 +      "none-yet" : "Nessun server esistente, aggiungilo qui sotto!",
 +      "title" : "Gestisci i Server"
@@ -6561,10 +6910,10 @@ index 0000000..638a182
 \ No newline at end of file
 diff --git a/frontend/src/lib/generated/i18n/ja.json b/frontend/src/lib/generated/i18n/ja.json
 new file mode 100644
-index 0000000..c5d8734
+index 0000000..da4c0eb
 --- /dev/null
 +++ b/frontend/src/lib/generated/i18n/ja.json
-@@ -0,0 +1,313 @@
+@@ -0,0 +1,353 @@
 +{
 +  "announcement" : {
 +    "go-offline" : "オフラインモードにする",
@@ -6643,6 +6992,9 @@ index 0000000..c5d8734
 +    "ficsit-app" : "ficsit.app (Mod 保管所)",
 +    "game-version" : "ゲームのインストール方法の選択",
 +    "help" : "ヘルプ",
++    "install-info" : {
++      "server" : "サーバー"
++    },
 +    "install-invalid" : "無効",
 +    "install-invalid-tooltip" : "状況: このインストール方法ではSMMは管理できません",
 +    "install-loading" : "ロード中…",
@@ -6664,12 +7016,36 @@ index 0000000..c5d8734
 +    "title" : "<1>{mod}</1> 変更履歴"
 +  },
 +  "mod-details" : {
++    "ai-disclosure" : null,
++    "ai-disclosure-no-usage" : "このModを制作する際に生成AIは使用されていません。",
++    "ai-disclosure-runtime-usage" : "ユーザーはこのModを通して生成AIを使用することができます。",
++    "ai-disclosure-unspecified" : "未指定",
++    "ai-disclosure-usage" : "このModを制作する際に生成AIが使われました。",
++    "buttons" : {
++      "compatibility-note-none" : "(未指定)",
++      "compatibility-warning" : "このModは幾つかの問題を抱えているようですが、インストールすることはできます。詳細情報:",
++      "dependency" : "このModは他のModで必須とされています。他Modがこれを必要としている限り、これは削除できません。",
++      "disable" : "このModはこのプロファイル内で有効化されています。ここを押して無効化します。無効化されたModはゲームに読み込まれませんがプロファイル内には残ります。",
++      "disable-queued" : "このModは無効化の適用待ちをしています。ここを押して無効化をキャンセルします。",
++      "enable" : "ここを押して有効化する",
++      "enable-queued" : "このModは有効化の適用待ちをしています。ここを押して有効化をキャンセルします。",
++      "hidden" : "このModは製作者によって隠されています。",
++      "install" : "インストール",
++      "install-tooltip" : "ここを押してこのModをインストールします。",
++      "not-installable" : "このModはインストールできません。理由:",
++      "queued" : "このModはまだ他の処理を待っています。",
++      "queued-install" : "このModはインストール待ちをしています。ここを押してキャンセルします。",
++      "queued-uninstall" : "このModはアンインストール待ちをしています。ここを押してキャンセルします。",
++      "uninstall" : "このModは現在のプロファイルにインストール済みです。ここを押してアンインストールします。",
++      "wait" : "処理が完了するまでお待ちください。"
++    },
 +    "change-version" : "バージョンを変更",
 +    "change-version-any" : "どれでも",
 +    "change-version-or-newer" : "またはこれよりも最新",
 +    "changelogs" : "変更履歴",
 +    "compatibility" : "互換性",
 +    "compatibility-branch" : "このModは{branch}ブランチで{state}と報告されています。",
++    "compatibility-controller" : "このModはコントローラーのサポート状況は{state}と報告されています。",
 +    "compatibility-unknown" : "不明",
 +    "compatibility-unknown-tooltip" : "このModには互換情報が登録されていません。このModを試してから結果をDiscordにて報告して頂けると幸いです。",
 +    "contributors" : "貢献者 <1>{authors}</1>",
@@ -6678,6 +7054,10 @@ index 0000000..c5d8734
 +    "installed-version" : "インストール中のバージョン",
 +    "latest-version" : "最新バージョン",
 +    "mod-author" : "製作者:",
++    "network-disclosure-no-usage" : "Mod開発者はこのModが外部ネットワークへの接続をしないことを確認済みです。",
++    "network-disclosure-usage" : "Mod開発者はこのModの外部ネットワークへの接続状況についてこう説明しています:",
++    "network-use-disclosure" : "ネットワークへの接続",
++    "network-use-disclosure-unspecified" : "未指定",
 +    "offline-mode" : "現在オフラインモードです。変更履歴と詳細情報は利用できません。",
 +    "size" : "容量",
 +    "updated" : "最終更新日",
@@ -6689,7 +7069,7 @@ index 0000000..c5d8734
 +    "compatibility-note" : "このModは今のゲームバージョンに対して{state}と報告されています。",
 +    "compatibility-note-none" : "(未指定)",
 +    "compatibility-warning" : "このModは幾つかの問題を抱えているようですが、インストールすることはできます。詳細情報:",
-+    "dependency" : "このModは他のModで必須とされています。単体でのインストールと削除はできません。",
++    "dependency" : "このModは他のModで必須とされています。他Modがこれを必要としている限り、これは削除できません。",
 +    "disable" : "このModはこのプロファイル内で有効化されています。ここを押して無効化します。無効化されたModはゲームに読み込まれませんがプロファイル内には残ります。",
 +    "disable-queued" : "このModは無効化の適用待ちをしています。ここを押して無効化をキャンセルします。",
 +    "disabled-tooltip" : "このModは無効化状態です。このポーズアイコンを押して有効化します。",
@@ -6729,15 +7109,23 @@ index 0000000..c5d8734
 +      "last-updated" : "最終更新日",
 +      "name" : "名前",
 +      "popularity" : "人気",
++      "search" : "探す",
 +      "views" : "閲覧数"
 +    },
-+    "search" : "Modを探す…"
++    "search" : "Modを探す…",
++    "tag" : {
++      "button-label" : "タグでフィルターをかける",
++      "match-all" : "全て一致",
++      "match-any" : "部分一致",
++      "match-mode" : "一致方法",
++      "none-available" : "タグが利用不可"
++    }
 +  },
 +  "mods-list" : {
 +    "no-mods-filtered" : "検索に該当するModがありませんでした",
 +    "no-mods-found" : "該当Mod無し",
-+    "remove-search-filters" : null,
-+    "remove-search-text" : null,
++    "remove-search-filters" : "検索フィルターを外す",
++    "remove-search-text" : "検索ワードの消去",
 +    "show-all" : "全て表示する"
 +  },
 +  "profiles" : {
@@ -6769,6 +7157,7 @@ index 0000000..c5d8734
 +    "add" : "追加",
 +    "advanced-note" : "ユーザー名とパスワードを入力する際に一部の文字前にエスケープ文字を入れる必要があります。",
 +    "advanced-path-placeholder" : "ユーザー名:パスワード@ホストIP:ポート番号/パス",
++    "connect-and-select-folder" : "接続してサーバーのフォルダーを選択する",
 +    "existing-servers" : {
 +      "none-yet" : "サーバーが存在していません。下記を記入して追加してください。",
 +      "title" : "サーバーの管理"
@@ -6881,10 +7270,10 @@ index 0000000..c5d8734
 \ No newline at end of file
 diff --git a/frontend/src/lib/generated/i18n/ko.json b/frontend/src/lib/generated/i18n/ko.json
 new file mode 100644
-index 0000000..4aacc27
+index 0000000..9a6514f
 --- /dev/null
 +++ b/frontend/src/lib/generated/i18n/ko.json
-@@ -0,0 +1,313 @@
+@@ -0,0 +1,353 @@
 +{
 +  "announcement" : {
 +    "go-offline" : "오프라인으로 변경",
@@ -6963,6 +7352,9 @@ index 0000000..4aacc27
 +    "ficsit-app" : "ficsit.app (모드 저장소)",
 +    "game-version" : "게임 버전",
 +    "help" : "도움말",
++    "install-info" : {
++      "server" : null
++    },
 +    "install-invalid" : "잘못됨",
 +    "install-invalid-tooltip" : "상태: SMM가 해당 설치를 관리할 수 없음",
 +    "install-loading" : "불러오는 중...",
@@ -6984,12 +7376,36 @@ index 0000000..4aacc27
 +    "title" : "<1>{mod}</1> 변경사항"
 +  },
 +  "mod-details" : {
++    "ai-disclosure" : null,
++    "ai-disclosure-no-usage" : null,
++    "ai-disclosure-runtime-usage" : null,
++    "ai-disclosure-unspecified" : null,
++    "ai-disclosure-usage" : null,
++    "buttons" : {
++      "compatibility-note-none" : null,
++      "compatibility-warning" : null,
++      "dependency" : null,
++      "disable" : null,
++      "disable-queued" : null,
++      "enable" : null,
++      "enable-queued" : null,
++      "hidden" : null,
++      "install" : null,
++      "install-tooltip" : null,
++      "not-installable" : null,
++      "queued" : null,
++      "queued-install" : null,
++      "queued-uninstall" : null,
++      "uninstall" : null,
++      "wait" : null
++    },
 +    "change-version" : "버전 변경",
 +    "change-version-any" : "모두",
 +    "change-version-or-newer" : "이상",
 +    "changelogs" : "변경사항",
 +    "compatibility" : "호환성",
 +    "compatibility-branch" : "이 모드는 {branch} 버전에서 {state} 상태로 확인되었습니다.",
++    "compatibility-controller" : null,
 +    "compatibility-unknown" : "알 수 없음",
 +    "compatibility-unknown-tooltip" : "아직 이 모드에 대한 호환성 보고가 없습니다. 시도 후 디스코드를 통해 연락해 업데이트할 수 있게 기여해 주십시오!",
 +    "contributors" : "기여자 <1>({authors})</1>",
@@ -6998,6 +7414,10 @@ index 0000000..4aacc27
 +    "installed-version" : "설치된 버전",
 +    "latest-version" : "최신 버전",
 +    "mod-author" : "모드 제작:",
++    "network-disclosure-no-usage" : null,
++    "network-disclosure-usage" : null,
++    "network-use-disclosure" : null,
++    "network-use-disclosure-unspecified" : null,
 +    "offline-mode" : "오프라인 모드가 활성화 되었습니다. 변경사항과 설명에 접근할 수 없습니다.",
 +    "size" : "크기",
 +    "updated" : "업데이트됨",
@@ -7049,9 +7469,17 @@ index 0000000..4aacc27
 +      "last-updated" : "최근 업데이트",
 +      "name" : "이름",
 +      "popularity" : "인기도",
++      "search" : null,
 +      "views" : "조회수"
 +    },
-+    "search" : "모드 검색"
++    "search" : "모드 검색",
++    "tag" : {
++      "button-label" : "태그로 필터링",
++      "match-all" : "모두 일치",
++      "match-any" : "부분 일치",
++      "match-mode" : "일치 모드",
++      "none-available" : "사용 가능한 태그 없음"
++    }
 +  },
 +  "mods-list" : {
 +    "no-mods-filtered" : "필터 결과에 맞는 모드 없음",
@@ -7089,6 +7517,7 @@ index 0000000..4aacc27
 +    "add" : "추가",
 +    "advanced-note" : "참고: 사용자 이름과 비밀번호에는 특정 문자를 사용할 수 없습니다",
 +    "advanced-path-placeholder" : "user:pass@host:port/path",
++    "connect-and-select-folder" : null,
 +    "existing-servers" : {
 +      "none-yet" : "아무 서버나 하나 추가해 보는 건 어떻습니까?",
 +      "title" : "추가한 서버 관리"
@@ -7201,10 +7630,10 @@ index 0000000..4aacc27
 \ No newline at end of file
 diff --git a/frontend/src/lib/generated/i18n/lt.json b/frontend/src/lib/generated/i18n/lt.json
 new file mode 100644
-index 0000000..9273d83
+index 0000000..0618fd7
 --- /dev/null
 +++ b/frontend/src/lib/generated/i18n/lt.json
-@@ -0,0 +1,313 @@
+@@ -0,0 +1,353 @@
 +{
 +  "announcement" : {
 +    "go-offline" : "Atsijunkite",
@@ -7274,8 +7703,8 @@ index 0000000..9273d83
 +    "possibly-incompatible-mods" : "{versionPossiblyCompatible, plural, one {Vienas modas, kuris {versionPossiblyCompatible, plural, one {yra} other {yra}} greičiausiai nesuderinamas su jūsų žaidimu} other {# modai, kurie {versionPossiblyCompatible, plural, one {yra} other {yra}} greičiausiai nesuderinami su jūsų žaidimu.}}",
 +    "profile-change-queued" : "Pakeitimai dar nebuvo atlikti jūsų modų failuose. Spustelėkite žemiau esantį mygtuką, kad pritaikytumėte naują profilį.\n\n(Jūs esate „Pradėti rankiniu būdu“ režime)",
 +    "ready" : "Jūs esate pasiruošę veiksmui!\n\n\"Pastaba: Modų tvarkyklė jau baigė diegti modų failus už jus. Galite paleisti žaidimą naudodami savo įprastą žaidimo paleidiklį, o modai vis tiek bus įkelti.\"",
-+    "reported-incompatible-mods" : "{reportedIncompatible, plural, one {Vienas modas praneštas} other {# modai pranešti}} kaip neveikiantys šioje žaidimo versijoje. Perskaitykite {versionIncompatible, plural, one {modo} other {modų}} aprašymą arba suderinamumo pastabas, kad sužinotumėte daugiau informacijos.",
-+    "reported-possibly-compatible-mods" : "{reportedPossiblyCompatible, plural, one {Vienas modas praneštas} other {# modai pranešti}} kaip pažeisti šioje žaidimo versijoje. Perskaitykite {versionIncompatible, plural, one {modo} other {modų}} aprašymą arba suderinamumo pastabas, kad sužinotumėte daugiau informacijos.",
++    "reported-incompatible-mods" : "{reportedIncompatible, plural, one {Vienas modas praneštas} other {# modai pranešti}} kaip neveikiantys šioje žaidimo versijoje. Perskaitykite {reportedIncompatible, plural, one {modo} other {modų}} aprašymą arba suderinamumo pastabas, kad sužinotumėte daugiau informacijos.",
++    "reported-possibly-compatible-mods" : "{reportedPossiblyCompatible, plural, one {Vienas modas praneštas} other {# modai pranešti}} kaip pažeisti šioje žaidimo versijoje. Perskaitykite {reportedPossiblyCompatible, plural, one {modo} other {modų}} aprašymą arba suderinamumo pastabas, kad sužinotumėte daugiau informacijos.",
 +    "you-have-warning-mods" : "Jus turite:"
 +  },
 +  "left-bar" : {
@@ -7283,6 +7712,9 @@ index 0000000..9273d83
 +    "ficsit-app" : "ficsit.app (Modų saugykla)",
 +    "game-version" : "Pasirinkite Žaidimo Įdiegimą",
 +    "help" : "Pagalba",
++    "install-info" : {
++      "server" : null
++    },
 +    "install-invalid" : "Netinkamas",
 +    "install-invalid-tooltip" : "Būsena: SMM negali valdyti šios diegimo versijos",
 +    "install-loading" : "Kraunama...",
@@ -7304,12 +7736,36 @@ index 0000000..9273d83
 +    "title" : "<1>{mod}</1>Pakeitimų žurnalas"
 +  },
 +  "mod-details" : {
++    "ai-disclosure" : null,
++    "ai-disclosure-no-usage" : null,
++    "ai-disclosure-runtime-usage" : null,
++    "ai-disclosure-unspecified" : null,
++    "ai-disclosure-usage" : null,
++    "buttons" : {
++      "compatibility-note-none" : null,
++      "compatibility-warning" : null,
++      "dependency" : null,
++      "disable" : null,
++      "disable-queued" : null,
++      "enable" : null,
++      "enable-queued" : null,
++      "hidden" : null,
++      "install" : null,
++      "install-tooltip" : null,
++      "not-installable" : null,
++      "queued" : null,
++      "queued-install" : null,
++      "queued-uninstall" : null,
++      "uninstall" : null,
++      "wait" : null
++    },
 +    "change-version" : "Pakeisti versija",
 +    "change-version-any" : "Betkuris",
 +    "change-version-or-newer" : "arba naujesnė",
 +    "changelogs" : "Pakeitimų žurnalai",
 +    "compatibility" : "Suderinamumas",
 +    "compatibility-branch" : "Šis modas buvo praneštas kaip {state} ant {branch}.",
++    "compatibility-controller" : null,
 +    "compatibility-unknown" : "Nežinoma",
 +    "compatibility-unknown-tooltip" : "Dar nėra pateikta suderinamumo informacijos apie šį modą. Išbandykite jį ir susisiekite su mumis Discord platformoje, kad galėtume ją atnaujinti!",
 +    "contributors" : "Prisidėjėliai <1>{authors}</1>",
@@ -7318,6 +7774,10 @@ index 0000000..9273d83
 +    "installed-version" : "Įdiegta versija",
 +    "latest-version" : "Naujausia versija",
 +    "mod-author" : "Modas nuo:",
++    "network-disclosure-no-usage" : null,
++    "network-disclosure-usage" : null,
++    "network-use-disclosure" : null,
++    "network-use-disclosure-unspecified" : null,
 +    "offline-mode" : null,
 +    "size" : "Dydis",
 +    "updated" : "Atnaujinta",
@@ -7369,9 +7829,17 @@ index 0000000..9273d83
 +      "last-updated" : "Paskutinį kartą atnaujinta",
 +      "name" : "Pavadinimas",
 +      "popularity" : "Populiarumas",
++      "search" : null,
 +      "views" : "Peržiūros"
 +    },
-+    "search" : "Ieškoti modų"
++    "search" : "Ieškoti modų",
++    "tag" : {
++      "button-label" : null,
++      "match-all" : null,
++      "match-any" : null,
++      "match-mode" : null,
++      "none-available" : null
++    }
 +  },
 +  "mods-list" : {
 +    "no-mods-filtered" : null,
@@ -7409,6 +7877,7 @@ index 0000000..9273d83
 +    "add" : "Pridėti",
 +    "advanced-note" : "Atkreipkite dėmesį, kad naudotojo varde ir slaptažodyje gali reikėti vengti tam tikrų simbolių",
 +    "advanced-path-placeholder" : "vartotojas:slaptazodis@savininkas:prievadas/vieta",
++    "connect-and-select-folder" : null,
 +    "existing-servers" : {
 +      "none-yet" : null,
 +      "title" : null
@@ -7521,10 +7990,10 @@ index 0000000..9273d83
 \ No newline at end of file
 diff --git a/frontend/src/lib/generated/i18n/mt.json b/frontend/src/lib/generated/i18n/mt.json
 new file mode 100644
-index 0000000..03d5ab7
+index 0000000..c10d0a2
 --- /dev/null
 +++ b/frontend/src/lib/generated/i18n/mt.json
-@@ -0,0 +1,313 @@
+@@ -0,0 +1,353 @@
 +{
 +  "announcement" : {
 +    "go-offline" : null,
@@ -7603,6 +8072,9 @@ index 0000000..03d5ab7
 +    "ficsit-app" : null,
 +    "game-version" : null,
 +    "help" : null,
++    "install-info" : {
++      "server" : null
++    },
 +    "install-invalid" : null,
 +    "install-invalid-tooltip" : null,
 +    "install-loading" : null,
@@ -7624,12 +8096,36 @@ index 0000000..03d5ab7
 +    "title" : null
 +  },
 +  "mod-details" : {
++    "ai-disclosure" : null,
++    "ai-disclosure-no-usage" : null,
++    "ai-disclosure-runtime-usage" : null,
++    "ai-disclosure-unspecified" : null,
++    "ai-disclosure-usage" : null,
++    "buttons" : {
++      "compatibility-note-none" : null,
++      "compatibility-warning" : null,
++      "dependency" : null,
++      "disable" : null,
++      "disable-queued" : null,
++      "enable" : null,
++      "enable-queued" : null,
++      "hidden" : null,
++      "install" : null,
++      "install-tooltip" : null,
++      "not-installable" : null,
++      "queued" : null,
++      "queued-install" : null,
++      "queued-uninstall" : null,
++      "uninstall" : null,
++      "wait" : null
++    },
 +    "change-version" : null,
 +    "change-version-any" : null,
 +    "change-version-or-newer" : null,
 +    "changelogs" : null,
 +    "compatibility" : null,
 +    "compatibility-branch" : null,
++    "compatibility-controller" : null,
 +    "compatibility-unknown" : null,
 +    "compatibility-unknown-tooltip" : null,
 +    "contributors" : null,
@@ -7638,6 +8134,10 @@ index 0000000..03d5ab7
 +    "installed-version" : null,
 +    "latest-version" : null,
 +    "mod-author" : null,
++    "network-disclosure-no-usage" : null,
++    "network-disclosure-usage" : null,
++    "network-use-disclosure" : null,
++    "network-use-disclosure-unspecified" : null,
 +    "offline-mode" : null,
 +    "size" : null,
 +    "updated" : null,
@@ -7689,9 +8189,17 @@ index 0000000..03d5ab7
 +      "last-updated" : null,
 +      "name" : null,
 +      "popularity" : null,
++      "search" : null,
 +      "views" : null
 +    },
-+    "search" : null
++    "search" : null,
++    "tag" : {
++      "button-label" : null,
++      "match-all" : null,
++      "match-any" : null,
++      "match-mode" : null,
++      "none-available" : null
++    }
 +  },
 +  "mods-list" : {
 +    "no-mods-filtered" : null,
@@ -7729,6 +8237,7 @@ index 0000000..03d5ab7
 +    "add" : null,
 +    "advanced-note" : null,
 +    "advanced-path-placeholder" : null,
++    "connect-and-select-folder" : null,
 +    "existing-servers" : {
 +      "none-yet" : null,
 +      "title" : null
@@ -7841,10 +8350,10 @@ index 0000000..03d5ab7
 \ No newline at end of file
 diff --git a/frontend/src/lib/generated/i18n/nl.json b/frontend/src/lib/generated/i18n/nl.json
 new file mode 100644
-index 0000000..cd16dff
+index 0000000..762c31f
 --- /dev/null
 +++ b/frontend/src/lib/generated/i18n/nl.json
-@@ -0,0 +1,313 @@
+@@ -0,0 +1,353 @@
 +{
 +  "announcement" : {
 +    "go-offline" : "Ga Offline",
@@ -7914,8 +8423,8 @@ index 0000000..cd16dff
 +    "possibly-incompatible-mods" : "{versionPossiblyCompatible, plural, one {Een mod dat {versionPossiblyCompatible, plural, one {is} other {zijn}} waarschijnlijk niet compatibel met je game } other {# mods die {versionPossiblyCompatible, plural, one {is} other {zijn}} waarschijnlijk niet compatibel met je game }}",
 +    "profile-change-queued" : "Er zijn nog geen wijzigingen aangebracht in uw mod-bestanden. Klik op de onderstaande knop om het nieuwe profiel toe te passen.\n\n(U bevindt zich in de wachtrij “Handmatig starten”-modus)",
 +    "ready" : "Je bent klaar om te beginnen!\n\nOpmerking: De Mod Manager heeft de mod-bestanden al voor je geïnstalleerd. Je kunt het spel starten met je gebruikelijke game launcher en de mods worden nog steeds geladen.",
-+    "reported-incompatible-mods" : "{reportedIncompatible, plural, one {Een mod} other {# mods}} die {reportedIncompatible, plural, one {is} other {zijn}} als defect gemeld voor deze gameversie. Lees de {versionIncompatible, plural, one {mod zijn} other {mods hun}} beschrijving of compatibiliteit notities voor meer informatie",
-+    "reported-possibly-compatible-mods" : "{reportedPossiblyCompatible, plural, one {Een mod} other {# mods}} die {reportedPossiblyCompatible, plural, one {is} other {zijn}} als deels functioneel gemeld voor deze gameversie. Lees de {versionIncompatible, plural, one {mod zijn} other {mods hun}} beschrijving of compatibiliteit notities voor meer informatie",
++    "reported-incompatible-mods" : "{reportedIncompatible, plural, one {Een mod} other {# mods}} die {reportedIncompatible, plural, one {is} other {zijn}} als defect gemeld voor deze gameversie. Lees de {reportedIncompatible, plural, one {mod zijn} other {mods hun}} beschrijving of compatibiliteit notities voor meer informatie",
++    "reported-possibly-compatible-mods" : "{reportedPossiblyCompatible, plural, one {Een mod} other {# mods}} die {reportedPossiblyCompatible, plural, one {is} other {zijn}} als deels functioneel gemeld voor deze gameversie. Lees de {reportedPossiblyCompatible, plural, one {mod zijn} other {mods hun}} beschrijving of compatibiliteit notities voor meer informatie",
 +    "you-have-warning-mods" : "Je hebt:"
 +  },
 +  "left-bar" : {
@@ -7923,6 +8432,9 @@ index 0000000..cd16dff
 +    "ficsit-app" : "ficsit.app (Mod-bibliotheek)",
 +    "game-version" : "Selecteer Game Installatie",
 +    "help" : "Help",
++    "install-info" : {
++      "server" : null
++    },
 +    "install-invalid" : "Ongeldig",
 +    "install-invalid-tooltip" : "Status: SMM kan deze installatie niet beheren",
 +    "install-loading" : "Laden...",
@@ -7944,12 +8456,36 @@ index 0000000..cd16dff
 +    "title" : "<1>{mod}</1> Wijzigingen"
 +  },
 +  "mod-details" : {
++    "ai-disclosure" : null,
++    "ai-disclosure-no-usage" : null,
++    "ai-disclosure-runtime-usage" : null,
++    "ai-disclosure-unspecified" : null,
++    "ai-disclosure-usage" : null,
++    "buttons" : {
++      "compatibility-note-none" : null,
++      "compatibility-warning" : null,
++      "dependency" : null,
++      "disable" : null,
++      "disable-queued" : null,
++      "enable" : null,
++      "enable-queued" : null,
++      "hidden" : null,
++      "install" : null,
++      "install-tooltip" : null,
++      "not-installable" : null,
++      "queued" : null,
++      "queued-install" : null,
++      "queued-uninstall" : null,
++      "uninstall" : null,
++      "wait" : null
++    },
 +    "change-version" : "Versie wijzigen",
 +    "change-version-any" : "Alle",
 +    "change-version-or-newer" : "of nieuwer",
 +    "changelogs" : "Wijzigingen",
 +    "compatibility" : "Compatibiliteit",
 +    "compatibility-branch" : "Deze mod is geraporteerd als {state} op {branch}.",
++    "compatibility-controller" : null,
 +    "compatibility-unknown" : "Onbekend",
 +    "compatibility-unknown-tooltip" : "Er is nog geen compatibiliteitsinformatie voor deze mod gemeld. Probeer het uit en neem contact met ons op via Discord, zodat we de informatie kunnen bijwerken!",
 +    "contributors" : "Bijdragers <1>({authors})</1>",
@@ -7958,6 +8494,10 @@ index 0000000..cd16dff
 +    "installed-version" : "Geïnstalleerde versie",
 +    "latest-version" : "Laatste versie",
 +    "mod-author" : "Een mod door:",
++    "network-disclosure-no-usage" : null,
++    "network-disclosure-usage" : null,
++    "network-use-disclosure" : null,
++    "network-use-disclosure-unspecified" : null,
 +    "offline-mode" : "Offline modus is ingeschakeld. Wijzigingen en beschrijvingen zijn niet beschikbaar.",
 +    "size" : "Grootte",
 +    "updated" : "Bijgewerkt",
@@ -8009,9 +8549,17 @@ index 0000000..cd16dff
 +      "last-updated" : "Laatste bijgewerkt",
 +      "name" : "Naam",
 +      "popularity" : "Populariteit",
++      "search" : null,
 +      "views" : "Weergaven"
 +    },
-+    "search" : "Zoek mods"
++    "search" : "Zoek mods",
++    "tag" : {
++      "button-label" : null,
++      "match-all" : null,
++      "match-any" : null,
++      "match-mode" : null,
++      "none-available" : null
++    }
 +  },
 +  "mods-list" : {
 +    "no-mods-filtered" : "Er zijn geen mods die aan je filters voldoen.",
@@ -8049,6 +8597,7 @@ index 0000000..cd16dff
 +    "add" : "Toevoegen",
 +    "advanced-note" : "Let op: het kan zijn dat u bepaalde tekens in de gebruikersnaam en het wachtwoord moet escapen",
 +    "advanced-path-placeholder" : "gebruikersnaam:wachtwoord@host:poort/pad",
++    "connect-and-select-folder" : null,
 +    "existing-servers" : {
 +      "none-yet" : "Er zijn nog geen servers toegevoegd. Voeg er hieronder een toe!",
 +      "title" : "Bestaande Servers Beheren"
@@ -8161,10 +8710,10 @@ index 0000000..cd16dff
 \ No newline at end of file
 diff --git a/frontend/src/lib/generated/i18n/pl.json b/frontend/src/lib/generated/i18n/pl.json
 new file mode 100644
-index 0000000..0b7dc61
+index 0000000..5727d6a
 --- /dev/null
 +++ b/frontend/src/lib/generated/i18n/pl.json
-@@ -0,0 +1,313 @@
+@@ -0,0 +1,353 @@
 +{
 +  "announcement" : {
 +    "go-offline" : "Przejdź w Tryb Offline",
@@ -8184,13 +8733,13 @@ index 0000000..0b7dc61
 +  "error" : {
 +    "failed_to_generate_debug" : "Wystąpił błąd przy próbie wygenerowania pliku debugowania. Prosimy o manualne sprawdzenie plików logów Menadżera Modów, aby uzyskać więcej informacji, oraz o zgłoszenie tego problemu na Discord. Użyj przycisku poniżej, aby otworzyć dokumentacje i dowiedzieć się, jak to zrobić.",
 +    "generate_debug_info" : "Wygeneruj informacje debugowania",
-+    "help" : "Nie powinno tak być? Naciśnij przycisk poniżej i wyślij wygenerowany plik .zip na <1>discordzie od modowania</1> na #help-using-mods.",
++    "help" : "Nie powinno tak być? Kliknij przycisk poniżej i wyślij wygenerowany plik zip na <1>discordzie od modowania</1> na #help-using-mods.",
 +    "invalid_installs" : "{invalidInstalls, plural, one {Wykryto {invalidInstalls} błędną instalację Satisfactory} many {Wykryto {invalidInstalls} błędnych instalacji Satisfactory} other {Wykryto {invalidInstalls} błędne instalacje Satisfactory} }",
 +    "no_installs" : "Nie znaleziono instalacji Satisfactory",
 +    "open_log_docs" : "Otwórz Dokumentacje Logów",
 +    "open_modding_discord" : "Otwórz Discord od Modowania",
 +    "open_modding_discord.must_generate_debug_first" : "Musisz najpierw wygenerować informacje debugowania",
-+    "reporting_directions" : "Nie powinno tak być? Naciśnij przycisk poniżej, aby zebrać logi, a następnie wyślij wygenerowany plik .zip na discordzie od modowania na #help-using-mods.",
++    "reporting_directions" : "Nie powinno tak być? Kliknij przycisk poniżej, aby zebrać logi, a następnie wyślij wygenerowany plik .zip na discordzie od modowania na #help-using-mods.",
 +    "title" : "Coś poszło nie tak"
 +  },
 +  "external-install-mod" : {
@@ -8225,17 +8774,17 @@ index 0000000..0b7dc61
 +    "are-you-sure-warning" : "Czy jesteś pewien, że chcesz uruchomić?",
 +    "cant-launch" : "SMM nie może uruchomić tej instalacji",
 +    "cant-launch-tooltip" : "Menadżer Modów nie jest w stanie uruchomić tego typu instalacji, ale nadal będzie zarządzać plikami modów dla Ciebie. Uruchom Satisfactory za pomocą twojego standardowego programu do uruchamiania gier.",
-+    "changes-queued" : "Zmiany nie zostały jeszcze zastosowane dla twoich modów. Naciśnij przycisk poniżej, aby zastosować zmiany, które są w kolejce\n\n(Jesteś w trybie Kolejki \"Zastosuj manualnie\")",
++    "changes-queued" : "Zmiany nie zostały jeszcze zastosowane dla twoich modów. Kliknij przycisk poniżej, aby zastosować zmiany, które są w kolejce\n\n(Jesteś w trybie Kolejki \"Zastosuj manualnie\")",
 +    "game-running" : "Twój program do uruchamiania gier zgłasza, że gra jest już uruchomiona (albo jest podczas procesu zamykania).",
 +    "incompatible-mods" : "{versionIncompatible, plural, one {{versionIncompatible} niekompatybilny mod, który się nie załaduje, bądź nieoczekiwanie zamknie naszą grę} many {{versionIncompatible} niekompatybilnych modów, które się nie załadują, bądź nieoczekiwanie zamkną naszą grę} other {{versionIncompatible} niekompatybilne mody, które się nie załadują, bądź nieoczekiwanie zamkną naszą grę} }",
 +    "launch-in-progress" : "Uruchamianie w toku...",
 +    "operation-in-progress" : "Operacja jest już w toku.",
 +    "play" : "Zagraj w Satisfactory",
 +    "possibly-incompatible-mods" : "{versionPossiblyCompatible, plural, one {Jeden mod {versionPossiblyCompatible, plural, one {jest} few {są} many {jest} other {są}} prawdopodobnie niekompatybilny z twoją grą} many {# modów {versionPossiblyCompatible, plural, one {jest} few {są} many {jest} other {są}} prawdopodobnie niekompatybilnych z twoją grą} other {# mody {versionPossiblyCompatible, plural, one {jest} few {są} many {jest} other {są}} prawdopodobnie niekompatybilne z twoją grą} }",
-+    "profile-change-queued" : "Zmiany nie zostały jeszcze zastosowane dla twoich modów. Naciśnij przycisk poniżej, aby zastosować nowy profil.\n\n(Jesteś w trybie Kolejki \"Zastosuj manualnie\")",
-+    "ready" : "Jesteś gotów do akcji:\n\nInformacja: Menadżer modów już skończył instalować dla Ciebie mody. Możesz wystartować grę używając swojego standardowego programu do uruchamiania gier, a mody i tak się załadują.",
-+    "reported-incompatible-mods" : "{reportedIncompatible, plural, one {Jeden mod} few {# mody} many {# modów} other {# mody}} {reportedIncompatible, plural, one {został zgłoszony jako Niedziałający} few {zostały zgłoszone jako Niedziałające} many {zostało zgłoszonych jako Niedziałających} other {zostały zgłoszone jako Niedziałające}} na tej wersji gry. Przeczytaj opis lub informacje o kompatybilności {versionIncompatible, plural, one {moda} few {modów} many {modów} other {modów}} po więcej informacji",
-+    "reported-possibly-compatible-mods" : "{reportedPossiblyCompatible, plural, one {Jeden mod} few {# mody} many {# modów} other {# mody}} {reportedPossiblyCompatible, plural, one {został zgłoszony jako Uszkodzony} few {zostały zgłoszone jako Uszkodzone} many {zostało zgłoszonych jako Uszkodzone} other {zostały zgłoszone jako Uszkodzone}} na tej wersji gry. Przeczytaj opis lub informacje o kompatybilności {versionIncompatible, plural, one {moda} few {modów} many {modów} other {modów}} po więcej informacji",
++    "profile-change-queued" : "Zmiany nie zostały jeszcze zastosowane dla twoich modów. Kliknij przycisk poniżej, aby zastosować nowy profil.\n\n(Jesteś w trybie Kolejki \"Zastosuj manualnie\")",
++    "ready" : "Jesteś gotów do akcji!\n\nInformacja: Menadżer modów już skończył instalować dla Ciebie mody. Możesz wystartować grę używając swojego standardowego programu do uruchamiania gier, a mody i tak się załadują.",
++    "reported-incompatible-mods" : "{reportedIncompatible, plural, one {Jeden mod,} few {# mody,} many {# modów,} other {# mody,}} {reportedIncompatible, plural, one {który został zgłoszony jako Niedziałający} few {które zostały zgłoszone jako Niedziałające} many {które zostały zgłoszone jako Niedziałające} other {które zostały zgłoszone jako Niedziałające}} na tej wersji gry. Przeczytaj opis lub informacje o kompatybilności {reportedIncompatible, plural, one {moda} few {modów} many {modów} other {modów}} po więcej informacji",
++    "reported-possibly-compatible-mods" : "{reportedPossiblyCompatible, plural, one {Jeden mod} few {# mody} many {# modów} other {# mody}} {reportedPossiblyCompatible, plural, one {został zgłoszony jako Uszkodzony} few {zostały zgłoszone jako Uszkodzone} many {zostało zgłoszonych jako Uszkodzone} other {zostały zgłoszone jako Uszkodzone}} na tej wersji gry. Przeczytaj opis lub informacje o kompatybilności {reportedPossiblyCompatible, plural, one {moda} few {modów} many {modów} other {modów}} po więcej informacji",
 +    "you-have-warning-mods" : "Masz:"
 +  },
 +  "left-bar" : {
@@ -8243,6 +8792,9 @@ index 0000000..0b7dc61
 +    "ficsit-app" : "ficsit.app (Repozytorium Modów)",
 +    "game-version" : "Wybierz Instalacje Gry",
 +    "help" : "Pomoc",
++    "install-info" : {
++      "server" : "Serwer"
++    },
 +    "install-invalid" : "Błędna",
 +    "install-invalid-tooltip" : "Status: SMM nie może zarządzać tą instalacją",
 +    "install-loading" : "Ładowanie...",
@@ -8250,7 +8802,7 @@ index 0000000..0b7dc61
 +    "install-unknown" : "Nieznana",
 +    "install-unknown-tooltip" : "Status: Nie mogliśmy zdobyć informacji na temat tej instalacji",
 +    "links" : "Łącza",
-+    "manage-servers" : "Zarządaj Serwerami",
++    "manage-servers" : "Zarządzaj Serwerami",
 +    "mods-off" : "Wyłącz Mody",
 +    "mods-on" : "Włącz Mody",
 +    "other" : "Inne",
@@ -8264,12 +8816,36 @@ index 0000000..0b7dc61
 +    "title" : "Lista Zmian <1>{mod}</1>"
 +  },
 +  "mod-details" : {
++    "ai-disclosure" : "Zawiadomienie o AI",
++    "ai-disclosure-no-usage" : "Nie użyto generatywnej AI do stworzenia tego moda.",
++    "ai-disclosure-runtime-usage" : "Użytkownik może korzystać z generatywnej AI podczas używania tego moda.",
++    "ai-disclosure-unspecified" : "Nie określono",
++    "ai-disclosure-usage" : "Generatywna AI została użyta do stworzenia tego moda.",
++    "buttons" : {
++      "compatibility-note-none" : "(Nie określono)",
++      "compatibility-warning" : "Zostały zgłoszone problemy z tym modem, ale nadal możesz spróbować go zainstalować. Detale:",
++      "dependency" : "Ten mod jest już zainstalowany jako dependencja innego moda. Nie może on zostać odinstalowany, dopóki inne mody na nim polegają.",
++      "disable" : "Ten mod jest Włączony na tym profilu. Kliknij, aby go Wyłączyć, spowoduje to, że nie załaduje się on przy starcie gry, ale dalej będzie częścią tego profilu.",
++      "disable-queued" : "Ten mod jest w kolejce do Wyłączenia. Kliknij, aby anulować tę operację.",
++      "enable" : "Kliknij, aby włączyć tego moda.",
++      "enable-queued" : "Ten mod jest w kolejce do Włączenia. Kliknij, aby anulować tę operację.",
++      "hidden" : "Ten mod został ukryty przez autora.",
++      "install" : "Zainstaluj",
++      "install-tooltip" : "Kliknij, aby zainstalować tego moda.",
++      "not-installable" : "Nie możesz zainstalować tego moda. Powód:",
++      "queued" : "Ten mod jest już w kolejce do innej operacji.",
++      "queued-install" : "Ten mod jest w kolejce do zainstalowania. Kliknij, aby anulować tę operację.",
++      "queued-uninstall" : "Ten mod jest w kolejce do odinstalowania. Kliknij, aby anulować tę operację.",
++      "uninstall" : "Ten mod jest zainstalowany na tym profilu. Kliknij, aby go odinstalować.",
++      "wait" : "Poczekaj, aż aktualna operacja zostanie ukończona."
++    },
 +    "change-version" : "Zmień wersje",
 +    "change-version-any" : "Jakakolwiek",
 +    "change-version-or-newer" : "lub nowsza",
 +    "changelogs" : "Listy Zmian",
 +    "compatibility" : "Kompatybilność",
 +    "compatibility-branch" : "Mod został zgłoszony jako {state} na {branch}",
++    "compatibility-controller" : "Mod został zgłoszony jako {state} odnośnie wsparcia dla kontrolerów.",
 +    "compatibility-unknown" : "Nieznane",
 +    "compatibility-unknown-tooltip" : "Informacja o kompatybilności nie została jeszcze zgłoszona. Przetestuj ją i skontaktuj się z nami na Discord, abyśmy mogli ją zaktualizować!",
 +    "contributors" : "Autorzy <1>({authors})</1>",
@@ -8278,6 +8854,10 @@ index 0000000..0b7dc61
 +    "installed-version" : "Zainstalowana wersja",
 +    "latest-version" : "Najnowsza wersja",
 +    "mod-author" : "Mod autorstwa:",
++    "network-disclosure-no-usage" : "Deweloper moda potwierdza, że ten mod nie łączy się z sieciami zewnętrznymi.",
++    "network-disclosure-usage" : "Deweloper moda tak opisuje jego łączność z sieciami zewnętrznymi:",
++    "network-use-disclosure" : "Wykorzystanie sieci",
++    "network-use-disclosure-unspecified" : "Nie określono",
 +    "offline-mode" : "Tryb Offline jest włączony. Listy zmian i opisy są niedostępne.",
 +    "size" : "Rozmiar",
 +    "updated" : "Data Zaktualizowania:",
@@ -8290,22 +8870,22 @@ index 0000000..0b7dc61
 +    "compatibility-note-none" : "(Nie podano)",
 +    "compatibility-warning" : "Zostały zgłoszone problemy z tym modem, ale nadal możesz spróbować go zainstalować. Detale:",
 +    "dependency" : "Ten mod jest już zainstalowany jako dependencja innego moda. Nie może on zostać odinstalowany, dopóki inne mody na nim polegają.",
-+    "disable" : "Ten mod jest Włączony na tym profilu. Naciśnij, aby go Wyłączyć, spowoduje to, że nie załaduje się on przy starcie gry, ale dalej będzie częścią tego profilu.",
-+    "disable-queued" : "Ten mod jest w kolejce do Wyłączenia. Naciśnij, aby anulować tę operację.",
-+    "disabled-tooltip" : "Ten mod jest Wyłączony. Naciśnij ikonkę pauzy, aby go Włączyć.",
-+    "enable" : "Naciśnij, aby włączyć ten mod.",
-+    "enable-queued" : "Ten mod jest w kolejce do Włączenia. Naciśnij, aby anulować tę operację.",
-+    "favorite" : "Naciśnij, aby dodać ten mod do Ulubionych. Oznaczenie moda jako Ulubionego nie jest powiązane z tym czy jest zainstalowany - to sposób, aby śledzić moda, niezależnie od wybranego profilu.",
-+    "hidden" : "Ten mod jest ukryty przez autora",
-+    "install" : "Naciśnij, aby zainstalować ten mod.",
++    "disable" : "Ten mod jest Włączony na tym profilu. Kliknij, aby go Wyłączyć, spowoduje to, że nie załaduje się on przy starcie gry, ale dalej będzie częścią tego profilu.",
++    "disable-queued" : "Ten mod jest w kolejce do Wyłączenia. Kliknij, aby anulować tę operację.",
++    "disabled-tooltip" : "Ten mod jest Wyłączony. Kliknij ikonkę pauzy, aby go Włączyć.",
++    "enable" : "Kliknij, aby włączyć tego moda.",
++    "enable-queued" : "Ten mod jest w kolejce do Włączenia. Kliknij, aby anulować tę operację.",
++    "favorite" : "Kliknij, aby dodać ten mod do Ulubionych. Oznaczenie moda jako Ulubionego nie jest powiązane z tym czy jest zainstalowany - to sposób, aby śledzić moda, niezależnie od wybranego profilu.",
++    "hidden" : "Ten mod został ukryty przez autora.",
++    "install" : "Kliknij, aby zainstalować tego moda.",
 +    "no-tags" : "(nie podano)",
 +    "not-installable" : "Nie możesz zainstalować tego moda. Powód:",
 +    "queued" : "Ten mod jest już w kolejce do innej operacji.",
-+    "queued-install" : "Ten mod jest w kolejce do zainstalowania. Naciśnij, aby anulować tę operację.",
-+    "queued-uninstall" : "Ten mod jest w kolejce do odinstalowania. Naciśnij, aby anulować tę operację.",
++    "queued-install" : "Ten mod jest w kolejce do zainstalowania. Kliknij, aby anulować tę operację.",
++    "queued-uninstall" : "Ten mod jest w kolejce do odinstalowania. Kliknij, aby anulować tę operację.",
 +    "unavailable" : "Ten mod nie jest już dostępny na ficsit.app. Możesz chcieć go usunąć.",
-+    "unfavorite" : "Naciśnij, aby usunąć tego moda z Ulubionych.",
-+    "uninstall" : "Ten mod jest zainstalowany na tym profilu. Naciśnij, aby go odinstalować.",
++    "unfavorite" : "Kliknij, aby usunąć tego moda z Ulubionych.",
++    "uninstall" : "Ten mod jest zainstalowany na tym profilu. Kliknij, aby go odinstalować.",
 +    "wait" : "Poczekaj, aż aktualna operacja zostanie ukończona."
 +  },
 +  "mod" : {
@@ -8329,9 +8909,17 @@ index 0000000..0b7dc61
 +      "last-updated" : "Zaktualizowane",
 +      "name" : "Nazwa",
 +      "popularity" : "Popularność",
++      "search" : "Wyszukaj",
 +      "views" : "Wyświetlenia"
 +    },
-+    "search" : "Szukaj mody"
++    "search" : "Szukaj mody",
++    "tag" : {
++      "button-label" : "Filtruj według tagów",
++      "match-all" : "Dopasuj wszystkie",
++      "match-any" : "Dopasuj którekolwiek",
++      "match-mode" : "Tryb dopasowywania",
++      "none-available" : "Brak dostępnych tagów"
++    }
 +  },
 +  "mods-list" : {
 +    "no-mods-filtered" : "Żadne mody nie pasują do kryteriów wyszukiwania.",
@@ -8369,11 +8957,12 @@ index 0000000..0b7dc61
 +    "add" : "Dodaj",
 +    "advanced-note" : "Uwaga: niektóre znaki w nazwie użytkownika i haśle mogą wymagać poprzedzenia znakiem ucieczki (zazwyczaj znak odwrotnego ukośnika \"\\\").",
 +    "advanced-path-placeholder" : "użytkownik:hasło@host:port/ścieżka",
++    "connect-and-select-folder" : "Połącz i wybierz folder serwera",
 +    "existing-servers" : {
 +      "none-yet" : "Jeszcze nie zostały dodane żadne serwery. Dodaj jeden poniżej!",
 +      "title" : "Zarządzaj Istniejącymi Serwerami"
 +    },
-+    "failed-to-connect" : "Nie udało się połączyć z serwerem, naciśnij, aby spróbować ponownie",
++    "failed-to-connect" : "Nie udało się połączyć z serwerem, kliknij, aby spróbować ponownie",
 +    "get-help" : "Uzyskaj pomoc z łączeniem do serwerów",
 +    "host-placeholder" : "host",
 +    "invalid" : "SMM nie może zarządzać tą instalacją",
@@ -8407,7 +8996,7 @@ index 0000000..0b7dc61
 +    "copy-mod-list" : "Skopiuj listę modów",
 +    "debug" : "Debugowanie",
 +    "generate-debug-info" : "Wygeneruj informacje debugowania",
-+    "go-online-offline" : "Pójdź {offline, select, true {online} other {offline}}",
++    "go-online-offline" : "Przejdź w Tryb {offline, select, true {online} other {offline}}",
 +    "language" : "Język",
 +    "launch-button" : "Przycisk uruchamiania",
 +    "launch-button.button" : "Przycisk",
@@ -8481,10 +9070,10 @@ index 0000000..0b7dc61
 \ No newline at end of file
 diff --git a/frontend/src/lib/generated/i18n/pt-BR.json b/frontend/src/lib/generated/i18n/pt-BR.json
 new file mode 100644
-index 0000000..65dc070
+index 0000000..aeb60d8
 --- /dev/null
 +++ b/frontend/src/lib/generated/i18n/pt-BR.json
-@@ -0,0 +1,313 @@
+@@ -0,0 +1,353 @@
 +{
 +  "announcement" : {
 +    "go-offline" : "Ficar Offline",
@@ -8554,8 +9143,8 @@ index 0000000..65dc070
 +    "possibly-incompatible-mods" : "{versionPossiblyCompatible, plural, one {Um mod que {versionPossiblyCompatible, plural, one {is} other {are}} provavelmente incompatível com seu jogo} other {# mods que {versionPossiblyCompatible, plural, one {is} other {are}} provavelmente incompatível com seu jogo}}",
 +    "profile-change-queued" : "Mudanças ainda não foram feitas em seus arquivos mod. Clique no botão acima para aplicar o novo perfil.\n\n(Você está no modo de fila \"Iniciar manualmente\")",
 +    "ready" : "Você está pronto para fazer barulho!\n\nNota: O Mod Manager já concluiu a instalação dos arquivos mod para você. Você poderia iniciar o jogo usando seu inicializador do jogo e os mods ainda seriam carregados.",
-+    "reported-incompatible-mods" : "{reportedIncompatible, plural, one {One mod} other {# mods}} that {reportedIncompatible, plural, one {is} other {are}} reportado como Quebrado nesta versão do jogo. Leia o {versionIncompatible, plural, one {mod's} other {mods'}} descrição ou notas de compatibilidade para obter mais informações",
-+    "reported-possibly-compatible-mods" : "{reportedPossiblyCompatible, plural, one {One mod} other {# mods}} that {reportedPossiblyCompatible, plural, one {is} other {are}} reportado como Danificado nesta versão do jogo. Leia o {versionIncompatible, plural, one {mod's} other {mods'}} descrição ou notas de compatibilidade para obter mais informações",
++    "reported-incompatible-mods" : "{reportedIncompatible, plural, one {One mod} other {# mods}} that {reportedIncompatible, plural, one {is} other {are}} reportado como Quebrado nesta versão do jogo. Leia o {reportedIncompatible, plural, one {mod's} other {mods''}} descrição ou notas de compatibilidade para obter mais informações",
++    "reported-possibly-compatible-mods" : "{reportedPossiblyCompatible, plural, one {One mod} other {# mods}} that {reportedPossiblyCompatible, plural, one {is} other {are}} reportado como Danificado nesta versão do jogo. Leia o {reportedPossiblyCompatible, plural, one {mod's} other {mods''}} descrição ou notas de compatibilidade para obter mais informações",
 +    "you-have-warning-mods" : "Você tem:"
 +  },
 +  "left-bar" : {
@@ -8563,6 +9152,9 @@ index 0000000..65dc070
 +    "ficsit-app" : "ficsit.app (Repositório de Mods)",
 +    "game-version" : "Selecione a instalação do jogo",
 +    "help" : "Ajuda",
++    "install-info" : {
++      "server" : null
++    },
 +    "install-invalid" : "Inválido",
 +    "install-invalid-tooltip" : "Status: o SMM não pode gerenciar esta instalação",
 +    "install-loading" : "Carregando...",
@@ -8584,12 +9176,36 @@ index 0000000..65dc070
 +    "title" : "<1>{mod}</1>Registro de alterações"
 +  },
 +  "mod-details" : {
++    "ai-disclosure" : null,
++    "ai-disclosure-no-usage" : null,
++    "ai-disclosure-runtime-usage" : null,
++    "ai-disclosure-unspecified" : null,
++    "ai-disclosure-usage" : null,
++    "buttons" : {
++      "compatibility-note-none" : null,
++      "compatibility-warning" : null,
++      "dependency" : null,
++      "disable" : null,
++      "disable-queued" : null,
++      "enable" : null,
++      "enable-queued" : null,
++      "hidden" : null,
++      "install" : null,
++      "install-tooltip" : null,
++      "not-installable" : null,
++      "queued" : null,
++      "queued-install" : null,
++      "queued-uninstall" : null,
++      "uninstall" : null,
++      "wait" : null
++    },
 +    "change-version" : "Alterar versão",
 +    "change-version-any" : "Qualquer",
 +    "change-version-or-newer" : "Ou mais recente",
 +    "changelogs" : "Registros de alterações",
 +    "compatibility" : "Compatibilidade",
 +    "compatibility-branch" : "Este mod foi reportado como {state} na {branch}.",
++    "compatibility-controller" : null,
 +    "compatibility-unknown" : "Desconhecido",
 +    "compatibility-unknown-tooltip" : "Nenhuma informação de compatibilidade foi reportada para este mod ainda. Experimente e entre em contato conosco no Discord para que possa ser atualizado!",
 +    "contributors" : "Contribuidores <1>({authors})</1>",
@@ -8598,6 +9214,10 @@ index 0000000..65dc070
 +    "installed-version" : "Versão instalada",
 +    "latest-version" : "Versão mais recente",
 +    "mod-author" : "Um mod por:",
++    "network-disclosure-no-usage" : null,
++    "network-disclosure-usage" : null,
++    "network-use-disclosure" : null,
++    "network-use-disclosure-unspecified" : null,
 +    "offline-mode" : "O modo offline está ativado. Registros de alterações e descrições não estão disponíveis.",
 +    "size" : "Tamanho",
 +    "updated" : "Atualizado",
@@ -8649,9 +9269,17 @@ index 0000000..65dc070
 +      "last-updated" : "Última atualização",
 +      "name" : "Nome",
 +      "popularity" : "Nome",
++      "search" : null,
 +      "views" : "Visualizações"
 +    },
-+    "search" : "Pesquisar mods"
++    "search" : "Pesquisar mods",
++    "tag" : {
++      "button-label" : null,
++      "match-all" : null,
++      "match-any" : null,
++      "match-mode" : null,
++      "none-available" : null
++    }
 +  },
 +  "mods-list" : {
 +    "no-mods-filtered" : "Nenhum mod que corresponda aos seus filtros",
@@ -8689,6 +9317,7 @@ index 0000000..65dc070
 +    "add" : "Adicionar",
 +    "advanced-note" : "Observe que você pode ter que escapar certos caracteres no nome de usuário e na senha.",
 +    "advanced-path-placeholder" : "user:pass@host:port/path",
++    "connect-and-select-folder" : null,
 +    "existing-servers" : {
 +      "none-yet" : "Nenhum servidor adicionado ainda. Adicione um abaixo!",
 +      "title" : "Gerenciar Servidores Existentes"
@@ -8801,10 +9430,10 @@ index 0000000..65dc070
 \ No newline at end of file
 diff --git a/frontend/src/lib/generated/i18n/ru.json b/frontend/src/lib/generated/i18n/ru.json
 new file mode 100644
-index 0000000..650fd1c
+index 0000000..1789072
 --- /dev/null
 +++ b/frontend/src/lib/generated/i18n/ru.json
-@@ -0,0 +1,313 @@
+@@ -0,0 +1,353 @@
 +{
 +  "announcement" : {
 +    "go-offline" : "Перейти в офлайн",
@@ -8874,8 +9503,8 @@ index 0000000..650fd1c
 +    "possibly-incompatible-mods" : "{versionPossiblyCompatible, plural, one {Один мод, который {versionPossiblyCompatible, plural, one {возможно} other {возможно}} несовместим с вашей игрой} other {# модов, которые {versionPossiblyCompatible, plural, one {возможно} other {возможно}} несовместимы с вашей игрой}}",
 +    "profile-change-queued" : "Изменения в файлы модов ещё не внесены. Нажмите кнопку ниже, чтобы применить новый профиль.\n\nВы в режиме \"Запуск вручную\"",
 +    "ready" : "Вы готовы к действию!\n\nПримечание: Менеджер модов уже завершил установку файлов модов. Вы можете запустить игру через обычный лаунчер, и моды всё равно будут загружены.",
-+    "reported-incompatible-mods" : "{reportedIncompatible, plural, one {Один мод} other {# модов}} отмечен как неисправный для этой версии игры. Ознакомьтесь с описанием или примечаниями по совместимости {versionIncompatible, plural, one {этого мода} other {этих модов}} для получения дополнительной информации.",
-+    "reported-possibly-compatible-mods" : "{reportedPossiblyCompatible, plural, one {Один мод} other {# модов}} отмечен как повреждённый для этой версии игры. Ознакомьтесь с описанием или примечаниями по совместимости {versionIncompatible, plural, one {этого мода} other {этих модов}} для получения дополнительной информации.",
++    "reported-incompatible-mods" : "{reportedIncompatible, plural, one {Один мод} other {# модов}} отмечен как неисправный для этой версии игры. Ознакомьтесь с описанием или примечаниями по совместимости {reportedIncompatible, plural, one {этого мода} other {этих модов}} для получения дополнительной информации.",
++    "reported-possibly-compatible-mods" : "{reportedPossiblyCompatible, plural, one {Один мод} other {# модов}} отмечен как повреждённый для этой версии игры. Ознакомьтесь с описанием или примечаниями по совместимости {reportedPossiblyCompatible, plural, one {этого мода} other {этих модов}} для получения дополнительной информации.",
 +    "you-have-warning-mods" : "У вас:"
 +  },
 +  "left-bar" : {
@@ -8883,6 +9512,9 @@ index 0000000..650fd1c
 +    "ficsit-app" : "ficsit.app (Репозиторий модов)",
 +    "game-version" : "Выберите установку игры",
 +    "help" : "Помощь",
++    "install-info" : {
++      "server" : null
++    },
 +    "install-invalid" : "Недействительный",
 +    "install-invalid-tooltip" : "Статус: SMM не может управлять этой установкой",
 +    "install-loading" : "Загрузка...",
@@ -8904,12 +9536,36 @@ index 0000000..650fd1c
 +    "title" : "История изменений <1>{mod}</1>"
 +  },
 +  "mod-details" : {
++    "ai-disclosure" : null,
++    "ai-disclosure-no-usage" : null,
++    "ai-disclosure-runtime-usage" : null,
++    "ai-disclosure-unspecified" : null,
++    "ai-disclosure-usage" : null,
++    "buttons" : {
++      "compatibility-note-none" : null,
++      "compatibility-warning" : null,
++      "dependency" : null,
++      "disable" : null,
++      "disable-queued" : null,
++      "enable" : null,
++      "enable-queued" : null,
++      "hidden" : null,
++      "install" : null,
++      "install-tooltip" : null,
++      "not-installable" : null,
++      "queued" : null,
++      "queued-install" : null,
++      "queued-uninstall" : null,
++      "uninstall" : null,
++      "wait" : null
++    },
 +    "change-version" : "Изменить версию",
 +    "change-version-any" : "Любая",
 +    "change-version-or-newer" : "или новее",
 +    "changelogs" : "История изменений",
 +    "compatibility" : "Совместимость",
 +    "compatibility-branch" : "Этот мод был отмечен как {state} на {branch}.",
++    "compatibility-controller" : null,
 +    "compatibility-unknown" : "Неизвестно",
 +    "compatibility-unknown-tooltip" : "Информация о совместимости для этого мода ещё не предоставлена. Попробуйте его и свяжитесь с нами в Discord, чтобы обновить данные!",
 +    "contributors" : "Авторы <1>({authors})</1>",
@@ -8918,6 +9574,10 @@ index 0000000..650fd1c
 +    "installed-version" : "Установленная версия",
 +    "latest-version" : "Последняя версия",
 +    "mod-author" : "Мод от:",
++    "network-disclosure-no-usage" : null,
++    "network-disclosure-usage" : null,
++    "network-use-disclosure" : null,
++    "network-use-disclosure-unspecified" : null,
 +    "offline-mode" : "Офлайн-режим включён. История изменений и описания недоступны.",
 +    "size" : "Размер",
 +    "updated" : "Обновлено",
@@ -8969,9 +9629,17 @@ index 0000000..650fd1c
 +      "last-updated" : "Последнее обновление",
 +      "name" : "Название",
 +      "popularity" : "Популярность",
++      "search" : null,
 +      "views" : "Просмотры"
 +    },
-+    "search" : "Поиск модов"
++    "search" : "Поиск модов",
++    "tag" : {
++      "button-label" : null,
++      "match-all" : null,
++      "match-any" : null,
++      "match-mode" : null,
++      "none-available" : null
++    }
 +  },
 +  "mods-list" : {
 +    "no-mods-filtered" : " Нет модов, соответствующих вашим фильтрам",
@@ -9009,6 +9677,7 @@ index 0000000..650fd1c
 +    "add" : "Добавить",
 +    "advanced-note" : "Учтите, что вам, возможно, придётся экранировать определённые символы в имени пользователя и пароле",
 +    "advanced-path-placeholder" : "user:pass@host:port/path",
++    "connect-and-select-folder" : null,
 +    "existing-servers" : {
 +      "none-yet" : null,
 +      "title" : null
@@ -9121,148 +9790,179 @@ index 0000000..650fd1c
 \ No newline at end of file
 diff --git a/frontend/src/lib/generated/i18n/tr.json b/frontend/src/lib/generated/i18n/tr.json
 new file mode 100644
-index 0000000..03d5ab7
+index 0000000..6653fef
 --- /dev/null
 +++ b/frontend/src/lib/generated/i18n/tr.json
-@@ -0,0 +1,313 @@
+@@ -0,0 +1,353 @@
 +{
 +  "announcement" : {
-+    "go-offline" : null,
-+    "go-online" : null,
-+    "healthcheck" : null,
-+    "offline" : null
++    "go-offline" : "Çevrimdışı Moda Geç",
++    "go-online" : "Çevrimiçi Moda Geç",
++    "healthcheck" : "ficsit.app adresine ulaşılamadı. İnternet bağlantınızı kontrol edin veya çevrimdışı modu kullanmayı deneyin. (Mod Yöneticisi Ayarları > Çevrimdışı Moda Geç)",
++    "offline" : "Şu anda çevrimdışısınız. Bazı özellikler kullanılamayabilir. (Yeniden bağlanmak için Mod Yöneticisi Ayarları > Çevrimiçi Moda Geç seçeneğini kullanın.)"
 +  },
 +  "common" : {
-+    "add" : null,
-+    "cancel" : null,
-+    "close" : null,
-+    "delete" : null,
-+    "import" : null,
-+    "loading" : null,
-+    "rename" : null
++    "add" : "Ekle",
++    "cancel" : "İptal",
++    "close" : "Kapat",
++    "delete" : "Sil",
++    "import" : "İçe Aktar",
++    "loading" : "Yükleniyor...",
++    "rename" : "Yeniden Adlandır"
 +  },
 +  "error" : {
-+    "failed_to_generate_debug" : null,
-+    "generate_debug_info" : null,
-+    "help" : null,
-+    "invalid_installs" : null,
-+    "no_installs" : null,
-+    "open_log_docs" : null,
-+    "open_modding_discord" : null,
-+    "open_modding_discord.must_generate_debug_first" : null,
-+    "reporting_directions" : null,
-+    "title" : null
++    "failed_to_generate_debug" : "Hata ayıklama dosyası oluşturulurken bir hata oluştu. Daha fazla bilgi için Satisfactory Mod Manager günlük dosyalarını manuel olarak kontrol edin ve bu durumu Discord üzerinden bildirin. Nasıl yapılacağını öğrenmek ve dökümantasyonu açmak için aşağıdaki düğmeyi kullanın.",
++    "generate_debug_info" : "Hata Ayıklama Bilgisi Oluştur",
++    "help" : "Bir sorun mu var? Aşağıdaki düğmeye tıklayın ve oluşturulan ZIP dosyasını modlama Discord'undaki #help-using-mods kanalına gönderin.",
++    "invalid_installs" : "{invalidInstalls, plural, other {{invalidInstalls} geçersiz Satisfactory kurulumu bulundu} }",
++    "no_installs" : "Satisfactory kurulumu bulunamadı",
++    "open_log_docs" : "Günlük Kaydı Belgelerini Aç",
++    "open_modding_discord" : "Modlama Discord'unu Aç",
++    "open_modding_discord.must_generate_debug_first" : "Önce hata ayıklama bilgisi oluşturmalısınız",
++    "reporting_directions" : "Bir sorun mu var? Günlük kayıtlarını toplamak için aşağıdaki düğmeye tıklayın, ardından oluşturulan ZIP dosyasını modlama Discord'undaki #help-using-mods kanalına gönderin.",
++    "title" : "Bir şeyler ters gitti"
 +  },
 +  "external-install-mod" : {
-+    "already-installed" : null,
-+    "error-loading" : null,
-+    "in-queue" : null,
-+    "install" : null,
-+    "latest-version" : null,
-+    "title" : null,
-+    "version" : null
++    "already-installed" : "Zaten yüklü",
++    "error-loading" : "Mod ayrıntıları yüklenirken hata oluştu",
++    "in-queue" : "Sırada",
++    "install" : "Yükle",
++    "latest-version" : "En son sürüm",
++    "title" : "Mod yükle",
++    "version" : "Sürüm {version}"
 +  },
 +  "first_time_setup" : {
-+    "acknowledge" : null,
-+    "change_later_hint" : null,
-+    "intro" : null,
-+    "open_welcome_guide" : null,
++    "acknowledge" : "Başlayalım!",
++    "change_later_hint" : "Bu ayarları daha sonra istediğiniz zaman \"Mod Yöneticisi Ayarları\" menüsünden değiştirebilirsiniz.",
++    "intro" : "Başlamak için tercihlerinizi seçin.",
++    "open_welcome_guide" : "Karşılama Rehberini Aç",
 +    "option" : {
 +      "language" : {
-+        "title" : null
++        "title" : "Mümkün olan yerlerde bu dili kullan:"
 +      },
 +      "queue-auto-start" : {
-+        "disabled" : null,
-+        "enabled" : null,
-+        "title" : null
++        "disabled" : "\"Uygula\" düğmesine basmamı bekle",
++        "enabled" : "Değişiklikleri hemen uygula",
++        "title" : "Bir mode eklediğimde veya kaldırdığımda ya da profil değiştirdiğimde..."
 +      }
 +    },
-+    "title" : null
++    "title" : "Satisfactory Mod Manager'a Hoş Geldiniz!"
 +  },
 +  "launch-button" : {
-+    "apply-profile-change" : null,
-+    "apply-queued" : null,
-+    "are-you-sure-warning" : null,
-+    "cant-launch" : null,
-+    "cant-launch-tooltip" : null,
-+    "changes-queued" : null,
-+    "game-running" : null,
-+    "incompatible-mods" : null,
-+    "launch-in-progress" : null,
-+    "operation-in-progress" : null,
-+    "play" : null,
-+    "possibly-incompatible-mods" : null,
-+    "profile-change-queued" : null,
-+    "ready" : null,
-+    "reported-incompatible-mods" : null,
-+    "reported-possibly-compatible-mods" : null,
-+    "you-have-warning-mods" : null
++    "apply-profile-change" : "{profile} Profilini Uygula",
++    "apply-queued" : "{queued, plural, one {# değişikliği uygula} other {# değişikliği uygula}}",
++    "are-you-sure-warning" : "Başlatmak istediğinizden emin misiniz?",
++    "cant-launch" : "SMM bu kurulumu başlatamıyor",
++    "cant-launch-tooltip" : "Mod Yöneticisi bu kurulum türünü başlatamaz ancak mod dosyalarını yine de sizin için yönetir. Satisfactory'i kullandığınız oyun başlatıcısı üzerinden başlatın.",
++    "changes-queued" : "Değişiklikler henüz mod dosyalarınıza uygulanmadı. Sıraya aldığınız değişiklikleri uygulamak için aşağıdaki düğmeye tıklayın.\n\n(Kuyruk “Elle başlat” modundasınız.)",
++    "game-running" : "Oyun başlatıcınız, oyunun zaten çalıştığını veya hâlâ kapanma aşamasında olduğunu bildiriyor.",
++    "incompatible-mods" : "{versionIncompatible, plural, one {Oyununuzla uyumsuz olan ve yüklenmeyebilecek ya da oyunun çökmesine neden olabilecek {versionIncompatible} mod var} other {Oyununuzla uyumsuz olan ve yüklenmeyebilecek ya da oyunun çökmesine neden olabilecek {versionIncompatible} modlar var}}",
++    "launch-in-progress" : "Başlatılıyor...",
++    "operation-in-progress" : "Zaten devam eden bir işlem var.",
++    "play" : "Satisfactory Oyna",
++    "possibly-incompatible-mods" : "{versionPossiblyCompatible, plural, one {Oyununuzla büyük olasılıkla uyumsuz olan bir mod var} other {Oyununuzla büyük olasılıkla uyumsuz olan {versionPossiblyCompatible} mod var}}",
++    "profile-change-queued" : "Değişiklikler henüz mod dosyalarınıza uygulanmadı. Yeni profili uygulamak için aşağıdaki düğmeye tıklayın.\n\n(Kuyruk “Elle başlat” modundasınız.)",
++    "ready" : "Başlamaya hazırsınız!\n\nNot: Mod Yöneticisi mod dosyalarını yüklemeyi zaten tamamladı. Oyunu kullandığınız oyun başlatıcısından da başlatabilirsiniz; modlar yine yüklenecektir.",
++    "reported-incompatible-mods" : "Bu oyun sürümünde {reportedIncompatible, plural, one {# mod} other {# mod}} bozuk olarak bildirilmiş. Daha fazla bilgi için {reportedIncompatible, plural, one {modun} other {modların}} açıklamasını veya uyumluluk notlarını okuyun.",
++    "reported-possibly-compatible-mods" : "Bu oyun sürümünde {reportedPossiblyCompatible, plural, one {# mod} other {# mod}} hasarlı olarak bildirilmiş. Daha fazla bilgi için {reportedPossiblyCompatible, plural, one {modun} other {modların}} açıklamasını veya uyumluluk notlarını okuyun.",
++    "you-have-warning-mods" : "Şunlara sahipsiniz:"
 +  },
 +  "left-bar" : {
-+    "export" : null,
-+    "ficsit-app" : null,
-+    "game-version" : null,
-+    "help" : null,
-+    "install-invalid" : null,
-+    "install-invalid-tooltip" : null,
-+    "install-loading" : null,
-+    "install-loading-tooltip" : null,
-+    "install-unknown" : null,
-+    "install-unknown-tooltip" : null,
-+    "links" : null,
-+    "manage-servers" : null,
-+    "mods-off" : null,
-+    "mods-on" : null,
-+    "other" : null,
-+    "profile" : null,
-+    "queue-blocking-switching-tooltip" : null,
-+    "satisfactory-modding-discord" : null,
-+    "smm-github" : null,
-+    "updates" : null
++    "export" : "Dışa Aktar",
++    "ficsit-app" : "ficsit.app (Mod Deposu)",
++    "game-version" : "Oyun Kurulumunu Seç",
++    "help" : "Yardım",
++    "install-info" : {
++      "server" : null
++    },
++    "install-invalid" : "Geçersiz",
++    "install-invalid-tooltip" : "Durum: SMM bu kurulumu yönetemiyor",
++    "install-loading" : "Yükleniyor...",
++    "install-loading-tooltip" : "Durum: Yükleniyor...",
++    "install-unknown" : "Bilinmiyor",
++    "install-unknown-tooltip" : "Durum: Bu kurulum hakkında bilgi alınamadı",
++    "links" : "Bağlantılar",
++    "manage-servers" : "Sunucuları Yönet",
++    "mods-off" : "Modlar kapalı",
++    "mods-on" : "Modlar açık",
++    "other" : "Diğer",
++    "profile" : "Profil",
++    "queue-blocking-switching-tooltip" : "{number, plural, one {Sırada {number} işlem var. Kurulum veya profil değiştirmeden önce işlemi uygulayın ya da iptal edin.} other {Sırada {number} işlem var. Kurulum veya profil değiştirmeden önce işlemleri uygulayın ya da iptal edin.}}",
++    "satisfactory-modding-discord" : "Satisfactory Modding Discord",
++    "smm-github" : "SMM GitHub",
++    "updates" : "Güncellemeler"
 +  },
 +  "mod-changelog" : {
-+    "title" : null
++    "title" : "<1>{mod}</1> Değişiklik Günlüğü"
 +  },
 +  "mod-details" : {
-+    "change-version" : null,
-+    "change-version-any" : null,
-+    "change-version-or-newer" : null,
-+    "changelogs" : null,
-+    "compatibility" : null,
-+    "compatibility-branch" : null,
-+    "compatibility-unknown" : null,
-+    "compatibility-unknown-tooltip" : null,
-+    "contributors" : null,
-+    "created" : null,
-+    "downloads" : null,
-+    "installed-version" : null,
-+    "latest-version" : null,
-+    "mod-author" : null,
-+    "offline-mode" : null,
-+    "size" : null,
-+    "updated" : null,
-+    "view-on-ficsit-app" : null,
-+    "views" : null
++    "ai-disclosure" : null,
++    "ai-disclosure-no-usage" : null,
++    "ai-disclosure-runtime-usage" : null,
++    "ai-disclosure-unspecified" : null,
++    "ai-disclosure-usage" : null,
++    "buttons" : {
++      "compatibility-note-none" : null,
++      "compatibility-warning" : null,
++      "dependency" : null,
++      "disable" : null,
++      "disable-queued" : null,
++      "enable" : null,
++      "enable-queued" : null,
++      "hidden" : null,
++      "install" : null,
++      "install-tooltip" : null,
++      "not-installable" : null,
++      "queued" : null,
++      "queued-install" : null,
++      "queued-uninstall" : null,
++      "uninstall" : null,
++      "wait" : null
++    },
++    "change-version" : "Sürümü Değiştir",
++    "change-version-any" : "Herhangi Biri",
++    "change-version-or-newer" : "veya daha yenisi",
++    "changelogs" : "Değişiklik Günlükleri",
++    "compatibility" : "Uyumluluk",
++    "compatibility-branch" : "Bu mod, {branch} dalında {state} olarak bildirilmiş.",
++    "compatibility-controller" : null,
++    "compatibility-unknown" : "Bilinmiyor",
++    "compatibility-unknown-tooltip" : "Bu mod için henüz uyumluluk bilgisi bildirilmemiş. Modu deneyip bilginin güncellenemebilmesi için Discord üzerinden bizimle iletişime geçebilirsiniz!",
++    "contributors" : "Katkıda Bulunanlar <1>({authors})</1>",
++    "created" : "Oluşturulma Tarihi",
++    "downloads" : "Toplam İndirme",
++    "installed-version" : "Yüklü Sürüm",
++    "latest-version" : "En Son Sürüm",
++    "mod-author" : "Mod geliştiricisi:",
++    "network-disclosure-no-usage" : null,
++    "network-disclosure-usage" : null,
++    "network-use-disclosure" : null,
++    "network-use-disclosure-unspecified" : null,
++    "offline-mode" : "Çevrimdışı mod etkin. Değişiklik günlükleri ve açıklamalar kullanılamıyor.",
++    "size" : "Boyut",
++    "updated" : "Güncellenme Tarihi",
++    "view-on-ficsit-app" : "ficsit.app'te Görüntüle",
++    "views" : "Görüntülenme"
 +  },
 +  "mod-list-item" : {
-+    "by-author" : null,
-+    "compatibility-note" : null,
-+    "compatibility-note-none" : null,
-+    "compatibility-warning" : null,
-+    "dependency" : null,
-+    "disable" : null,
-+    "disable-queued" : null,
-+    "disabled-tooltip" : null,
-+    "enable" : null,
-+    "enable-queued" : null,
-+    "favorite" : null,
-+    "hidden" : null,
-+    "install" : null,
-+    "no-tags" : null,
-+    "not-installable" : null,
-+    "queued" : null,
-+    "queued-install" : null,
-+    "queued-uninstall" : null,
++    "by-author" : "Tarafından",
++    "compatibility-note" : "Bu mod, bu oyun sürümünde {state} olarak bildirilmiş.",
++    "compatibility-note-none" : "(Belirtilmemiş)",
++    "compatibility-warning" : "Bu modla ilgili sorunlar bildirilmiş, ancak yine de yüklemeyi deneyebilirsiniz. Ayrıntılar:",
++    "dependency" : "Bu mod, başka bir modun bağımlılığı olarak zaten yüklü. Diğer modlar buna bağlı olduğu sürece kaldırılamaz.",
++    "disable" : "Bu mod bu profilde etkin. Devre dışı bırakmak için tıklayın. Bu işlem, oyunu başlattığınızda modun yüklenmesini engeller ancak modu profilin bir parçası olarak tutar.",
++    "disable-queued" : "Bu mod devre dışı bırakılmak üzere sıraya alındı. İşlemi iptal etmek için tıklayın.",
++    "disabled-tooltip" : "Bu mod devre dışı. Etkinleştirmek için duraklatma simgesine tıklayın.",
++    "enable" : "Bu modu etkinleştirmek için tıklayın.",
++    "enable-queued" : "Bu mod etkinleştirilmek üzere sıraya alındı. İşlemi iptal etmek için tıklayın.",
++    "favorite" : "Bu modu favorilerinize eklemek için tıklayın. Bir modun favorilere eklenmesi, yüklü olup olmamasından bağımsızdır; seçili profiliniz ne olursa olsun modu daha sonra kolayca bulmanızı sağlar.",
++    "hidden" : "Bu mod geliştiricisi tarafından gizlendi.",
++    "install" : "Bu modu yüklemek için tıklayın.",
++    "no-tags" : "(etiket yok)",
++    "not-installable" : "Bu modu yükleyemezsiniz. Nedeni:",
++    "queued" : "Bu mod başka bir işlem için zaten sıraya alınmış.",
++    "queued-install" : "Bu mod yüklenmek üzere sıraya alındı. İşlemi iptal etmek için tıklayın.",
++    "queued-uninstall" : "Bu mod kaldırılmak üzere sıraya alındı. İşlemi iptal etmek için tıklayın.",
 +    "unavailable" : null,
 +    "unfavorite" : null,
 +    "uninstall" : null,
@@ -9289,9 +9989,17 @@ index 0000000..03d5ab7
 +      "last-updated" : null,
 +      "name" : null,
 +      "popularity" : null,
++      "search" : null,
 +      "views" : null
 +    },
-+    "search" : null
++    "search" : null,
++    "tag" : {
++      "button-label" : null,
++      "match-all" : null,
++      "match-any" : null,
++      "match-mode" : null,
++      "none-available" : null
++    }
 +  },
 +  "mods-list" : {
 +    "no-mods-filtered" : null,
@@ -9329,6 +10037,7 @@ index 0000000..03d5ab7
 +    "add" : null,
 +    "advanced-note" : null,
 +    "advanced-path-placeholder" : null,
++    "connect-and-select-folder" : null,
 +    "existing-servers" : {
 +      "none-yet" : null,
 +      "title" : null
@@ -9441,10 +10150,10 @@ index 0000000..03d5ab7
 \ No newline at end of file
 diff --git a/frontend/src/lib/generated/i18n/zh-Hans.json b/frontend/src/lib/generated/i18n/zh-Hans.json
 new file mode 100644
-index 0000000..d9b69a1
+index 0000000..faf01b7
 --- /dev/null
 +++ b/frontend/src/lib/generated/i18n/zh-Hans.json
-@@ -0,0 +1,313 @@
+@@ -0,0 +1,353 @@
 +{
 +  "announcement" : {
 +    "go-offline" : "进入离线模式",
@@ -9514,7 +10223,7 @@ index 0000000..d9b69a1
 +    "possibly-incompatible-mods" : "{versionPossiblyCompatible, plural, other {{versionPossiblyCompatible} 个模组可能与您的游戏不兼容}}",
 +    "profile-change-queued" : "模组文件尚未进行更改。单击以应用新配置。\n\n（队列模式为手动开始）",
 +    "ready" : "准备就绪！\n\n注意：模组管理器已经为您完成了模组的安装。也可以从游戏启动器正常启动游戏，模组仍会加载。",
-+    "reported-incompatible-mods" : "{reportedPossiblyCompatible} 个模组已被报告损坏，请阅读模组描述或兼容性说明",
++    "reported-incompatible-mods" : "{reportedIncompatible} 个模组已被报告损坏，请阅读模组描述或兼容性说明",
 +    "reported-possibly-compatible-mods" : "{reportedPossiblyCompatible} 个模组已被报告危险，请阅读模组描述或兼容性说明",
 +    "you-have-warning-mods" : "您有："
 +  },
@@ -9523,6 +10232,9 @@ index 0000000..d9b69a1
 +    "ficsit-app" : "ficsit.app（模组仓库）",
 +    "game-version" : "选择已安装游戏",
 +    "help" : "帮助",
++    "install-info" : {
++      "server" : null
++    },
 +    "install-invalid" : "无效",
 +    "install-invalid-tooltip" : "状态：SMM 无法管理此游戏版本",
 +    "install-loading" : "加载中…",
@@ -9544,12 +10256,36 @@ index 0000000..d9b69a1
 +    "title" : "<1>{mod}</1> 更新日志"
 +  },
 +  "mod-details" : {
++    "ai-disclosure" : null,
++    "ai-disclosure-no-usage" : null,
++    "ai-disclosure-runtime-usage" : null,
++    "ai-disclosure-unspecified" : null,
++    "ai-disclosure-usage" : null,
++    "buttons" : {
++      "compatibility-note-none" : null,
++      "compatibility-warning" : null,
++      "dependency" : null,
++      "disable" : null,
++      "disable-queued" : null,
++      "enable" : null,
++      "enable-queued" : null,
++      "hidden" : null,
++      "install" : null,
++      "install-tooltip" : null,
++      "not-installable" : null,
++      "queued" : null,
++      "queued-install" : null,
++      "queued-uninstall" : null,
++      "uninstall" : null,
++      "wait" : null
++    },
 +    "change-version" : "更改版本",
 +    "change-version-any" : "任意版本",
 +    "change-version-or-newer" : "或更新",
 +    "changelogs" : "更新日志",
 +    "compatibility" : "兼容性",
 +    "compatibility-branch" : "该模组在 {branch} 中被报告 {state}。",
++    "compatibility-controller" : null,
 +    "compatibility-unknown" : "未知",
 +    "compatibility-unknown-tooltip" : "目前没有报告兼容性信息。请测试并在 Discord 上联系我们，以保持更新。",
 +    "contributors" : "贡献者 <1>（{authors}）</1>",
@@ -9558,6 +10294,10 @@ index 0000000..d9b69a1
 +    "installed-version" : "已安装版本",
 +    "latest-version" : "最新版本",
 +    "mod-author" : "作者：",
++    "network-disclosure-no-usage" : null,
++    "network-disclosure-usage" : null,
++    "network-use-disclosure" : null,
++    "network-use-disclosure-unspecified" : null,
 +    "offline-mode" : "离线模式已启用。无法浏览更新日志和模组详情。",
 +    "size" : "大小",
 +    "updated" : "更新于",
@@ -9609,9 +10349,17 @@ index 0000000..d9b69a1
 +      "last-updated" : "最近更新",
 +      "name" : "名称",
 +      "popularity" : "近期人气",
++      "search" : null,
 +      "views" : "浏览量"
 +    },
-+    "search" : "搜索模组"
++    "search" : "搜索模组",
++    "tag" : {
++      "button-label" : null,
++      "match-all" : null,
++      "match-any" : null,
++      "match-mode" : null,
++      "none-available" : null
++    }
 +  },
 +  "mods-list" : {
 +    "no-mods-filtered" : "没有符合条件的模组",
@@ -9649,6 +10397,7 @@ index 0000000..d9b69a1
 +    "add" : "添加",
 +    "advanced-note" : "请注意转义用户名和密码中的某些字符",
 +    "advanced-path-placeholder" : "user:pass@host:port/path",
++    "connect-and-select-folder" : null,
 +    "existing-servers" : {
 +      "none-yet" : null,
 +      "title" : null
@@ -9761,10 +10510,10 @@ index 0000000..d9b69a1
 \ No newline at end of file
 diff --git a/frontend/src/lib/generated/i18n/zh-Hant.json b/frontend/src/lib/generated/i18n/zh-Hant.json
 new file mode 100644
-index 0000000..4ef7c49
+index 0000000..322ee36
 --- /dev/null
 +++ b/frontend/src/lib/generated/i18n/zh-Hant.json
-@@ -0,0 +1,313 @@
+@@ -0,0 +1,353 @@
 +{
 +  "announcement" : {
 +    "go-offline" : "進入離線模式",
@@ -9834,8 +10583,8 @@ index 0000000..4ef7c49
 +    "possibly-incompatible-mods" : "{versionPossiblyCompatible, plural, other {# 個模組可能與您的遊戲不相容}}",
 +    "profile-change-queued" : "變更尚未套用，點擊套用按鈕以套用新設定",
 +    "ready" : "準備就緒！\n\n注意： 模組管理器已經為您完成了模組的安裝。您可以使用遊戲啟動器啟動遊戲，模組仍會載入。",
-+    "reported-incompatible-mods" : "{reportedIncompatible}個模組被回報可能不相容於這個遊戲版本，請閱讀{versionIncompatible}模組的描述或相容性說明。\n",
-+    "reported-possibly-compatible-mods" : "{reportedIncompatible}個模組被回報在這個遊戲版本中無法使用，請閱讀{versionIncompatible}模組的描述或相容性說明。\n",
++    "reported-incompatible-mods" : "{reportedIncompatible}個模組被回報可能不相容於這個遊戲版本，請閱讀{reportedIncompatible}模組的描述或相容性說明。\n",
++    "reported-possibly-compatible-mods" : "{reportedPossiblyCompatible}個模組被回報在這個遊戲版本中無法使用，請閱讀{reportedPossiblyCompatible}模組的描述或相容性說明。\n",
 +    "you-have-warning-mods" : "您有："
 +  },
 +  "left-bar" : {
@@ -9843,6 +10592,9 @@ index 0000000..4ef7c49
 +    "ficsit-app" : "ficsit.app（模組儲存庫）",
 +    "game-version" : "選擇已安裝遊戲",
 +    "help" : "幫助",
++    "install-info" : {
++      "server" : null
++    },
 +    "install-invalid" : "無效",
 +    "install-invalid-tooltip" : "狀態：SMM無法管理這個遊戲版本",
 +    "install-loading" : "載入中...",
@@ -9864,12 +10616,36 @@ index 0000000..4ef7c49
 +    "title" : "<1>{mod}</1>變更日誌"
 +  },
 +  "mod-details" : {
++    "ai-disclosure" : null,
++    "ai-disclosure-no-usage" : null,
++    "ai-disclosure-runtime-usage" : null,
++    "ai-disclosure-unspecified" : null,
++    "ai-disclosure-usage" : null,
++    "buttons" : {
++      "compatibility-note-none" : null,
++      "compatibility-warning" : null,
++      "dependency" : null,
++      "disable" : null,
++      "disable-queued" : null,
++      "enable" : null,
++      "enable-queued" : null,
++      "hidden" : null,
++      "install" : null,
++      "install-tooltip" : null,
++      "not-installable" : null,
++      "queued" : null,
++      "queued-install" : null,
++      "queued-uninstall" : null,
++      "uninstall" : null,
++      "wait" : null
++    },
 +    "change-version" : "變更版本",
 +    "change-version-any" : "任意",
 +    "change-version-or-newer" : "或更新",
 +    "changelogs" : "變更日誌",
 +    "compatibility" : "相容性",
 +    "compatibility-branch" : "這個模組在{branch}被回報為{state}",
++    "compatibility-controller" : null,
 +    "compatibility-unknown" : "未知",
 +    "compatibility-unknown-tooltip" : "目前沒有已知的相容性資訊。請測試它並在 Discord 上聯絡我們，讓他們可以被更新！",
 +    "contributors" : "貢獻者<1>（{authors}）</1>",
@@ -9878,6 +10654,10 @@ index 0000000..4ef7c49
 +    "installed-version" : "已安裝版本",
 +    "latest-version" : "最新版本",
 +    "mod-author" : "作者：",
++    "network-disclosure-no-usage" : null,
++    "network-disclosure-usage" : null,
++    "network-use-disclosure" : null,
++    "network-use-disclosure-unspecified" : null,
 +    "offline-mode" : "離線模式已啟用，更改日誌及描述不可用。",
 +    "size" : "大小",
 +    "updated" : "更新於",
@@ -9929,9 +10709,17 @@ index 0000000..4ef7c49
 +      "last-updated" : null,
 +      "name" : null,
 +      "popularity" : null,
++      "search" : null,
 +      "views" : null
 +    },
-+    "search" : null
++    "search" : null,
++    "tag" : {
++      "button-label" : null,
++      "match-all" : null,
++      "match-any" : null,
++      "match-mode" : null,
++      "none-available" : null
++    }
 +  },
 +  "mods-list" : {
 +    "no-mods-filtered" : null,
@@ -9969,6 +10757,7 @@ index 0000000..4ef7c49
 +    "add" : null,
 +    "advanced-note" : null,
 +    "advanced-path-placeholder" : null,
++    "connect-and-select-folder" : null,
 +    "existing-servers" : {
 +      "none-yet" : null,
 +      "title" : null

@@ -10,6 +10,8 @@
   openssl,
   onnxruntime,
   webkitgtk_4_1,
+  aws-lc,
+  oniguruma,
   gtk3,
   glib,
   gdk-pixbuf,
@@ -33,29 +35,31 @@
   dbus,
   gvfs,
   libheif,
+  libgphoto2,
   glib-networking,
   nodejs_24,
   npmHooks,
   cargo-tauri,
   writableTmpDirAsHomeHook,
+  nix-update-script,
 }:
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "rapidraw";
-  version = "1.5.8";
+  version = "1.7.1";
 
   src = fetchFromGitHub {
     owner = "CyberTimon";
     repo = "RapidRAW";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-LbAEQwZeFeiKV6lVt8vh+mZpqlJ02RSHs0rZEMeMRc4=";
+    hash = "sha256-+C6L/1Yo7hqDw5dLso96UvjFUkt27R0+B6DwN/otnsk=";
   };
 
-  cargoHash = "sha256-vx4+5aMxML5Cp1s7HKHSOYS4d4HaAGO2l6jMZuFPUsQ=";
+  cargoHash = "sha256-EuR0faese+x90Pc4Fu4rsXc+zLeUdqZGnJuj8sRA2co=";
 
   npmDeps = fetchNpmDeps {
     inherit (finalAttrs) src;
-    hash = "sha256-JtkzeCt21KIEshvoCHWo1QoxUgvVJN1loJrUHgvV4qE=";
+    hash = "sha256-MbecY5iU1Swc1gCPsIaiiOJ2/BZx7j5+qSW9tH5tyKs=";
   };
 
   nativeBuildInputs = [
@@ -65,10 +69,13 @@ rustPlatform.buildRustPackage (finalAttrs: {
     nodejs_24
     npmHooks.npmConfigHook
     cargo-tauri.hook
+    rustPlatform.bindgenHook
     writableTmpDirAsHomeHook
   ];
 
   buildInputs = [
+    aws-lc
+    oniguruma
     nodejs_24
     glib-networking
     openssl
@@ -92,14 +99,15 @@ rustPlatform.buildRustPackage (finalAttrs: {
     zlib
     libGL
     dbus
-    gvfs
     libheif
     onnxruntime
     wrapGAppsHook4
+    libgphoto2
   ]
   ++ lib.optionals stdenv.hostPlatform.isLinux [
     webkitgtk_4_1
     libappindicator
+    gvfs
   ];
 
   cargoRoot = "src-tauri";
@@ -113,10 +121,17 @@ rustPlatform.buildRustPackage (finalAttrs: {
     substituteInPlace src-tauri/tauri.conf.json \
       --replace-fail '  "identifier": "io.github.CyberTimon.RapidRAW",' '  "identifier": "io.github.CyberTimon.RapidRAW", "mainBinaryName": "rapidraw",'
 
-    # Disable downloading of ONNX runtime library this is correctly linked during postInstall
+    # Patch out required runtime dependencies to avoid downloading them during the build
+    # onnxruntime is correctly linked during postInstall
     substituteInPlace src-tauri/build.rs \
-      --replace-fail 'if !is_valid' 'if false'
+      --replace-fail 'runtime_libraries(&target_os, &target_arch)' 'Vec::<(&str, &str, &str)>::new()'
   '';
+
+  tauriBuildFlags = [
+    "--no-sign"
+    "--features"
+    "tethering"
+  ];
 
   dontWrapGApps = true;
 
@@ -151,6 +166,8 @@ rustPlatform.buildRustPackage (finalAttrs: {
       wrapGApp "$out/Applications/RapidRAW.app/Contents/MacOS/rapidraw" \
         --set ORT_STRATEGY "system"
     '';
+
+  passthru.updateScript = nix-update-script { };
 
   meta = {
     description = "Blazingly-fast, non-destructive, and GPU-accelerated RAW image editor built with performance in mind";

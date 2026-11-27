@@ -22,20 +22,18 @@ backendStdenv.mkDerivation (finalAttrs: {
   # NOTE: Depends on the CUDA package set, so use cudaNamePrefix.
   name = "${cudaNamePrefix}-${finalAttrs.pname}-${finalAttrs.version}";
   pname = "gdrcopy";
-  version = "2.6";
+  version = "2.7";
 
   src = fetchFromGitHub {
     owner = "NVIDIA";
     repo = "gdrcopy";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-Waq/Of0LcLDqyaWaU47lorJcG30CijcdTsvf9nMqgrg=";
+    hash = "sha256-FJ6vF/nzehfCv1ft2zT3OQzazfSpgifB5umhtk1FgwQ=";
   };
 
   outputs = [ "out" ];
 
-  nativeBuildInputs = [
-    cuda_nvcc
-  ];
+  nativeBuildInputs = [ cuda_nvcc ];
 
   postPatch = ''
     nixLog "patching shebang in $PWD/config_arch"
@@ -86,6 +84,14 @@ backendStdenv.mkDerivation (finalAttrs: {
     "exes"
   ];
 
+  # Neither is needed at runtime: no binary here has libcudart in DT_NEEDED, and libcuda.so.1 comes from the driver.
+  # nvlink records both in the device code of gdrcopy_pplat, the only test built with relocatable device code;
+  # cuda_nvcc's nvlink wrapper removes them.
+  disallowedRequisites = [
+    (lib.getBin cuda_nvcc)
+    (lib.getLib cuda_cudart)
+  ];
+
   # Tests require gdrdrv be installed (don't know how to communicate dependency on the driver).
   doCheck = false;
 
@@ -102,6 +108,7 @@ backendStdenv.mkDerivation (finalAttrs: {
   meta = {
     description = "Fast GPU memory copy library based on NVIDIA GPUDirect RDMA technology";
     homepage = "https://github.com/NVIDIA/gdrcopy";
+    changelog = "https://github.com/NVIDIA/gdrcopy/blob/${finalAttrs.src.rev}/CHANGELOG.md";
     license = licenses.mit;
     platforms = [
       "aarch64-linux"

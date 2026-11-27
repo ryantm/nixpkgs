@@ -14,18 +14,18 @@
 }:
 
 let
-  package = buildGoModule rec {
+  package = buildGoModule (finalAttrs: {
     pname = "opentofu";
-    version = "1.12.4";
+    version = "1.13.10";
 
     src = fetchFromGitHub {
       owner = "opentofu";
       repo = "opentofu";
-      tag = "v${version}";
-      hash = "sha256-WuSvKev+kLbW0TVRJacEtX2o0fueZ5c2UYcVXQo4Q9Q=";
+      tag = "v${finalAttrs.version}";
+      hash = "sha256-hMg5nNIKu3TKdfwjsEL+6HACFG+HZ/ckoRdetiFzHyc=";
     };
 
-    vendorHash = "sha256-t4RVH90TSTwxNPR2tKQsk8qd6d2OP8MmjAjgIZx7OVY=";
+    vendorHash = "sha256-NwHu+t6GFPCGMLt9PHdz+PMAzcrUBGXwmi5vvl2NsEw=";
     ldflags = [
       "-s"
       "-w"
@@ -35,11 +35,6 @@ let
 
     nativeBuildInputs = [ installShellFiles ];
     patches = [ ./provider-path-1_12.patch ];
-
-    postPatch = ''
-      substituteInPlace go.mod \
-        --replace-fail "go 1.26.4" "go 1.26.3"
-    '';
 
     passthru = {
       inherit plugins;
@@ -72,7 +67,7 @@ let
     meta = {
       description = "Tool for building, changing, and versioning infrastructure";
       homepage = "https://opentofu.org/";
-      changelog = "https://github.com/opentofu/opentofu/blob/v${version}/CHANGELOG.md";
+      changelog = "https://github.com/opentofu/opentofu/blob/v${finalAttrs.version}/CHANGELOG.md";
       license = lib.licenses.mpl20;
       maintainers = with lib.maintainers; [
         nickcao
@@ -80,7 +75,7 @@ let
       ];
       mainProgram = "tofu";
     };
-  };
+  });
 
   opentofu_plugins_test =
     let

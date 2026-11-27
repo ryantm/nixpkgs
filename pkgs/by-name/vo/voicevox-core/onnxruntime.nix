@@ -43,10 +43,6 @@ stdenv.mkDerivation (finalAttrs: {
         id = "linux-arm64";
         hash = "sha256-J27twAe2lDJPWbw1ws+QQXJOt4ZghDemSfCW7eo5Q6k=";
       };
-      "x86_64-darwin" = fetchArtifact {
-        id = "osx-x86_64";
-        hash = "sha256-We3IYCUtu39kzC63K9SykEpt98NfM9yAgkNbnxWlBd8=";
-      };
       "aarch64-darwin" = fetchArtifact {
         id = "osx-arm64";
         hash = "sha256-ltfqGSigoVSFSS03YhOH31D0CnkuKmgX1N9z7NGFcfI=";
@@ -56,12 +52,13 @@ stdenv.mkDerivation (finalAttrs: {
   meta = {
     license = with lib.licenses; [
       mit
-      {
-        name = "VOICEVOX ONNX Runtime Terms of Use";
+      (mkLicense {
+        shortName = "voicevox-onnx";
+        fullName = "VOICEVOX ONNX Runtime Terms of Use";
         url = "https://github.com/VOICEVOX/voicevox_resource/blob/main/onnxruntime/README.md";
         free = false;
         redistributable = true;
-      }
+      })
     ];
     maintainers = with lib.maintainers; [
       tomasajt

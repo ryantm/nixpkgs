@@ -4,51 +4,31 @@
   fetchurl,
   fetchpatch2,
   fetchFromGitHub,
-  python,
+  python3,
+  abseil-cpp,
   ada,
   brotli,
   c-ares,
   gtest,
   hdrhistogram_c,
   libffiReal,
+  libhwy,
   libuv,
   lief,
   llhttp,
   merve,
   nbytes,
   nghttp2,
-  nghttp3,
-  ngtcp2,
   openssl,
   simdjson,
   simdutf,
-  simdutf_6 ? (
-    simdutf.overrideAttrs (
-      {
-        version = "6.5.0";
-
-        src = fetchFromGitHub {
-          owner = "simdutf";
-          repo = "simdutf";
-          rev = "v6.5.0";
-          hash = "sha256-bZ4r62GMz2Dkd3fKTJhelitaA8jUBaDjG6jOysEg8Nk=";
-        };
-      }
-      // (lib.optionalAttrs stdenv.buildPlatform.isDarwin {
-        # Fix build on darwin
-        postPatch = ''
-          substituteInPlace tools/CMakeLists.txt --replace-fail '-Wl,--gc-sections' ""
-        '';
-      })
-    )
-  ),
   sqlite,
   temporal_capi,
   uvwasi,
   zlib,
   zstd,
   icu,
-  bash,
+  bashNonInteractive,
   ninja,
   pkgconf,
   unixtools,
@@ -137,16 +117,18 @@ let
       null;
   # TODO: also handle MIPS flags (mips_arch, mips_fpu, mips_float_abi).
 
-  useSharedAdaAndSimd = lib.versionAtLeast version "22.2";
+  useSharedAbseilAndHighway = lib.versionAtLeast version "26.9";
+  useSharedAdaAndSimdjson = lib.versionAtLeast version "22.2";
+  useSharedSimdutf = lib.versionAtLeast version "26.10";
   useSharedFFI = lib.versionAtLeast version "26.1";
   useSharedGtestAndHistogram = lib.versionAtLeast version (
     if majorVersion == "24" then "24.14.0" else "25.4"
   );
   useSharedNBytes = lib.versionAtLeast version (if majorVersion == "24" then "24.14.0" else "25.5");
   useSharedLief = lib.versionAtLeast version "25.6";
-  useSharedMerve = lib.versionAtLeast version (if majorVersion == 24 then "24.14.0" else "25.6.1");
+  useSharedMerve = lib.versionAtLeast version (if majorVersion == "24" then "24.14.0" else "25.6.1");
   useSharedSQLite = lib.versionAtLeast version "22.5";
-  useSharedTemporal = majorVersion == "26";
+  useSharedTemporal = lib.versionAtLeast version "26";
   useSharedZstd = lib.versionAtLeast version "22.15";
 
   sharedLibDeps = {
@@ -154,8 +136,6 @@ let
       brotli
       libuv
       nghttp2
-      nghttp3
-      ngtcp2
       openssl
       uvwasi
       zlib
@@ -163,12 +143,18 @@ let
     cares = c-ares;
     http-parser = llhttp;
   }
-  // (lib.optionalAttrs useSharedAdaAndSimd {
+  // (lib.optionalAttrs useSharedAbseilAndHighway {
+    abseil = abseil-cpp;
+    highway = libhwy;
+  })
+  // (lib.optionalAttrs useSharedAdaAndSimdjson {
     inherit
       ada
       simdjson
       ;
-    simdutf = if lib.versionAtLeast version "25" then simdutf else simdutf_6;
+  })
+  // (lib.optionalAttrs useSharedSimdutf {
+    inherit simdutf;
   })
   // (lib.optionalAttrs useSharedSQLite {
     inherit sqlite;
@@ -177,7 +163,6 @@ let
     inherit temporal_capi;
   })
   // (lib.optionalAttrs useSharedGtestAndHistogram {
-    inherit gtest;
     hdr-histogram = hdrhistogram_c;
   })
   // (lib.optionalAttrs useSharedFFI {
@@ -190,15 +175,18 @@ let
     inherit nbytes;
   })
   // (lib.optionalAttrs useSharedMerve {
-    inherit merve;
+    # Merve cannot be built with simdutf_6, and upstream also disables simdutf support on the 24.x branch
+    merve = if majorVersion == "24" then (merve.override { simdutf = null; }) else merve;
   })
   // (lib.optionalAttrs useSharedZstd {
     inherit zstd;
   });
+  sharedCheckLibDeps = lib.optionalAttrs useSharedGtestAndHistogram {
+    # Only linked into cctest, so only needed when running checks.
+    inherit gtest;
+  };
 
-  copyLibHeaders = map (name: "${lib.getDev sharedLibDeps.${name}}/include/*") (
-    builtins.attrNames sharedLibDeps
-  );
+  sharedLibInputs = [ icu ] ++ builtins.attrValues sharedLibDeps;
 
   bundlesCorepack = !lib.versionAtLeast version "25.0.0";
 
@@ -243,6 +231,10 @@ let
         the final package fixed point, after potential overrides
       */
       self = finalAttrs.finalPackage;
+
+      allSharedLibDeps = sharedLibDeps // lib.optionalAttrs self.doCheck sharedCheckLibDeps;
+      pkgConfigSystemLibInputs =
+        finalAttrs.buildInputs ++ lib.optionals self.doCheck finalAttrs.checkInputs;
     in
     {
       inherit pname version;
@@ -261,6 +253,17 @@ let
         # Note: do not set TERM=dumb environment variable globally, it is used in
         # test-ci-js test suite to skip tests that otherwise run fine.
         NINJA = "TERM=dumb ninja";
+
+        # configure.py queries pkg-config for every --shared-* lib (and needs it
+        # for system-icu and shared abseil), then embeds the resulting -I/-L flags
+        # in config.gypi, i.e. process.config in bin/node, which would keep the
+        # -dev outputs in the runtime closure. The cc wrapper already passes these
+        # paths, so have pkgconf treat them as system paths and omit them.
+        PKG_CONFIG_SYSTEM_INCLUDE_PATH = lib.makeSearchPathOutput "dev" "include" pkgConfigSystemLibInputs;
+        PKG_CONFIG_SYSTEM_LIBRARY_PATH = lib.concatStringsSep ":" [
+          (lib.makeSearchPathOutput "dev" "lib" pkgConfigSystemLibInputs)
+          (lib.makeLibraryPath pkgConfigSystemLibInputs)
+        ];
       }
       // lib.optionalAttrs (!canExecute && !canEmulate) {
         # these are used in the --cross-compiling case. see comment at postConfigure.
@@ -269,20 +272,14 @@ let
         AR_host = touchScript "${buildPackages.stdenv.cc}/bin/ar";
       };
 
-      # NB: technically, we do not need bash in build inputs since all scripts are
-      # wrappers over the corresponding JS scripts. There are some packages though
-      # that use bash wrappers, e.g. polaris-web.
-      buildInputs = [
-        bash
-        icu
-      ]
-      ++ builtins.attrValues sharedLibDeps;
+      # NB: we need bash for npm (and corepack) outputs
+      buildInputs = [ bashNonInteractive ] ++ sharedLibInputs;
 
       nativeBuildInputs = [
         installShellFiles
         ninja
         pkgconf
-        python
+        python3
       ]
       ++ lib.optionals stdenv.buildPlatform.isDarwin [
         # gyp checks `sysctl -n hw.memsize` if `sys.platform == "darwin"`.
@@ -330,26 +327,14 @@ let
       ]
       ++ lib.optional useSharedTemporal "--v8-enable-temporal-support"
       ++ lib.optionals (lib.versionOlder version "19") [ "--without-dtrace" ]
-      ++ lib.concatMap (name: [
-        "--shared-${name}"
-        "--shared-${name}-libpath=${lib.getLib sharedLibDeps.${name}}/lib"
-        /**
-          Closure notes: we explicitly avoid specifying --shared-*-includes,
-          as that would put the paths into bin/nodejs.
-          Including pkg-config in build inputs would also have the same effect!
-
-          FIXME: the statement above is outdated, we have to include pkg-config
-          in build inputs for system-icu.
-        */
-      ]) (builtins.attrNames sharedLibDeps);
+      ++ lib.optionals (lib.versionAtLeast version "22") [ "--use-prefix-to-find-headers" ]
+      ++ map (name: "--shared-${name}") (builtins.attrNames allSharedLibDeps);
 
       configurePlatforms = [ ];
 
       dontDisableStatic = true;
 
-      configureScript = writeScript "nodejs-configure" ''
-        exec ${python.executable} configure.py "$@"
-      '';
+      configureScript = "${python3.pythonOnBuildForHost.interpreter} configure.py";
 
       # In order to support unsupported cross configurations, we copy some intermediate executables
       # from a native build and replace all the build-system tools with a script which simply touches
@@ -392,6 +377,7 @@ let
       __structuredAttrs = true; # for outputChecks
 
       doCheck = canExecute;
+      checkInputs = builtins.attrValues sharedCheckLibDeps;
 
       # See https://github.com/nodejs/node/issues/22006
       enableParallelChecking = false;
@@ -420,26 +406,7 @@ let
       checkFlags = [
         # Do not create __pycache__ when running tests.
         "PYTHONDONTWRITEBYTECODE=1"
-      ]
-      ++ lib.optionals (stdenv.buildPlatform.isDarwin && stdenv.buildPlatform.isx86_64) [
-        # Python 3.12 introduced a warning for calling `os.fork()` in a
-        # multi‐threaded program. For some reason, the Node.js
-        # `tools/pseudo-tty.py` program used for PTY‐related tests
-        # triggers this warning on Hydra, on `x86_64-darwin` only,
-        # despite not creating any threads itself. This causes the
-        # Node.js test runner to misinterpret the warnings as part of the
-        # test output and fail. It does not reproduce reliably off Hydra
-        # on Intel Macs, or occur on the `aarch64-darwin` builds.
-        #
-        # This seems likely to be related to Rosetta 2, but it could also
-        # be some strange x86‐64‐only threading behaviour of the Darwin
-        # system libraries, or a bug in CPython, or something else
-        # haunted about the Nixpkgs/Hydra build environment. We silence
-        # the warnings in the hope that closing our eyes will make the
-        # ghosts go away.
-        "PYTHONWARNINGS=ignore::DeprecationWarning"
-      ]
-      ++ lib.optionals (!stdenv.buildPlatform.isDarwin || lib.versionAtLeast version "20") [
+
         "FLAKY_TESTS=skip"
         # Skip some tests that are not passing in this context
         "CI_SKIP_TESTS=${
@@ -448,13 +415,16 @@ let
               # Tests don't work in sandbox.
               "test-child-process-exec-env"
               "test-child-process-uid-gid"
-              "test-fs-write-stream-eagain"
               "test-process-euid-egid"
-              "test-process-initgroups"
-              "test-process-setgroups"
               "test-process-uid-gid"
-              # This is a bit weird, but for some reason fs watch tests fail with
-              # sandbox.
+            ]
+            ++ lib.optional (majorVersion == "22") "test-runner-watch-mode"
+            ++ lib.optionals stdenv.hostPlatform.is32bit [
+              # utime (actually utimensat) fails with EINVAL on 2038 timestamp
+              "test-fs-utimes-y2K38"
+            ]
+            ++ lib.optionals stdenv.buildPlatform.isDarwin [
+              # Disable tests that don’t work under macOS sandbox.
               "test-fs-promises-watch"
               "test-fs-watch"
               "test-fs-watch-encoding"
@@ -470,35 +440,10 @@ let
               "test-fs-watch-recursive-sync-write"
               "test-fs-watch-recursive-update-file"
               "test-fs-watchfile"
-              "test-runner-run"
-              "test-runner-watch-mode"
-              "test-watch-mode-files_watcher"
-
-              # fail on openssl 3.6.0
-              "test-http2-server-unknown-protocol"
-              "test-tls-ocsp-callback"
-            ]
-            ++ lib.optionals (!lib.versionAtLeast version "22") [
-              "test-tls-multi-key"
-            ]
-            ++ lib.optionals stdenv.hostPlatform.is32bit [
-              # utime (actually utimensat) fails with EINVAL on 2038 timestamp
-              "test-fs-utimes-y2K38"
-            ]
-            ++ lib.optionals stdenv.buildPlatform.isDarwin [
-              # Disable tests that don’t work under macOS sandbox.
-              # uv_os_setpriority returned EPERM (operation not permitted)
               "test-os"
               "test-os-process-priority"
-
-              # Debugger tests failing on macOS 15.4
-              "test-debugger-extract-function-name"
-              "test-debugger-random-port-with-inspect-port"
-              "test-debugger-launch"
-              "test-debugger-pid"
-
-              # Those are annoyingly flaky, but not enough to be marked as such upstream.
-              "test-wasi"
+              "test-runner-run"
+              "test-watch-mode-files_watcher"
 
               # This is failing on newer macOS versions, no fix has yet been provided upstream:
               "test-cluster-dgram-1"
@@ -506,23 +451,6 @@ let
             ++ lib.optionals stdenv.hostPlatform.isMusl [
               # Doesn't work in sandbox on x86_64.
               "test-dns-set-default-order"
-            ]
-            ++ lib.optionals (stdenv.buildPlatform.isDarwin && stdenv.buildPlatform.isx86_64) [
-              # These tests fail on x86_64-darwin (even without sandbox).
-              # TODO: revisit at a later date.
-              "test-fs-readv"
-              "test-fs-readv-sync"
-              "test-vm-memleak"
-
-              # Those are annoyingly flaky, but not enough to be marked as such upstream.
-              "test-tick-processor-arguments"
-              "test-set-raw-mode-reset-signal"
-            ]
-            # Apple SDK update broke something related to those tests, so skipping them for now
-            ++ lib.optionals (majorVersion == "24" && stdenv.hostPlatform.isDarwin) [
-              "test-worker-track-unmanaged-fds"
-              "test-esm-import-meta-main-eval"
-              "test-worker-debug"
             ]
             # These network/fetch/inspector tests fail on riscv64
             ++ lib.optionals (majorVersion == "24" && stdenv.hostPlatform.isRiscV64) [
@@ -547,16 +475,11 @@ let
               "test-wasm-web-api"
             ]
             # Those are annoyingly flaky, but not enough to be marked as such upstream.
-            ++ lib.optional (majorVersion == "22") "test-child-process-stdout-flush-exit"
+            ++ lib.optional (majorVersion == "22" && stdenv.hostPlatform.isRiscV64) "test-worker-messaging"
+            ++ lib.optional (majorVersion == "26" && !stdenv.buildPlatform.isDarwin) "test-net-boundsocket"
             ++ lib.optional (
               majorVersion == "22" && stdenv.buildPlatform.isDarwin
             ) "test/sequential/test-http-server-request-timeouts-mixed.js"
-            # https://github.com/NixOS/nixpkgs/pull/507974#issuecomment-4249433124
-            # OpenSSL reports different errors
-            # https://github.com/nodejs/node/pull/62629
-            # patch does not apply
-            ++ lib.optional (!lib.versionAtLeast version "24") "test-tls-junk-server"
-            ++ lib.optional (majorVersion == "22") "test-tls-alert-handling"
           )
         }"
       ];
@@ -568,6 +491,8 @@ let
             "npm"
           ]
           ++ lib.optional bundlesCorepack "corepack";
+          # See PKG_CONFIG_SYSTEM_INCLUDE_PATH.
+          disallowedRequisites = map (dep: dep.dev) (lib.filter (dep: dep ? dev) sharedLibInputs);
         };
         corepack = {
           disallowedReferences = [
@@ -636,9 +561,15 @@ let
           ln -s $npm/lib/node_modules/npm/lib/utils/completion.sh \
             $npm/share/bash-completion/completions/npm
 
-          # install the missing headers for node-gyp
-          # TODO: use propagatedBuildInputs instead of copying headers.
-          cp -r ${lib.concatStringsSep " " copyLibHeaders} $out/include/node
+          ${
+            # node-gyp expects these headers in node_prefix (i.e. $out); the list matches
+            # upstream's tools/install.py. Copied rather than linked so $out does
+            # not depend on the -dev outputs (and through them zlib-static, openssl-bin).
+            ''
+              cp -R ${lib.getDev libuv}/include/* $out/include/node/
+              cp -R ${lib.getDev openssl}/include/openssl $out/include/node/
+              cp ${lib.getDev zlib}/include/{zconf,zlib}.h $out/include/node/
+            ''}
 
           # assemble a static v8 library and put it in the 'libv8' output
           mkdir -p $libv8/lib
@@ -684,6 +615,9 @@ let
         done
       '';
 
+      # reduces build time from ~90 to ~15 minutes on hydra
+      requiredSystemFeatures = [ "big-parallel" ];
+
       passthru.tests = {
         version = testers.testVersion {
           package = self;
@@ -726,7 +660,7 @@ let
         knownVulnerabilities = lib.optional (lib.versionOlder version "22") "This NodeJS release has reached its end of life. See https://nodejs.org/en/about/releases/.";
       };
 
-      passthru.python = python; # to ensure nodeEnv uses the same version
+      passthru.python = python3; # to ensure nodeEnv uses the same version
     }
   );
 in

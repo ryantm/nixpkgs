@@ -30,16 +30,15 @@
 
 buildPythonPackage (finalAttrs: {
   pname = "boost-histogram";
-  version = "1.7.2";
+  version = "1.8.1";
   pyproject = true;
-  __structuredAttrs = true;
 
   src = fetchFromGitHub {
     owner = "scikit-hep";
     repo = "boost-histogram";
     tag = "v${finalAttrs.version}";
     fetchSubmodules = true;
-    hash = "sha256-nDNSLpmQ3YOo/nEkHfvsE0l9yATzQnrlunX1qWupbLQ=";
+    hash = "sha256-pI+5KURd2YheV8TGNDxXS1QfwzSsti6h1U7E4Ds825c=";
   };
 
   nativeBuildInputs = [ cmake ];
@@ -73,7 +72,7 @@ buildPythonPackage (finalAttrs: {
       # Trace/BPT trap: 5
       "test_round_trip_3d_histogram_json"
     ]
-    ++ lib.optionals (stdenv.hostPlatform.isDarwin && stdenv.hostPlatform.isAarch64) [
+    ++ lib.optionals stdenv.hostPlatform.isDarwin [
       # Segfaults: boost_histogram/_internal/hist.py", line 799 in sum
       # Fatal Python error: Segmentation fault
       "test_numpy_conversion_4"

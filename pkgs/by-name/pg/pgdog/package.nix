@@ -1,50 +1,65 @@
 {
+  aws-lc,
+  bison,
   lib,
   clangStdenv,
   fetchFromGitHub,
+  flex,
+  icu,
   openssl,
+  perl,
   pkg-config,
+  readline,
   rustPlatform,
+  rust-jemalloc-sys-unprefixed,
   useMoldLinker,
   versionCheckHook,
-  withMold ? with clangStdenv.hostPlatform; isUnix && !isDarwin,
+  withMold ? with clangStdenv.hostPlatform; isLinux,
+  zlib,
 }:
 let
   stdenv = if withMold then useMoldLinker clangStdenv else clangStdenv;
 in
 rustPlatform.buildRustPackage.override { inherit stdenv; } (finalAttrs: {
   pname = "pgdog";
-  version = "0.1.48";
+  version = "0.1.66";
 
   src = fetchFromGitHub {
     owner = "pgdogdev";
     repo = "pgdog";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-0lun9HmJvpSWguckUtudDcNlBc/KgpHk/fBJnj4HSuo=";
+    hash = "sha256-O9nIoKGKwYnbLLg4Ms6EDdopyrzwoFdm2s/ujDWm+U4=";
   };
 
-  cargoHash = "sha256-cNIjTNuxHPofkTYpEb3+8Jhqz5AMAeXj7avNAAOG5D8=";
+  cargoHash = "sha256-gRMbEVQg/GpA6Pjjdo+hDKRnfX5yBMukr5wc++mM5HY=";
 
   # Hardcoded paths for C compiler and linker
   postPatch = ''
     rm .cargo/config.toml
   '';
 
+  env.RUSTFLAGS = "--cfg tokio_unstable";
   cargoBuildFlags = [
     "--package"
     "pgdog"
   ];
 
   nativeBuildInputs = [
+    bison
+    flex
+    perl
     pkg-config
     rustPlatform.bindgenHook
   ];
 
   buildInputs = [
+    aws-lc
+    icu
     openssl
+    readline
+    zlib
+    rust-jemalloc-sys-unprefixed
   ];
-
-  strictDeps = true;
 
   # Several tests rely on networking
   doCheck = false;

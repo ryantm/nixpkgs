@@ -3,6 +3,7 @@
   lib,
   stdenv,
   fetchFromGitHub,
+  nixosTests,
 
   # keep-sorted start
   cmake,
@@ -101,20 +102,20 @@ let
         # RocksDB's startup path via unique_ptr<T[]> bounds checks.
         hardeningDisable =
           (oldAttrs.hardeningDisable or [ ])
-          ++ (lib.optionals (stdenv.hostPlatform.isDarwin && stdenv.hostPlatform.isAarch64) [
+          ++ (lib.optionals stdenv.hostPlatform.isDarwin [
             "libcxxhardeningfast"
           ]);
       });
 in
 stdenv.mkDerivation (finalAttrs: {
   pname = "kvrocks";
-  version = "2.16.0";
+  version = "2.17.0";
 
   src = fetchFromGitHub {
     owner = "apache";
     repo = "kvrocks";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-CAbhOX7dmyXgl0STNjzALseXUzrpTPNy9tjoPACe0Os=";
+    hash = "sha256-OEHiAa634ooNLlBrIwHpvEmzzkHHprNuRIvQGxMPwl8=";
   };
 
   __structuredAttrs = true;
@@ -312,7 +313,7 @@ stdenv.mkDerivation (finalAttrs: {
     # LuaJIT defaults to gcc, which may be unavailable (e.g. Darwin stdenv).
     substituteInPlace $TMPDIR/luajit/src/Makefile \
       --replace-fail "DEFAULT_CC = gcc" "DEFAULT_CC = $CC"
-    cmakeFlagsArray+=("-DFETCHCONTENT_SOURCE_DIR_LUAJIT=$TMPDIR/luajit")
+    cmakeFlags+=("-DFETCHCONTENT_SOURCE_DIR_LUAJIT=$TMPDIR/luajit")
   '';
 
   cmakeFlags = [
@@ -334,6 +335,7 @@ stdenv.mkDerivation (finalAttrs: {
   passthru = {
     hook = callPackage ./hook.nix { kvrocks = finalAttrs.finalPackage; };
     tests = {
+      inherit (nixosTests) kvrocks;
       hook = callPackage ./hook-test.nix { kvrocks = finalAttrs.finalPackage; };
     };
   };

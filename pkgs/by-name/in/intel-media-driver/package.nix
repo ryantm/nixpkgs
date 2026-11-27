@@ -11,13 +11,14 @@
   libdrm,
   enableX11 ? stdenv.hostPlatform.isLinux,
   libx11,
+  nix-update-script,
   # for passhtru.tests
   pkgsi686Linux,
 }:
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "intel-media-driver";
-  version = "26.1.6";
+  version = "26.3.5";
 
   outputs = [
     "out"
@@ -28,7 +29,7 @@ stdenv.mkDerivation (finalAttrs: {
     owner = "intel";
     repo = "media-driver";
     tag = "intel-media-${finalAttrs.version}";
-    hash = "sha256-Jk9pIZ1V1tKi9l6u10tftClVZhYn2ECvALt26n58XC0=";
+    hash = "sha256-DSyF3CLNdj4pi2DHOduNc0pZ70qVmMoKu0ReQyqprFk=";
   };
 
   patches = [
@@ -74,6 +75,13 @@ stdenv.mkDerivation (finalAttrs: {
 
   passthru.tests = {
     inherit (pkgsi686Linux) intel-media-driver;
+  };
+
+  passthru.updateScript = nix-update-script {
+    extraArgs = [
+      "--use-github-releases"
+      "--version-regex=intel-media-(.*[.].*[.].*)"
+    ];
   };
 
   meta = {

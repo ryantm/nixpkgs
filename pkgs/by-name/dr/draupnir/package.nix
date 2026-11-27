@@ -2,7 +2,7 @@
   lib,
   fetchFromGitHub,
   makeBinaryWrapper,
-  nodejs_24,
+  nodejs_26,
   matrix-sdk-crypto-nodejs,
   python3,
   sqlite,
@@ -13,20 +13,21 @@
   cctools,
   nixosTests,
   nix-update-script,
+  fetchpatch2,
 }:
 let
-  nodeSources = srcOnly nodejs_24;
+  nodeSources = srcOnly nodejs_26;
 in
 
 buildNpmPackage (finalAttrs: {
   pname = "draupnir";
-  version = "3.1.0";
+  version = "3.2.0";
 
   src = fetchFromGitHub {
     owner = "the-draupnir-project";
     repo = "Draupnir";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-e6d9z5dkJg4ZpkN+yJFr8J8RWl9tcAhEYTOM+9413Ok=";
+    hash = "sha256-OcP7Zf6HgoUQksKUyg2GM6ztLkLNylJW3o6ZVpQrgWQ=";
   };
 
   nativeBuildInputs = [
@@ -36,7 +37,9 @@ buildNpmPackage (finalAttrs: {
   ]
   ++ lib.optional stdenv.hostPlatform.isDarwin cctools.libtool;
 
-  npmDepsHash = "sha256-DvQM9Kr9Hc7/1OEZadZ1GvpAjfRmbdIcA6UDuFBQ+vo=";
+  npmDepsHash = "sha256-pn8oyi0mx8N/NmBUaQqArNzOVOMilf0lp9gNbNKROI0=";
+
+  npmFlags = [ "--ignore-scripts" ];
 
   preBuild = ''
     # install proper version and branch info
@@ -68,12 +71,12 @@ buildNpmPackage (finalAttrs: {
     mkdir -p $out/lib/node_modules/draupnir
     mkdir $out/bin
     # Install outputs
-    mv ./node_modules ./packages ./apps/draupnir/dist ./apps/draupnir/version.txt ./apps/draupnir/package.json $out/lib/node_modules/draupnir
+    mv ./node_modules ./packages ./apps/draupnir/dist ./apps/draupnir/version.txt ./apps/draupnir/branch.txt ./apps/draupnir/package.json $out/lib/node_modules/draupnir
     # Fix dangling symlink pointing to relative path ../apps/draupnir
     rm $out/lib/node_modules/draupnir/node_modules/draupnir
 
     # Create wrapper executable
-    makeWrapper ${lib.getExe nodejs_24} $out/bin/draupnir \
+    makeWrapper ${lib.getExe nodejs_26} $out/bin/draupnir \
       --add-flags "--enable-source-maps" \
       --add-flags "$out/lib/node_modules/draupnir/dist/index.js"
 

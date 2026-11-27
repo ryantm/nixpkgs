@@ -55,7 +55,7 @@ buildPythonPackage rec {
     # Due to bug in SIP .whl name generation we have to bump minimal macos sdk upto 11.0 for
     # aarch64-darwin. This patch can be removed once SIP will fix it in upstream,
     # see https://github.com/NixOS/nixpkgs/pull/186612#issuecomment-1214635456.
-    + lib.optionalString (stdenv.hostPlatform.isDarwin && stdenv.hostPlatform.isAarch64) ''
+    + lib.optionalString stdenv.hostPlatform.isDarwin ''
       minimum-macos-version = "11.0"
     ''
     + ''
@@ -94,7 +94,7 @@ buildPythonPackage rec {
     '';
 
   enableParallelBuilding = true;
-  # HACK: paralellize compilation of make calls within pyqt's setup.py
+  # HACK: parallelize compilation of make calls within pyqt's setup.py
   # pkgs/stdenv/generic/setup.sh doesn't set this for us because
   # make gets called by python code and not its build phase
   # format=pyproject means the pip-build-hook hook gets used to build this project

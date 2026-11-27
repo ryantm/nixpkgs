@@ -25,7 +25,7 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "dbus";
-  version = "1.16.2";
+  version = "1.16.4";
 
   outputs = [
     "out"
@@ -39,7 +39,7 @@ stdenv.mkDerivation (finalAttrs: {
 
   src = fetchurl {
     url = "https://dbus.freedesktop.org/releases/dbus/dbus-${finalAttrs.version}.tar.xz";
-    sha256 = "sha256-C6KhpLFq/nvOssB+nOmajCw1COXewpDbtkM4S9a+t+I=";
+    sha256 = "sha256-0IsFUmwst5ZqX7eSENYRKxrKPRNfMVwbMC4UtLApfaw=";
   };
 
   patches = [
@@ -127,6 +127,7 @@ stdenv.mkDerivation (finalAttrs: {
     (lib.mesonEnable "launchd" stdenv.hostPlatform.isDarwin)
     (lib.mesonEnable "systemd" enableSystemd)
     "-Dselinux=disabled"
+    "-Dc_args=-Wno-error=incompatible-pointer-types"
   ]
   ++ lib.optionals stdenv.hostPlatform.isDarwin [
     # D-Bus defaults to launchd-activation on Darwin, but that requires the launch agent be installed. It also breaks

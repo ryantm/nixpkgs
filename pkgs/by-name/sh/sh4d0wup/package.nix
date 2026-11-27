@@ -1,5 +1,6 @@
 {
   lib,
+  aws-lc,
   fetchFromGitHub,
   gcc,
   go,
@@ -20,22 +21,23 @@
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "sh4d0wup";
-  version = "0.11.0";
+  version = "0.11.1";
 
   src = fetchFromGitHub {
     owner = "kpcyrd";
     repo = "sh4d0wup";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-gzkh+JYwuYvdNljB6agEVd7WxqJ5lI3sseY3BlkLmXs=";
+    hash = "sha256-r3ACagjyCWNNQAoDLhUAk2lybIU2TXvNHii7r0g2DrI=";
   };
 
-  cargoHash = "sha256-FjRlKlOX78QClzhhFhkZuaOLA6XpFziSghJltlRPt20=";
+  cargoHash = "sha256-ELFiW3OKI/FrTl9jMxzSUbXVV2KLfQdQ1dZc0KdNxEo=";
 
   nativeBuildInputs = [
     makeWrapper
     pkg-config
   ];
   buildInputs = [
+    aws-lc
     openssl
     pcsclite
     xz
@@ -47,6 +49,11 @@ rustPlatform.buildRustPackage (finalAttrs: {
   '';
 
   checkInputs = [ sequoia-sq ];
+  checkFlags = [
+    # Ignored upstream, remove with the next release
+    # https://github.com/kpcyrd/sh4d0wup/commit/8c891c976de90d4bc00a264bad19262d28bd3f45
+    "--skip=sign::pgp::tests::test_sign_cleartext"
+  ];
   preCheck = ''
     export XDG_DATA_DIRS=$XDG_DATA_DIRS:${shared-mime-info}/share
   '';
@@ -69,7 +76,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
     homepage = "https://github.com/kpcyrd/sh4d0wup";
     changelog = "https://github.com/kpcyrd/sh4d0wup/releases/tag/v${finalAttrs.version}";
     mainProgram = "sh4d0wup";
-    license = with lib.licenses; [ gpl3Plus ];
+    license = lib.licenses.gpl3Plus;
     maintainers = with lib.maintainers; [ kpcyrd ];
     platforms = lib.platforms.all;
   };

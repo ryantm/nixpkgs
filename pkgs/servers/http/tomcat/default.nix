@@ -15,6 +15,9 @@ let
       pname = "apache-tomcat";
       inherit version;
 
+      __structuredAttrs = true;
+      strictDeps = true;
+
       src = fetchurl {
         url = "mirror://apache/tomcat/tomcat-${lib.versions.major version}/v${version}/bin/apache-tomcat-${version}.tar.gz";
         inherit hash;
@@ -26,10 +29,14 @@ let
       ];
 
       installPhase = ''
+        runHook preInstall
+
         mkdir $out
         mv * $out
         mkdir -p $webapps/webapps
         mv $out/webapps $webapps/
+
+        runHook postInstall
       '';
 
       passthru = {
@@ -60,17 +67,17 @@ let
 in
 {
   tomcat9 = common {
-    version = "9.0.118";
-    hash = "sha256-L9Me+dqZKbh4mX9zHPJVNv6sV0FhwC2TmXJ0ccfEBrI=";
+    version = "9.0.124";
+    hash = "sha256-8helujEzZ0LXPq+SiuAgIn5o2ndxA79AKhlR872Bfxo=";
   };
 
   tomcat10 = common {
-    version = "10.1.55";
-    hash = "sha256-l4oNCJA0XuxSo4yWcKjhEtTMjPjLEO9B0F1rcXiFdJU=";
+    version = "10.1.61";
+    hash = "sha256-qTQcLtBjmJbrB2AyDEJDCjA775F/g/8+bxYEbzrir3k=";
   };
 
   tomcat11 = common {
-    version = "11.0.22";
-    hash = "sha256-c9I5Iy8U394ieOjZMfdn7UVK7ZsBjk1wodQEwlebWZg=";
+    version = "11.0.29";
+    hash = "sha256-In3SK7Z7zElDHOT1PM4jDuZYWb9QHaraKTx5SpyecvM=";
   };
 }

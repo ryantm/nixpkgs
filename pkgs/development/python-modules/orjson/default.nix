@@ -6,7 +6,6 @@
 
   # build-system
   rustPlatform,
-  cffi,
 
   # native dependencies
   libiconv,
@@ -17,7 +16,6 @@
   pytestCheckHook,
   python-dateutil,
   pytz,
-  xxhash,
 
   # for passthru.tests
   falcon,
@@ -27,35 +25,32 @@
   ufolib2,
 }:
 
-buildPythonPackage rec {
+buildPythonPackage (finalAttrs: {
   pname = "orjson";
-  version = "3.11.9";
+  version = "3.13.0";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "ijl";
     repo = "orjson";
-    tag = version;
-    hash = "sha256-CCwpD6pzO80GlMvjJt4HURQxbghYg53OG/6ZIJWggNU=";
+    tag = finalAttrs.version;
+    hash = "sha256-AFHhZWHDAmSH1TFm4YOnUCpXaAmTgbjPus3GnMTSqA4=";
   };
 
-  patches = lib.optionals (stdenv.buildPlatform != stdenv.hostPlatform) [
-    # fix architecture checks in build.rs to fix build for riscv
+  patches = [
+    # fix missing target_arch checks for avx512 feature
     ./cross-arch-compat.patch
   ];
 
   cargoDeps = rustPlatform.fetchCargoVendor {
-    inherit pname version src;
-    hash = "sha256-F1TFEj26trVV0TjK6tkS8kiorWRF0uijb1jQko7RDSM=";
+    inherit (finalAttrs) pname version src;
+    hash = "sha256-2D+P3TyJkJuLexikbwJZ9Og9dIoQVEKTtIp3xPT2VYM=";
   };
 
-  nativeBuildInputs = [
-    cffi
-  ]
-  ++ (with rustPlatform; [
+  nativeBuildInputs = with rustPlatform; [
     cargoSetupHook
     maturinBuildHook
-  ]);
+  ];
 
   buildInputs = lib.optionals stdenv.hostPlatform.isDarwin [ libiconv ];
 
@@ -65,7 +60,6 @@ buildPythonPackage rec {
     pytestCheckHook
     python-dateutil
     pytz
-    xxhash
   ];
 
   pythonImportsCheck = [ "orjson" ];
@@ -83,7 +77,7 @@ buildPythonPackage rec {
   meta = {
     description = "Fast, correct Python JSON library supporting dataclasses, datetimes, and numpy";
     homepage = "https://github.com/ijl/orjson";
-    changelog = "https://github.com/ijl/orjson/blob/${version}/CHANGELOG.md";
+    changelog = "https://github.com/ijl/orjson/blob/${finalAttrs.src.tag}/CHANGELOG.md";
     license = with lib.licenses; [
       asl20
       mit
@@ -91,4 +85,4 @@ buildPythonPackage rec {
     platforms = lib.platforms.unix;
     maintainers = with lib.maintainers; [ misuzu ];
   };
-}
+})

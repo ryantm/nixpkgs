@@ -28,15 +28,14 @@ let
 in
 buildPythonPackage.override { inherit (torch) stdenv; } (finalAttrs: {
   pname = "torchvision";
-  version = "0.27.0";
+  version = "0.29.2";
   pyproject = true;
-  __structuredAttrs = true;
 
   src = fetchFromGitHub {
     owner = "pytorch";
     repo = "vision";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-HOTD45xY7Gye1GI1+AsF3KmMUTAp1QlzHOUeBHvzv0A=";
+    hash = "sha256-rNWO8wyofMEmd5cB8NbmpDKUQioup5sukygXbqayPMk=";
   };
 
   nativeBuildInputs = [
@@ -50,7 +49,16 @@ buildPythonPackage.override { inherit (torch) stdenv; } (finalAttrs: {
     libjpeg_turbo
     libpng
     torch.cxxdev
-  ];
+  ]
+  ++ lib.optionals cudaSupport (
+    with cudaPackages;
+    [
+      cuda_cudart # cuda_runtime.h
+      libcublas # cublas_v2.h
+      libcusolver # cusolverDn.h
+      libcusparse # cusparse.h
+    ]
+  );
 
   dependencies = [
     numpy
@@ -60,6 +68,9 @@ buildPythonPackage.override { inherit (torch) stdenv; } (finalAttrs: {
   ];
 
   env = {
+    # Otherwise, the version is read from `version.txt` (`0.29.1a0`)
+    BUILD_VERSION = finalAttrs.version;
+
     TORCHVISION_INCLUDE = "${libjpeg_turbo.dev}/include/";
     TORCHVISION_LIBRARY = "${libjpeg_turbo}/lib/";
   }

@@ -1,6 +1,7 @@
 {
   lib,
   callPackage,
+  cloudflared,
   symlinkJoin,
   makeBinaryWrapper,
   enableAzureDevOps ? false,
@@ -26,7 +27,10 @@
   jujutsu,
   enableOpencode ? false,
   opencode,
+  enableResourceMonitor ? true,
+  enableTelemetry ? false,
   t3code-unwrapped ? callPackage ./unwrapped.nix { },
+  t3code-resource-monitor ? callPackage ./resource-monitor.nix { inherit t3code-unwrapped; },
 }:
 
 let
@@ -45,6 +49,36 @@ let
     ++ lib.optionals enableJujutsu [ jujutsu ]
     ++ lib.optionals enableOpencode [ opencode ];
 
+  # The resource monitor sidecar is a separate Rust binary that upstream only
+  # builds in its electron-builder pipeline, not in `build:desktop`. The server
+  # checks this variable before any bundled location, and the desktop app's
+  # server child inherits it.
+  wrapperArgs =
+    lib.optionals (runtimePackages != [ ]) [
+      "--prefix"
+      "PATH"
+      ":"
+      (lib.makeBinPath runtimePackages)
+    ]
+    # Use nixpkgs cloudflared for T3 Connect instead of downloading a copy at runtime.
+    ++ [
+      "--set-default"
+      "T3CODE_CLOUDFLARED_PATH"
+      (lib.getExe cloudflared)
+    ]
+    # Upstream has no setting to turn telemetry off, so opt out by default.
+    # https://github.com/pingdotgg/t3code/issues/1397
+    ++ [
+      "--set-default"
+      "T3CODE_TELEMETRY_ENABLED"
+      (lib.boolToString enableTelemetry)
+    ]
+    ++ lib.optionals enableResourceMonitor [
+      "--set-default"
+      "T3CODE_RESOURCE_MONITOR_PATH"
+      (lib.getExe t3code-resource-monitor)
+    ];
+
 in
 symlinkJoin {
   pname = "t3code";
@@ -56,15 +90,15 @@ symlinkJoin {
 
   nativeBuildInputs = [ makeBinaryWrapper ];
 
-  postBuild = lib.optionalString (runtimePackages != [ ]) ''
+  postBuild = lib.optionalString (wrapperArgs != [ ]) ''
     for program in "$out/bin"/*; do
-      wrapProgram "$program" \
-        --prefix PATH : "${lib.makeBinPath runtimePackages}"
+      wrapProgram "$program" ${lib.escapeShellArgs wrapperArgs}
     done
   '';
 
   passthru = {
     unwrapped = t3code-unwrapped;
+    resourceMonitor = t3code-resource-monitor;
   }
   // t3code-unwrapped.passthru;
 

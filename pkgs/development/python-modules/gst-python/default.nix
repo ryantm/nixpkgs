@@ -21,7 +21,7 @@
 
 buildPythonPackage rec {
   pname = "gst-python";
-  version = "1.28.4";
+  version = "1.28.9";
 
   pyproject = false;
 
@@ -32,7 +32,7 @@ buildPythonPackage rec {
 
   src = fetchurl {
     url = "https://gstreamer.freedesktop.org/src/gst-python/gst-python-${version}.tar.xz";
-    hash = "sha256-xOs4JyC0RD+4AaU0GN/wvUzXR4cW1c7Uk1BKZ1tNCf0=";
+    hash = "sha256-5q0mWPrVuW2Zr3LO7H5ImV/3kvvaQ400SG0YnOBHcYo=";
   };
 
   patches = [
@@ -102,6 +102,6 @@ buildPythonPackage rec {
     homepage = "https://gstreamer.freedesktop.org";
     description = "Python bindings for GStreamer";
     license = lib.licenses.lgpl2Plus;
-    maintainers = with lib.maintainers; [ tmarkus ];
+    maintainers = with lib.maintainers; [ AAAAAASomeThingsFailToEvaluate ];
   };
 }

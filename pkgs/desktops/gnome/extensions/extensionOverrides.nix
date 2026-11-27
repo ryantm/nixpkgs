@@ -13,7 +13,6 @@
   gobject-introspection,
   gsound,
   hddtemp,
-  libgda6,
   libgtop,
   libhandy,
   liquidctl,
@@ -24,14 +23,14 @@
   smartmontools,
   replaceVars,
   stdenvNoCC,
-  touchegg,
   util-linux,
   vte,
   wrapGAppsHook3,
   xdg-utils,
   gtk4,
   desktop-file-utils,
-  xdg-user-dirs,
+  libglycin,
+  libglycin-gtk4,
 }:
 let
   # Helper method to reduce redundancy
@@ -52,6 +51,14 @@ in
 # the upstream repository's sources.
 super:
 lib.trivial.pipe super [
+  (patchExtension "appindicatorsupport@rgcjonas.gmail.com" (old: {
+    patches = [
+      (replaceVars ./extensionOverridesPatches/appindicatorsupport_at_rgcjonas.gmail.com.patch {
+        gjs = lib.getExe gjs;
+      })
+    ];
+  }))
+
   (patchExtension "apps-menu@gnome-shell-extensions.gcampax.github.com" (old: {
     patches = [
       (replaceVars
@@ -64,24 +71,19 @@ lib.trivial.pipe super [
   }))
 
   (patchExtension "caffeine@patapon.info" (old: {
-    meta.maintainers = with lib.maintainers; [ eperuffo ];
+    meta = old.meta // {
+      maintainers = with lib.maintainers; [ eperuffo ];
+    };
   }))
 
   (patchExtension "copyous@boerdereinar.dev" (old: {
     buildInputs = [
-      libgda6
       gsound
     ];
     preInstall = ''
-      sed -i "1i import GIRepository from 'gi://GIRepository';\nGIRepository.Repository.dup_default().prepend_search_path('${libgda6}/lib/girepository-1.0');\nGIRepository.Repository.dup_default().prepend_search_path('${gsound}/lib/girepository-1.0');\n" lib/preferences/dependencies/dependencies.js
-      sed -i "1i import GIRepository from 'gi://GIRepository';\nGIRepository.Repository.dup_default().prepend_search_path('${libgda6}/lib/girepository-1.0');\n" lib/database/entryTracker.js
       sed -i "1i import GIRepository from 'gi://GIRepository';\nGIRepository.Repository.dup_default().prepend_search_path('${gsound}/lib/girepository-1.0');\n" lib/common/sound.js
       sed -i "1i import GIRepository from 'gi://GIRepository';\nGIRepository.Repository.dup_default().prepend_search_path('${gsound}/lib/girepository-1.0');\n" lib/preferences/general/feedbackSettings.js
     '';
-  }))
-
-  (patchExtension "dash-to-dock@micxgx.gmail.com" (old: {
-    meta.maintainers = with lib.maintainers; [ rhoriguchi ];
   }))
 
   (patchExtension "ddterm@amezin.github.com" (old: {
@@ -105,11 +107,9 @@ lib.trivial.pipe super [
     patches = [
       (replaceVars ./extensionOverridesPatches/ding_at_rastersoft.com.patch {
         inherit gjs;
-        util_linux = util-linux;
         xdg_utils = xdg-utils;
         gtk3_gsettings_path = glib.getSchemaPath gtk3;
         nautilus_gsettings_path = glib.getSchemaPath nautilus;
-        typelib_path = "${gtk3}/lib/girepository-1.0";
       })
     ];
   }))
@@ -222,10 +222,23 @@ lib.trivial.pipe super [
   (patchExtension "system-monitor-next@paradoxxx.zero.gmail.com" (old: {
     patches = [
       (replaceVars ./extensionOverridesPatches/system-monitor-next_at_paradoxxx.zero.gmail.com.patch {
-        gtop_path = "${libgtop}/lib/girepository-1.0";
+        typelibPath = lib.makeSearchPath "/lib/girepository-1.0" [ libgtop ];
       })
     ];
-    meta.maintainers = with lib.maintainers; [ andersk ];
+    meta = old.meta // {
+      maintainers = with lib.maintainers; [ andersk ];
+    };
+  }))
+
+  (patchExtension "user-theme-x@tuberry.github.io" (old: {
+    patches = [
+      (replaceVars ./extensionOverridesPatches/user-theme-x_at_tuberry.github.io.patch {
+        typelibPath = lib.makeSearchPath "/lib/girepository-1.0" [
+          libglycin
+          libglycin-gtk4
+        ];
+      })
+    ];
   }))
 
   (patchExtension "Vitals@CoreCoding.com" (old: {
@@ -236,33 +249,10 @@ lib.trivial.pipe super [
     ];
   }))
 
-  (patchExtension "x11gestures@joseexposito.github.io" (old: {
-    # Extension can't find Touchegg
-    # https://github.com/NixOS/nixpkgs/issues/137621
-    postPatch = ''
-      substituteInPlace "src/touchegg/ToucheggConfig.js" \
-        --replace "GLib.build_filenamev([GLib.DIR_SEPARATOR_S, 'usr', 'share', 'touchegg', 'touchegg.conf'])" "'${touchegg}/share/touchegg/touchegg.conf'"
-    '';
-  }))
-
-  (patchExtension "pwcalc@thilomaurer.de" {
-    postPatch = ''
-      # remove unused dangling symlink
-      rm settings-importexport.ui
-    '';
-  })
-
   (patchExtension "TeaTimer@zener.sbg.at" {
     postPatch = ''
       # remove unused dangling symlink
       rm utilities-teatime.svg
-    '';
-  })
-
-  (patchExtension "named-workspaces@a31.at" {
-    postPatch = ''
-      # remove duplicate schema file
-      rm schemas/org.gnome.shell.extensions.workspace-name.gschema.xml
     '';
   })
 ]

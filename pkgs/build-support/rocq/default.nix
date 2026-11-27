@@ -55,7 +55,7 @@ in
   extraNativeBuildInputs ? [ ],
   overrideBuildInputs ? [ ],
   overrideNativeBuildInputs ? [ ],
-  namePrefix ? [ "rocq-core" ],
+  namePrefix ? null,
   enableParallelBuilding ? true,
   extraInstallFlags ? [ ],
   setROCQBIN ? true,
@@ -66,7 +66,8 @@ in
   dropDerivationAttrs ? [ ],
   useDuneifVersion ? (x: false),
   useDune ? false,
-  opam-name ? (concatStringsSep "-" (namePrefix ++ [ pname ])),
+  opam-name ? null,
+  opam-nameVersion ? (x: null),
   useCoq ? false,
   useCoqifVersion ? (x: false),
   ...
@@ -95,6 +96,7 @@ let
       "useDuneifVersion"
       "useDune"
       "opam-name"
+      "opam-nameVersion"
       "extraInstallFlags"
       "setROCQBIN"
       "mlPlugin"
@@ -160,17 +162,28 @@ let
       ] ""
     )
     + optionalString (v == null) "-broken";
-  append-version = p: n: p + display-pkg n "" rocqPackages.${n}.version + "-";
-  prefix-name = foldl append-version "" namePrefix;
   useDune = args.useDune or (useDuneifVersion fetched.version);
   useCoq = args.useCoq or (useCoqifVersion fetched.version);
+  namePrefix = args.namePrefix or [ (if useCoq then "coq" else "rocq") ];
+  append-version =
+    p: n:
+    let
+      version = if n == "rocq" then rocqPackages.rocq-core.version else rocqPackages.${n}.version;
+    in
+    p + display-pkg n "" version + "-";
+  prefix-name = foldl append-version "" namePrefix;
+  opam-name =
+    let
+      v = args.opam-name or (opam-nameVersion fetched.version);
+    in
+    if v != null then v else concatStringsSep "-" (namePrefix ++ [ pname ]);
   rocq-core = if useCoq then coq // { rocq-version = coq.coq-version; } else args0.rocq-core;
   rocqlib-flags = [
     "COQLIBINSTALL=$(out)/lib/coq/${rocq-core.rocq-version}/user-contrib"
     "COQPLUGININSTALL=$(OCAMLFIND_DESTDIR)"
   ];
   docdir-flags = [ "COQDOCINSTALL=$(out)/share/coq/${rocq-core.rocq-version}/user-contrib" ];
-  COQUSERCONTRIB = "$out/lib/coq/${rocq-core.rocq-version}/user-contrib";
+  ROCQUSERCONTRIB = "$out/lib/coq/${rocq-core.rocq-version}/user-contrib";
 in
 
 stdenv.mkDerivation (
@@ -202,9 +215,16 @@ stdenv.mkDerivation (
         }
         // optionalAttrs (setROCQBIN && useCoq) { COQBIN = "${rocq-core}/bin/"; }
         // optionalAttrs (args ? useMelquiondRemake) {
-          inherit COQUSERCONTRIB;
+          inherit ROCQUSERCONTRIB;
+          COQUSERCONTRIB = ROCQUSERCONTRIB;
         }
         // (args.env or { });
+
+      preBuild =
+        optionalString (useCoq && useDune && lib.versionAtLeast rocq-core.rocq-version "9.0") ''
+          export COQPATH="$ROCQPATH"
+        ''
+        + (args.preBuild or "");
 
       meta =
         (
@@ -246,7 +266,7 @@ stdenv.mkDerivation (
     })
     // (optionalAttrs (args ? useMelquiondRemake) {
       preConfigurePhases = [ "autoconf" ];
-      configureFlags = [ "--libdir=${COQUSERCONTRIB}/${useMelquiondRemake.logpath or ""}" ];
+      configureFlags = [ "--libdir=${ROCQUSERCONTRIB}/${useMelquiondRemake.logpath or ""}" ];
       buildPhase = "./remake -j$NIX_BUILD_CORES";
       installPhase = "./remake install";
     })

@@ -3,6 +3,7 @@
   stdenv,
   fetchFromGitHub,
   rustPlatform,
+  rust-jemalloc-sys,
 }:
 
 rustPlatform.buildRustPackage (finalAttrs: {
@@ -27,13 +28,17 @@ rustPlatform.buildRustPackage (finalAttrs: {
 
   buildAndTestSubdir = "ladspa";
 
+  buildInputs = [
+    rust-jemalloc-sys
+  ];
+
   postInstall = ''
     mkdir $out/lib/ladspa
     mv $out/lib/libdeep_filter_ladspa${stdenv.hostPlatform.extensions.sharedLibrary} $out/lib/ladspa/
   '';
 
   meta = {
-    description = "Noise supression using deep filtering";
+    description = "Noise suppression using deep filtering";
     homepage = "https://github.com/Rikorose/DeepFilterNet";
     license = with lib.licenses; [
       mit

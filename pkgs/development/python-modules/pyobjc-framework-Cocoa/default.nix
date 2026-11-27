@@ -1,48 +1,28 @@
 {
   buildPythonPackage,
   darwin,
-  fetchFromGitHub,
   lib,
   pyobjc-core,
   setuptools,
-  # TODO: Clean up on `staging`.
-  stdenv,
-  llvmPackages,
 }:
 
-buildPythonPackage rec {
+buildPythonPackage (finalAttrs: {
   pname = "pyobjc-framework-Cocoa";
   pyproject = true;
 
   inherit (pyobjc-core) version src;
 
-  patches = pyobjc-core.patches or [ ];
-
-  sourceRoot = "${src.name}/pyobjc-framework-Cocoa";
+  sourceRoot = "${finalAttrs.src.name}/pyobjc-framework-Cocoa";
 
   build-system = [ setuptools ];
 
-  buildInputs = [
-    darwin.libffi
-  ];
+  buildInputs = [ darwin.libffi ];
 
   nativeBuildInputs = [
     darwin.DarwinTools # sw_vers
-  ]
-  # TODO: Clean up on `staging`.
-  ++ lib.optionals stdenv.hostPlatform.isDarwin [
-    llvmPackages.lld
   ];
 
-  # See https://github.com/ronaldoussoren/pyobjc/pull/641. Unfortunately, we
-  # cannot just pull that diff with fetchpatch due to https://discourse.nixos.org/t/how-to-apply-patches-with-sourceroot/59727.
-  postPatch = ''
-    substituteInPlace pyobjc_setup.py \
-      --replace-fail "-buildversion" "-buildVersion" \
-      --replace-fail "-productversion" "-productVersion" \
-      --replace-fail "/usr/bin/sw_vers" "sw_vers" \
-      --replace-fail "/usr/bin/xcrun" "xcrun"
-  '';
+  patches = [ ../pyobjc-core/use-PATH-for-macOS-tools.patch ];
 
   dependencies = [ pyobjc-core ];
 
@@ -50,8 +30,6 @@ buildPythonPackage rec {
     "-I${darwin.libffi.dev}/include"
     "-Wno-error=unused-command-line-argument"
   ];
-  # TODO: Clean up on `staging`.
-  env.NIX_CFLAGS_LINK = "-fuse-ld=lld";
 
   pythonImportsCheck = [
     "Cocoa"
@@ -68,4 +46,4 @@ buildPythonPackage rec {
     platforms = lib.platforms.darwin;
     maintainers = with lib.maintainers; [ samuela ];
   };
-}
+})

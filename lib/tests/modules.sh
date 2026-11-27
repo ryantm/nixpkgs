@@ -172,8 +172,11 @@ checkConfigError() {
 checkConfigOutput '^"one two"$' config.result ./shorthand-meta.nix
 
 checkConfigError "In module .*test-push-down-non-attrs.nix., you're trying to define a value of type \`bool'\n\s*rather than an attribute set for the option" config ./test-push-down-non-attrs.nix
+checkConfigError "In module .*test-push-down-non-attrs-nested.nix., you're trying to define a value of type \`bool'\n\s*rather than an attribute set for the option\n\s*\`a\.b'!" config.a.b.c ./test-push-down-non-attrs-nested.nix
+checkConfigOutput '^1$' config.a.b.x ./options-lazy-in-unmatched-defns.nix
 
 checkConfigOutput '^true$' config.result ./test-mergeAttrDefinitionsWithPrio.nix
+checkConfigOutput '^true$' config.result ./test-fixupOptionType-idempotent.nix
 
 # Check that a module argument is passed, also when a default is available
 # (but not needed)
@@ -226,6 +229,9 @@ checkConfigError 'In attrTag, each tag value must be an option, but tag int was 
 # types
 checkConfigOutput '"ok"' config.assertions ./types.nix
 
+# types.nullOr
+checkConfigError 'A definition for option .nullableValue\.mixed. is not of type .*\. TypeError: The option .nullableValue\.mixed. is defined both null and not null, in .* and .*\.' config.nullableValue.mixed ./types.nix
+
 # types.pathInStore
 checkConfigOutput '".*/store/0lz9p8xhf89kb1c1kk6jxrzskaiygnlh-bash-5.2-p15.drv"' config.pathInStore.ok1 ./types.nix
 checkConfigOutput '".*/store/0fb3ykw9r5hpayd05sr0cizwadzq1d8q-bash-5.2-p15"' config.pathInStore.ok2 ./types.nix
@@ -275,6 +281,10 @@ checkConfigError 'The option .* does not exist. Definition values:\n\s*- In .*: 
 checkConfigError 'The option .* does not exist. Definition values:\n\s*- In .*' config.enable ./define-enable-throw.nix
 checkConfigError 'while evaluating a definition from `.*/define-enable-abort.nix' config.enable ./define-enable-abort.nix
 checkConfigError 'while evaluating the error message for definitions for .enable., which is an option that does not exist' config.enable ./define-enable-abort.nix
+
+# Check that context is printed when mkIf/mkMerge throw
+checkConfigError 'while evaluating definitions from `.*/define-enable-mkIf-throw.nix' config.enable ./declare-enable.nix ./define-enable-mkIf-throw.nix
+checkConfigError 'while evaluating definitions from `.*/define-enable-mkMerge-throw.nix' config.enable ./declare-enable.nix ./define-enable-mkMerge-throw.nix
 
 # Check boolByOr type.
 checkConfigOutput '^false$' config.value.falseFalse ./boolByOr.nix
@@ -742,6 +752,9 @@ checkConfigOutput '^38|27$' options.submoduleLine38.declarationPositions.1.line 
 # nested options work
 checkConfigOutput '^34$' options.nested.nestedLine34.declarationPositions.0.line ./declaration-positions.nix
 
+# types.pathWith in-module assertions
+checkConfigOutput '"ok"' config.assertionsResult ./pathWith.nix
+
 # types.pathWith { inStore = true; }
 checkConfigOutput '".*/store/0lz9p8xhf89kb1c1kk6jxrzskaiygnlh-bash-5.2-p15.drv"' config.pathInStore.ok1 ./pathWith.nix
 checkConfigOutput '".*/store/0fb3ykw9r5hpayd05sr0cizwadzq1d8q-bash-5.2-p15"' config.pathInStore.ok2 ./pathWith.nix
@@ -858,6 +871,8 @@ checkConfigError 'the-defs-file\.nix' config.argv ./attrList-valueMeta-definitio
 
 # attrListOf does not support type merging
 checkConfigError 'The option .merged. in .*/declare-attrList-type-merge.nix. is already declared in .*/declare-attrList-type-merge.nix' config.merged ./declare-attrList-type-merge.nix
+
+checkConfigOutput '"ok"' config.result ./mapAttrsOfSubmodule.nix
 
 cat <<EOF
 ====== module tests ======

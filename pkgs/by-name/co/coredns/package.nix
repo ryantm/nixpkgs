@@ -3,10 +3,11 @@
   stdenv,
   buildGoModule,
   fetchFromGitHub,
+  fetchpatch,
   installShellFiles,
   nixosTests,
   externalPlugins ? [ ],
-  vendorHash ? "sha256-9LLTgIjOOMvYx4nhy+6X9bEBvqlKeTx//39q+YWXeHw=",
+  vendorHash ? "sha256-yApPucq++OXDxLBS5PFZ2eYI2icu5Wn8kOhshB+YEgM=",
 }:
 
 let
@@ -14,14 +15,24 @@ let
 in
 buildGoModule (finalAttrs: {
   pname = "coredns";
-  version = "1.14.3";
+  version = "1.15.0";
 
   src = fetchFromGitHub {
     owner = "coredns";
     repo = "coredns";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-Uk4oWsUxaGdLQzX5JywYzi7pmQHGo06uQdLeOkP4U/s";
+    hash = "sha256-/r0OBNg7VlsUZkojyGT1lwca3E1ZQZ5IroVwV8y4iME=";
   };
+
+  patches = [
+    # https://github.com/coredns/coredns/pull/8769
+    # Merged upstream, remove when updating to the release after 1.15.0.
+    (fetchpatch {
+      name = "fix-racy-port-allocation-in-view-test.patch";
+      url = "https://github.com/coredns/coredns/commit/d6cd28412bcb2783e84e28c7dab4596769874ca4.patch";
+      hash = "sha256-ZvFZu3Fl3dwbX4ZVv0zz7/L5/0Sh7vHE/OcwyUPm3q4=";
+    })
+  ];
 
   inherit vendorHash;
 
@@ -123,10 +134,6 @@ buildGoModule (finalAttrs: {
   + lib.optionalString stdenv.hostPlatform.isDarwin ''
     # loopback interface is lo0 on macos
     sed -E -i 's/\blo\b/lo0/' plugin/bind/setup_test.go
-
-    # test is apparently outdated but only exhibits this on darwin
-    substituteInPlace test/corefile_test.go \
-      --replace-fail "TestCorefile1" "SkipCorefile1"
   '';
 
   __darwinAllowLocalNetworking = true;

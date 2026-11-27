@@ -4,7 +4,7 @@
   fetchFromGitHub,
   setuptools,
   aiohttp,
-  mashumaro,
+  aiospinel,
   pyprojectVersionPatchHook,
   pytest-asyncio,
   pytestCheckHook,
@@ -13,19 +13,18 @@
 
 buildPythonPackage (finalAttrs: {
   pname = "zigpy-ziggurat";
-  version = "1.0.1";
+  version = "1.2.1";
   pyproject = true;
-  __structuredAttrs = true;
 
   src = fetchFromGitHub {
     owner = "zigpy";
     repo = "zigpy-ziggurat";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-/yOj4ktxEmfFCiZwJVrYqY0PXnZUi8/LwuaUgxTfBCs=";
+    hash = "sha256-bZz4GpL5p1fdKSXiKfcOMh0nr//RaAQXC0dBXI5d7EM=";
   };
 
   postPatch = ''
-    # finds version 0.0.1 instead of 1.0.1
+    # falls back to wrong version
     substituteInPlace pyproject.toml \
       --replace-fail ', "setuptools-git-versioning<3"' ""
   '';
@@ -40,7 +39,7 @@ buildPythonPackage (finalAttrs: {
 
   dependencies = [
     aiohttp
-    mashumaro
+    aiospinel
     zigpy
   ];
 

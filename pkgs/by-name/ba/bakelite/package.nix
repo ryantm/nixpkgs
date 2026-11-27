@@ -16,11 +16,13 @@ stdenv.mkDerivation {
     hash = "sha256-rRJrtCcgfbqC/4qQiTVeUUcPqoJlNfitYRqIO58AmpA=";
   };
 
-  preBuild = ''
+  strictDeps = true;
+
+  makeFlags = [
     # pipe2() is only exposed with _GNU_SOURCE
     # Upstream makefile explicitly uses -O3 to improve SHA-3 performance
-    makeFlagsArray+=( CFLAGS="-D_GNU_SOURCE -g -O3" )
-  '';
+    "CFLAGS=-D_GNU_SOURCE -g -O3"
+  ];
 
   installPhase = ''
     mkdir -p $out/bin
@@ -33,12 +35,14 @@ stdenv.mkDerivation {
     };
   };
 
+  __structuredAttrs = true;
+
   meta = {
     homepage = "https://github.com/richfelker/bakelite";
     description = "Incremental backup with strong cryptographic confidentality";
     mainProgram = "bakelite";
     license = lib.licenses.gpl2Only;
-    maintainers = with lib.maintainers; [ mvs ];
+    maintainers = [ ];
     # no support for Darwin (yet: https://github.com/richfelker/bakelite/pull/5)
     platforms = lib.platforms.linux;
   };

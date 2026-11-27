@@ -57,7 +57,7 @@ in
       default = { };
       description = ''
         Configuration options for the Stalwart server.
-        See <https://stalw.art/docs/category/configuration> for available options.
+        See <https://stalw.art/docs/configuration> for available options.
 
         By default, the module is configured to store everything locally.
       '';
@@ -97,7 +97,7 @@ in
         the macros such as
         `%{file:/run/credentials/stalwart.service/VAR_NAME}%`.
       '';
-      type = lib.types.attrsOf lib.types.str;
+      type = lib.types.attrsOf lib.types.path;
       default = { };
       example = {
         user_admin_password = "/run/keys/stalwart_admin_password";

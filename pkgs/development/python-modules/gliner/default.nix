@@ -18,15 +18,14 @@
 
 buildPythonPackage (finalAttrs: {
   pname = "gliner";
-  version = "0.2.27";
+  version = "0.2.30";
   pyproject = true;
-  __structuredAttrs = true;
 
   src = fetchFromGitHub {
     owner = "urchade";
     repo = "GLiNER";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-pM2JenMxBvCiDQyj9VFMYJGRckWJWna3gCdAlhBGR1U=";
+    hash = "sha256-x/1FNJ9r+NhGoR5+CPgQuSCO0W1TkkyZXI+Uj/Jf5Co=";
   };
 
   build-system = [

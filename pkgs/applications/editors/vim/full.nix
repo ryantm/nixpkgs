@@ -4,6 +4,7 @@
   lib,
   stdenv,
   ncurses,
+  pixman,
   pkg-config,
   gettext,
   writeText,
@@ -11,7 +12,7 @@
   glib,
   gtk2-x11,
   gtk3-x11,
-  lua,
+  lua5_5,
   python3,
   perl,
   tcl,
@@ -26,6 +27,7 @@
   libxmu,
   libsodium,
   libice,
+  wayland,
   wayland-scanner,
   vimPlugins,
   makeWrapper,
@@ -33,7 +35,7 @@
 
   features ? "huge", # One of tiny, small, normal, big or huge
   wrapPythonDrv ? false,
-  guiSupport ? config.vim.gui or (if stdenv.hostPlatform.isDarwin then "gtk2" else "gtk3"),
+  guiSupport ? config.vim.gui or "gtk3",
   waylandSupport ? !stdenv.hostPlatform.isDarwin,
   luaSupport ? config.vim.lua or true,
   perlSupport ? config.vim.perl or false, # Perl interpreter
@@ -48,12 +50,11 @@
   darwinSupport ? config.vim.darwin or false, # Enable Darwin support
   ftNixSupport ? config.vim.ftNix or true, # Add nix indentation support from vim-nix (not needed for basic syntax highlighting)
   sodiumSupport ? config.vim.sodium or true, # Enable sodium based encryption
-
-  # TODO: Clean up on `staging`
-  llvmPackages,
 }:
 
 let
+  lua = lua5_5;
+
   nixosRuntimepath = writeText "nixos-vimrc" ''
     set nocompatible
     syntax on
@@ -125,7 +126,7 @@ stdenv.mkDerivation {
     "--disable-nextaf_check"
     "--disable-carbon_check"
     "--disable-gtktest"
-    (lib.strings.enableFeature waylandSupport "wayland")
+    (lib.strings.withFeature waylandSupport "wayland")
   ]
   ++ lib.optionals (stdenv.hostPlatform != stdenv.buildPlatform) [
     "vim_cv_toupper_broken=no"
@@ -171,14 +172,13 @@ stdenv.mkDerivation {
   ++ lib.optional wrapPythonDrv makeWrapper
   ++ lib.optional nlsSupport gettext
   ++ lib.optional perlSupport perl
-  ++ lib.optional (guiSupport == "gtk3") wrapGAppsHook3
-  ++ lib.optional waylandSupport wayland-scanner
-  # TODO: Clean up on `staging`
-  ++ lib.optional stdenv.hostPlatform.isDarwin llvmPackages.lld;
+  ++ lib.optional (guiSupport == "gtk3") (wrapGAppsHook3.override { gtk3 = gtk3-x11; })
+  ++ lib.optional waylandSupport wayland-scanner;
 
   buildInputs = [
     ncurses
     glib
+    pixman
   ]
   # All X related dependencies
   ++ lib.optionals (guiSupport == "gtk2" || guiSupport == "gtk3") [
@@ -194,6 +194,7 @@ stdenv.mkDerivation {
   ]
   ++ lib.optional (guiSupport == "gtk2") gtk2-x11
   ++ lib.optional (guiSupport == "gtk3") gtk3-x11
+  ++ lib.optional waylandSupport wayland
   ++ lib.optional luaSupport lua
   ++ lib.optional pythonSupport python3
   ++ lib.optional tclSupport tcl
@@ -201,10 +202,7 @@ stdenv.mkDerivation {
   ++ lib.optional sodiumSupport libsodium;
 
   # error: '__declspec' attributes are not enabled; use '-fdeclspec' or '-fms-extensions' to enable support for __declspec attributes
-  # workaround for ld64 hardening issue
-  #
-  # TODO: Clean up on `staging`
-  env.NIX_CFLAGS_COMPILE = lib.optionalString stdenv.hostPlatform.isDarwin "-fdeclspec -fuse-ld=lld";
+  env.NIX_CFLAGS_COMPILE = lib.optionalString stdenv.hostPlatform.isDarwin "-fdeclspec";
 
   preConfigure = lib.optionalString ftNixSupport ''
     cp ${vimPlugins.vim-nix.src}/ftplugin/nix.vim runtime/ftplugin/nix.vim

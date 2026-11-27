@@ -49,6 +49,11 @@ buildPythonPackage (finalAttrs: {
     pytestCheckHook
   ];
 
+  pytestFlags = [
+    # pytest.PytestRemovedIn10Warning: Passing a non-Collection iterable to parametrize is deprecated
+    "-Wignore::pytest.PytestRemovedIn10Warning"
+  ];
+
   disabledTests = [
     # lmstudio.LMStudioRuntimeError: Local API host port is not yet resolved.
     "test_session_disconnected_async"

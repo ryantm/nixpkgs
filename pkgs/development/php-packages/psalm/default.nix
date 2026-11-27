@@ -8,12 +8,12 @@
 }:
 
 let
-  version = "6.14.3";
+  version = "7.12.0";
 
   # The PHAR file is only required to get the `composer.lock` file
   psalm-phar = fetchurl {
     url = "https://github.com/vimeo/psalm/releases/download/${version}/psalm.phar";
-    hash = "sha256-dqRI73CdY51K1aitIK6R74Y2sLb68l4ndNuTzRv8qRE=";
+    hash = "sha256-bWMkQ1N6ONcImYPRaxTX55hDSleOUB3YNC81ZWE20Xs=";
   };
 in
 php.buildComposerProject2 (finalAttrs: {
@@ -24,14 +24,14 @@ php.buildComposerProject2 (finalAttrs: {
     owner = "vimeo";
     repo = "psalm";
     tag = finalAttrs.version;
-    hash = "sha256-6MO16Ch3SR2kn48lTj64c/1DZDpsLjpZcFYmtiBhCCU=";
+    hash = "sha256-XKGOK/tY+MG2VdWFOy0OW5zuVJpYrdX6bBbckfR+c14=";
   };
 
   composerLock = runCommand "composer.lock" { } ''
     ${lib.getExe php} -r '$phar = new Phar("${psalm-phar}"); $phar->extractTo(".", "composer.lock");'
     cp composer.lock $out
   '';
-  vendorHash = "sha256-2LlP0D7b07yXVGc/+pJUUWYXF8rsc4HiErBUt5SfZmw=";
+  vendorHash = "sha256-VBfc+jBfem/yCaj38UdV4aBkcvC9nZQ1qZEmOVt1WlE=";
 
   doInstallCheck = true;
   nativeInstallCheckInputs = [ versionCheckHook ];

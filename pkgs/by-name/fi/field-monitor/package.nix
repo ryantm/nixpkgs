@@ -23,7 +23,7 @@
   libxml2,
   nix-update-script,
   spice-protocol,
-  spice-gtk,
+  spice-glib,
   vte-gtk4,
   gcr_4,
   gtk-vnc,
@@ -31,10 +31,11 @@
   libepoxy,
   libGL,
   openssl,
+  aws-lc,
 }:
 stdenv.mkDerivation (finalAttrs: {
   pname = "field-monitor";
-  version = "50.1";
+  version = "51.0";
 
   strictDeps = true;
 
@@ -42,12 +43,12 @@ stdenv.mkDerivation (finalAttrs: {
     owner = "theCapypara";
     repo = "field-monitor";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-waMa70oLKvIoljvE+MjWWKVL1Cd0xnasVeB17tfMQW8=";
+    hash = "sha256-A7NDb6kpD1XzP43jbc5DSZ2bKoCWWmtTHFY3okC8PHY=";
   };
 
   cargoDeps = rustPlatform.fetchCargoVendor {
-    inherit (finalAttrs) src;
-    hash = "sha256-fsrczFhoIilxgZRH2PVXC67YdkMsIjA6zTfix57TTzo=";
+    inherit (finalAttrs) pname version src;
+    hash = "sha256-PLblOFgFJ5CoT9j6OvoQjJZPOVvrveFvWkIFd0LBaiw=";
   };
 
   mesonBuildType = "release";
@@ -68,6 +69,7 @@ stdenv.mkDerivation (finalAttrs: {
   ];
 
   buildInputs = [
+    aws-lc
     gcr_4
     glib
     gsettings-desktop-schemas
@@ -78,7 +80,7 @@ stdenv.mkDerivation (finalAttrs: {
     libGL
     libvirt
     openssl
-    spice-gtk
+    spice-glib
     spice-protocol
     usbredir
     vte-gtk4

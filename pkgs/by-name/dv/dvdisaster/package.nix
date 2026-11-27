@@ -5,6 +5,7 @@
   gettext,
   pkg-config,
   which,
+  util-linux,
   glib,
   gtk3,
   wrapGAppsHook3,
@@ -27,6 +28,7 @@ stdenv.mkDerivation (finalAttrs: {
     gettext
     pkg-config
     which
+    util-linux
     wrapGAppsHook3
   ];
 
@@ -69,7 +71,9 @@ stdenv.mkDerivation (finalAttrs: {
       --replace-fail /dev/shm "$TMP/log" \
       --replace-fail /var/tmp "$TMP"
 
-    ./runtests.sh
+    # Cap parallelism: upstream defaults MAX_JOBS to nproc (16 on Hydra),
+    # which piles too many large test images into $TMP and exhausts disk.
+    MAX_JOBS=4 ./runtests.sh
 
     popd
     runHook postCheck
@@ -106,7 +110,7 @@ stdenv.mkDerivation (finalAttrs: {
     '';
     license = lib.licenses.gpl3Plus;
     platforms = lib.platforms.linux;
-    maintainers = [ lib.maintainers.matteopacini ];
+    maintainers = [ ];
     mainProgram = "dvdisaster";
     # Tests are not parallelized, and take a long time to run (1-3 hours, depending on CPU)
     # Max observed time: ~4 hours on a "big-parallel" builder

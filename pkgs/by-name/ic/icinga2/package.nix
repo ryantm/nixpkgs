@@ -6,7 +6,7 @@
   cmake,
   flex,
   bison,
-  systemd,
+  systemdLibs,
   boost,
   libedit,
   openssl,
@@ -33,13 +33,13 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "icinga2${nameSuffix}";
-  version = "2.16.3";
+  version = "2.16.6";
 
   src = fetchFromGitHub {
     owner = "icinga";
     repo = "icinga2";
     rev = "v${finalAttrs.version}";
-    hash = "sha256-0gKNHtSc6uaabDHujlUKrcZfx6wz0vDp7Z4YMSem4iY=";
+    hash = "sha256-GwcYYx1EJReySndIGflGaBuF6SWF/41jIOyv+Fyxgck=";
   };
 
   patches = [
@@ -77,6 +77,7 @@ stdenv.mkDerivation (finalAttrs: {
       "-DICINGA2_GROUP=icinga2"
       "-DICINGA2_GIT_VERSION_INFO=OFF"
       "-DUSE_SYSTEMD=ON"
+      "-DCMAKE_CXX_STANDARD=20"
     ];
 
   outputs = [
@@ -88,7 +89,7 @@ stdenv.mkDerivation (finalAttrs: {
     boost
     libedit
     openssl
-    systemd
+    systemdLibs
   ]
   ++ lib.optional withOtel protobuf
   ++ lib.optional withPostgresql libpq;
@@ -144,8 +145,8 @@ stdenv.mkDerivation (finalAttrs: {
     license = lib.licenses.gpl3Plus;
     platforms = lib.platforms.linux;
     maintainers = with lib.maintainers; [
-      das_j
       helsinki-Jo
+      al2klimov
     ];
   };
 })

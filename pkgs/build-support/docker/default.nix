@@ -71,9 +71,7 @@ let
       # A user is required by nix
       # https://github.com/NixOS/nix/blob/9348f9291e5d9e4ba3c4347ea1b235640f54fd79/src/libutil/util.cc#L478
       export USER=nobody
-      ${lib.getExe' buildPackages.nix "nix-store"} --load-db < ${
-        closureInfo { rootPaths = contentsList; }
-      }/registration
+      nix-store --load-db < ${closureInfo { rootPaths = contentsList; }}/registration
       # Reset registration times to make the image reproducible
       ${lib.getExe buildPackages.sqlite} nix/var/nix/db/db.sqlite "UPDATE ValidPaths SET registrationTime = ''${SOURCE_DATE_EPOCH}"
 
@@ -86,9 +84,8 @@ let
   # The OCI Image specification recommends that configurations use values listed
   # in the Go Language document for GOARCH.
   # Reference: https://github.com/opencontainers/image-spec/blob/master/config.md#properties
-  # For the mapping from Nixpkgs system parameters to GOARCH, we can reuse the
-  # mapping from the go package.
-  defaultArchitecture = go.GOARCH;
+  # We reuse the mapping from Nixpkgs system parameters to GOARCH for that purpose.
+  defaultArchitecture = stdenv.hostPlatform.go.GOARCH;
 
   compressors = {
     none = {
@@ -116,16 +113,9 @@ let
     compressors.${compressor}
       or (throw "in docker image ${imageName}: compressor must be one of: [${toString (builtins.attrNames compressors)}]");
 
-in
-rec {
   examples = callPackage ./examples.nix {
     inherit
-      buildImage
-      buildLayeredImage
-      pullImage
-      shadowSetup
-      buildImageWithNixDb
-      streamNixShellImage
+      dockerTools
       ;
   };
 
@@ -430,6 +420,7 @@ rec {
       keepContentsDirlinks ? false,
       # Additional commands to run on the layer before it is tar'd up.
       extraCommands ? "",
+      nativeBuildInputs ? [ ],
       uid ? 0,
       gid ? 0,
     }:
@@ -441,7 +432,8 @@ rec {
           jshon
           rsync
           tarsum
-        ];
+        ]
+        ++ nativeBuildInputs;
       }
       ''
         mkdir layer
@@ -705,6 +697,7 @@ rec {
               uid
               gid
               ;
+            nativeBuildInputs = optionals includeNixDB [ nix ];
             extraCommands = extraCommandsWithDB;
             copyToRoot = rootContents;
           }
@@ -1082,6 +1075,9 @@ rec {
         ]
         ++ optionals enableFakechroot [
           proot
+        ]
+        ++ optionals includeNixDB [
+          nix
         ];
         postBuild = ''
           mv $out old_out
@@ -1445,4 +1441,41 @@ rec {
       passthru = { inherit (stream) imageTag; };
       nativeBuildInputs = compress.nativeInputs;
     } "${stream} | ${compress.compress} > $out";
-}
+
+  /**
+    The returned dockerTools attrset.
+    Can be used for self-references, e.g. makes `.examples` after `.override`
+    coherent.
+  */
+  dockerTools = {
+    inherit
+      binSh
+      buildImage
+      buildImageWithNixDb
+      buildLayeredImage
+      buildLayeredImageWithNixDb
+      buildNixShellImage
+      caCertificates
+      examples
+      exportImage
+      fakeNss
+      mergeDrvs
+      mergeImages
+      # `mkPureLayer` was grandfathered in. Might be ok to deprecate as public interface?
+      mkPureLayer
+      # `mkRootLayer` was grandfathered in. Might be ok to deprecate as public interface?
+      mkRootLayer
+      pullImage
+      # `runWithOverlay` was grandfathered in. Might be ok to deprecate as public interface?
+      runWithOverlay
+      shadowSetup
+      shellScript
+      streamLayeredImage
+      streamNixShellImage
+      tarsum
+      tests
+      usrBinEnv
+      ;
+  };
+in
+dockerTools

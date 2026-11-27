@@ -22,16 +22,14 @@
 
 buildPythonPackage (finalAttrs: {
   pname = "openinference-instrumentation-openai";
-  version = "0.1.52";
+  version = "0.1.54";
   pyproject = true;
-
-  __structuredAttrs = true;
 
   src = fetchFromGitHub {
     owner = "Arize-ai";
     repo = "openinference";
     tag = "python-openinference-instrumentation-openai-v${finalAttrs.version}";
-    hash = "sha256-wmwqmN/rN521TaXVZfkaRzHPVhANSgKaBVc4rhXgIII=";
+    hash = "sha256-rEF7Ijx3Zo3NHywFJFa5+QpXZjIWOvkQBie+54v/f8A=";
   };
 
   sourceRoot = "${finalAttrs.src.name}/python/instrumentation/${finalAttrs.pname}";
@@ -72,7 +70,16 @@ buildPythonPackage (finalAttrs: {
     "test_tool_calls"
   ];
 
-  passthru.updateScript = nix-update-script { };
+  disabledTestPaths = [
+    # want to connect to OpenAI's API
+    "tests/openinference/instrumentation/openai/test_instrumentor.py"
+  ];
+
+  passthru = {
+    # bulk updater uses wrong tag
+    skipBulkUpdate = true;
+    updateScript = nix-update-script { };
+  };
 
   meta = {
     description = "OpenInference OpenAI SDK Instrumentation";

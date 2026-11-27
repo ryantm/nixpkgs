@@ -1,5 +1,6 @@
 {
   rustPlatform,
+  stdenv,
   lib,
   pkg-config,
   wayland,
@@ -13,7 +14,7 @@
   mesa,
   xwayland,
   libinput,
-  libdisplay-info,
+  libdisplay-info_0_3,
   git,
   libgbm,
   rustc,
@@ -22,11 +23,13 @@
   callPackage,
   libglvnd,
   autoPatchelfHook,
+  installShellFiles,
   libxcursor,
   libxi,
   libxrandr,
   libx11,
   fetchFromGitHub,
+  writableTmpDirAsHomeHook,
 }:
 let
   version = "0.2.4";
@@ -44,6 +47,10 @@ let
     license = lib.licenses.gpl3;
     mainProgram = "pinnacle";
     platforms = lib.platforms.linux;
+    badPlatforms = [
+      # tests fail https://hydra.nixos.org/build/337493260
+      "aarch64-linux"
+    ];
     maintainers = with lib.maintainers; [ cassandracomar ];
   };
 
@@ -53,6 +60,15 @@ let
     src = pinnacle-src;
     sourceRoot = "${src.name}/api/lua";
     knownRockspec = "${pinnacle-src}/api/lua/rockspecs/pinnacle-api-0.2.4-1.rockspec";
+
+    postConfigure = ''
+      substituteInPlace "$rockspecFilename" \
+        --replace-fail '"compat53 ~> 0.14"' '"compat53 >= 0.14"' \
+        --replace-fail '"cqueues ~> 20200726"' '"cqueues >= 20200726"' \
+        --replace-fail '"lua-protobuf ~> 0.5"' '"lua-protobuf >= 0.5"' \
+        --replace-fail '"luaposix ~> 36.3"' '"luaposix >= 36.3"'
+    '';
+
     propagatedBuildInputs = with lua54Packages; [
       cqueues
       http
@@ -90,7 +106,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
     libinput
     mesa
     xwayland
-    libdisplay-info
+    libdisplay-info_0_3
     libgbm
     lua5_4
 
@@ -111,6 +127,8 @@ rustPlatform.buildRustPackage (finalAttrs: {
     wayland
     makeWrapper
     autoPatchelfHook
+    installShellFiles
+    writableTmpDirAsHomeHook
   ];
 
   checkFeatures = [ "testing" ];
@@ -145,6 +163,12 @@ rustPlatform.buildRustPackage (finalAttrs: {
     mkdir -p $out/share/xdg-desktop-portal
     install -m644 ./resources/pinnacle-portals.conf $out/share/xdg-desktop-portal/pinnacle-portals.conf
     install -m644 ./resources/pinnacle-portals.conf $out/share/xdg-desktop-portal/pinnacle-uwsm-portals.conf
+  ''
+  + lib.optionalString (stdenv.hostPlatform.canExecute stdenv.buildPlatform) ''
+    installShellCompletion --cmd pinnacle \
+      --bash <($out/bin/pinnacle gen-completions --shell bash) \
+      --fish <($out/bin/pinnacle gen-completions --shell fish) \
+      --zsh <($out/bin/pinnacle gen-completions --shell zsh)
   '';
 
   runtimeDependencies = [

@@ -5,36 +5,44 @@
   kernel,
   kernelModuleMakeFlags,
   bc,
+  unstableGitUpdater,
 }:
 
 stdenv.mkDerivation {
   pname = "rtl88x2bu";
-  version = "${kernel.version}-unstable-2025-12-04";
+  version = "0-unstable-2026-10-27";
+  __structuredAttrs = true;
 
   src = fetchFromGitHub {
     owner = "RinCat";
     repo = "RTL88x2BU-Linux-Driver";
-    rev = "825556e195ecde9ce8f5f4cbad9953f398c8598e";
-    hash = "sha256-MkvVCWyMOCBzCRufbKMuaaFOPhokZdFnXHYnrAwBe6M=";
+    rev = "465ae7cb522a382adc85ea5c31f228af8d172148";
+    hash = "sha256-+UDY9B6ZjwkDNbVoYhpwAiZ+cLd72/LMp/mQ6LJN5+0=";
   };
+
+  prePatch = ''
+    substituteInPlace ./Makefile \
+      --replace-fail /lib/modules/ "${kernel.dev}/lib/modules/" \
+      --replace-fail /sbin/depmod \# \
+      --replace-fail 'install -p -m 644 $(MODULE_NAME).ko  $(MODDESTDIR)' \
+        '$(MAKE) -C $(KSRC) M=$(shell pwd) modules_install'
+  '';
 
   hardeningDisable = [ "pic" ];
 
   nativeBuildInputs = [ bc ] ++ kernel.moduleBuildDependencies;
-  makeFlags = kernelModuleMakeFlags;
-
-  prePatch = ''
-    substituteInPlace ./Makefile \
-      --replace /lib/modules/ "${kernel.dev}/lib/modules/" \
-      --replace /sbin/depmod \# \
-      --replace '$(MODDESTDIR)' "$out/lib/modules/${kernel.modDirVersion}/kernel/net/wireless/"
-  '';
-
-  preInstall = ''
-    mkdir -p "$out/lib/modules/${kernel.modDirVersion}/kernel/net/wireless/"
-  '';
+  makeFlags = kernelModuleMakeFlags ++ [
+    "INSTALL_MOD_PATH=$(out)"
+    "INSTALL_MOD_DIR=kernel/net/wireless"
+    "INSTALL_MOD_STRIP=1"
+    "DEPMOD=true"
+  ];
 
   enableParallelBuilding = true;
+
+  passthru.updateScript = unstableGitUpdater {
+    hardcodeZeroVersion = true;
+  };
 
   meta = {
     description = "Realtek rtl88x2bu driver";
@@ -45,6 +53,7 @@ stdenv.mkDerivation {
       otavio
       claymorwan
     ];
+
     broken = kernel.kernelOlder "5.11";
   };
 }

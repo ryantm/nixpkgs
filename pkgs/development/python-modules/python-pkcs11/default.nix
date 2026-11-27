@@ -9,14 +9,14 @@
 
 buildPythonPackage rec {
   pname = "python-pkcs11";
-  version = "0.9.3";
+  version = "0.9.4";
   pyproject = true;
 
   src = fetchFromGitHub {
-    owner = "danni";
+    owner = "pyauth";
     repo = "python-pkcs11";
     tag = "v${version}";
-    sha256 = "sha256-ursQHwyTUz4kCg66+Rnvo8bI3fzA3k9FsmbnUvpq/aY=";
+    hash = "sha256-9RVUtUe+Af5nTDaMeipdijLK4Un/SGRAQIztVKQZZzQ=";
   };
 
   build-system = [
@@ -36,7 +36,7 @@ buildPythonPackage rec {
   meta = {
     changelog = "https://github.com/pyauth/python-pkcs11/releases/tag/${src.tag}";
     description = "PKCS#11/Cryptoki support for Python";
-    homepage = "https://github.com/danni/python-pkcs11";
+    homepage = "https://github.com/pyauth/python-pkcs11";
     license = lib.licenses.mit;
     maintainers = with lib.maintainers; [ fab ];
   };

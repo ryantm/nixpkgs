@@ -13,8 +13,6 @@ buildPythonPackage (finalAttrs: {
   version = "2.1.3";
   pyproject = true;
 
-  __structuredAttrs = true;
-
   src = fetchFromGitHub {
     owner = "fabfuel";
     repo = "circuitbreaker";
@@ -35,7 +33,7 @@ buildPythonPackage (finalAttrs: {
   meta = {
     description = "Python Circuit Breaker implementation";
     homepage = "https://github.com/fabfuel/circuitbreaker";
-    license = with lib.licenses; [ bsd3 ];
+    license = lib.licenses.bsd3;
     maintainers = with lib.maintainers; [ fab ];
   };
 })

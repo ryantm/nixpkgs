@@ -61,7 +61,7 @@ let
 in
 stdenv.mkDerivation (finalAttrs: {
   pname = "azahar";
-  version = "2125.1.3";
+  version = "2126.2";
 
   src = fetchFromGitHub {
     owner = "azahar-emu";
@@ -74,8 +74,10 @@ stdenv.mkDerivation (finalAttrs: {
       echo "${finalAttrs.version}" > "$out/GIT-TAG"
       git -C "$out" rev-parse HEAD > "$out/GIT-COMMIT"
     '';
-    hash = "sha256-jn5Ib5jM/6zHuCjWoMkTvs0nR29mAbTlvID5aYZLw5o=";
+    hash = "sha256-wgF7n2ju8rP5jphHAj+fTLjfdhSz1OVDBHGNKJFlP2E=";
   };
+
+  patches = [ ./quartzcore.patch ];
 
   strictDeps = true;
   nativeBuildInputs = [
@@ -147,6 +149,14 @@ stdenv.mkDerivation (finalAttrs: {
   + optionalString enableGamemode ''
     substituteInPlace externals/gamemode/include/gamemode_client.h \
       --replace-fail "libgamemode.so.0" "${getLib gamemode}/lib/libgamemode.so.0"
+  ''
+  # With Qt 6.12, include/QtGui/qwindowdefs.h is an unguarded forwarder whose
+  # #include_next resolves to itself, so #import skips the real header
+  + optionalString stdenv.hostPlatform.isDarwin ''
+    substituteInPlace src/citra_qt/util/metal_util.h \
+      --replace-fail '#import "qwindowdefs.h"' '#include <qwindowdefs.h>'
+    substituteInPlace src/citra_qt/util/metal_util.mm \
+      --replace-fail '#import <qwindowdefs.h>' '#include <qwindowdefs.h>'
   '';
 
   cmakeFlags = [
@@ -157,9 +167,10 @@ stdenv.mkDerivation (finalAttrs: {
     (cmakeBool "DISABLE_SYSTEM_SPIRV_HEADERS" true)
     (cmakeBool "ENABLE_QT_TRANSLATION" enableQtTranslations)
     (cmakeBool "ENABLE_CUBEB" enableCubeb)
-    (cmakeBool "USE_DISCORD_PRESENCE" useDiscordRichPresence)
+    (cmakeBool "ENABLE_DISCORD_RPC" useDiscordRichPresence)
     (cmakeBool "ENABLE_SSE42" enableSSE42)
-  ];
+  ]
+  ++ lib.optional stdenv.hostPlatform.isDarwin (cmakeBool "USE_SYSTEM_MOLTENVK" true);
 
   installPhase = optionalString stdenv.hostPlatform.isDarwin ''
     runHook preInstall

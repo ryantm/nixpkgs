@@ -2,22 +2,23 @@
   lib,
   stdenv,
   rustPlatform,
+  jemalloc,
   fetchFromGitHub,
   nix-update-script,
 }:
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "lightningcss";
-  version = "1.32.0";
+  version = "1.33.0";
 
   src = fetchFromGitHub {
     owner = "parcel-bundler";
     repo = "lightningcss";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-JqAzBPYbJq52exCpVTdhd90BQGsbfMOx68PD1xUripg=";
+    hash = "sha256-twodhkzM/h4ijZFeB2tQAOAV131r1ggLr3tcXUUGHFo=";
   };
 
-  cargoHash = "sha256-zndBkOJ/U6lLaOJn273TabMAPbz96hQeWs4cPKFDGro=";
+  cargoHash = "sha256-Jz6kpaan1HNJKhG7Jb5f5mfZoYNDwQhemTuVCf5Cn0Q=";
 
   patches = [
     # Backport fix for build error for lightningcss-napi
@@ -38,6 +39,12 @@ rustPlatform.buildRustPackage (finalAttrs: {
   cargoTestFlags = [
     "--lib"
   ];
+
+  env = lib.optionalAttrs stdenv.hostPlatform.isDarwin {
+    # jemalloc-sys 0.3.2 expects unprefixed symbols when JEMALLOC_OVERRIDE is set,
+    # so use jemalloc (unprefixed on darwin) instead of the _rjem_-prefixed rust-jemalloc-sys
+    JEMALLOC_OVERRIDE = "${lib.getLib jemalloc}/lib/libjemalloc${stdenv.hostPlatform.extensions.sharedLibrary}";
+  };
 
   passthru.updateScript = nix-update-script { };
 

@@ -7,22 +7,24 @@
   makeBinaryWrapper,
   pkg-config,
   xz,
+  zstd,
 }:
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "pwninit";
-  version = "3.3.2";
+  version = "3.3.3";
 
   src = fetchFromGitHub {
     owner = "io12";
     repo = "pwninit";
     rev = finalAttrs.version;
-    sha256 = "sha256-WKOndOkaKr+dUnx61LW6ZZxUFUESerjE5W6hgLA3n1o=";
+    sha256 = "sha256-Gy7W2caZSD/fXzcGpYEzpotEAmYF48UeDUNWN4rbOTs=";
   };
 
   buildInputs = [
     openssl
     xz
+    zstd
   ];
   nativeBuildInputs = [
     pkg-config
@@ -34,7 +36,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
   '';
   doCheck = false; # there are no tests to run
 
-  cargoHash = "sha256-KMvaKTNC84K6N0NAZizK9M1nP4rV4cfwlOTI/HidQYc=";
+  cargoHash = "sha256-m0Bdx2ayLCTCJXCl7YUKfxka1qUVSFm9LNLICEjEfY4=";
 
   meta = {
     description = "Automate starting binary exploit challenges";

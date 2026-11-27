@@ -21,15 +21,13 @@
 
 buildPythonPackage (finalAttrs: {
   pname = "torchaudio";
-  version = "2.11.0";
+  version = "2.11.1";
   format = "wheel";
 
   src =
     let
-      pyVerNoDot = lib.replaceStrings [ "." ] [ "" ] python.pythonVersion;
       unsupported = throw "Unsupported system";
-      srcs =
-        (import ./binary-hashes.nix finalAttrs.version)."${stdenv.system}-${pyVerNoDot}" or unsupported;
+      srcs = (import ./binary-hashes.nix finalAttrs.version).${stdenv.system} or unsupported;
     in
     fetchurl srcs;
 
@@ -49,7 +47,7 @@ buildPythonPackage (finalAttrs: {
 
       # $out/${sitePackages}/torchaudio/lib/libtorchaudio*.so wants libnvToolsExt.so.2 but torch/lib only ships
       # libnvToolsExt-$hash.so.1
-      cuda_nvtx
+      nvtx
     ]
   );
 
@@ -60,7 +58,7 @@ buildPythonPackage (finalAttrs: {
 
   dependencies = [ torch-bin ];
 
-  preInstall = lib.optionals stdenv.hostPlatform.isLinux ''
+  preInstall = lib.optionalString stdenv.hostPlatform.isLinux ''
     addAutoPatchelfSearchPath "${torch-bin}/${python.sitePackages}/torch"
   '';
 

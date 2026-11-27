@@ -13,6 +13,8 @@ stdenv.mkDerivation {
   pname = "9base";
   version = "6-unstable-2019-09-13";
 
+  __structuredAttrs = true;
+
   src = fetchgit {
     url = "https://git.suckless.org/9base";
     rev = "63916da7bd6d73d9a405ce83fc4ca34845667cce";
@@ -90,6 +92,6 @@ stdenv.mkDerivation {
     platforms = lib.platforms.unix;
     # needs additional work to support aarch64-darwin
     # due to usage of _DARWIN_NO_64_BIT_INODE
-    broken = stdenv.hostPlatform.isAarch64 && stdenv.hostPlatform.isDarwin;
+    broken = stdenv.hostPlatform.isDarwin;
   };
 }

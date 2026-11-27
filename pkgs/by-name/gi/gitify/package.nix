@@ -2,29 +2,33 @@
   lib,
   stdenv,
   fetchFromGitHub,
-  pnpm_10,
+  pnpm_11,
   fetchPnpmDeps,
   pnpmConfigHook,
-  nodejs,
-  electron,
+  nodejs_24,
+  electron_44,
   makeDesktopItem,
   copyDesktopItems,
   imagemagick,
   makeWrapper,
+  cacert,
+  darwin,
   nix-update-script,
 }:
 let
-  pnpm = pnpm_10;
+  pnpm = pnpm_11;
+  nodejs = nodejs_24;
+  electron = electron_44;
 in
 stdenv.mkDerivation (finalAttrs: {
   pname = "gitify";
-  version = "6.20.0";
+  version = "8.2.0";
 
   src = fetchFromGitHub {
     owner = "gitify-app";
     repo = "gitify";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-zKvI9uwKiKKbHTzM/LIhCzUCcM104UNReRJb51iQonc=";
+    hash = "sha256-KzirrOKuJHMVsNCC3J3YKjRE4H7gtSelPrnnzxntLM0=";
   };
 
   nativeBuildInputs = [
@@ -34,6 +38,10 @@ stdenv.mkDerivation (finalAttrs: {
     copyDesktopItems
     imagemagick
     makeWrapper
+    cacert
+  ]
+  ++ lib.optionals stdenv.hostPlatform.isDarwin [
+    darwin.autoSignDarwinBinariesHook
   ];
 
   strictDeps = true;
@@ -43,7 +51,7 @@ stdenv.mkDerivation (finalAttrs: {
     inherit (finalAttrs) pname version src;
     inherit pnpm;
     fetcherVersion = 4;
-    hash = "sha256-KjRcUVeByCXetX7skJoxt6LU6EZcOG+5U2y3sr3XP7A=";
+    hash = "sha256-ShMuQ4GG0MAhHrk4YhLC2EMziWIKkZaYjuAaajZWURk=";
   };
 
   env.ELECTRON_SKIP_BINARY_DOWNLOAD = 1;
@@ -64,6 +72,11 @@ stdenv.mkDerivation (finalAttrs: {
     # Disable auto-updater; updates are handled via nixpkgs.
     substituteInPlace src/main/updater.ts \
       --replace-fail "if (!this.menubar.app.isPackaged)" "if (true)"
+  ''
+  + lib.optionalString stdenv.hostPlatform.isDarwin ''
+    # Keep the fuse changes, but sign in fixup instead of calling codesign in the sandbox.
+    substituteInPlace electron-builder.js \
+      --replace-fail 'resetAdHocDarwinSignature: true' 'resetAdHocDarwinSignature: false'
   '';
 
   buildPhase = ''
@@ -91,7 +104,7 @@ stdenv.mkDerivation (finalAttrs: {
         ''
           mkdir -p $out/Applications
           cp -r dist/mac*/Gitify.app $out/Applications
-          makeWrapper $out/Applications/Gitify.app/Contents/MacOS/gitify $out/bin/gitify
+          makeWrapper $out/Applications/Gitify.app/Contents/MacOS/Gitify $out/bin/gitify
         ''
       else
         ''

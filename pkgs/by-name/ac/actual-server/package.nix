@@ -6,22 +6,22 @@
   git,
   jq,
   makeBinaryWrapper,
-  nodejs_22,
+  nodejs_24,
   python3,
   xcbuild,
   yarn-berry_4,
   nixosTests,
 }:
 let
-  nodejs = nodejs_22;
+  nodejs = nodejs_24;
   yarn-berry = yarn-berry_4.override { inherit nodejs; };
-  version = "26.7.0";
+  version = "26.11.0";
   src = fetchFromGitHub {
     name = "actualbudget-actual-source";
     owner = "actualbudget";
     repo = "actual";
     tag = "v${version}";
-    hash = "sha256-KePWt08rAhLZUrgyN7tdFUQXR/5y0TvakReji4eMwxg=";
+    hash = "sha256-AjboUgo74ivnQL8BN72Iko9x+9FsggEXmzWar+Qy/vk=";
   };
   translations = fetchFromGitHub {
     name = "actualbudget-translations-source";
@@ -29,8 +29,8 @@ let
     repo = "translations";
     # Note to updaters: this repo is not tagged, so just update this to the Git
     # tip at the time the update is performed.
-    rev = "c26df422b50745085191721b1f078664daac947d";
-    hash = "sha256-u3EVA8J0VCLPafidGHhDiySB2fQdibntN+6FfErQi70=";
+    rev = "1061ae505e0c0dd6a1a6e1309b0084270136236e";
+    hash = "sha256-OH90MVqeiwyoUsbiRVp1q7osao3VIaA3tu1k24/cYvY=";
   };
 
 in
@@ -40,12 +40,6 @@ stdenv.mkDerivation (finalAttrs: {
     translations
   ];
   sourceRoot = "${src.name}/";
-
-  patches = [
-    # Remove after upstream updates to Yarn 4.14
-    # https://github.com/actualbudget/actual/blob/master/package.json#L123
-    ./yarn-4.14-support.patch
-  ];
 
   nativeBuildInputs = [
     yarn-berry
@@ -71,13 +65,16 @@ stdenv.mkDerivation (finalAttrs: {
   __darwinAllowLocalNetworking = true;
 
   postPatch = ''
+    # We bring our own yarn
+    sed -i '/yarnPath:/d' .yarnrc.yml
+
     ln -sv ../../../${translations.name} ./packages/desktop-client/locale
 
     patchShebangs --build ./bin ./packages/*/bin
 
     # Patch all references to `git` to a no-op `true`. This neuter automatic
     # translation update.
-    substituteInPlace bin/package-browser \
+    substituteInPlace bin/package-browser bin/package-electron \
       --replace-fail "git" "true"
 
     # Allow `remove-untranslated-languages` to do its job.
@@ -114,8 +111,8 @@ stdenv.mkDerivation (finalAttrs: {
 
   missingHashes = ./missing-hashes.json;
   offlineCache = yarn-berry.fetchYarnBerryDeps {
-    inherit (finalAttrs) src missingHashes patches;
-    hash = "sha256-eZxQAf2AfNd+0wrSEmE9kg5XWdqhE3Dlf6OGc1bZhXA=";
+    inherit (finalAttrs) src missingHashes;
+    hash = "sha256-fPL9qx4Y0nW7JhlhyA8P+3qNOE4cVWRgziA0Cs8fIEA=";
   };
 
   pname = "actual-server";
@@ -150,7 +147,7 @@ stdenv.mkDerivation (finalAttrs: {
   '';
 
   passthru = {
-    inherit (finalAttrs) offlineCache;
+    inherit (finalAttrs) offlineCache env;
     inherit translations;
     tests = nixosTests.actual;
     updateScript = ./update.sh;
@@ -164,6 +161,7 @@ stdenv.mkDerivation (finalAttrs: {
     license = lib.licenses.mit;
     platforms = with lib.platforms; linux ++ darwin;
     maintainers = [
+      lib.maintainers.PerchunPak
       lib.maintainers.oddlama
       lib.maintainers.patrickdag
       lib.maintainers.yash-garg

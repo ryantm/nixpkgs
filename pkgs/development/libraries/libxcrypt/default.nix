@@ -2,7 +2,6 @@
   lib,
   stdenv,
   fetchurl,
-  fetchpatch,
   perl,
   # Update the enabled crypt scheme ids in passthru when the enabled hashes change
   enableHashes ? "strong",
@@ -62,6 +61,8 @@ stdenv.mkDerivation (finalAttrs: {
     perl
   ];
 
+  strictDeps = true;
+
   enableParallelBuilding = true;
 
   doCheck = true;
@@ -71,7 +72,7 @@ stdenv.mkDerivation (finalAttrs: {
       inherit (nixosTests) login shadow;
 
       passthruMatches = runCommand "libxcrypt-test-passthru-matches" { } ''
-        ${python3.interpreter} "${./check_passthru_matches.py}" ${
+        ${python3.interpreter} -P "${./check_passthru_matches.py}" ${
           lib.escapeShellArgs (
             [
               finalAttrs.src
@@ -96,6 +97,8 @@ stdenv.mkDerivation (finalAttrs: {
       "6" # sha512crypt
     ];
   };
+
+  __structuredAttrs = true;
 
   meta = {
     changelog = "https://github.com/besser82/libxcrypt/blob/v${finalAttrs.version}/NEWS";

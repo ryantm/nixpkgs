@@ -5,7 +5,7 @@
   fetchFromGitHub,
 
   # build-system
-  setuptools,
+  uv-build,
 
   # dependencies
   rich,
@@ -18,18 +18,17 @@
 
 buildPythonPackage (finalAttrs: {
   pname = "textual-image";
-  version = "0.12.0";
+  version = "0.14.4";
   pyproject = true;
-  __structuredAttrs = true;
 
   src = fetchFromGitHub {
     owner = "lnqs";
     repo = "textual-image";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-W0f9ZnSZ58XqiPnr9SZEv22EE4yCsvXcgNA8eJebJQo=";
+    hash = "sha256-pUuTBwSHwkqpNaFrpxmJaByvRW3WFivsrl25CsIpM8w=";
   };
 
-  build-system = [ setuptools ];
+  build-system = [ uv-build ];
 
   dependencies = [
     pillow

@@ -7,6 +7,7 @@
   fetchFromGitHub,
   pip,
   pyproject-hooks,
+  pytest-mock,
   pytest-xdist,
   pytestCheckHook,
   setuptools,
@@ -15,21 +16,17 @@
   wheel,
 }:
 
-buildPythonPackage rec {
+buildPythonPackage (finalAttrs: {
   pname = "pip-tools";
-  version = "7.5.3";
+  version = "7.7.0";
   pyproject = true;
 
   src = fetchFromGitHub {
-    owner = "jazzband";
+    owner = "pypa";
     repo = "pip-tools";
-    tag = "v${version}";
-    hash = "sha256-MkYGD/ropw+MLLrk4gRZZguOv5extzNNXwTy6NQnCu0=";
+    tag = "v${finalAttrs.version}";
+    hash = "sha256-O3W8exoRz7PHockhcxHGV7RtCjpF7mkdz34tzlBjBlg=";
   };
-
-  patches = [
-    ./fix-setup-py-bad-syntax-detection.patch
-  ];
 
   build-system = [ setuptools-scm ];
 
@@ -45,12 +42,13 @@ buildPythonPackage rec {
   __darwinAllowLocalNetworking = true;
 
   nativeCheckInputs = [
+    pytest-mock
     pytest-xdist
     pytestCheckHook
     tomli-w
   ];
 
-  preCheck = lib.optionalString (stdenv.hostPlatform.isDarwin && stdenv.hostPlatform.isAarch64) ''
+  preCheck = lib.optionalString stdenv.hostPlatform.isDarwin ''
     # https://github.com/python/cpython/issues/74570#issuecomment-1093748531
     export no_proxy='*';
   '';
@@ -97,9 +95,9 @@ buildPythonPackage rec {
 
   meta = {
     description = "Keeps your pinned dependencies fresh";
-    homepage = "https://github.com/jazzband/pip-tools/";
-    changelog = "https://github.com/jazzband/pip-tools/releases/tag/${version}";
+    homepage = "https://github.com/pypa/pip-tools/";
+    changelog = "https://github.com/pypa/pip-tools/releases/tag/${finalAttrs.version}";
     license = lib.licenses.bsd3;
     maintainers = with lib.maintainers; [ zimbatm ];
   };
-}
+})

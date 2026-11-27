@@ -11,22 +11,23 @@
   pytest-timeout,
   pytest-django,
   pydot,
+  graphviz,
   docutils,
   pyyaml,
   jsonschema,
+  sphinx,
+  sphinxcontrib-mermaid,
 }:
 
 buildPythonPackage (finalAttrs: {
   pname = "python-statemachine";
-  version = "3.2.0";
+  version = "3.2.2";
   pyproject = true;
-
-  __structuredAttrs = true;
 
   src = fetchPypi {
     pname = "python_statemachine";
     inherit (finalAttrs) version;
-    hash = "sha256-RLmMubsQgYke9u+pB8gh0FyuUxSiuZcT5W1Wqcli3gg=";
+    hash = "sha256-WWjF4HpTf3UxuLHQoNUGejRSyIlB+grGwkSHDUj3gyU=";
   };
 
   build-system = [ hatchling ];
@@ -39,9 +40,12 @@ buildPythonPackage (finalAttrs: {
     pytest-timeout
     pytest-django
     pydot
+    graphviz
     docutils
     pyyaml
     jsonschema
+    sphinx
+    sphinxcontrib-mermaid
   ];
 
   pytestFlags = [ "--benchmark-disable" ];
@@ -50,9 +54,6 @@ buildPythonPackage (finalAttrs: {
     # quite slow
     "tests/test_weighted_transitions.py"
     "tests/scxml/"
-
-    # requires sphinx, which is not worth pulling in for this relatively low-signal test
-    "statemachine/contrib/diagram/sphinx_ext.py"
   ];
 
   disabledTests = [

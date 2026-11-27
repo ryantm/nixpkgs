@@ -2,6 +2,7 @@
   lib,
   backendStdenv,
   fetchFromGitHub,
+  fetchpatch,
   flags,
 
   # nativeBuildInputs
@@ -9,7 +10,7 @@
   cuda_nvcc,
 
   # buildInputs
-  boost,
+  argparse,
   cuda_cudart,
   cuda_nvml_dev,
 
@@ -21,7 +22,7 @@
 }:
 backendStdenv.mkDerivation (finalAttrs: {
   pname = "nvbandwidth";
-  version = "0.9";
+  version = "0.11.0";
 
   __structuredAttrs = true;
   strictDeps = true;
@@ -30,13 +31,21 @@ backendStdenv.mkDerivation (finalAttrs: {
     owner = "NVIDIA";
     repo = "nvbandwidth";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-j1bKWXHIkjsE/M+w5rRF0UGjkj1gLA2yi+5hc1sWl/A=";
+    hash = "sha256-XB6uzSBTiXLdietsjFkxrwco6kmFmMnGc921noE002I=";
   };
 
   patches = [
     # Force a dynamic Boost build and link against the CUDA driver / NVML stubs via the CMake
     # imported targets exposed by `find_package(CUDAToolkit)`.
     ./use-cuda-imported-targets.patch
+
+    # Fix link failure when the last CUDA arch is < sm_100 (e.g. [ "10.0" "8.9" ])
+    # https://github.com/NVIDIA/nvbandwidth/pull/74
+    (fetchpatch {
+      name = "fix-multi-arch-kernel-stubs.patch";
+      url = "https://github.com/NVIDIA/nvbandwidth/commit/3a32d2c84d419bde4b4e7485ae62953ed09bf63e.patch";
+      hash = "sha256-5RYNnCv31hMn+Er/LNJJlh30kWpmu2O/knYMluLA1vM=";
+    })
   ];
 
   nativeBuildInputs = [
@@ -49,7 +58,7 @@ backendStdenv.mkDerivation (finalAttrs: {
   ];
 
   buildInputs = [
-    boost
+    argparse
     cuda_cudart # cuda_runtime.h, libcuda stub
     cuda_nvml_dev # libnvidia-ml
   ];

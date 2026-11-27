@@ -11,14 +11,14 @@
 
 buildPythonPackage (finalAttrs: {
   pname = "hatch-argparse-manpage";
-  version = "1.0.1";
+  version = "1.0.3";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "damonlynch";
     repo = "hatch-argparse-manpage";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-wkMLbbOkIRO83byUTJRYAS7uTYc2weL/viH1fI8xYh0=";
+    hash = "sha256-5ACbZ6XOVPkS1BLryKNtvLFjYylVrUhjsnm4LO5Mrks=";
   };
 
   build-system = [

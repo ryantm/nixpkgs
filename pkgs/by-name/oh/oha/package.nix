@@ -8,22 +8,25 @@
   libredirect,
   pkg-config,
   openssl,
+  aws-lc,
+  sqlite,
+  zstd,
   rust-jemalloc-sys,
   versionCheckHook,
 }:
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "oha";
-  version = "1.15.0";
+  version = "1.17.0";
 
   src = fetchFromGitHub {
     owner = "hatoo";
     repo = "oha";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-WkV4tiDjaFy0fttR7HhhqxWF2VggQfdNMLIZzxjTCOA=";
+    hash = "sha256-ujFZa/eo1rjmpgjsTxhKuXLWg4P0FYcRyOn1RJ03Ycw=";
   };
 
-  cargoHash = "sha256-KZZKV5DXABfgjXRc+BhO0AGONaKxoCNKYxTnupzvZV0=";
+  cargoHash = "sha256-OTvWXJhk6bmiU5sIkAz5fz0nNgbsxafcPi30cunyEfU=";
 
   env = {
     CARGO_PROFILE_RELEASE_LTO = "fat";
@@ -32,13 +35,14 @@ rustPlatform.buildRustPackage (finalAttrs: {
 
   nativeBuildInputs = [
     installShellFiles
-  ]
-  ++ lib.optionals stdenv.hostPlatform.isLinux [
     pkg-config
   ];
 
-  buildInputs = lib.optionals stdenv.hostPlatform.isLinux [
+  buildInputs = [
     openssl
+    aws-lc
+    sqlite
+    zstd
     rust-jemalloc-sys
   ];
 

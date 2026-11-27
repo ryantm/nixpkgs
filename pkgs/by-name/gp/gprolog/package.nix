@@ -46,10 +46,12 @@ stdenv.mkDerivation (finalAttrs: {
   meta = {
     homepage = "https://www.gnu.org/software/gprolog/";
     description = "GNU Prolog, a free Prolog compiler with constraint solving over finite domains";
-    license = with lib.licenses; [
-      lgpl3Plus # and/or
-      gpl2Plus
-    ];
+    license =
+      with lib.licenses;
+      OR [
+        lgpl3Plus
+        gpl2Plus
+      ];
 
     longDescription = ''
       GNU Prolog is a free Prolog compiler with constraint solving
@@ -70,7 +72,7 @@ stdenv.mkDerivation (finalAttrs: {
       interface, sockets,...).
 
       GNU Prolog also includes an efficient constraint solver over
-      Finite Domains (FD).  This opens contraint logic programming to
+      Finite Domains (FD).  This opens constraint logic programming to
       the user combining the power of constraint programming to the
       declarativity of logic programming.
     '';

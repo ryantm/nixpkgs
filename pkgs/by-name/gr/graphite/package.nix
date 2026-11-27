@@ -2,7 +2,6 @@
   lib,
   stdenv,
   fetchFromGitHub,
-  fetchurl,
   fetchzip,
   rustPlatform,
   fetchNpmDeps,
@@ -14,12 +13,13 @@
   binaryen,
   cargo-about,
   nodejs,
-  wasm-bindgen-cli_0_2_121,
+  wasm-bindgen-cli_0_2_129,
   xz,
   removeReferencesTo,
   cef-binary,
   wayland,
   openssl,
+  aws-lc,
   vulkan-loader,
   libGL,
   libxkbcommon,
@@ -29,27 +29,21 @@
 }:
 
 let
-  version = "0-unstable-2026-07-09";
-  rev = "97f8113fe43d41b15ca3a56c300c48b7c8fda5c4";
+  version = "0-unstable-2026-11-23";
+  rev = "73c1da7404b2182ab92fbb2ed9957af627c1ddc7";
 
-  srcHash = "sha256-EPZzS3sxHYLi2qaRKvJbjUfS0LWaIWwJW/z4op+/uZM=";
-  shaderHash = "sha256-iwtT43vnhgZZhtvWdTLDL5xZVStkOUb2D832/wjqsUE=";
-  cargoHash = "sha256-uwLZFB3+jefE3WihUc3ta8L5G1vdmDdhEDVkDOwAveE=";
-  npmHash = "sha256-Rb0bLPk54QigNp7TkDkJJy/TEJXAhlXOCruckwvdXks=";
+  srcHash = "sha256-QDj9epOE+CPwNxH1/kzkXIlW7EGH1cgeL5mJGaLNUyY=";
+  cargoHash = "sha256-bNWPcqc94NGbQMXUl960pfsjxHO8YzWZpzOLxlD9DBk=";
+  npmHash = "sha256-VUNW+YfBvJc3EyigULBdv4Uqb+vKgTjrDMOAVk1DCvI=";
 
-  brandingRev = "0d004aa61e6b48d316e8e5db6d59ccc4788f192d";
-  brandingHash = "sha256-wAA6fR+NSxlCAqgwWmpiIAnji9k/jsMXpR0Vt04Ntmk=";
+  brandingRev = "38176c494d7cf0bde3bdf45e6a318ae6a9d89229";
+  brandingHash = "sha256-w5vHwBDJA5i3ygcH1Qp1K/W+qI0BiZTzVjEaA0drtmg=";
 
   src = fetchFromGitHub {
     owner = "GraphiteEditor";
     repo = "Graphite";
     inherit rev;
     hash = srcHash;
-  };
-
-  shaders = fetchurl {
-    url = "https://raw.githubusercontent.com/timon-schelling/graphite-artifacts/refs/heads/main/rev/${rev}/raster_nodes_shaders_entrypoint.wgsl";
-    hash = shaderHash;
   };
 
   branding = fetchzip {
@@ -64,6 +58,7 @@ let
     libGL
     wayland
     openssl
+    aws-lc
     libxkbcommon
     libxcursor
     libxcb
@@ -95,7 +90,7 @@ stdenv.mkDerivation (finalAttrs: {
     pkg-config
     npmHooks.npmConfigHook
     binaryen
-    wasm-bindgen-cli_0_2_121
+    wasm-bindgen-cli_0_2_129
     nodejs
     cargo-about
     removeReferencesTo
@@ -132,7 +127,6 @@ stdenv.mkDerivation (finalAttrs: {
   '';
 
   env.CEF_PATH = cefPath;
-  env.RASTER_NODES_SHADER_PATH = shaders;
   env.GRAPHITE_GIT_COMMIT_HASH = finalAttrs.src.rev;
 
   buildPhase = ''
@@ -180,18 +174,24 @@ stdenv.mkDerivation (finalAttrs: {
       combines layer-based compositing with node-based generative design.
     '';
 
-    # All Graphite code is licensed under the Apache License 2.0.
+    # All Graphite code is dual-licensed under the MIT and Apache 2.0 licenses.
     # This derivation also bundles the official branding assets
     # which are licensed under the separate Graphite Branding License.
-    license = with lib.licenses; [
-      asl20
-      {
-        fullName = "Graphite Branding License";
-        url = "https://graphite.art/license/#branding";
-        free = false;
-        redistributable = true;
-      }
-    ];
+    license =
+      with lib.licenses;
+      AND [
+        (OR [
+          mit
+          asl20
+        ])
+        (mkLicense {
+          shortName = "graphite";
+          fullName = "Graphite Branding License";
+          url = "https://graphite.art/license/#branding";
+          free = false;
+          redistributable = true;
+        })
+      ];
     platforms = lib.platforms.linux;
     maintainers = with lib.maintainers; [ timon ];
   };

@@ -20,6 +20,7 @@
   libx11,
   libxcb,
   libxshmfence,
+  mesa-libclc,
   spirv-llvm-translator,
   spirv-tools,
   zlib,
@@ -35,7 +36,6 @@
     "kosmickrisp" # Vulkan on Metal
   ],
   vulkanLayers ? [
-    "anti-lag"
     "intel-nullhw"
     "overlay"
     "screenshot"
@@ -85,8 +85,8 @@ stdenv.mkDerivation {
     libpng
     libxml2 # should be propagated from libllvm
     llvmPackages.libclang
-    llvmPackages.libclc
     llvmPackages.libllvm
+    mesa-libclc
     python3Packages.python # for shebang
     spirv-llvm-translator
     spirv-tools

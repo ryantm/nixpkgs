@@ -14,15 +14,15 @@
 
 buildGoModule (finalAttrs: {
   pname = "restish";
-  version = "2.2.0";
+  version = "2.3.0";
 
   __structuredAttrs = true;
 
   src = fetchFromGitHub {
-    owner = "danielgtaylor";
+    owner = "rest-sh";
     repo = "restish";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-wGchbKSEbzr1vQlYWgUTubA1xQVcxq7iyRUIuWqVL0Y=";
+    hash = "sha256-tI4o+zkKNnFrqWFEHsNt2+03Luth9KHH+x7P+WwaGNI=";
   };
 
   vendorHash = "sha256-Y0GwgrkD09WAlmyI6Oe3Kw6L62E7QRTCIThZGXbbn74=";
@@ -46,8 +46,8 @@ buildGoModule (finalAttrs: {
   ];
 
   checkFlags = [
-    # Test requires network access and test with hard-coded version '2.0.0'
-    "-skip=TestAPISyncDiscoveryDoesNotSendAuthToCrossOriginLinkSpec|TestVersion$|TestVersionCommand"
+    # Tests require network access or use a hard-coded version string
+    "-skip=TestAPISyncDiscoveryDoesNotSendAuthToCrossOriginLinkSpec|TestCommandSurfaceHideSupportCommands|TestVersion$|TestVersionCommand"
   ];
 
   doInstallCheck = true;
@@ -55,7 +55,7 @@ buildGoModule (finalAttrs: {
   meta = {
     description = "CLI tool for interacting with REST-ish HTTP APIs";
     homepage = "https://rest.sh/";
-    changelog = "https://github.com/danielgtaylor/restish/releases/tag/${finalAttrs.src.tag}";
+    changelog = "https://github.com/rest-sh/restish/releases/tag/${finalAttrs.src.tag}";
     license = lib.licenses.mit;
     maintainers = with lib.maintainers; [ fab ];
     mainProgram = "restish";

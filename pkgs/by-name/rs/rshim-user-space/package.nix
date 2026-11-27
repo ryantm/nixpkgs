@@ -4,6 +4,7 @@
   bashNonInteractive,
   coreutils,
   fetchFromGitHub,
+  fetchpatch,
   fuse3,
   gawk,
   gnugrep,
@@ -17,6 +18,7 @@
   procps,
   pv,
   stdenv,
+  systemdSupport ? lib.meta.availableOn stdenv.hostPlatform systemd,
   systemd,
   util-linux,
   which,
@@ -25,13 +27,13 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "rshim-user-space";
-  version = "2.7.3";
+  version = "2.8.5";
 
   src = fetchFromGitHub {
     owner = "Mellanox";
     repo = "rshim-user-space";
     rev = "rshim-${finalAttrs.version}";
-    hash = "sha256-2Hu5ysjh38dBaGeZirke+qMb6jw+6sTh8qd4LPei5ms=";
+    hash = "sha256-Qd2dkMr0yG4S89oOyGweAAPcp1Jf+u8euE1l19q4wcQ=";
   };
 
   nativeBuildInputs = [
@@ -45,8 +47,8 @@ stdenv.mkDerivation (finalAttrs: {
     fuse3
     libusb1
     pciutils
-    systemd
-  ];
+  ]
+  ++ lib.optionals systemdSupport [ systemd ];
 
   patches = [
     # https://github.com/Mellanox/rshim-user-space/pull/391
@@ -56,6 +58,12 @@ stdenv.mkDerivation (finalAttrs: {
     # https://github.com/Mellanox/rshim-user-space/pull/363
     # Fix console handling under glibc >= 2.42 where struct termio was removed.
     ./fix-console-handling.patch
+
+    # https://github.com/Mellanox/rshim-user-space/pull/451
+    (fetchpatch {
+      url = "https://github.com/Mellanox/rshim-user-space/commit/03dfebef1bc026340bd9cb57220c8b4df9585af1.patch";
+      hash = "sha256-7qTEjJD1ZG7xIQRsmcBU3y1j7NlKyCRsEvFlsj7H5b8=";
+    })
   ];
 
   prePatch = ''
@@ -81,20 +89,22 @@ stdenv.mkDerivation (finalAttrs: {
   postFixup = lib.optionalString withBfbInstall ''
     wrapProgram $out/bin/bfb-install \
       --set PATH ${
-        lib.makeBinPath [
-          bashNonInteractive
-          coreutils
-          gawk
-          gnugrep
-          gnused
-          pciutils
-          perl
-          procps
-          pv
-          systemd
-          util-linux
-          which
-        ]
+        lib.makeBinPath (
+          [
+            bashNonInteractive
+            coreutils
+            gawk
+            gnugrep
+            gnused
+            pciutils
+            perl
+            procps
+            pv
+            util-linux
+            which
+          ]
+          ++ lib.optionals systemdSupport [ systemd ]
+        )
       }
   '';
 

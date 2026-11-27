@@ -17,14 +17,14 @@
 
 let
   pname = "plausible";
-  version = "3.2.1";
+  version = "3.2.2";
   mixEnv = "ce";
 
   src = fetchFromGitHub {
     owner = "plausible";
     repo = "analytics";
     rev = "v${version}";
-    hash = "sha256-2roIj0s2cybYdGmmJSPJ5Rc1gNunxlYew9JR5xxMv+k=";
+    hash = "sha256-FbNy8kSAHciPHAWQ2uiWCW8ppCqViQe9tEko5wtmtYQ=";
     postFetch = ''
       ${lib.getExe npm-lockfile-fix} $out/assets/package-lock.json
       sed -ie '
@@ -129,7 +129,7 @@ let
           $out/lazy_html/_build/c/third_party/lexbor/${lexborCommit}
       '';
 
-  beamPackages = beam27Packages.extend (self: super: { elixir = self.elixir_1_18; });
+  beamPackages = beam27Packages.overrideScope (final: prev: { elixir = final.elixir_1_18; });
 
 in
 beamPackages.mixRelease rec {

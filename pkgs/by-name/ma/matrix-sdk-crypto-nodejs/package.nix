@@ -8,22 +8,24 @@
   napi-rs-cli,
   nodejs,
   libiconv,
+  pkg-config,
+  sqlite,
 }:
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "matrix-sdk-crypto-nodejs";
-  version = "0.4.0-beta.1";
+  version = "0.7.0";
 
   src = fetchFromGitHub {
     owner = "matrix-org";
     repo = "matrix-rust-sdk-crypto-nodejs";
-    rev = "v${finalAttrs.version}";
-    hash = "sha256-Rl0xtaEj2RnW9HPN94hjETwiMInxT1XGa1BocldQAPs=";
+    tag = "v${finalAttrs.version}";
+    hash = "sha256-942DqzcV5dT43LHB7ievB8j57hFWOm5eFQpzLapomM4=";
   };
 
   cargoDeps = rustPlatform.fetchCargoVendor {
     inherit (finalAttrs) pname version src;
-    hash = "sha256-4AC+l52I8Z3sXiViNPe6GLCl1Z+GpqjbwkcFX6BhxDA=";
+    hash = "sha256-2Jr/aSodaT/0UWJEeaz2xrH4Vodw0ZvVk4e/SpVKyHA=";
   };
 
   nativeBuildInputs = [
@@ -32,9 +34,13 @@ stdenv.mkDerivation (finalAttrs: {
     rustc
     napi-rs-cli
     nodejs
+    pkg-config
   ];
 
-  buildInputs = lib.optionals stdenv.hostPlatform.isDarwin [ libiconv ];
+  buildInputs = [
+    sqlite
+  ]
+  ++ lib.optionals stdenv.hostPlatform.isDarwin [ libiconv ];
 
   buildPhase = ''
     runHook preBuild
@@ -47,7 +53,7 @@ stdenv.mkDerivation (finalAttrs: {
   installPhase = ''
     runHook preInstall
 
-    local -r outPath="$out/lib/node_modules/@matrix-org/${finalAttrs.pname}"
+    local -r outPath="$out/lib/node_modules/@matrix-org/matrix-sdk-crypto-nodejs"
     mkdir -p "$outPath"
     cp package.json index.js index.d.ts matrix-sdk-crypto.*.node "$outPath"
 

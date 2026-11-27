@@ -5,13 +5,15 @@
   fetchFromGitHub,
   findlib,
   mdx,
-  qcheck-core,
+  qcheck,
   ppx_inline_test,
 }:
 
 buildDunePackage (finalAttrs: {
   pname = "patricia-tree";
-  version = "0.11.0";
+  version = "0.15.0";
+
+  __structuredAttrs = true;
 
   minimalOCamlVersion = "4.14";
 
@@ -24,17 +26,17 @@ buildDunePackage (finalAttrs: {
     owner = "codex-semantics-library";
     repo = "patricia-tree";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-lpmU0KhsyIHxPBiw38ssA7XFEMsRvOT03MByoJG88Xs=";
+    hash = "sha256-u2t63vGV4tNF0RzbdkvQrpmwe7ep03TPtZehbPxasWI=";
   };
 
   nativeCheckInputs = [
-    mdx.bin
+    mdx.out
   ];
 
   checkInputs = [
     mdx
     ppx_inline_test
-    qcheck-core
+    qcheck
   ];
 
   doCheck = true;

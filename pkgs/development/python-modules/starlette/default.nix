@@ -8,7 +8,6 @@
 
   # dependencies
   anyio,
-  typing-extensions,
 
   # optional dependencies
   itsdangerous,
@@ -16,8 +15,11 @@
   python-multipart,
   pyyaml,
   httpx,
+  httpx2,
 
   # tests
+  blockbuster,
+  opentelemetry-sdk,
   pytestCheckHook,
   trio,
 
@@ -27,14 +29,14 @@
 
 buildPythonPackage rec {
   pname = "starlette";
-  version = "1.1.0";
+  version = "1.7.0";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "Kludex";
     repo = "starlette";
     tag = version;
-    hash = "sha256-9iQXlpA1VDGw1c7X1zJPmJ3Dub46PwqrVIX1+fWOZ7M=";
+    hash = "sha256-5/gQtC0JbQM7eSQeu2aVJtD63v4LjnbSSC0jF96e958=";
   };
 
   build-system = [ hatchling ];
@@ -47,12 +49,14 @@ buildPythonPackage rec {
     python-multipart
     pyyaml
     httpx
+    httpx2
   ];
 
   nativeCheckInputs = [
+    blockbuster
+    opentelemetry-sdk
     pytestCheckHook
     trio
-    typing-extensions
   ]
   ++ lib.concatAttrValues optional-dependencies;
 
@@ -65,9 +69,12 @@ buildPythonPackage rec {
   meta = {
     changelog = "https://github.com/Kludex/starlette/blob/${src.tag}/docs/release-notes.md";
     downloadPage = "https://github.com/Kludex/starlette";
-    homepage = "https://www.starlette.io/";
+    homepage = "https://starlette.dev";
     description = "Little ASGI framework that shines";
     license = lib.licenses.bsd3;
-    maintainers = with lib.maintainers; [ wd15 ];
+    maintainers = with lib.maintainers; [
+      booxter
+      wd15
+    ];
   };
 }

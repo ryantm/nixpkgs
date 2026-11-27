@@ -7,17 +7,17 @@
 buildNpmPackage (finalAttrs: {
   pname = "cinny-unwrapped";
   # Remember to update cinny-desktop when bumping this version.
-  version = "4.12.3";
+  version = "4.12.8";
 
   # nixpkgs-update: no auto update
   src = fetchFromGitHub {
     owner = "cinnyapp";
     repo = "cinny";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-RjPdq9xNvUbJESV7CqxmgfqAx+MoKZbhUtJNTcH9aUk=";
+    hash = "sha256-lDb4j8u9OheobXNjA1Q/75r6JITn+wLgtgEX+aKl9nk=";
   };
 
-  npmDepsHash = "sha256-CU8AVRuMFOGI0/LbN0LGysBk+qc2XQYxQGfrrH72stc=";
+  npmDepsHash = "sha256-QnsU22wjiayk6cBmlk9NChmSET7t4xkBLeGxgFIJArs=";
 
   # Skip rebuilding native modules since they're not needed for the web app
   npmRebuildFlags = [

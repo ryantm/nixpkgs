@@ -6,16 +6,14 @@
 
 python3Packages.buildPythonApplication (finalAttrs: {
   pname = "lean-lsp-mcp";
-  version = "0.26.2";
+  version = "0.33.0";
   pyproject = true;
-
-  __structuredAttrs = true;
 
   src = fetchFromGitHub {
     owner = "oOo0oOo";
     repo = "lean-lsp-mcp";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-NWX+r6hz04WnSkERqVj57ruw47RhqOeEofYUaxuU/uM=";
+    hash = "sha256-hpur2AdjvYv5mQ3tAHF4ZcK9HNKFCQwIaqYeYwkx4Yk=";
   };
 
   build-system = with python3Packages; [ setuptools ];
@@ -28,8 +26,9 @@ python3Packages.buildPythonApplication (finalAttrs: {
   ];
 
   pythonRelaxDeps = [
-    "mcp"
+    "certifi"
     "leanclient"
+    "mcp"
   ];
 
   # Tests require a real Lean toolchain

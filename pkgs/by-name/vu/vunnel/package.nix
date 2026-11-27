@@ -7,14 +7,14 @@
 
 python3.pkgs.buildPythonApplication (finalAttrs: {
   pname = "vunnel";
-  version = "0.62.1";
+  version = "0.68.0";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "anchore";
     repo = "vunnel";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-Np80Yj8zazMBgeHu27N97K543GmKw8gf9Muixu4WBVQ=";
+    hash = "sha256-osNF3BH1T4VGmDuJ+m/zkmET+REp1LcoScZYw/Mh+lg=";
     leaveDotGit = true;
   };
 
@@ -77,11 +77,9 @@ python3.pkgs.buildPythonApplication (finalAttrs: {
   disabledTests = [
     # Compare output
     "test_status"
-    # TypeError
-    "test_parser"
-    # Test require network access
-    "test_rhel_provider_supports_ignore_hydra_errors"
   ];
+
+  __darwinAllowLocalNetworking = true;
 
   meta = {
     description = "Tool for collecting vulnerability data from various sources";

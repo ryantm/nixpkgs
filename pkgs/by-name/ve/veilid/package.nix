@@ -5,6 +5,7 @@
   protobuf,
   capnproto,
   cmake,
+  sqlite,
   testers,
   veilid,
   gitUpdater,
@@ -12,21 +13,25 @@
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "veilid";
-  version = "0.5.5";
+  version = "0.5.8";
 
   src = fetchFromGitLab {
     owner = "veilid";
     repo = "veilid";
     rev = "v${finalAttrs.version}";
-    hash = "sha256-14jRIs2iE5JH1ZmC/1DGcg6cejsnmhUTkquXNmOEuQA=";
+    hash = "sha256-Z2H0bXjAZex0OKI0QN+f/8vqoXLeLt0bh8/Ss6MFs08=";
   };
 
-  cargoHash = "sha256-xuIw/RRKydanStS7dw1jK96bgEH0U5TDbayaBZq/OCg=";
+  cargoHash = "sha256-AHWqH9Zb7bGJrHgI0HPf7HXNqCtuAYXs6+cNhL5bnWM=";
 
   nativeBuildInputs = [
     capnproto
     cmake
     protobuf
+  ];
+
+  buildInputs = [
+    sqlite
   ];
 
   cargoBuildFlags = [

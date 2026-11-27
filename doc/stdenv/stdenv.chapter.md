@@ -493,7 +493,7 @@ When using native compilation, `stdenv` is lenient towards incorrect placement o
 
 While convenient for getting to a package quickly, this behavior can break cross-compilation. Adding `strictDeps = true` as a parameter to `mkDerivation` or any of its language specific wrappers disables this behavior.
 
-The specialized `build*` functions for dlang, emacs, go, nim, ocaml, python, and rust enable this option by default.
+The specialized `build*` functions for dlang, emacs, go, nim, ocaml, python, rust, and `tcl.mkTclDerivation` enable this option by default.
 
 ## Attributes {#ssec-stdenv-attributes}
 
@@ -508,6 +508,7 @@ A number between 0 and 7 indicating how much information to log. If set to 1 or 
 #### `enableParallelBuilding` {#var-stdenv-enableParallelBuilding}
 
 If set to `true`, `stdenv` will pass specific flags to `make` and other build tools to enable parallel building with up to `build-cores` workers.
+Can be overridden for a specific phase using `enableParallelInstalling` or `enableParallelChecking`.
 
 Unless set to `false`, some build systems with good support for parallel building including `cmake`, `meson`, and `qmake` will set it to `true`.
 
@@ -612,7 +613,7 @@ Specifies the phases. You can change the order in which phases are executed, or 
 
 The elements of `phases` must not contain spaces. If `phases` is specified as a Nix Language attribute, it should be specified as lists instead of strings. The same rules apply to the `*Phases` variables.
 
-It is discouraged to set this variable, as it is easy to miss some important functionality hidden in some of the less obviously needed phases (like `fixupPhase` which patches the shebang of scripts).
+It is discouraged to set this variable, as it is easy to miss some important functionality hidden in some of the less obvious phases (like `fixupPhase` which patches the shebang of scripts).
 Usually, if you just want to add a few phases, it’s more convenient to set one of the `*Phases` variables below.
 
 ##### `prePhases` {#var-stdenv-prePhases}
@@ -857,6 +858,11 @@ Before and after running `make`, the hooks `preBuild` and `postBuild` are called
 The check phase checks whether the package was built correctly by running its test suite. The default `checkPhase` calls `make $checkTarget`, but only if the [`doCheck` variable](#var-stdenv-doCheck) is enabled.
 
 It is highly recommended, for packages' sources that are not distributed with any tests, to at least use [`versionCheckHook`](#versioncheckhook) to test that the resulting executable is basically functional.
+
+::: {.note}
+A [`versionCheckHook`](#versioncheckhook) runs in the [`installCheckPhase`](#ssec-installCheck-phase), not the `checkPhase`.
+The hook should therefore be added to the `nativeInstallCheckInputs`, not the `nativeCheckInputs`, and the `installCheckPhase` should be explicitly enabled.
+:::
 
 #### Variables controlling the check phase {#variables-controlling-the-check-phase}
 
@@ -1196,6 +1202,9 @@ They cannot be overridden without rebuilding the package.
 :::
 
 If dependencies should be resolved at runtime, use `--suffix` to append fallback values to `PATH`.
+
+`makeBinaryWrapper` refuses a `--prefix` or `--suffix` value that would introduce an empty segment (an empty value, or a leading, trailing or doubled separator), because many `PATH`-like variables interpret an empty segment as the current directory.
+For variables where an empty segment is useful and safe, such as `LUA_PATH` where `;;` stands for the default search path, use `--prefix-unchecked` or `--suffix-unchecked` instead.
 
 There’s many more kinds of arguments, they are documented in `nixpkgs/pkgs/build-support/setup-hooks/make-wrapper.sh` for the `makeWrapper` implementation and in `nixpkgs/pkgs/by-name/ma/makeBinaryWrapper/make-binary-wrapper.sh` for the `makeBinaryWrapper` implementation.
 

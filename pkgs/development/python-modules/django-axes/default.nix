@@ -12,14 +12,14 @@
 
 buildPythonPackage rec {
   pname = "django-axes";
-  version = "8.3.1";
+  version = "8.3.2";
   pyproject = true;
 
   src = fetchFromGitHub {
-    owner = "jazzband";
+    owner = "django-commons";
     repo = "django-axes";
     tag = version;
-    hash = "sha256-DcoKXNldTXNcJTauI1torupjnKNvqmTo4/BbFXBZyFA=";
+    hash = "sha256-jH/A3ZuuBI/S9xZ1VmOoB/8NnxSa5NgnSzY9N02GmD0=";
   };
 
   build-system = [ setuptools-scm ];
@@ -39,7 +39,7 @@ buildPythonPackage rec {
 
   meta = {
     description = "Keep track of failed login attempts in Django-powered sites";
-    homepage = "https://github.com/jazzband/django-axes";
+    homepage = "https://github.com/django-commons/django-axes";
     maintainers = with lib.maintainers; [ sikmir ];
     license = lib.licenses.mit;
   };

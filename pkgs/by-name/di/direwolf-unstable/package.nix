@@ -12,13 +12,13 @@
   inherit hamlibSupport gpsdSupport extraScripts;
 }).overrideAttrs
   (oldAttrs: {
-    version = "1.8.1-unstable-2026-07-06";
+    version = "1.8.1-unstable-2026-09-08";
 
     src = fetchFromGitHub {
       owner = "wb2osz";
       repo = "direwolf";
-      rev = "160cbb40a3828e47bc977b6f7d5499d1f1cf56e5";
-      hash = "sha256-q08QuyWGYqLLz77JXlkJetrYMVQwQVUgjIXz9J4Y9VA=";
+      rev = "f11c82b81a23ca425f91bf9810fe9e2dc4f7539e";
+      hash = "sha256-D2vzwc4PK5CUXbSQV4u/lAriRh2drsNPLt6ADN6a8fs=";
     };
 
     dontVersionCheck = true;

@@ -1,29 +1,32 @@
 {
   lib,
   stdenv,
-  fetchFromGitLab,
+  fetchFromGitHub,
   kdePackages,
-  nix-update-script,
+  gitUpdater,
 }:
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "fokus";
-  version = "2.3.3";
+  version = "3.2.0";
 
-  src = fetchFromGitLab {
+  src = fetchFromGitHub {
     owner = "divinae";
     repo = "focus-plasmoid";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-S/0hAAt9zzj8pP5juFDvT0Z2B+GKpFnBsIVdJjSEakI=";
+    hash = "sha256-t8C0zLyUL2Trb7WzTm5XXgqrjsZmZ8Cxf/5C8pHXYSw=";
   };
 
   dontWrapQtApps = true;
+
+  # No build is needed, as this is a plasmoid with QML files only.
+  dontBuild = true;
 
   postPatch = ''
     substituteInPlace package/contents/config/main.xml package/contents/ui/configNotifications.qml \
          --replace-fail "/usr/share/sounds" "${kdePackages.ocean-sound-theme}/share/sounds"
 
-    substituteInPlace package/contents/ui/configNotifications.qml package/contents/ui/configScripts.qml package/contents/ui/main.qml package/contents/ui/NotificationManager.qml \
+    substituteInPlace package/contents/ui/Sfx.qml \
          --replace-fail 'import QtMultimedia' 'import "file://${kdePackages.qtmultimedia}/lib/qt-6/qml/QtMultimedia"'
   '';
 
@@ -36,11 +39,15 @@ stdenv.mkDerivation (finalAttrs: {
     runHook postInstall
   '';
 
-  passthru.updateScript = nix-update-script { };
+  # Releases are marked with Git tags, there are no GitHub Releases upstream.
+  passthru.updateScript = gitUpdater {
+    rev-prefix = "v";
+  };
 
   meta = {
     description = "Simple pomodoro KDE Plasma plasmoid";
-    homepage = "https://gitlab.com/divinae/focus-plasmoid";
+    homepage = "https://github.com/divinae/focus-plasmoid";
+    changelog = "https://github.com/divinae/focus-plasmoid/blob/v${finalAttrs.version}/CHANGELOG.md";
     license = lib.licenses.gpl3Only;
     maintainers = with lib.maintainers; [ structix ];
     platforms = lib.platforms.linux;

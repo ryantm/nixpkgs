@@ -148,11 +148,15 @@ in
   fetchDebianPatch = recurseIntoAttrs (callPackages ../build-support/fetchdebianpatch/tests.nix { });
   fetchzip = recurseIntoAttrs (callPackages ../build-support/fetchzip/tests.nix { });
   fetchgit = recurseIntoAttrs (callPackages ../build-support/fetchgit/tests.nix { });
+  fetchRepoProject = recurseIntoAttrs (callPackages ../build-support/fetchrepoproject/tests.nix { });
   fetchNextcloudApp = recurseIntoAttrs (
     callPackages ../build-support/fetchnextcloudapp/tests.nix { }
   );
   fetchFromBitbucket = recurseIntoAttrs (callPackages ../build-support/fetchbitbucket/tests.nix { });
   fetchFromGitHub = recurseIntoAttrs (callPackages ../build-support/fetchgithub/tests.nix { });
+  fetchFromHuggingFace = recurseIntoAttrs (
+    callPackages ../build-support/fetchhuggingface/tests.nix { }
+  );
   fetchFirefoxAddon = recurseIntoAttrs (
     callPackages ../build-support/fetchfirefoxaddon/tests.nix { }
   );
@@ -180,6 +184,7 @@ in
 
   buildRustCrate = recurseIntoAttrs (callPackage ../build-support/rust/build-rust-crate/test { });
   importCargoLock = recurseIntoAttrs (callPackage ../build-support/rust/test/import-cargo-lock { });
+  fetchCargoVendor = recurseIntoAttrs (callPackage ../build-support/rust/test/fetch-cargo-vendor { });
 
   vim = callPackage ./vim { };
 
@@ -223,12 +228,10 @@ in
     makeBinaryWrapper = pkgs.makeBinaryWrapper.override {
       # Enable sanitizers in the tests only, to avoid the performance cost in regular usage.
       # The sanitizers cause errors on aarch64-darwin, see https://github.com/NixOS/nixpkgs/pull/150079#issuecomment-994132734
-      sanitizers =
-        optionals (!(pkgs.stdenv.hostPlatform.isDarwin && pkgs.stdenv.hostPlatform.isAarch64))
-          [
-            "undefined"
-            "address"
-          ];
+      sanitizers = optionals (!pkgs.stdenv.hostPlatform.isDarwin) [
+        "undefined"
+        "address"
+      ];
     };
   };
 
@@ -243,6 +246,8 @@ in
   auto-patchelf-hook = callPackage ./auto-patchelf-hook { };
 
   auto-patchelf-hook-preserve-origin = callPackage ./auto-patchelf-hook-preserve-origin { };
+
+  auto-patchelf-hook-relativize-rpath = callPackage ./auto-patchelf-hook-relativize-rpath { };
 
   # Accumulate all passthru.tests from arrayUtilities into a single attribute set.
   arrayUtilities = recurseIntoAttrs (
@@ -281,4 +286,6 @@ in
   );
 
   home-assistant-components = recurseIntoAttrs pkgs.home-assistant.tests.components;
+
+  openscad = recurseIntoAttrs (callPackage ../build-support/openscad/tests { });
 }

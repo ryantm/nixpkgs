@@ -1,8 +1,8 @@
 {
   stdenv,
   lib,
-  fetchpatch,
   fetchFromGitHub,
+  fetchpatch,
   libcap,
   libsodium,
   openssl,
@@ -20,21 +20,20 @@ let
 in
 stdenv.mkDerivation (finalAttrs: {
   pname = "proftpd";
-  version = "1.3.9a";
+  version = "1.3.9e";
 
   src = fetchFromGitHub {
     owner = "proftpd";
     repo = "proftpd";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-SNLzIwMF6XU2SAc5B9LIW2Jeh1Fa4CVumQYd2O0XxRY=";
+    hash = "sha256-TdPdZHQt6H58s/MblgWs2Dd4r8dgL09cC3hk77nkkQM=";
   };
 
   patches = [
     ./no-install-user.patch
     (fetchpatch {
-      name = "CVE-2026-44331.patch";
-      url = "https://github.com/proftpd/proftpd/commit/5e06acc4687046c7bf794b55bd8c44a86a05ae61.patch";
-      hash = "sha256-1YM9yeiZJwU2CasPhf4g9O8Jf/B01ullFeUkERFe9WY=";
+      url = "https://github.com/proftpd/proftpd/commit/933abc9ae115ffc59e4b2a98495ec267bf341d23.diff?full_index=1";
+      hash = "sha256-f7TFjKX1/q1YFA1q2/K4KB+LPDaFGkyf75f6vjLDkXA=";
     })
   ];
 

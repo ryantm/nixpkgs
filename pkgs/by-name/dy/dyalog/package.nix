@@ -71,7 +71,7 @@ stdenv.mkDerivation (finalAttrs: {
           hash,
         }:
         fetchurl {
-          url = "https://download.dyalog.com/download.php?file=${finalAttrs.shortVersion}/${prefix}_${finalAttrs.version}_${suffix}";
+          url = "https://dyalog.com/uploads/php/download.dyalog.com/download.php?file=${finalAttrs.shortVersion}/${prefix}_${finalAttrs.version}_${suffix}";
           inherit hash;
         };
     in
@@ -191,7 +191,8 @@ stdenv.mkDerivation (finalAttrs: {
     }.htm";
     description = "Dyalog APL interpreter";
     homepage = "https://www.dyalog.com";
-    license = {
+    license = lib.licenses.mkLicense {
+      shortName = "dyalog";
       fullName = "Dyalog License";
       url = licenseUrl;
       free = false;

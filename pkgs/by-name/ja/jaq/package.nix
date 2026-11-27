@@ -5,26 +5,41 @@
   versionCheckHook,
   nix-update-script,
   runCommand,
+  jotdown,
 }:
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "jaq";
-  version = "3.1.0";
+  version = "3.2.0";
   __structuredAttrs = true;
 
   src = fetchFromGitHub {
     owner = "01mf02";
     repo = "jaq";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-cwHYsLp9uBb3/etH0bGYzNLOJJypeE4qED7jTBESHiE=";
+    hash = "sha256-1WFGrORD70f9cB34p0pwcOHiqMR5DfdccoxANqkibzk=";
   };
 
-  cargoHash = "sha256-9vLD5aYcnbdjQC+5FsTglLFYhbv/1lSqsfkD8oclwBs=";
+  cargoHash = "sha256-Fpeu6NX9zRX4rAVN9F/zQJE6FX7DHCiMFImIFlsKYqo=";
 
   nativeInstallCheckInputs = [
     versionCheckHook
   ];
   doInstallCheck = true;
+
+  nativeBuildInputs = [
+    jotdown # for manpage
+  ];
+
+  postBuild = ''
+    pushd docs || true
+    make jaq.1
+    popd
+  '';
+
+  postInstall = ''
+    install -D docs/jaq.1 -t $out/share/man/man1
+  '';
 
   passthru = {
     updateScript = nix-update-script {

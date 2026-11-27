@@ -13,20 +13,20 @@
 }:
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "turborepo-remote-cache";
-  version = "2.11.2";
+  version = "3.0.3";
 
   src = fetchFromGitHub {
     owner = "ducktors";
     repo = "turborepo-remote-cache";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-V56EEG5iO8lKXRfk5UUo5so58xCEZavYfT1Bj6QYfA8=";
+    hash = "sha256-4c7HfiVKfCBaFRJvR55qQvIEN+X2XGIFPKDYXlfZSmM=";
   };
 
   pnpmDeps = fetchPnpmDeps {
     inherit (finalAttrs) pname version src;
     pnpm = pnpm_10;
     fetcherVersion = 3;
-    hash = "sha256-dMil3ZlCVDOp7q0IxmDQgyBqqsvwidizy3z9b3Bq0hE=";
+    hash = "sha256-6Qprmy+tVY+fGmVHUPJ3ylFPf/ytk1S/eufyltR68VU=";
   };
 
   nativeBuildInputs = [
@@ -54,8 +54,6 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     # Clean up broken symlinks left behind by `pnpm prune`
     # https://github.com/pnpm/pnpm/issues/3645
     find node_modules -xtype l -delete
-     # Remove non-deterministic files
-    rm node_modules/.modules.yaml
     runHook postBuild
   '';
 

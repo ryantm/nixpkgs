@@ -7,7 +7,7 @@
   cmake,
   boost,
   bzip2,
-  ffmpeg,
+  ffmpeg_8,
   fftwSinglePrec,
   hdf5,
   muparser,
@@ -23,19 +23,24 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "ovito";
-  version = "3.15.5";
+  version = "3.16.0";
 
   src = fetchFromGitLab {
     owner = "stuko";
     repo = "ovito";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-ySU9AW4p7u1/yR9uOSmS82vIwx5fh4pWrFEqBZOoEHA=";
+    hash = "sha256-NN5q+qh84w7myBYiRAsBxDDV/82AmIz8j2yk6JiEHcY=";
     fetchSubmodules = true;
   };
 
   postPatch = ''
     substituteInPlace src/ovito/core/CMakeLists.txt \
       --replace-fail " IF(OVITO_BUILD_CONDA)" " IF(TRUE)"
+
+    # GCC 16 devirtualization makes StdModGui reference this class, so it must be exported to link
+    substituteInPlace src/ovito/stdmod/modifiers/ColorCodingModifier.h \
+      --replace-fail "class LinesColorCodingModifierDelegate :" \
+                     "class OVITO_STDMOD_EXPORT LinesColorCodingModifierDelegate :"
   '';
 
   nativeBuildInputs = [
@@ -49,7 +54,7 @@ stdenv.mkDerivation (finalAttrs: {
   buildInputs = [
     boost
     bzip2
-    ffmpeg
+    ffmpeg_8
     fftwSinglePrec
     hdf5
     muparser

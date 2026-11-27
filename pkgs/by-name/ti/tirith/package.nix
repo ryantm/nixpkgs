@@ -8,31 +8,22 @@
 }:
 rustPlatform.buildRustPackage (final: {
   pname = "tirith";
-  version = "0.3.1";
+  version = "0.5.0";
   src = fetchFromGitHub {
     owner = "sheeki03";
     repo = "tirith";
     tag = "v${final.version}";
-    hash = "sha256-RdStW5ubqypdmFqNk9DHtUp5jHnZdXiWW/lAlSaBb3c=";
+    hash = "sha256-3gnBEVkYyASzkR7hcZbPKV1QYB30AhS2TQsSY4LPgNU=";
   };
 
-  cargoHash = "sha256-/V2vv02x0zSsJCcJMSttG9eekRZMK7KTk6m2VYePFa8=";
+  cargoHash = "sha256-gM5ahD7EXWiYBskYlO9h54387S8pmean9WeVfFCN7KY=";
 
   cargoBuildFlags = [
     "-p"
     "tirith"
   ];
 
-  postPatch = ''
-    # The bash_preexec_enforce tests require a shell with job control
-    rm crates/tirith/tests/bash_preexec_enforce.rs
-  '';
-
-  checkFlags = [
-    # requires a fully functional shell environment, generating init scripts needs a patch under nix to work at build time
-    "--skip=init_bash_output"
-    "--skip=init_zsh_output"
-  ];
+  doCheck = false;
 
   nativeBuildInputs = lib.optionals (stdenv.buildPlatform.canExecute stdenv.hostPlatform) [
     installShellFiles

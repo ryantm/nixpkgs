@@ -6,16 +6,16 @@
 
 buildNpmPackage (finalAttrs: {
   pname = "custom-brand-icons";
-  version = "2026.07.0";
+  version = "2026.11.3";
 
   src = fetchFromGitHub {
     owner = "elax46";
     repo = "custom-brand-icons";
     tag = finalAttrs.version;
-    hash = "sha256-fmvWUt3Q+9ydvHB7t8z3/9mCLuF/llpoUo6e8K2rn/g=";
+    hash = "sha256-C08mB1EPHBsyNXm046MWdzksULDRUGSgAXGe3SCXxw4=";
   };
 
-  npmDepsHash = "sha256-ZTl9+vXEBR3pvksaLWof8y1WnoL2tAL3KuPzZn7VjjE=";
+  npmDepsHash = "sha256-RIEX7kEpoMEEuESXJASHlKMVY+L+2n/JRWvoRbSEPjM=";
 
   buildPhase = ''
     runHook preBuild
@@ -38,7 +38,7 @@ buildNpmPackage (finalAttrs: {
     description = "Custom brand icons for Home Assistant";
     homepage = "https://github.com/elax46/custom-brand-icons";
     changelog = "https://github.com/elax46/custom-brand-icons/releases/tag/${finalAttrs.src.tag}";
-    license = lib.licenses.cc-by-nc-sa-40;
+    license = lib.licenses.mit;
     maintainers = with lib.maintainers; [ SuperSandro2000 ];
     platforms = lib.platforms.all;
   };

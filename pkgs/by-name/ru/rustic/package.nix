@@ -7,27 +7,36 @@
   nix-update-script,
   tzdata,
   fuse3,
+  aws-lc,
+  zstd,
+  pkg-config,
 }:
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "rustic";
-  version = "0.11.3";
+  version = "0.12.0";
 
   src = fetchFromGitHub {
     owner = "rustic-rs";
     repo = "rustic";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-k5Z/jKom5Aj0Ypp9udMC5zIcWo7/DmwK6inCm/RbV50=";
+    hash = "sha256-EAY6w4XzUPEEn1kutgk962WeNI1LIT3dkRp+GD+wyuo=";
   };
 
-  cargoHash = "sha256-y/QAhpF8JOu2QLwLpYEgox4O5CFFl6qhP5ct4mn/en8=";
+  cargoHash = "sha256-UBOQfkQDjdunTJKu4ORXA979FvfKb3Raz6UQK9WMQ58=";
 
   buildFeatures = lib.optionals stdenv.hostPlatform.isLinux [ "mount" ];
   checkFeatures = lib.subtractLists [ "mount" ] finalAttrs.buildFeatures; # we do not want `mount` during unit tests because it breaks rustic's test snapshots
 
-  nativeBuildInputs = [ installShellFiles ];
+  nativeBuildInputs = [
+    installShellFiles
+    pkg-config
+  ];
 
-  buildInputs = lib.optionals stdenv.hostPlatform.isLinux [ fuse3 ];
+  buildInputs = lib.optionals stdenv.hostPlatform.isLinux [ fuse3 ] ++ [
+    aws-lc
+    zstd
+  ];
 
   nativeCheckInputs = [ tzdata ];
 

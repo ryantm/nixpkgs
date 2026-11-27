@@ -89,6 +89,14 @@ let
 
       # domain-specific
       fetchers = callLibs ./fetchers.nix;
+      services = callLibs ./services/lib.nix;
+      importService = self.modules.importApply ./services/service.nix;
+
+      # Modules that are not specific to a module class
+      genericModules = {
+        meta-maintainers = ./modules/generic/meta-maintainers.nix;
+        assertions = ./modules/generic/assertions.nix;
+      };
 
       # Eval-time filesystem handling
       path = callLibs ./path;
@@ -96,8 +104,8 @@ let
       fileset = callLibs ./fileset;
       sources = callLibs ./sources.nix;
 
-      # back-compat aliases
-      platforms = self.systems.doubles;
+      # also `lib.systems.doubles`, but aliased for backcompat reasons
+      platforms = callLibs ./platforms;
 
       # linux kernel configuration
       kernel = callLibs ./kernel.nix;
@@ -444,6 +452,8 @@ let
         getLicenseFromSpdxIdOr
         getExe
         getExe'
+        getDarwinApp
+        getDarwinApp'
         ;
       inherit (self.filesystem)
         pathType

@@ -1,27 +1,33 @@
 {
   lib,
+  aws-lc,
   rustPlatform,
   fetchFromGitHub,
   openssl,
   pkg-config,
   versionCheckHook,
   nix-update-script,
+  zstd,
 }:
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "pixi-pack";
-  version = "0.7.10";
+  version = "0.7.12";
 
   src = fetchFromGitHub {
     owner = "Quantco";
     repo = "pixi-pack";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-5PU+ro+uE1iiBkgQocMYlHZmiS8+bScP1rF3VVXpn/c=";
+    hash = "sha256-ZhODMZGWQkXnWXLN/D9qIPrg2nwglyVEDJn9xTz7oGw=";
   };
 
-  cargoHash = "sha256-9Of4qnt+MFrW42daZiLdHrbH5Z7tYpcN6Sg95FUlcQc=";
+  cargoHash = "sha256-avfTlft8BrFIqzB56Qk9obJRETuIsa6dMZBsyFecQik=";
 
-  buildInputs = [ openssl ];
+  buildInputs = [
+    aws-lc
+    openssl
+    zstd
+  ];
 
   nativeBuildInputs = [ pkg-config ];
 

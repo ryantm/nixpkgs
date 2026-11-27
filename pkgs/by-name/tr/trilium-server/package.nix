@@ -4,15 +4,16 @@
   autoPatchelfHook,
   fetchurl,
   makeBinaryWrapper,
+  nodejs_24,
 }:
 
 let
-  version = "0.103.0";
+  version = "0.107.0";
 
   serverSource_x64.url = "https://github.com/TriliumNext/Trilium/releases/download/v${version}/TriliumNotes-Server-v${version}-linux-x64.tar.xz";
-  serverSource_x64.hash = "sha256-+PmlEevacif9xP8y7KrMMCwMQ0jGmT9yVhMrQ1SYG58=";
+  serverSource_x64.hash = "sha256-ohe1rHAuS9nUAc/VxunuJfCm9KDGc0XGW9Z9yGY9Pc4=";
   serverSource_arm64.url = "https://github.com/TriliumNext/Trilium/releases/download/v${version}/TriliumNotes-Server-v${version}-linux-arm64.tar.xz";
-  serverSource_arm64.hash = "sha256-RjnHCvVIR/ExZ9lC8ukGr2M8X1Hnj5ZeVMmQHUvZTKY=";
+  serverSource_arm64.hash = "sha256-XdWgbTUPT4cuvsC3Fw6u9ImVX3a6YtmekyVpeMyQIoE=";
 
   serverSource =
     if stdenv.hostPlatform.isx86_64 then
@@ -45,10 +46,14 @@ stdenv.mkDerivation {
     mkdir -p "$out/share/trilium-server"
 
     cp -r ./* "$out/share/trilium-server/"
+    rm -r $out/share/trilium-server/node/bin
 
-    makeWrapper "$out/share/trilium-server/node/bin/node" "$out/bin/trilium-server" \
+    # Unused musl prebuilds confuse autoPatchelfHook (glibc-only).
+    rm -f "$out/share/trilium-server/node_modules/better-sqlite3/prebuilds"/linuxmusl-*.node
+
+    makeWrapper ${lib.getExe nodejs_24} "$out/bin/trilium-server" \
       --chdir "$out/share/trilium-server" \
-      --add-flags "main.cjs"
+      --add-flags "main.mjs"
 
     runHook postInstall
   '';

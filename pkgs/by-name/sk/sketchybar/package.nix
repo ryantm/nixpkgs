@@ -5,43 +5,27 @@
   nix-update-script,
   apple-sdk_15,
   versionCheckHook,
-  llvmPackages,
 }:
 
 let
   inherit (stdenv.hostPlatform) system;
-
-  target =
-    {
-      "aarch64-darwin" = "arm64";
-      "x86_64-darwin" = "x86";
-    }
-    .${system} or (throw "Unsupported system: ${system}");
 in
 stdenv.mkDerivation (finalAttrs: {
   pname = "sketchybar";
-  version = "2.24.0";
+  version = "2.24.1";
 
   src = fetchFromGitHub {
     owner = "FelixKratz";
     repo = "SketchyBar";
     rev = "v${finalAttrs.version}";
-    hash = "sha256-5tyc/yYzdV/3JTtujuj7le/14XkC7TlN/nZg7tOZsNg=";
+    hash = "sha256-fEbVzafjFTigR7TjQ41gOnDpk6S4B8qCwpz890ZNgwE=";
   };
-
-  nativeBuildInputs = [
-    # TODO: Remove once #536365 reaches this branch
-    llvmPackages.lld
-  ];
 
   buildInputs = [
     apple-sdk_15
   ];
 
-  makeFlags = [ target ];
-
-  # TODO: Remove once #536365 reaches this branch
-  env.NIX_CFLAGS_LINK = "-fuse-ld=lld";
+  makeFlags = [ "arm64" ];
 
   installPhase = ''
     runHook preInstall

@@ -2,7 +2,7 @@
   buildPythonPackage,
   lib,
   fetchPypi,
-  setuptools,
+  setuptools_80,
 }:
 
 buildPythonPackage (finalAttrs: {
@@ -10,15 +10,13 @@ buildPythonPackage (finalAttrs: {
   version = "2.9.0.1";
   pyproject = true;
 
-  __structuredAttrs = true;
-
   src = fetchPypi {
     pname = "XStatic-Pygments";
     inherit (finalAttrs) version;
     hash = "sha256-CCwen+YG+770dPeLb9sZ6aLvzHqbfZQWPPZve/rnV2I=";
   };
 
-  build-system = [ setuptools ];
+  build-system = [ setuptools_80 ];
 
   # no tests implemented
   doCheck = false;

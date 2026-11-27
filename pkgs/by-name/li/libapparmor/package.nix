@@ -2,6 +2,7 @@
   stdenv,
   lib,
   fetchFromGitLab,
+  fetchpatch,
   autoreconfHook,
   autoconf-archive,
   pkg-config,
@@ -32,15 +33,26 @@
 }:
 stdenv.mkDerivation (finalAttrs: {
   pname = "libapparmor";
-  version = "5.0.0";
+  version = "5.0.2";
 
   src = fetchFromGitLab {
     owner = "apparmor";
     repo = "apparmor";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-seEREIc83alEPyZGD/GY48hjpqiw3QENnqYsdjHOGgs=";
+    hash = "sha256-Kuc5Nrz4iq5MC5AOcJL9Sb54DWNKlEk3b3DW0vpgSZg=";
   };
   sourceRoot = "${finalAttrs.src.name}/libraries/libapparmor";
+
+  patches = [
+    # Fix build against SWIG >= 4.5
+    # https://gitlab.com/apparmor/apparmor/-/merge_requests/2191
+    (fetchpatch {
+      name = "swig-4.5-compat";
+      url = "https://gitlab.com/apparmor/apparmor/-/commit/6b80489953728aab8aeb4f9075283feb26e2e262.patch";
+      relative = "libraries/libapparmor";
+      hash = "sha256-n28S10obmXmp5X1+mLyY2Pfr/nQ4VtnkPxdCmvLMaaw=";
+    })
+  ];
 
   postPatch = ''
     substituteInPlace swig/perl/Makefile.am \
@@ -98,6 +110,8 @@ stdenv.mkDerivation (finalAttrs: {
     apparmorRulesFromClosure = callPackage ./apparmorRulesFromClosure.nix { };
   };
 
+  __structuredAttrs = true;
+
   meta = {
     homepage = "https://apparmor.net/";
     description = "Mandatory access control system - core library";
@@ -107,5 +121,8 @@ stdenv.mkDerivation (finalAttrs: {
     ];
     maintainers = lib.teams.apparmor.members;
     platforms = lib.platforms.linux;
+    identifiers.cpeParts = lib.meta.cpeFullVersionWithVendor "canonical" finalAttrs.version // {
+      product = "apparmor";
+    };
   };
 })

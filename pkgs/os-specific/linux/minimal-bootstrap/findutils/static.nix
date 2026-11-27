@@ -5,7 +5,6 @@
   fetchurl,
   bash,
   gcc,
-  musl,
   binutils,
   gnumake,
   gnused,
@@ -18,11 +17,11 @@
 }:
 let
   pname = "findutils-static";
-  version = "4.10.0";
+  version = "4.11.0";
 
   src = fetchurl {
     url = "mirror://gnu/findutils/findutils-${version}.tar.xz";
-    hash = "sha256-E4fgtn/yR9Kr3pmPkN+/cMFJE5Glnd/suK5ph4nwpPU=";
+    hash = "sha256-v9GcsGzHHzNS1WfpAoTYzawCrIl3S76t8LUzsMEUMv0=";
   };
 in
 bash.runCommand "${pname}-${version}"
@@ -31,7 +30,6 @@ bash.runCommand "${pname}-${version}"
 
     nativeBuildInputs = [
       gcc
-      musl
       binutils
       gnumake
       gnused
@@ -70,9 +68,7 @@ bash.runCommand "${pname}-${version}"
       --build=${buildPlatform.config} \
       --host=${hostPlatform.config} \
       --disable-dependency-tracking \
-      --disable-nls \
-      CC=musl-gcc \
-      CFLAGS=-static
+      --disable-nls
 
     # Build
     make -j $NIX_BUILD_CORES

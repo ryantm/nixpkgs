@@ -12,6 +12,7 @@ let
     mkEnableOption
     mkOption
     mkPackageOption
+    mkDefault
     types
     ;
 
@@ -27,9 +28,6 @@ let
   finalPackage = cfg.package.override {
     inherit (cfg) providers;
   };
-
-  # YouTube Music needs deno with JIT to solve yt-dlp challenges
-  useYTMusic = lib.elem "ytmusic" cfg.providers;
 in
 
 {
@@ -60,7 +58,11 @@ in
       default = false;
       description = ''
         Whether to open required ports for the configured providers.
-        Currently airplay and sendspin need port to be opened to function.
+        Currently AirPlay, AirPlay Receiver, AriaCast Receiver, Sendspin, Snapcast, Squeezelite and Spotify Connect need port(s) to be opened to properly function.
+
+        ::: {.note}
+        AirPlay and Spotify Connect must open all random high UDP or TCP ports respectively to function.
+        :::
       '';
     };
 
@@ -73,6 +75,32 @@ in
       ];
       description = ''
         List of provider names for which dependencies will be installed.
+
+        Providers that need shared service credentials (`spotify`, `qobuz`, `apple_music`,
+        `theaudiodb`, `fanarttv`) do not work out of the box. Register your own credentials
+        with the service and pass them to Music Assistant through the matching `MASS_APP_VAR_*`
+        environment variable:
+
+        ```nix
+        services.music-assistant.providers = [ "spotify" ];
+
+        systemd.services.music-assistant.environment = {
+          MASS_APP_VAR_SPOTIFY_CLIENT_ID = "your-client-id";
+        };
+        ```
+
+        To pass multiple values at once, point Music Assistant at a JSON map of app variables
+        with the `MASS_APP_VARS_FILE` environment variable. The upstream
+        [app_vars.py](https://github.com/music-assistant/server/blob/dev/music_assistant/helpers/app_vars.py)
+        file lists the supported variables and the provider documentation (for example
+        <https://www.music-assistant.io/music-providers/spotify/>) describes the setup steps.
+        Qobuz and Tidal cannot be configured this way, and Spotify restricts apps registered
+        by third parties.
+
+        Nixpkgs does not ship these credentials: they are bundled only in the official Music
+        Assistant release builds, are not covered by the Apache-2.0 license of the source code
+        and may not be redistributed (see the upstream
+        [NOTICE file](https://github.com/music-assistant/server/blob/dev/NOTICE)).
       '';
     };
   };
@@ -81,8 +109,16 @@ in
     networking.firewall = lib.mkIf cfg.openFirewall {
       allowedTCPPorts =
         lib.optional cfg.enable 8097 # Music Assistant stream port
-        ++ lib.optional (lib.elem "airplay" cfg.providers) 7000
+        # https://github.com/music-assistant/server/blob/dev/music_assistant/providers/airplay/pairing.py#L191
+        ++ lib.optionals (lib.elem "airplay" cfg.providers) [
+          5000 # AirPlay 1/RAOP
+          7000 # AirPlay 2
+        ]
+        # https://github.com/AriaCast/AriaCast-Protocol-Spec/blob/main/spec/discovery.md#ports
+        ++ lib.optional (lib.elem "ariacast_receiver" cfg.providers) 12889
+        # https://www.music-assistant.io/player-support/sendspin/#connecting-external-sendspin-clients
         ++ lib.optional (lib.elem "sendspin" cfg.providers) 8927
+        # https://www.music-assistant.io/player-support/snapcast/#known-issues--notes
         ++ lib.optional (lib.elem "snapcast" cfg.providers) 1780
         ++ lib.optionals (lib.elem "squeezelite" cfg.providers) [
           # https://lyrion.org/reference/slimproto-protocol/
@@ -91,29 +127,59 @@ in
           9000 # Slimproto JSON-RPC
           9090 # Slimproto CLI
         ];
-      allowedUDPPorts = lib.optionals (lib.elem "squeezelite" cfg.providers) [
-        # https://lyrion.org/reference/slimproto-protocol/
-        3483 # Slimproto discovery
-      ];
-      # The information published by Apple 1 seem to not apply to libraop.
-      # The closest we could find that represents the port range being used as observed by tcpdump is the ephemeral port range.
-      # 1: https://support.apple.com/en-us/103229#:~:text=49152%E2%80%93-,65535,-TCP%2C%20UDP
-      # 2: https://en.wikipedia.org/wiki/Ephemeral_port#Range
-      allowedUDPPortRanges = lib.mkIf (lib.elem "airplay" cfg.providers) [
-        {
-          from = 32768;
-          to = 65535;
-        }
-      ];
+      allowedTCPPortRanges =
+        # AirPlay2 ports
+        # https://github.com/music-assistant/server/blob/2.11.0b7/music_assistant/providers/airplay_receiver/provider.py#L68-L75
+        lib.optionals (lib.elem "airplay_receiver" cfg.providers) [
+          {
+            from = 7000;
+            to = 7999;
+          }
+        ]
+        # Music Assistant does not configure the zeroconf_port, so all ephemeral ports are used
+        # https://github.com/devgianlu/go-librespot#example-minimal-zeroconf-configuration
+        ++ lib.optionals (lib.elem "spotify_connect" cfg.providers) [
+          {
+            from = 32768;
+            to = 65535;
+          }
+        ];
+      allowedUDPPorts =
+        #  https://github.com/AriaCast/AriaCast-Protocol-Spec/blob/main/spec/discovery.md#ports
+        lib.optional (lib.elem "ariacast_receiver" cfg.providers) 12888
+        ++ lib.optionals (lib.elem "squeezelite" cfg.providers) [
+          # https://lyrion.org/reference/slimproto-protocol/
+          3483 # Slimproto discovery
+        ];
+      allowedUDPPortRanges =
+        # AirPlay1 ports
+        # https://github.com/mikebrady/shairport-sync/blob/5.6.3/scripts/shairport-sync.conf#L44-L45
+        lib.optionals (lib.elem "airplay_receiver" cfg.providers) [
+          {
+            from = 6001;
+            to = 6011;
+          }
+        ]
+        # The information published by Apple 1 seem to not apply to libraop.
+        # The closest we could find that represents the port range being used as observed by tcpdump is the ephemeral port range.
+        # 1: https://support.apple.com/en-us/103229#:~:text=49152%E2%80%93-,65535,-TCP%2C%20UDP
+        # 2: https://en.wikipedia.org/wiki/Ephemeral_port#Range
+        ++ lib.optionals (lib.elem "airplay" cfg.providers) [
+          {
+            from = 32768;
+            to = 65535;
+          }
+        ];
     };
 
     services = {
       avahi = lib.mkIf (lib.elem "airplay_receiver" cfg.providers) {
         enable = true;
         openFirewall = lib.mkIf cfg.openFirewall true;
-        publish = {
-          enable = true;
-          userServices = true;
+        settings.publish = {
+          disable-publishing = false;
+          disable-user-service-publishing = false;
+          publish-addresses = true;
         };
       };
 
@@ -140,8 +206,7 @@ in
           lsof
         ]
         ++ lib.optionals (lib.elem "airplay" cfg.providers) [
-          cliairplay
-          libraop
+          airplay-cli
         ]
         ++ lib.optionals (lib.elem "airplay_receiver" cfg.providers) [
           shairport-sync
@@ -155,7 +220,8 @@ in
         ++ lib.optionals (lib.elem "snapcast" cfg.providers) [
           snapcast
         ]
-        ++ lib.optionals useYTMusic [
+        # YouTube Music needs deno with JIT to solve yt-dlp challenges
+        ++ lib.optionals (lib.elem "ytmusic" cfg.providers) [
           deno
           ffmpeg-headless
         ];
@@ -169,8 +235,18 @@ in
         );
         DynamicUser = true;
         StateDirectory = "music-assistant";
-        AmbientCapabilities = "";
-        CapabilityBoundingSet = [ "" ];
+        # AirPlay 2 requires CAP_NET_BIND_SERVICE to bind to UDP ports 319 and 320 for synchronized group playback.
+        # Opening the ports in the firewall is not necessary.
+        # See this older version of the docs:
+        # https://github.com/music-assistant/music-assistant.io/blob/33175c11961beac4c6a27beff6d4cce269f29efe/src/content/docs/player-support/airplay.md#airplay-2-group-synchronization
+        AmbientCapabilities = [
+          ""
+        ]
+        ++ lib.optionals (lib.elem "airplay" cfg.providers) [ "CAP_NET_BIND_SERVICE" ];
+        CapabilityBoundingSet = [
+          ""
+        ]
+        ++ lib.optionals (lib.elem "airplay" cfg.providers) [ "CAP_NET_BIND_SERVICE" ];
         DevicePolicy = "closed";
         LockPersonality = true;
         # breaks pyopenssl's cffi calls, used in remote access feature
@@ -204,7 +280,8 @@ in
           "~@privileged"
           "mbind"
         ]
-        ++ lib.optionals useYTMusic [
+        # YouTube Music needs deno with JIT to solve yt-dlp challenges
+        ++ lib.optionals (lib.elem "ytmusic" cfg.providers) [
           "@pkey"
         ];
         RestrictSUIDSGID = true;

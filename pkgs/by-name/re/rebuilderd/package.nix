@@ -1,5 +1,6 @@
 {
   lib,
+  aws-lc,
   rustPlatform,
   fetchFromGitHub,
   pkg-config,
@@ -21,13 +22,13 @@
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "rebuilderd";
-  version = "0.27.0";
+  version = "0.29.0";
 
   src = fetchFromGitHub {
     owner = "kpcyrd";
     repo = "rebuilderd";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-f+WfmkV0P4VfaOXxX3t5t9g/uJYCh2A587HEq9OK5QU=";
+    hash = "sha256-FW6D9iI+loJq2jiwgj5FmsRCXHlD3zRgBrQkctDmBmE=";
   };
 
   postPatch = ''
@@ -41,7 +42,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
       --replace-fail '/bin/echo' 'echo'
   '';
 
-  cargoHash = "sha256-se5u7+SF3fW5WqdUA3qmztUw5oPa0YXbgOp9GIVOQu0=";
+  cargoHash = "sha256-QpzxJSoB3C98F++0wfaUFHZ7outXmtavn2kkcqofuBA=";
 
   nativeBuildInputs = [
     pkg-config
@@ -50,6 +51,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
   ];
 
   buildInputs = [
+    aws-lc
     bzip2
     openssl
     shared-mime-info

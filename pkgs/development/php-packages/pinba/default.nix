@@ -1,18 +1,19 @@
 {
   buildPecl,
   lib,
+  php,
   fetchFromGitHub,
 }:
 
-buildPecl rec {
+buildPecl (finalAttrs: {
   pname = "pinba";
   version = "1.1.2";
 
   src = fetchFromGitHub {
     owner = "tony2001";
     repo = "pinba_extension";
-    rev = "RELEASE_${lib.replaceStrings [ "." ] [ "_" ] version}";
-    sha256 = "0wqcqq6sb51wiawa37hbd1h9dbvmyyndzdvz87xqji7lpr9vn8jy";
+    tag = "RELEASE_${lib.replaceStrings [ "." ] [ "_" ] finalAttrs.version}";
+    hash = "sha256-XiK7U770RIn7QX+336z3da+WYGgLnqG4ijyUpQ3GDHM=";
   };
 
   # Fix GCC 14 build.
@@ -20,6 +21,7 @@ buildPecl rec {
   env.NIX_CFLAGS_COMPILE = "-Wno-error=incompatible-pointer-types";
 
   meta = {
+    broken = lib.versionAtLeast php.version "8.6";
     description = "PHP extension for Pinba";
     longDescription = ''
       Pinba is a MySQL storage engine that acts as a realtime monitoring and
@@ -29,4 +31,4 @@ buildPecl rec {
     homepage = "http://pinba.org/";
     teams = [ lib.teams.php ];
   };
-}
+})

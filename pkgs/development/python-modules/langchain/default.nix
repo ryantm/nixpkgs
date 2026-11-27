@@ -46,15 +46,14 @@
 
 buildPythonPackage (finalAttrs: {
   pname = "langchain";
-  version = "1.3.11";
+  version = "1.5.2";
   pyproject = true;
-  __structuredAttrs = true;
 
   src = fetchFromGitHub {
     owner = "langchain-ai";
     repo = "langchain";
     tag = "langchain==${finalAttrs.version}";
-    hash = "sha256-ARLnl+HNsaFW7glyT3CEsNWvp9quvVkCpQvMLxgS2eI=";
+    hash = "sha256-vKod7yWBB3Z/8urzsUJcHp4SA+n04e4CagufIql8qMw=";
   };
 
   sourceRoot = "${finalAttrs.src.name}/libs/langchain_v1";
@@ -65,6 +64,12 @@ buildPythonPackage (finalAttrs: {
   '';
 
   build-system = [ hatchling ];
+
+  pythonRelaxDeps = [
+    "langchain-core"
+    "langgraph"
+    "uuid-utils"
+  ];
 
   dependencies = [
     langchain-core
@@ -128,14 +133,33 @@ buildPythonPackage (finalAttrs: {
     # AttributeError: 'ImportErrorProfileModel' object has no attribute 'profile'
     # https://github.com/langchain-ai/langchain/issues/36312
     "test_summarization_middleware_missing_profile"
+    # langchain.mcp requires fastmcp>=4 (nixpkgs has 3.x) and jsonschema
+    "test_import_all"
+    "test_import_all_using_dir"
+    # Mermaid graph snapshots drifted vs langgraph 1.2.22's rendering
+    "test_create_agent_jump"
+    "test_simple_agent_graph"
+    "test_agent_graph_with_jump_to_end_as_after_agent"
+    "test_agent_graph_with_return_direct_tool"
+    "test_agent_graph_with_mixed_tools"
+    "test_agent_graph_without_return_direct_tools"
   ];
 
   disabledTestPaths = [
+    # Requires fastmcp>=4 (nixpkgs has 3.x) and jsonschema
+    "tests/unit_tests/mcp"
+
     # Their configuration tests don't place nicely with nixpkgs
     "tests/unit_tests/test_pytest_config.py"
 
     # Timing sensitive tests
     "tests/unit_tests/agents/middleware/implementations/test_model_retry.py"
+
+    # TypeError: interrupt() got an unexpected keyword argument
+    "tests/unit_tests/agents/middleware/implementations/test_human_in_the_loop.py"
+
+    # ImportError: No module named 'langchain_openai'
+    "tests/unit_tests/agents/middleware/implementations/test_model_fallback.py"
   ];
 
   pythonImportsCheck = [ "langchain" ];

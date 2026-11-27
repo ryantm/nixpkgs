@@ -1,6 +1,6 @@
 {
   lib,
-  buildGo125Module,
+  buildGoModule,
   fetchFromGitHub,
   versionCheckHook,
   runCommand,
@@ -10,20 +10,22 @@
   symlinkJoin,
 }:
 
-buildGo125Module (finalAttrs: {
+buildGoModule (finalAttrs: {
   pname = "tflint";
-  version = "0.61.0";
+  version = "0.66.0";
 
   src = fetchFromGitHub {
     owner = "terraform-linters";
     repo = "tflint";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-j2bP3McVCxtVEVQYs3mHWFtmUTKDIEd5aU4I/6W/Pns=";
+    hash = "sha256-vQFqTgLFIkLkCrobcpq5bsK2cAHzejZYiJOYSf0kOvw=";
   };
 
-  vendorHash = "sha256-R4NmHSyay0FGpOSMNPbXWxNJFH3lhyWxGeJsNefkBrc=";
+  vendorHash = "sha256-tkazDw40Q/G1jAwyJhkrxChOmyXZyHzcXnHGIiMkPI0=";
 
   doCheck = false;
+
+  env.CGO_ENABLED = 0;
 
   subPackages = [ "." ];
 

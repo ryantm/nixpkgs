@@ -11,17 +11,18 @@
 
 buildGoModule (finalAttrs: {
   pname = "gomuks-web";
-  version = "26.06";
+  version = "26.11.1";
+  tag = "v0.2611.1";
 
   src = fetchFromGitHub {
     owner = "gomuks";
     repo = "gomuks";
-    tag = "v0.${lib.replaceStrings [ "." ] [ "" ] finalAttrs.version}.0";
-    hash = "sha256-Q4hu3bcB16iuqASZvlv7nDvxj8CFX66qWp6DHIUTmh4=";
+    inherit (finalAttrs) tag;
+    hash = "sha256-ZW8syNxvEx02ytoWJWVu4jfLzGjUaUE98CKW40+EvUc=";
   };
 
   proxyVendor = true;
-  vendorHash = "sha256-iuSu5MvNRt+eCZ9wxUwMo6X0joos7q9WPyXBwhn/0yE=";
+  vendorHash = "sha256-ymC5YmC8eNlorZ1AWfduMG/gcU21KiesNP0JNEKtAbA=";
 
   nativeBuildInputs = [
     nodejs
@@ -37,7 +38,7 @@ buildGoModule (finalAttrs: {
     npmRoot = "web";
     npmDeps = fetchNpmDeps {
       src = "${finalAttrs.src}/web";
-      hash = "sha256-RiOes+tmAxhA9IkyA6yWQXTjjXyZg2Z8FmPTgcmCg/g=";
+      hash = "sha256-gwkb3tGhmcbfclJMIO8rTOexzFfUFOmYE93vdgwUK/Y=";
     };
   };
 
@@ -50,7 +51,6 @@ buildGoModule (finalAttrs: {
   doCheck = false;
 
   tags = [
-    "goolm"
     "libheif"
     "sqlite_fts5"
   ];
@@ -83,7 +83,10 @@ buildGoModule (finalAttrs: {
     description = "Matrix client written in Go";
     homepage = "https://github.com/tulir/gomuks";
     license = lib.licenses.agpl3Only;
-    maintainers = [ lib.maintainers.zaphyra ];
+    maintainers = with lib.maintainers; [
+      zaphyra
+      logn
+    ];
     platforms = lib.platforms.unix;
   };
 })

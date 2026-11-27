@@ -1,14 +1,12 @@
 {
   lib,
-  gcc15Stdenv,
+  gcc16Stdenv,
   fetchFromGitHub,
   cmake,
   pkg-config,
-  libGL,
   libxkbcommon,
   hyprgraphics,
   hyprlang,
-  hyprutils,
   hyprwayland-scanner,
   pam,
   sdbus-cpp_2,
@@ -16,25 +14,20 @@
   wayland,
   wayland-protocols,
   wayland-scanner,
-  cairo,
-  file,
-  libjpeg,
-  libwebp,
-  pango,
   libdrm,
   libgbm,
   nix-update-script,
 }:
 
-gcc15Stdenv.mkDerivation (finalAttrs: {
+gcc16Stdenv.mkDerivation (finalAttrs: {
   pname = "hyprlock";
-  version = "0.9.5";
+  version = "0.9.7";
 
   src = fetchFromGitHub {
     owner = "hyprwm";
     repo = "hyprlock";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-VFlM1cN4jmUAbfmZbeg7vL+AN9miXEUqqpk5EkHNq2c=";
+    hash = "sha256-P8pBEk0fKsYlWfYe/Qrt1ovGa5fPSFlqRPn2D3nMV6w=";
   };
 
   nativeBuildInputs = [
@@ -45,19 +38,12 @@ gcc15Stdenv.mkDerivation (finalAttrs: {
   ];
 
   buildInputs = [
-    cairo
-    file
     hyprgraphics
     hyprlang
-    hyprutils
     libdrm
-    libGL
-    libjpeg
-    libwebp
     libxkbcommon
     libgbm
     pam
-    pango
     sdbus-cpp_2
     systemdLibs
     wayland

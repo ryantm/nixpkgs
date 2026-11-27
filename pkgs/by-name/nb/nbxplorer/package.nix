@@ -7,13 +7,13 @@
 
 buildDotnetModule rec {
   pname = "nbxplorer";
-  version = "2.6.0";
+  version = "2.6.23";
 
   src = fetchFromGitHub {
     owner = "btcpayserver";
     repo = "NBXplorer";
     tag = "v${version}";
-    hash = "sha256-X1+UdsKVOC3QpES22p0MG1Rz1oresilBM+b/4I1nCyI=";
+    hash = "sha256-Zgv3ZIrUF1AzINbMzBk5yIAOU6noTWOD/VUolnQsoMA=";
   };
 
   projectFile = "NBXplorer/NBXplorer.csproj";
@@ -26,6 +26,8 @@ buildDotnetModule rec {
   postFixup = ''
     mv $out/bin/{NBXplorer,nbxplorer} || :
   '';
+
+  passthru.updateScript = ./update.sh;
 
   meta = {
     description = "Minimalist UTXO tracker for HD Cryptocurrency Wallets";

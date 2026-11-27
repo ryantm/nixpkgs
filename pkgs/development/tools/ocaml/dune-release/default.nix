@@ -11,7 +11,6 @@
   rresult,
   logs,
   fpath,
-  odoc,
   opam-format,
   opam-core,
   opam-state,
@@ -42,11 +41,11 @@ let
 in
 buildDunePackage (finalAttrs: {
   pname = "dune-release";
-  version = "2.2.1";
+  version = "2.3.0";
 
   src = fetchurl {
     url = "https://github.com/ocamllabs/dune-release/releases/download/${finalAttrs.version}/dune-release-${finalAttrs.version}.tbz";
-    hash = "sha256-A0es0mk6aEMdKvweVfffkaezfgIi1DWAr3dLmNwGOTo=";
+    hash = "sha256-T5egUxBe6gukCXo77TH4/JNyjqSdkpKRLdLxuf8CaD8=";
   };
 
   nativeBuildInputs = [ makeWrapper ] ++ runtimeInputs;
@@ -60,14 +59,12 @@ buildDunePackage (finalAttrs: {
     opam-core
     rresult
     logs
-    odoc
     bos
     yojson
     astring
     fpath
   ];
   nativeCheckInputs = [
-    odoc
     gitMinimal
   ];
   checkInputs = [ alcotest ] ++ runtimeInputs;

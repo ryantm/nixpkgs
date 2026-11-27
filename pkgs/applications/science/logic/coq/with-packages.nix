@@ -11,7 +11,8 @@ packages:
 let
   # At version 9.0, Coq underwent a name change to Rocq.
   # A couple paths and environment variables need to change at this point.
-  isRocq = lib.versionAtLeast coq.coq-version "9.0";
+  isRocq = coq ? rocq-version && lib.versionAtLeast coq.rocq-version "9.0";
+  rocq-version = if isRocq then coq.rocq-version else coq.coq-version;
 
   collectPropagated =
     pkg:
@@ -21,11 +22,11 @@ let
 
   allPackages = lib.unique (lib.concatMap collectPropagated packages);
 
-  coqPath = lib.makeSearchPath "/lib/coq/${coq.coq-version}/user-contrib" allPackages;
+  coqPath = lib.makeSearchPath "/lib/coq/${rocq-version}/user-contrib" allPackages;
 
-  ocamlPath = lib.makeSearchPath "/lib/ocaml/${coq.ocaml.version}/site-lib" (
-    [ coq.ocamlPackages.findlib ] ++ allPackages
-  );
+  ocamlPath =
+    lib.makeSearchPathOutput "dev" "/lib/ocaml/${coq.ocamlPackages.ocaml.version}/site-lib"
+      ([ coq.ocamlPackages.findlib ] ++ allPackages);
 
   pathEnvVar = if isRocq then "ROCQPATH" else "COQPATH";
 in

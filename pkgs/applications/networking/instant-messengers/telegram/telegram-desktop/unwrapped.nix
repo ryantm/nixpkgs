@@ -6,7 +6,6 @@
   pkg-config,
   cmake,
   ninja,
-  clang,
   python3,
   qtshadertools,
   tdlib,
@@ -17,7 +16,7 @@
   kcoreaddons,
   lz4,
   xxhash,
-  ffmpeg_6,
+  ffmpeg,
   protobuf,
   openal-soft,
   minizip-ng-compat,
@@ -29,12 +28,16 @@
   microsoft-gsl,
   boost,
   ada,
+  pango,
+  tlottie,
+  libfido2,
   libavif,
   libheif,
   libjxl,
   libicns,
+  wallet-engine,
   apple-sdk_15,
-  llvmPackages,
+  swift,
   nix-update-script,
 }:
 
@@ -47,15 +50,21 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "telegram-desktop-unwrapped";
-  version = "6.9.3";
+  version = "7.4.4";
 
   src = fetchFromGitHub {
     owner = "telegramdesktop";
     repo = "tdesktop";
     rev = "v${finalAttrs.version}";
     fetchSubmodules = true;
-    hash = "sha256-QCGtESg+38lHWCFcsevHdc0kQ7LKJQmJjUJWszphah8=";
+    hash = "sha256-qZx3zNIc1sehz1zi4lnDHB/9rO8SJ3Ovjhog2aXTbgg=";
   };
+
+  postPatch = ''
+    substituteInPlace Telegram/cmake/telegram_apple_swift_runtime.cmake \
+     --replace-warn 'COMMAND "''${swift_bin_dir}/swift-stdlib-tool"' 'COMMAND true' \
+     --replace-warn 'COMMAND xcrun swift-stdlib-tool'                'COMMAND true'
+  '';
 
   nativeBuildInputs = [
     pkg-config
@@ -65,14 +74,10 @@ stdenv.mkDerivation (finalAttrs: {
     qtshadertools
   ]
   ++ lib.optionals stdenv.hostPlatform.isLinux [
-    # to build bundled libdispatch
-    clang
     gobject-introspection
   ]
-  # Work around ld64's libc++ hardening issue causing Trace/BPT trap: 5
-  # TODO: Remove once nixpkgs#536365 reaches this branch.
   ++ lib.optionals stdenv.hostPlatform.isDarwin [
-    llvmPackages.lld
+    swift
   ];
 
   buildInputs = [
@@ -80,7 +85,7 @@ stdenv.mkDerivation (finalAttrs: {
     qtsvg
     lz4
     xxhash
-    ffmpeg_6
+    ffmpeg
     openal-soft
     minizip-ng-compat
     range-v3
@@ -90,13 +95,17 @@ stdenv.mkDerivation (finalAttrs: {
     microsoft-gsl
     boost
     ada
+    libfido2
     (tdlib.override { tde2eOnly = true; })
+    tlottie
+    wallet-engine
   ]
   ++ lib.optionals stdenv.hostPlatform.isLinux [
     protobuf
     qtwayland
     kcoreaddons
     hunspell
+    pango
   ]
   ++ lib.optionals stdenv.hostPlatform.isDarwin [
     apple-sdk_15
@@ -108,18 +117,13 @@ stdenv.mkDerivation (finalAttrs: {
 
   dontWrapQtApps = true;
 
-  # Work around ld64's libc++ hardening issue causing Trace/BPT trap: 5
-  # TODO: Remove once nixpkgs#536365 reaches this branch.
-  env = lib.optionalAttrs stdenv.hostPlatform.isDarwin {
-    NIX_CFLAGS_LINK = "-fuse-ld=lld";
-  };
-
   cmakeFlags = [
     # We're allowed to used the API ID of the Snap package:
     (lib.cmakeFeature "TDESKTOP_API_ID" "611335")
     (lib.cmakeFeature "TDESKTOP_API_HASH" "d524b414d21f4d37f08684c1df41ac9c")
-    # swift 6 is not available in nixpkgs
-    (lib.cmakeBool "DESKTOP_APP_DISABLE_SWIFT6" true)
+  ]
+  ++ lib.optionals stdenv.hostPlatform.isDarwin [
+    (lib.cmakeFeature "CMAKE_Swift_COMPILER_TARGET" stdenv.hostPlatform.swift.triple)
   ];
 
   installPhase = lib.optionalString stdenv.hostPlatform.isDarwin ''

@@ -8,18 +8,20 @@
 
 buildGoModule (finalAttrs: {
   pname = "diffyml";
-  version = "1.7.0";
+  version = "1.8.3";
 
   __structuredAttrs = true;
+
+  __darwinAllowLocalNetworking = true;
 
   src = fetchFromGitHub {
     owner = "szhekpisov";
     repo = "diffyml";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-DIKHvFY/eW3CAF/ojW+D737vFCcZk0peRrSb8I/an9Q=";
+    hash = "sha256-sIZujFk6SH+4e5iBmQkEy8gmaN9LCSU6mnrkB6FHqYo=";
   };
 
-  vendorHash = "sha256-QE/EwVzMqUO24ZAl0WBibGx6x0kNo1AUTZtfnQvX50k=";
+  vendorHash = "sha256-vjGhS7nhjXlms1ZsRG6Qy/7ategUIgwiBwk943cz9Lk=";
 
   # bench/compare and doc/gen-cli-ref are internal dev tools, not user-facing.
   excludedPackages = [

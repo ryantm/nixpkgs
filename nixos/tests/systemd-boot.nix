@@ -2,7 +2,6 @@
   runTest,
   runTestOn,
   lib,
-  ...
 }:
 
 let
@@ -19,7 +18,7 @@ let
               title = "NixOS"
 
           conf_files = machine.succeed(
-              f"grep --files-with-matches 'version Generation {generation} NixOS' /boot/loader/entries/nixos-*.conf | xargs grep --line-regexp --fixed-strings --files-with-matches 'title {title}'"
+              f"grep --line-regexp --fixed-strings --files-with-matches 'version {generation}' /boot/loader/entries/nixos-*.conf | xargs grep --fixed-strings --files-with-matches 'title {title} (Generation {generation} NixOS'"
           ).split("\n")
 
           suffix = ""
@@ -41,6 +40,8 @@ let
       boot.loader.efi.canTouchEfiVariables = true;
       environment.systemPackages = [ pkgs.efibootmgr ];
       system.switch.enable = true;
+      nix.enable = true; # disabled by default. See all-tests.nix / tag(no-nix-by-default)
+
       # Needed for machine-id to be persisted between reboots.
       # Must be a valid (non-zero) ID, otherwise sd_id128_get_machine()
       # returns -ENOMEDIUM and dbus-broker refuses to start.
@@ -232,7 +233,7 @@ let
             ''}
             machine.succeed("${baseSystem}/bin/switch-to-configuration boot")
             machine.fail(
-              "grep --files-with-matches 'version Generation 1 NixOS' /boot/loader/entries/nixos-*.conf"
+              "grep --line-regexp --fixed-strings --files-with-matches 'version 1' /boot/loader/entries/nixos-*.conf"
             )
             check_generation(2)
           '';
@@ -265,6 +266,9 @@ in
 
           machine.succeed(f"grep 'sort-key nixos' {conf_file}")
 
+          bootctl_list = machine.succeed("bootctl list 2>&1")
+          assert "is not a valid version" not in bootctl_list, bootctl_list
+
           # Ensure we actually booted using systemd-boot
           # Magic number is the vendor UUID used by systemd-boot.
           machine.succeed(
@@ -288,7 +292,6 @@ in
         {
           imports = [ common ];
           environment.systemPackages = [ pkgs.sbctl ];
-          virtualisation.useSecureBoot = true;
         };
 
       testScript =
@@ -460,19 +463,17 @@ in
       nodes.machine = common;
 
       testScript =
-        let
-          oldVersion = "222";
-        in
         # python
         ''
           machine.succeed("mount -o remount,rw /boot")
 
           def switch():
-              # Replace version inside sd-boot with something older. See magic[] string in systemd src/boot/efi/boot.c
+              # Replace version inside sd-boot with something older. See SD_MAGIC in systemd src/boot/boot.c
+              # Note: the sed replacement has to be length-preserving, because section length matters.
               machine.succeed(
-                """
+                r"""
                 find /boot -iname '*boot*.efi' -print0 | \
-                xargs -0 -I '{}' sed -i 's/#### LoaderInfo: systemd-boot .* ####/#### LoaderInfo: systemd-boot ${oldVersion} ####/' '{}'
+                xargs -0 -I '{}' sed -i 's/#### LoaderInfo: systemd-boot [0-9]\(.*\) ####/#### LoaderInfo: systemd-boot 0\1 ####/' '{}'
                 """
               )
               return machine.succeed("/run/current-system/bin/switch-to-configuration boot 2>&1")
@@ -935,6 +936,8 @@ in
               "test -e /sys/firmware/efi/efivars/LoaderBootCountPath-4a67b082-0a4c-41cf-b6c7-440b29bb8c4f"
           )
 
+          # systemd-bless-boot should have already removed the "+2" suffix from the boot entry
+          machine.wait_for_unit("systemd-bless-boot.service")
           check_generation(1)
           check_current_system(orig)
 

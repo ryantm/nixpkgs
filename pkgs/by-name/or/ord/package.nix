@@ -4,20 +4,21 @@
   fetchFromGitHub,
   pkg-config,
   openssl,
+  aws-lc,
 }:
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "ord";
-  version = "0.27.1";
+  version = "0.29.0";
 
   src = fetchFromGitHub {
     owner = "ordinals";
     repo = "ord";
     rev = finalAttrs.version;
-    hash = "sha256-KtJfiQs+2XkFT2l/rpyjeGf/i15BsLFHjSQjzOZkRfg=";
+    hash = "sha256-0jcp8zOWeLjIOpop15DE5ue8axSHJiy7Jnv8oQiPbmo=";
   };
 
-  cargoHash = "sha256-4OFkqErFQ/VPvcHdBJTt877wpd1tALTH89U9u1V2KyY=";
+  cargoHash = "sha256-HPMRibZTYxKeaXRNmlriXaU3NyCMgm6Yitl2tBbOX8c=";
 
   nativeBuildInputs = [
     pkg-config
@@ -25,6 +26,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
 
   buildInputs = [
     openssl
+    aws-lc
   ];
 
   dontUseCargoParallelTests = true;

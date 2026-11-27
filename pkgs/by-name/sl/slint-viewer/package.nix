@@ -12,6 +12,7 @@
   libxkbcommon,
   pkg-config,
   qt6,
+  rust-jemalloc-sys,
   wayland,
 
   autoPatchelfHook,
@@ -20,27 +21,31 @@
 }:
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "slint-viewer";
-  version = "1.17.1";
+  version = "1.19.0";
 
   src = fetchCrate {
     inherit (finalAttrs) pname version;
-    hash = "sha256-Jo2nAYUx6N2fJvX4hHckRKr2gr6xsGW9lNMD45+/uNY=";
+    hash = "sha256-1oazE2WEuEgRr6tJVBy89VqPc3A0jZ+qCYdtgx+NCwg=";
   };
 
-  cargoHash = "sha256-TsM2CFsNDu4SRPcDwAWoPOtWPMf/Z3R9HlSlh4Ly92s=";
+  cargoHash = "sha256-UyYmXHejolkBuN9Q5pxyvfBCuaqkq3wSq19JMhrXlxA=";
 
   buildInputs = [
     qt6.qtbase
     qt6.qtsvg
     fontconfig
     libGL
+    rust-jemalloc-sys
   ];
 
+  buildFeatures = [ "gettext" ];
+
   nativeBuildInputs = [
-    autoPatchelfHook
     pkg-config
     qt6.wrapQtAppsHook
-  ];
+  ]
+  ++ lib.optionals stdenv.hostPlatform.isLinux [ autoPatchelfHook ]
+  ++ lib.optionals stdenv.hostPlatform.isDarwin [ rustPlatform.bindgenHook ];
 
   # stolen from the surfer package
   runtimeDependencies = lib.optionals stdenv.hostPlatform.isLinux [

@@ -2,22 +2,26 @@
   lib,
   rustPlatform,
   fetchFromGitHub,
+  versionCheckHook,
   nix-update-script,
 }:
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "txm";
-  version = "0.1.4";
+  version = "0.1.6";
   __structuredAttrs = true;
 
   src = fetchFromGitHub {
     owner = "thatmagicalcat";
     repo = "txm";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-TV2vDQRH4KV+id7pPtG3Wjbfz/V60RS3wfIvKTP90iE=";
+    hash = "sha256-ZpR4uCjGP3GdMbwNTflQNReytPsJjfFw7OdU4P6bDTw=";
   };
 
-  cargoHash = "sha256-ZGoIIPuDZUata7YmKOMCYcwc8Dlxo0s8W6eogK8qWsE=";
+  cargoHash = "sha256-G6C0Z1TMTjzXwbzpuimw6v7FOl2V+M1NjjcgEKPTKwA=";
+
+  nativeInstallCheckInputs = [ versionCheckHook ];
+  doInstallCheck = true;
 
   passthru.updateScript = nix-update-script { };
 

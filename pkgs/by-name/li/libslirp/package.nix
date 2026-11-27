@@ -10,17 +10,23 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "libslirp";
-  version = "4.9.3";
+  version = "4.9.7";
 
   src = fetchFromGitLab {
     domain = "gitlab.freedesktop.org";
     owner = "slirp";
     repo = "libslirp";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-Spr3dO5ehuUlzx3EnJi8najANWOirwQcTsWTVRVXYuY=";
+    hash = "sha256-pgqZ2bToa6GvUhrql7b/+jxO20vvduFsSYciXztU9F4=";
   };
 
+  __structuredAttrs = true;
+  strictDeps = true;
   separateDebugInfo = true;
+  outputs = [
+    "out"
+    "dev"
+  ];
 
   nativeBuildInputs = [
     meson
@@ -39,7 +45,7 @@ stdenv.mkDerivation (finalAttrs: {
     description = "General purpose TCP-IP emulator";
     homepage = "https://gitlab.freedesktop.org/slirp/libslirp";
     license = lib.licenses.bsd3;
-    maintainers = [ ];
     platforms = lib.platforms.unix;
+    teams = [ lib.teams.freedesktop ];
   };
 })

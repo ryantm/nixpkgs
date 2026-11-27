@@ -3,7 +3,7 @@
   stdenv,
   fetchurl,
   autoPatchelfHook,
-  squashfsTools,
+  squashfs-tools,
   makeBinaryWrapper,
   alsa-lib,
   atk,
@@ -17,7 +17,7 @@
   libGL,
   pango,
   sqlite,
-  systemd,
+  systemdLibs,
   wayland,
   libxext,
   libx11,
@@ -26,18 +26,18 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "tradingview";
-  version = "3.2.0";
-  revision = "71";
+  version = "3.5.0";
+  revision = "75";
 
   src = fetchurl {
     url = "https://api.snapcraft.io/api/v1/snaps/download/nJdITJ6ZJxdvfu8Ch7n5kH5P99ClzBYV_${finalAttrs.revision}.snap";
-    hash = "sha512-hT4U+RGqZ4OliAiLqWKkuv/OxeOpKHmFY0/ia9V7MZz1ZhogIaCLUUXXCmlfX1zhQDA1Xrw1uiwl/aeijgdq7g==";
+    hash = "sha512-7mxxam+Fqbyi9VY3MHqY3bllYkMm8OF5+ifOqVLp/F/uSfSJ6XURTtmnqKIR8flXclRPi9yci6BCmk5NXWMglw==";
   };
 
   nativeBuildInputs = [
     autoPatchelfHook
     makeBinaryWrapper
-    squashfsTools
+    squashfs-tools
   ];
 
   buildInputs = [
@@ -54,7 +54,7 @@ stdenv.mkDerivation (finalAttrs: {
     libGL
     pango
     sqlite
-    systemd
+    systemdLibs
     wayland
     libxcb
     libx11

@@ -7,6 +7,7 @@
   buildPythonPackage,
   fetchFromGitHub,
   numpy,
+  pytest-doctestplus,
   pytestCheckHook,
   scipy,
   setuptools-scm,
@@ -15,14 +16,14 @@
 
 buildPythonPackage (finalAttrs: {
   pname = "gwcs";
-  version = "1.0.1";
+  version = "1.0.3";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "spacetelescope";
     repo = "gwcs";
     tag = finalAttrs.version;
-    hash = "sha256-0iUnapBn8yDCx1tqHD10Ljid15yBuqlICyFuva2LNPk=";
+    hash = "sha256-Wh+3xVjXjTSlmlZuia2Jclj6tzjqlYDQ+giocGEkyAE=";
   };
 
   postPatch = ''
@@ -43,7 +44,10 @@ buildPythonPackage (finalAttrs: {
     scipy
   ];
 
-  nativeCheckInputs = [ pytestCheckHook ];
+  nativeCheckInputs = [
+    pytest-doctestplus
+    pytestCheckHook
+  ];
 
   pythonImportsCheck = [ "gwcs" ];
 

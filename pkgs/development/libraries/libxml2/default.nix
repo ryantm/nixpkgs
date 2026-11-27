@@ -44,6 +44,14 @@ let
           hash = "sha256-DcPZl6rOuP6aycK+1EHUgPX4YWDAH+ctAZtOI48QO2Q=";
           excludes = [ "test/catalogs/test.sh" ];
         })
+
+        (fetchpatch {
+          name = "CVE-2026-76781.patch";
+          url = "https://gitlab.gnome.org/GNOME/libxml2/-/commit/c63248941708bc1d2e3a4292954593312212f6ca.patch";
+          hash = "sha256-Xz6quAmfKi0tsr3FLpF6w7S1aJUzKhPJ4EW7ig2aL8g=";
+          # other files are only test related and don't apply cleanly
+          includes = [ "catalog.c" ];
+        })
       ];
       freezeUpdateScript = true;
       extraMeta = {
@@ -53,13 +61,13 @@ let
       };
     };
     libxml2 = callPackage ./common.nix {
-      version = "2.15.3";
+      version = "2.15.4";
       src = fetchFromGitLab {
         domain = "gitlab.gnome.org";
         owner = "GNOME";
         repo = "libxml2";
         tag = "v${packages.libxml2.version}";
-        hash = "sha256-fDntZDyITs223by8n7ueOXiO7yyzshtANoWbY0+yeqo=";
+        hash = "sha256-NHk5HIGBRmWwRbX2JMBmMDiIDdee2atZEfhz3QTgcOo=";
       };
       extraMeta = {
         maintainers = with lib.maintainers; [

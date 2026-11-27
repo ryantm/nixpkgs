@@ -11,19 +11,18 @@
   pycountry,
   pytestCheckHook,
   python-dateutil,
-  python-jose,
+  pyjwt,
   pyyaml,
   requests,
   rich,
   setuptools,
-  testers,
   unidecode,
   termcolor,
   responses,
-  woob,
+  versionCheckHook,
 }:
 
-buildPythonPackage rec {
+buildPythonPackage (finalAttrs: {
   pname = "woob";
   version = "3.7";
   pyproject = true;
@@ -31,11 +30,22 @@ buildPythonPackage rec {
   src = fetchFromGitLab {
     owner = "woob";
     repo = "woob";
-    tag = version;
+    tag = finalAttrs.version;
     hash = "sha256-EZHzw+/BIIvmDXG4fF367wsdUTVTHWYb0d0U56ZXwOs=";
   };
 
   build-system = [ setuptools ];
+
+  # python-jose is marked insecure and only used to read unverified claims
+  # https://gitlab.com/woob/woob/-/work_items/869
+  postPatch = ''
+    substituteInPlace modules/caissedepargne/browser.py modules/bouygues/browser.py \
+      --replace-fail "from jose import jwt" "import jwt"
+    substituteInPlace modules/caissedepargne/browser.py \
+      --replace-fail "jwt.get_unverified_claims(self.id_token)" "jwt.decode(self.id_token, options={'verify_signature': False})"
+    substituteInPlace modules/bouygues/browser.py \
+      --replace-fail "jwt.get_unverified_claims(fragments['id_token'])" "jwt.decode(fragments['id_token'], options={'verify_signature': False})"
+  '';
 
   pythonRelaxDeps = [
     "packaging"
@@ -46,7 +56,7 @@ buildPythonPackage rec {
   dependencies = [
     babel
     python-dateutil
-    python-jose
+    pyjwt
     html2text
     lxml
     packaging
@@ -63,6 +73,7 @@ buildPythonPackage rec {
   nativeCheckInputs = [
     pytestCheckHook
     responses
+    versionCheckHook
   ];
 
   disabledTests = [
@@ -73,17 +84,12 @@ buildPythonPackage rec {
 
   pythonImportsCheck = [ "woob" ];
 
-  passthru.tests.version = testers.testVersion {
-    package = woob;
-    version = "v${version}";
-  };
-
   meta = {
-    changelog = "https://gitlab.com/woob/woob/-/blob/${src.rev}/ChangeLog";
+    changelog = "https://gitlab.com/woob/woob/-/blob/${finalAttrs.src.rev}/ChangeLog";
     description = "Collection of applications and APIs to interact with websites";
     mainProgram = "woob";
     homepage = "https://woob.tech";
     license = lib.licenses.lgpl3Plus;
     maintainers = with lib.maintainers; [ DamienCassou ];
   };
-}
+})

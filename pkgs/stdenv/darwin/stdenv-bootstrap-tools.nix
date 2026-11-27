@@ -22,6 +22,7 @@
   ld64,
   libffi,
   libiconv,
+  libplist,
   libxml2,
   llvmPackages,
   ncurses,
@@ -142,7 +143,7 @@ stdenv.mkDerivation (finalAttrs: {
       cp -d ${getBin bzip2}/bin/b{,un}zip2 $out/bin
       cp ${getBin cpio}/bin/cpio $out/bin
       cp ${getBin gnutar}/bin/tar $out/bin
-      cp ${getBin gzip}/bin/.gzip-wrapped $out/bin/gzip
+      cp ${getBin gzip}/bin/gzip $out/bin/gzip
       cp ${getBin pbzx}/bin/pbzx $out/bin
       cp ${getBin xz}/bin/xz $out/bin
       cp -d ${getLib bzip2}/lib/libbz2*.dylib $out/lib
@@ -180,6 +181,7 @@ stdenv.mkDerivation (finalAttrs: {
 
       # copy sigtool
       cp -d ${getBin darwin.sigtool}/bin/{codesign,sigtool} $out/bin
+      cp -d ${getLib libplist}/lib/libplist*.dylib $out/lib
 
       # tools needed to unpack bootstrap archive
       mkdir -p unpack/bin unpack/lib

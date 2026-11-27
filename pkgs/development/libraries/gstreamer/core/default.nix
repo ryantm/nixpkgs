@@ -33,8 +33,6 @@
   hotdoc,
   directoryListingUpdater,
   apple-sdk_gstreamer,
-  # TODO: Clean up on `staging`
-  llvmPackages,
 }:
 
 let
@@ -42,7 +40,7 @@ let
 in
 stdenv.mkDerivation (finalAttrs: {
   pname = "gstreamer";
-  version = "1.28.4";
+  version = "1.28.9";
 
   outputs = [
     "bin"
@@ -54,7 +52,7 @@ stdenv.mkDerivation (finalAttrs: {
 
   src = fetchurl {
     url = "https://gstreamer.freedesktop.org/src/gstreamer/gstreamer-${finalAttrs.version}.tar.xz";
-    hash = "sha256-9a3H6PRIwQJgs7JaoQHJ1UBnTI2aVMK3eobQTys7UN0=";
+    hash = "sha256-bb90T1gxMaNIRcxkHoA4Q3Zqm6gM4AN4qQQ/1tjV+zg=";
   };
 
   depsBuildBuild = [
@@ -86,10 +84,6 @@ stdenv.mkDerivation (finalAttrs: {
   ]
   ++ lib.optionals enableDocumentation [
     hotdoc
-  ]
-  # TODO: Clean up on `staging`
-  ++ lib.optionals stdenv.hostPlatform.isDarwin [
-    llvmPackages.lld
   ];
 
   buildInputs = [
@@ -123,14 +117,6 @@ stdenv.mkDerivation (finalAttrs: {
     (lib.mesonEnable "libdw" (withLibunwind && hasElfutils))
   ];
 
-  # Fix for ld64 hardening issue
-  #
-  # TODO: Clean up on `staging`
-  env = lib.optionalAttrs stdenv.hostPlatform.isDarwin {
-    CC_LD = "lld";
-    OBJC_LD = "lld";
-  };
-
   postPatch = ''
     patchShebangs \
       gst/parse/get_flex_version.py \
@@ -160,6 +146,26 @@ stdenv.mkDerivation (finalAttrs: {
       pkg-config = testers.testMetaPkgConfig finalAttrs.finalPackage;
     };
     updateScript = directoryListingUpdater { odd-unstable = true; };
+
+    # From around version 1.12.0 on, there is a single CPE identifier for all of GStreamer.
+    # FIXME: Should gst-plugins-rs follow the main GStreamer versioning or its own deviating version?
+    gstreamerCpeParts =
+      let
+        commonGstreamerVersion = finalAttrs.version;
+      in
+      version:
+      lib.warnIf (version != commonGstreamerVersion)
+        ''
+          Detected mismatch between common GStreamer version (${commonGstreamerVersion}) and version used for gstreamerCpeParts (${version}).
+          Note that GStreamer uses a common CPE identifier for its components.
+          Having a deviating version is unusual, but may occur e.g. if overriding a subset of GStreamer libraries.
+        ''
+        (
+          lib.meta.cpeFullVersionWithVendor "gstreamer" version
+          // {
+            product = "gstreamer";
+          }
+        );
   };
 
   meta = {
@@ -171,7 +177,8 @@ stdenv.mkDerivation (finalAttrs: {
     ];
     platforms = lib.platforms.unix;
     maintainers = with lib.maintainers; [
-      tmarkus
+      AAAAAASomeThingsFailToEvaluate
     ];
+    identifiers.cpeParts = finalAttrs.passthru.gstreamerCpeParts finalAttrs.version;
   };
 })

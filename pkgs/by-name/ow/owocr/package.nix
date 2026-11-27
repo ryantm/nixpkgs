@@ -62,7 +62,9 @@ python3Packages.buildPythonApplication (finalAttrs: {
   meta = {
     description = "Optical character recognition for Japanese text";
     homepage = "https://github.com/AuroraWright/owocr";
-    license = lib.licenses.asl20;
+    changelog = "https://github.com/AuroraWright/owocr/releases/tag/${finalAttrs.src.tag}";
+    license = lib.licenses.gpl3Only;
     maintainers = with lib.maintainers; [ sigmanificient ];
+    mainProgram = "owocr";
   };
 })

@@ -2,21 +2,25 @@
   lib,
   buildGraalvmNativeImage,
   fetchurl,
+  versionCheckHook,
 }:
 
 buildGraalvmNativeImage (finalAttrs: {
   pname = "clj-kondo";
-  version = "2026.05.25";
+  version = "2026.10.26";
 
   src = fetchurl {
     url = "https://github.com/clj-kondo/clj-kondo/releases/download/v${finalAttrs.version}/clj-kondo-${finalAttrs.version}-standalone.jar";
-    sha256 = "sha256-SzrfsIHUW+KzZITesZ9aS00Gx7S4hekLsXXdjQJJxLM=";
+    sha256 = "sha256-KC6xS0cFL3Iw+jLdJfpLQAZRAbnoeVT0IY+FUPAMpmc=";
   };
 
   extraNativeImageBuildArgs = [
     "-H:+ReportExceptionStackTraces"
     "--no-fallback"
   ];
+
+  doInstallCheck = true;
+  nativeInstallCheckInputs = [ versionCheckHook ];
 
   meta = {
     description = "Linter for Clojure code that sparks joy";

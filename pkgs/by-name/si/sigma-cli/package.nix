@@ -7,14 +7,14 @@
 
 python3.pkgs.buildPythonApplication (finalAttrs: {
   pname = "sigma-cli";
-  version = "3.1.0";
+  version = "4.0.1";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "SigmaHQ";
     repo = "sigma-cli";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-cr9MFKot/A08q0fg4RnSU1Rl7YAOvfoyIC8Loas/+X8=";
+    hash = "sha256-vzynkLHgBiKC6hFBd8XMGypXTu3OsBZHM0/cvnwT34M=";
   };
 
   pythonRelaxDeps = [ "click" ];
@@ -26,13 +26,13 @@ python3.pkgs.buildPythonApplication (finalAttrs: {
     colorama
     prettytable
     pysigma
+    pysigma-backend-crowdstrike
     pysigma-backend-elasticsearch
     pysigma-backend-insightidr
+    pysigma-backend-loki
     pysigma-backend-opensearch
     pysigma-backend-qradar
     pysigma-backend-splunk
-    pysigma-backend-loki
-    pysigma-pipeline-crowdstrike
     pysigma-pipeline-sysmon
     pysigma-pipeline-windows
   ];

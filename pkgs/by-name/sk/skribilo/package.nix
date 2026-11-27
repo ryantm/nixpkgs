@@ -20,17 +20,16 @@
   enableTex ? true,
   texliveSmall,
 }:
-
 let
   inherit (lib) optional;
 in
 stdenv.mkDerivation (finalAttrs: {
   pname = "skribilo";
-  version = "0.10.0";
+  version = "0.11.1";
 
   src = fetchurl {
     url = "mirror://savannah/skribilo/skribilo-${finalAttrs.version}.tar.gz";
-    hash = "sha256-jP9I7hds7f1QMmSaNJpGlSvqUOwGcg+CnBzMopIS9Q4=";
+    hash = "sha256-ZlwkHEKSC/Np8SMdS5xxzhi6Y63QuajyQYIf0Roo1ZI=";
   };
 
   nativeBuildInputs = [
@@ -74,7 +73,7 @@ stdenv.mkDerivation (finalAttrs: {
       conventions used in emails, Usenet and text.
     '';
     license = lib.licenses.gpl3Plus;
-    maintainers = [ ];
+    maintainers = with lib.maintainers; [ l0r3v ];
     platforms = lib.platforms.unix;
   };
 })

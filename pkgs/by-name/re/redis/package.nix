@@ -3,8 +3,6 @@
   stdenv,
   fetchFromGitHub,
   fetchpatch2,
-  apple-sdk,
-  lua,
   jemalloc,
   pkg-config,
   nixosTests,
@@ -27,27 +25,37 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "redis";
-  version = "8.8.0";
+  version = "8.10.3";
 
   src = fetchFromGitHub {
     owner = "redis";
     repo = "redis";
     tag = finalAttrs.version;
-    hash = "sha256-D9rhe5GC0axhKHoRfeegUIGYXbrcEsa9m9vYJVxwtCk=";
+    hash = "sha256-ftzedXSe3QwEe3ZWaLJTpeO1PY2OP++7SuurJjY4OyM=";
   };
 
-  patches = lib.optional useSystemJemalloc (fetchpatch2 {
+  patches = [
+    # https://github.com/redis/redis/pull/15585
+    (fetchpatch2 {
+      url = "https://github.com/redis/redis/commit/c027c8effe13564bcbc903741305acd929cc23da.patch";
+      hash = "sha256-MynmKLQ04JjyHMVbfeSIEnKaj4jvjS1FjQNpfvQz3Pw=";
+    })
+  ]
+  ++ lib.optional useSystemJemalloc (fetchpatch2 {
     url = "https://gitlab.archlinux.org/archlinux/packaging/packages/redis/-/raw/102cc861713c796756abd541bf341a4512eb06e6/redis-5.0-use-system-jemalloc.patch";
     hash = "sha256-A9qp+PWQRuNy/xmv9KLM7/XAyL7Tzkyn0scpVCGngcc=";
   });
 
-  postPatch = lib.optionalString stdenv.hostPlatform.isDarwin ''
-    # The path `/Library/...` isn't available in the build sandbox. The package `apple-sdk`
-    # can provide that functionality for us.
-    substituteInPlace src/modules/Makefile modules/vector-sets/Makefile tests/modules/Makefile \
-      --replace-fail '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib' \
-        '${apple-sdk.sdkroot}/usr/lib'
-  '';
+  postPatch =
+    # tests/modules/Makefile hardcodes CC=gcc and LD=gcc on Linux, which breaks cross-compilation
+    # Use ?= so the environment CC is respected
+    # see https://github.com/redis/redis/issues/15395
+    # and https://github.com/redis/redis/pull/15458
+    ''
+      substituteInPlace tests/modules/Makefile \
+        --replace-fail 'CC = gcc' 'CC ?= gcc' \
+        --replace-fail 'LD = gcc' 'LD ?= gcc'
+    '';
 
   nativeBuildInputs = [
     pkg-config
@@ -55,12 +63,10 @@ stdenv.mkDerivation (finalAttrs: {
     python3
   ];
 
-  buildInputs = [
-    lua
-  ]
-  ++ lib.optional useSystemJemalloc jemalloc
-  ++ lib.optional withSystemd systemd
-  ++ lib.optional tlsSupport openssl;
+  buildInputs =
+    lib.optional useSystemJemalloc jemalloc
+    ++ lib.optional withSystemd systemd
+    ++ lib.optional tlsSupport openssl;
 
   # More cross-compiling fixes.
   makeFlags = [
@@ -77,8 +83,9 @@ stdenv.mkDerivation (finalAttrs: {
 
   env.NIX_LDFLAGS = lib.optionalString stdenv.hostPlatform.isFreeBSD "-lexecinfo";
 
-  # darwin currently lacks a pure `pgrep` which is extensively used here
-  doCheck = !stdenv.hostPlatform.isDarwin;
+  # Tests are in the `tests` passthru derivation: the suite is very large and some tests (e.g. memtests) are flaky.
+  doCheck = false;
+
   nativeCheckInputs = [
     which
     tcl
@@ -111,6 +118,7 @@ stdenv.mkDerivation (finalAttrs: {
       --timeout 2000 \
       --clients "$CLIENTS" \
       --tags -leaks \
+      --tags -defrag \
       --skipunit integration/aof-multi-part \
       --skipunit integration/failover \
       --skipunit integration/replication-rdbchannel \
@@ -126,7 +134,10 @@ stdenv.mkDerivation (finalAttrs: {
   versionCheckProgram = "${placeholder "out"}/bin/redis-server";
 
   passthru = {
-    tests.redis = nixosTests.redis;
+    tests = {
+      redis = nixosTests.redis;
+      unitTests = finalAttrs.finalPackage.overrideAttrs { doCheck = true; };
+    };
     serverBin = "redis-server";
     updateScript = nix-update-script { };
   };

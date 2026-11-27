@@ -4,22 +4,26 @@
   buildPythonPackage,
   fetchFromGitHub,
   unittestCheckHook,
+  pyprojectVersionPatchHook,
   pythonAtLeast,
   setuptools,
+  trio,
   werkzeug,
 }:
 
 buildPythonPackage rec {
   pname = "websockets";
-  version = "16.0";
+  version = "17.0.1";
   pyproject = true;
 
   src = fetchFromGitHub {
-    owner = "aaugustin";
+    owner = "python-websockets";
     repo = "websockets";
     tag = version;
-    hash = "sha256-75FkU45qbOb+xbJO4VKqfWBTep+Toh6OWch2WXnU4bg=";
+    hash = "sha256-7qY2u0rIHnwQNZtgZ59YOcO2EKCV++/lc9q1BHRdJr0=";
   };
+
+  nativeBuildInputs = [ pyprojectVersionPatchHook ];
 
   build-system = [ setuptools ];
 
@@ -40,6 +44,7 @@ buildPythonPackage rec {
   ];
 
   nativeCheckInputs = [
+    trio
     unittestCheckHook
     werkzeug
   ];
@@ -61,7 +66,7 @@ buildPythonPackage rec {
   meta = {
     description = "WebSocket implementation in Python";
     homepage = "https://websockets.readthedocs.io/";
-    changelog = "https://github.com/aaugustin/websockets/blob/${src.tag}/docs/project/changelog.rst";
+    changelog = "https://github.com/python-websockets/websockets/blob/${src.tag}/docs/project/changelog.rst";
     license = lib.licenses.bsd3;
     maintainers = with lib.maintainers; [ fab ];
   };

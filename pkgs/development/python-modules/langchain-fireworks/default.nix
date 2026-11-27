@@ -11,7 +11,7 @@
   fireworks-ai,
   langchain-core,
   openai,
-  pydantic,
+  requests,
 
   # tests
   langchain-tests,
@@ -24,16 +24,14 @@
 
 buildPythonPackage (finalAttrs: {
   pname = "langchain-fireworks";
-  version = "1.4.3";
+  version = "1.7.3";
   pyproject = true;
-  __structuredAttrs = true;
-  strictDeps = true;
 
   src = fetchFromGitHub {
     owner = "langchain-ai";
     repo = "langchain";
     tag = "langchain-fireworks==${finalAttrs.version}";
-    hash = "sha256-Z8KwSMq4kVCUVD9Cs8PU6ZRcC9ZG52dbeQrpYInt9L0=";
+    hash = "sha256-ylAEmkwQ89xFhDyBnGrKJoYAhiZydQgJD3iVpadsOWU=";
   };
 
   sourceRoot = "${finalAttrs.src.name}/libs/partners/fireworks";
@@ -45,7 +43,7 @@ buildPythonPackage (finalAttrs: {
     fireworks-ai
     langchain-core
     openai
-    pydantic
+    requests
   ];
 
   pythonRelaxDeps = [
@@ -60,6 +58,11 @@ buildPythonPackage (finalAttrs: {
   ];
 
   enabledTestPaths = [ "tests/unit_tests" ];
+
+  disabledTestPaths = [
+    # Requires langchain, which depends on this package
+    "tests/unit_tests/middleware/test_prompt_caching.py"
+  ];
 
   disabledTests = [
     # Fails when langchain-core gets ahead of this package

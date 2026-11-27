@@ -3,6 +3,7 @@
   stdenv,
   buildPythonPackage,
   fetchFromGitHub,
+  fetchpatch,
 
   # build-system
   setuptools,
@@ -33,7 +34,6 @@ buildPythonPackage (finalAttrs: {
   pname = "botorch";
   version = "0.18.1";
   pyproject = true;
-  __structuredAttrs = true;
 
   src = fetchFromGitHub {
     owner = "meta-pytorch";
@@ -41,6 +41,16 @@ buildPythonPackage (finalAttrs: {
     tag = "v${finalAttrs.version}";
     hash = "sha256-tUTtImqPlbS8g1oLoTTCCWQbeLwLop13qPjFrQeMtb8=";
   };
+
+  patches = [
+    # Allow scipy 1.18 in batched L-BFGS-B fast path
+    # https://github.com/meta-pytorch/botorch/pull/3328
+    (fetchpatch {
+      name = "scipy-1.18.patch";
+      url = "https://github.com/meta-pytorch/botorch/commit/611f14acc8c1b2f30ce2ae058568d90f96bbb2ec.patch";
+      hash = "sha256-PiXq9GmPaWQXh+emY7aNI53Y+ufl8K5uOFa8GD0clP8=";
+    })
+  ];
 
   build-system = [
     setuptools
@@ -104,7 +114,7 @@ buildPythonPackage (finalAttrs: {
     # RuntimeError: required keyword attribute 'value' has the wrong type
     "test_posterior_in_trace_mode"
   ]
-  ++ lib.optionals (stdenv.hostPlatform.isDarwin && stdenv.hostPlatform.isAarch64) [
+  ++ lib.optionals stdenv.hostPlatform.isDarwin [
     # Numerical error slightly above threshold
     # AssertionError: Tensor-likes are not close!
     "test_model_list_gpytorch_model"

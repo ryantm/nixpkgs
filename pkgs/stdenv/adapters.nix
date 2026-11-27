@@ -95,6 +95,8 @@ rec {
             (mkDerivationSuper args).overrideAttrs (
               args:
               (
+                # OpenBSD's rcrt0 expects the linker-provided _DYNAMIC symbol
+                # emitted for static PIE executables.
                 if (args ? NIX_CFLAGS_LINK) then
                   lib.warn
                     (
@@ -103,12 +105,18 @@ rec {
                       + lib.optionalString (args ? version) "-${args.version}"
                     )
                     {
-                      NIX_CFLAGS_LINK = toString (args.NIX_CFLAGS_LINK or "") + " -static";
+                      NIX_CFLAGS_LINK =
+                        toString (args.NIX_CFLAGS_LINK or "")
+                        + " -static"
+                        + lib.optionalString stdenv.hostPlatform.isOpenBSD " -pie";
                     }
                 else
                   {
                     env = (args.env or { }) // {
-                      NIX_CFLAGS_LINK = toString (args.env.NIX_CFLAGS_LINK or "") + " -static";
+                      NIX_CFLAGS_LINK =
+                        toString (args.env.NIX_CFLAGS_LINK or "")
+                        + " -static"
+                        + lib.optionalString stdenv.hostPlatform.isOpenBSD " -pie";
                     };
                   }
               )
@@ -355,16 +363,29 @@ rec {
     if !stdenv.targetPlatform.isLinux then
       throw "Wild only supports building Linux ELF files from Linux hosts."
     else
-      stdenv.override (prev: {
-        allowedRequisites = null;
-        cc = prev.cc.override {
-          bintools = prev.cc.bintools.override {
-            extraBuildCommands = ''
-              ln -fs ${pkgs.buildPackages.wild}/bin/* "$out/bin"
-            '';
+      stdenv.override (
+        prev:
+        {
+          allowedRequisites = null;
+          cc = prev.cc.override {
+            bintools = prev.cc.bintools.override {
+              extraBuildCommands = ''
+                ln -fs ${pkgs.buildPackages.wild}/bin/* "$out/bin"
+              '';
+            };
           };
-        };
-      });
+        }
+        //
+          lib.optionalAttrs
+            (stdenv.cc.isClang || (stdenv.cc.isGNU && lib.versionAtLeast stdenv.cc.version "16"))
+            {
+              mkDerivationFromStdenv = extendMkDerivationArgs prev (args: {
+                env = (args.env or { }) // {
+                  NIX_CFLAGS_LINK = toString (args.env.NIX_CFLAGS_LINK or "") + " -fuse-ld=wild";
+                };
+              });
+            }
+      );
 
   /*
     Modify a stdenv so that it builds binaries optimized specifically
@@ -387,15 +408,25 @@ rec {
     Modify a stdenv so that it builds binaries with the specified list of
     compilerFlags appended and passed to the compiler.
 
-    This example would recompile every derivation on the system with
-    -funroll-loops and -O3 passed to each gcc invocation.
+    This example builds a single package with -funroll-loops and -O3
+    passed to each compiler invocation.
 
     Example:
-      nixpkgs.overlays = [
-        (self: super: {
-          stdenv = super.withCFlags [ "-funroll-loops" "-O3" ] super.stdenv;
-        })
-      ];
+      hello.override {
+        stdenv = stdenvAdapters.withCFlags [ "-funroll-loops" "-O3" ] stdenv;
+      }
+
+    To rebuild every package with the flags, use `config.replaceStdenv`
+    rather than overriding `stdenv` in an overlay. Overlays also apply to
+    the stdenv bootstrap stages, so the flags would reach the bootstrap
+    compilers, which may not support them (for example, -flto).
+
+    Example (Nixpkgs config, e.g. `nixpkgs.config` on NixOS):
+      replaceStdenv =
+        { pkgs }: pkgs.stdenvAdapters.withCFlags [ "-funroll-loops" "-O3" ] pkgs.stdenv;
+
+    Cross package sets (pkgsCross, pkgsStatic, ...) ignore
+    `config.replaceStdenv`; use `config.replaceCrossStdenv` for those.
   */
   withCFlags =
     compilerFlags:

@@ -4,23 +4,19 @@
   appimageTools,
 }:
 
-let
+appimageTools.wrapType2 (finalAttrs: {
   pname = "steam-art-manager";
-  version = "3.16.1";
+  version = "3.31.0";
   src = fetchurl {
-    url = "https://github.com/Tormak9970/Steam-Art-Manager/releases/download/v${version}/steam-art-manager.AppImage";
-    hash = "sha256-7Lqcj9Q5P29YFt6biFXLlVdWHdlzF/daLIaA2fGY0+A=";
+    url = "https://github.com/Tormak9970/Steam-Art-Manager/releases/download/v${finalAttrs.version}/steam-art-manager.AppImage";
+    hash = "sha256-30hBqHgMVELi42CuS2kzL2w9O/J1CrDMeu5ajEKUaVo=";
   };
-  appimageContents = appimageTools.extract { inherit pname version src; };
-in
-appimageTools.wrapType2 {
-  inherit pname version src;
 
   extraInstallCommands = ''
-    install -m 444 -D "${appimageContents}/usr/share/applications/Steam Art Manager.desktop" $out/share/applications/steam-art-manager.desktop
-    install -m 444 -D "${appimageContents}/Steam Art Manager.png" $out/share/icons/hicolor/512x512/apps/steam-art-manager.png
+    install -m 444 -D "${finalAttrs.contents}/usr/share/applications/Steam Art Manager.desktop" $out/share/applications/steam-art-manager.desktop
+    install -m 444 -D "${finalAttrs.contents}/Steam Art Manager.png" $out/share/icons/hicolor/512x512/apps/steam-art-manager.png
     substituteInPlace $out/share/applications/steam-art-manager.desktop \
-      --replace 'Exec=AppRun' 'Exec=${pname}' \
+      --replace 'Exec=AppRun' 'Exec=${finalAttrs.pname}' \
       --replace 'Icon=Steam Art Manager' 'Icon=steam-art-manager'
   '';
 
@@ -32,4 +28,4 @@ appimageTools.wrapType2 {
     platforms = [ "x86_64-linux" ];
     mainProgram = "steam-art-manager";
   };
-}
+})

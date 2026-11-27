@@ -14,14 +14,14 @@
 
 buildPythonPackage (finalAttrs: {
   pname = "microsoft-kiota-abstractions";
-  version = "1.11.7";
+  version = "1.18.0";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "microsoft";
     repo = "kiota-python";
     tag = "microsoft-kiota-abstractions-v${finalAttrs.version}";
-    hash = "sha256-Fd9XSO3H1Au8y+Acft5to7hi7QNwWcmP0/NeWZlufjg=";
+    hash = "sha256-r7svcJmv9amLzJQn0qb75DA2efGLAhrC6AIEH/dxy3A=";
   };
 
   sourceRoot = "${finalAttrs.src.name}/packages/abstractions/";

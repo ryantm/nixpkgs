@@ -2,6 +2,7 @@
   lib,
   buildPythonPackage,
   fetchFromGitHub,
+  nix-update-script,
 
   # build-system
   hatchling,
@@ -14,15 +15,14 @@
 
 buildPythonPackage (finalAttrs: {
   pname = "jupyterlite-core";
-  version = "0.8.0";
+  version = "0.8.7";
   pyproject = true;
-  __structuredAttrs = true;
 
   src = fetchFromGitHub {
     owner = "jupyterlite";
     repo = "jupyterlite";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-LERWOeOvGdefbgQxbA8GAFZq1OD/Hhl2Q9hNVCS3Et4=";
+    hash = "sha256-NhEASYiPdu/lkBUCiH4nVI6iEBb9v3Djs/9N+BovfgA=";
   };
 
   sourceRoot = "${finalAttrs.src.name}/py/jupyterlite-core";
@@ -44,6 +44,13 @@ buildPythonPackage (finalAttrs: {
     "jupyterlite_core"
   ];
 
+  passthru.updateScript = nix-update-script {
+    extraArgs = [
+      "--version-regex=^v(\\d+).(\\d+).(\\d+)$"
+      "--use-github-releases"
+    ];
+  };
+
   meta = {
     description = "Wasm powered Jupyter running in the browser";
     homepage = "https://github.com/jupyterlite/jupyterlite";
@@ -51,5 +58,9 @@ buildPythonPackage (finalAttrs: {
     mainProgram = "jupyter-lite";
     license = lib.licenses.bsd3;
     maintainers = with lib.maintainers; [ eljamm ];
+    teams = with lib.teams; [
+      ngi
+      jupyter
+    ];
   };
 })

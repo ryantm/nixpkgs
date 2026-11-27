@@ -9,13 +9,13 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "wamrc";
-  version = "2.4.5";
+  version = "2.4.6";
 
   src = fetchFromGitHub {
-    owner = "bytecodealliance";
+    owner = "wasm-micro-runtime";
     repo = "wasm-micro-runtime";
     tag = "WAMR-${finalAttrs.version}";
-    hash = "sha256-HBew8kbi7AaKrAEZbPIlXqiO+1wDljSzEsE9+FWzxHE=";
+    hash = "sha256-Lsa7P8QQVWB08UFIidPIsmaXZOtnDxE3C2MzW73Rwtg=";
   };
 
   nativeBuildInputs = [
@@ -41,7 +41,7 @@ stdenv.mkDerivation (finalAttrs: {
 
   meta = {
     description = "WebAssembly Micro Runtime AOT compiler";
-    homepage = "https://github.com/bytecodealliance/wasm-micro-runtime";
+    homepage = "https://github.com/wasm-micro-runtime/wasm-micro-runtime";
     license = lib.licenses.asl20;
     mainProgram = "wamrc";
     maintainers = with lib.maintainers; [ bubblepipe ];

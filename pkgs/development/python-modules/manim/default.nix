@@ -1,11 +1,12 @@
 {
   lib,
+  stdenv,
   buildPythonPackage,
   fetchFromGitHub,
   texliveInfraOnly,
 
   # build-system
-  hatchling,
+  uv-build,
 
   # buildInputs
   cairo,
@@ -42,6 +43,7 @@
   # optional-dependencies
   jupyterlab,
   notebook,
+  typst,
 
   # tests
   ffmpeg,
@@ -187,21 +189,36 @@ let
 in
 buildPythonPackage (finalAttrs: {
   pname = "manim";
+  version = "0.22.1";
   pyproject = true;
-  version = "0.20.1";
 
   src = fetchFromGitHub {
     owner = "ManimCommunity";
     repo = "manim";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-rfPqKPbxT8UsxSin4DquDjPMAUEYmKixx2fBlr5mz8U=";
+    hash = "sha256-qeI2lUsRQ8Fzfa1q4qAfOynUC5vPMcr0U9txJicqsnY=";
   };
 
-  build-system = [
-    hatchling
+  patches = [
+    ./pytest-report-header.patch
+
+    # Parse modified SVGs from memory instead of a fixed temp file next to the source, which races
+    # when tests load the same SVG in parallel
+    ./svg-parse-race.patch
   ];
 
-  patches = [ ./pytest-report-header.patch ];
+  postPatch =
+    # nixpkgs still ships uv-build < 0.12.1
+    ''
+      substituteInPlace pyproject.toml \
+        --replace-fail \
+          "uv_build>=0.12.1,<0.13.0" \
+          "uv_build"
+    '';
+
+  build-system = [
+    uv-build
+  ];
 
   buildInputs = [ cairo ];
 
@@ -246,6 +263,9 @@ buildPythonPackage (finalAttrs: {
     ];
     # TODO package dearpygui
     # gui = [ dearpygui ];
+    typst = [
+      typst
+    ];
   };
 
   makeWrapperArgs = [
@@ -264,11 +284,18 @@ buildPythonPackage (finalAttrs: {
     pytest-cov-stub
     pytest-xdist
     pytestCheckHook
+    typst
     versionCheckHook
   ];
 
-  # about 55 of ~600 tests failing mostly due to demand for display
+  # about 45 of ~1050 tests failing mostly due to demand for display
   disabledTests = import ./failing_tests.nix;
+
+  __impureHostDeps = lib.optionals stdenv.hostPlatform.isDarwin [
+    # Without system fonts, CoreText falls back to LastResort (which draws a box for every glyph,
+    # whitespace included) and text-related tests fail
+    "/System/Library/Fonts"
+  ];
 
   pythonImportsCheck = [ "manim" ];
 
@@ -287,6 +314,7 @@ buildPythonPackage (finalAttrs: {
     maintainers = with lib.maintainers; [
       osbm
       ivyfanchiang
+      haansn08
     ];
   };
 })

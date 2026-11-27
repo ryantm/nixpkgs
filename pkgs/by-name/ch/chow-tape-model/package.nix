@@ -2,15 +2,11 @@
   alsa-lib,
   at-spi2-core,
   cmake,
-  curl,
   dbus,
-  libepoxy,
   fetchFromGitHub,
   libglut,
   freetype,
-  gtk3,
   lib,
-  libGL,
   libxcursor,
   libxdmcp,
   libxext,
@@ -18,14 +14,12 @@
   libxrandr,
   libxtst,
   libdatrie,
-  libjack2,
   libpsl,
   libselinux,
   libsepol,
   libsysprof-capture,
   libthai,
   libuuid,
-  libxkbcommon,
   lv2,
   pkg-config,
   python3,
@@ -57,13 +51,9 @@ stdenv.mkDerivation (finalAttrs: {
   buildInputs = [
     alsa-lib
     at-spi2-core
-    curl
     dbus
-    libepoxy
     libglut
     freetype
-    gtk3
-    libGL
     libxcursor
     libxdmcp
     libxext
@@ -71,14 +61,12 @@ stdenv.mkDerivation (finalAttrs: {
     libxrandr
     libxtst
     libdatrie
-    libjack2
     libpsl
     libselinux
     libsepol
     libsysprof-capture
     libthai
     libuuid
-    libxkbcommon
     lv2
     python3
     sqlite
@@ -123,7 +111,7 @@ stdenv.mkDerivation (finalAttrs: {
   meta = {
     homepage = "https://github.com/jatinchowdhury18/AnalogTapeModel";
     description = "Physical modelling signal processing for analog tape recording. LV2, VST3, CLAP, and standalone";
-    license = with lib.licenses; [ gpl3Only ];
+    license = lib.licenses.gpl3Only;
     maintainers = with lib.maintainers; [ magnetophon ];
     platforms = lib.platforms.linux;
     # error: 'vvtanh' was not declared in this scope; did you mean 'tanh'?

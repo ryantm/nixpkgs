@@ -1,41 +1,62 @@
 {
   lib,
+  stdenvNoCC,
   python3,
   fetchFromGitLab,
-  fetchpatch2,
+  cacert,
   openldap,
   nixosTests,
   postgresql,
 }:
 
 let
-  python = python3;
-in
-python.pkgs.buildPythonApplication rec {
-  pname = "canaille";
-  version = "0.2.7";
-  pyproject = true;
-
+  python = python3.override {
+    self = python;
+    packageOverrides = _final: prev: {
+      wtforms = prev.wtforms_3_3;
+    };
+  };
+  version = "0.4.3";
   src = fetchFromGitLab {
     owner = "yaal";
     repo = "canaille";
     tag = version;
-    hash = "sha256-hreEjMrD6mRapgrSDPRWcmqfLxfsOpK7dC8lHJkAY7Y=";
+    hash = "sha256-n1CSpbl5KfB/IRXPbUOaFcrlKcEGhM7E4yGN0ulSB3Y=";
   };
+  # Canaille uses it's own build hook to fetch NPM dependencies,
+  # so we just use that instead of fetchNpmDeps
+  frontendDependencies = stdenvNoCC.mkDerivation {
+    pname = "canaille-npm-deps";
+    inherit version src;
 
-  patches = [
-    # Backport authlib 1.7 compatibility.
-    (fetchpatch2 {
-      url = "https://gitlab.com/yaal/canaille/-/commit/b356baa82109a7fdf61a8258572d199ffd3c9604.diff";
-      hash = "sha256-/U6S3h6qIl763ZsGpOm6CVk4NaY3A7mq3PkT193aLEs=";
-    })
-    # Update OIDC tests for authlib 1.7 behavior.
-    (fetchpatch2 {
-      url = "https://gitlab.com/yaal/canaille/-/commit/c1b6d103ebf374cd6a21d9af8376c910c2d0d5d9.diff";
-      hash = "sha256-MjwkUb54ikt1+xUXBTOIBi9E+DmPdwYhw0W0c0prF/Q=";
-      includes = [ "tests/oidc/*" ];
-    })
-  ];
+    env.SSL_CERT_FILE = "${cacert}/etc/ssl/certs/ca-bundle.crt";
+
+    nativeBuildInputs = [
+      (python.withPackages (ps: [ ps.hatchling ]))
+      cacert
+    ];
+
+    buildPhase = ''
+      python -c 'import hatch_build; hatch_build.vendor_static_files()'
+    '';
+
+    installPhase = ''
+      cp -r canaille/static/vendor $out
+    '';
+
+    outputHashMode = "recursive";
+    outputHash = "sha256-+Sc9/9ST81mIu2NzpDzEeYwzviUnJ7Q0e1JosvYhWBU=";
+  };
+in
+python.pkgs.buildPythonApplication (finalAttrs: {
+  pname = "canaille";
+  pyproject = true;
+
+  inherit version src;
+
+  postPatch = ''
+    ln -s ${frontendDependencies} canaille/static/vendor
+  '';
 
   build-system = with python.pkgs; [
     hatchling
@@ -53,9 +74,12 @@ python.pkgs.buildPythonApplication rec {
     flask-dramatiq
     flask-session
     flask-wtf
-    httpx
+    flask-wtforms-htmx
+    httpx2
     pydantic-settings
     wtforms
+    wtforms-htmx
+    wtforms-htmx-components
   ];
 
   nativeCheckInputs =
@@ -63,6 +87,7 @@ python.pkgs.buildPythonApplication rec {
     [
       pytestCheckHook
       postgresql
+      cairosvg
       flask-webtest
       pyquery
       pytest-cov-stub
@@ -78,8 +103,9 @@ python.pkgs.buildPythonApplication rec {
       faker
       time-machine
       pytest-scim2-server
+      pytest-mysql
     ]
-    ++ (lib.concatLists (builtins.attrValues optional-dependencies));
+    ++ (lib.concatLists (builtins.attrValues finalAttrs.passthru.optional-dependencies));
 
   postInstall = ''
     mkdir -p $out/etc/schema
@@ -99,6 +125,8 @@ python.pkgs.buildPythonApplication rec {
   pytestFlags = [ "--numprocesses=4" ];
 
   disabledTests = [
+    # The NixOS module uses PostgreSQL, no interest in testing mariadb as a target for now
+    "sql:mariadb"
     # Tries to use DNS resolution
     "test_send_new_email_error"
     "test_send_test_email_ssl"
@@ -115,21 +143,22 @@ python.pkgs.buildPythonApplication rec {
       flask-talisman
       flask-themer
       isodate
-      pycountry
+      pillow
       pytz
-      tomlkit
       zxcvbn-rs-py
     ];
     oidc = [
       authlib
       joserfc
+      tomlkit
     ];
     scim = [
       authlib
-      httpx
       scim2-client
       scim2-models
-    ];
+      scim2-server
+    ]
+    ++ scim2-client.optional-dependencies.httpx2;
     ldap = [
       ldappool
       python-ldap
@@ -172,11 +201,11 @@ python.pkgs.buildPythonApplication rec {
   meta = {
     description = "Lightweight Identity and Authorization Management";
     homepage = "https://canaille.readthedocs.io/en/latest/index.html";
-    changelog = "https://gitlab.com/yaal/canaille/-/blob/${src.tag}/CHANGES.rst";
+    changelog = "https://gitlab.com/yaal/canaille/-/blob/${finalAttrs.src.tag}/CHANGES.rst";
     license = lib.licenses.mit;
     platforms = lib.platforms.linux;
     maintainers = with lib.maintainers; [ erictapen ];
     mainProgram = "canaille";
   };
 
-}
+})

@@ -1,7 +1,6 @@
 {
   lib,
   stdenv,
-  config,
   alsa-lib,
   cmake,
   dbus,
@@ -54,16 +53,12 @@
   libusbSupport ? stdenv.hostPlatform.isLinux,
   openglSupport ? lib.meta.availableOn stdenv.hostPlatform libGL,
   pipewireSupport ? stdenv.hostPlatform.isLinux && !stdenv.hostPlatform.isAndroid,
-  pulseaudioSupport ?
-    config.pulseaudio or stdenv.hostPlatform.isLinux && !stdenv.hostPlatform.isAndroid,
+  pulseaudioSupport ? stdenv.hostPlatform.isLinux && !stdenv.hostPlatform.isAndroid,
   sndioSupport ? false,
   traySupport ? true,
   vulkanSupport ? true,
   waylandSupport ? stdenv.hostPlatform.isLinux && !stdenv.hostPlatform.isAndroid,
   x11Support ? !stdenv.hostPlatform.isAndroid && !stdenv.hostPlatform.isWindows,
-
-  # TODO: Clean up on `staging`.
-  llvmPackages,
 }:
 
 assert lib.assertMsg (
@@ -73,7 +68,7 @@ assert lib.assertMsg (ibusSupport -> dbusSupport) "SDL3 requires dbus support to
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "sdl3";
-  version = "3.4.10";
+  version = "3.4.20";
 
   outputs = [
     "lib"
@@ -86,7 +81,7 @@ stdenv.mkDerivation (finalAttrs: {
     owner = "libsdl-org";
     repo = "SDL";
     tag = "release-${finalAttrs.version}";
-    hash = "sha256-6Dph2eLiJUmpQzPWe8EuY5LrWhrFwde2f2dwfgCcWNw=";
+    hash = "sha256-4BzkSQg2LkfMw0+Q66sKncA1vF7td7ulYN8MExWPfls=";
   };
 
   postPatch =
@@ -130,8 +125,7 @@ stdenv.mkDerivation (finalAttrs: {
     ninja
     validatePkgConfig
   ]
-  ++ lib.optional waylandSupport wayland-scanner
-  ++ lib.optional stdenv.hostPlatform.isDarwin llvmPackages.lld;
+  ++ lib.optional waylandSupport wayland-scanner;
 
   buildInputs =
     lib.optionals libusbSupport [
@@ -211,10 +205,6 @@ stdenv.mkDerivation (finalAttrs: {
       && !(stdenv.hostPlatform.isDarwin || stdenv.hostPlatform.isAndroid)
       && !(x11Support || waylandSupport)
     ))
-  ]
-  # TODO: Clean up on `staging`
-  ++ lib.optionals stdenv.hostPlatform.isDarwin [
-    (lib.cmakeFeature "CMAKE_LINKER_TYPE" "LLD")
   ];
 
   doCheck = true;

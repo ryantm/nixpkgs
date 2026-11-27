@@ -1,6 +1,5 @@
 {
   fetchurl,
-  fetchpatch,
   runCommand,
   lib,
   stdenv,
@@ -41,7 +40,6 @@
   libdisplay-info,
   gsettings-desktop-schemas,
   glib,
-  libglycin,
   atk,
   gtk4,
   fribidi,
@@ -73,7 +71,7 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "mutter";
-  version = "50.2";
+  version = "51.1";
 
   outputs = [
     "out"
@@ -84,25 +82,12 @@ stdenv.mkDerivation (finalAttrs: {
 
   src = fetchurl {
     url = "mirror://gnome/sources/mutter/${lib.versions.major finalAttrs.version}/mutter-${finalAttrs.version}.tar.xz";
-    hash = "sha256-/ejfinRlAMUfHJJbUeV8PdhwByM771Yweegx9Tv6O1Y=";
+    hash = "sha256-DTEdh5AdvLlFGPuJME/r4whSzl2KS++p+H6Fxo7O794=";
   };
 
-  patches = [
-    # mutter 50.2 spams logs, clutter_input_focus_set_cursor_location
-    # https://gitlab.gnome.org/GNOME/mutter/-/work_items/4840
-    (fetchpatch {
-      url = "https://gitlab.gnome.org/GNOME/mutter/-/commit/f1570318ec3e9a38615eb91708bb71628ab8bcfd.patch";
-      hash = "sha256-73GI2DTgoEBUQGa7nTUIur/ZuDHgDu4SwjUWHBRCyuo=";
-    })
-  ];
-
   mesonFlags = [
-    "-Degl_device=true"
     "-Dinstalled_tests=false" # TODO: enable these
     "-Dtests=disabled"
-    # For NVIDIA proprietary driver up to 470.
-    # https://src.fedoraproject.org/rpms/mutter/pull-request/49
-    "-Dwayland_eglstream=true"
     "-Dprofiler=true"
     "-Dxwayland_path=${lib.getExe xwayland}"
     # This should be auto detected, but it looks like it manages a false
@@ -141,7 +126,6 @@ stdenv.mkDerivation (finalAttrs: {
     cairo
     egl-wayland
     glib
-    libglycin
     gnome-desktop
     gnome-settings-daemon
     gsettings-desktop-schemas
@@ -217,7 +201,7 @@ stdenv.mkDerivation (finalAttrs: {
   doInstallCheck = true;
 
   passthru = {
-    libmutter_api_version = "18"; # bumped each dev cycle
+    libmutter_api_version = "51"; # bumped each dev cycle
     libdir = "${finalAttrs.finalPackage}/lib/mutter-${finalAttrs.passthru.libmutter_api_version}";
 
     tests = {

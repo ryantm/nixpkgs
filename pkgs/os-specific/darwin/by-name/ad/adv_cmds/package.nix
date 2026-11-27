@@ -74,8 +74,10 @@ mkAppleDerivation {
         --replace-fail '/usr/local' "$out"
     done
   '';
-
-  env.NIX_CFLAGS_COMPILE = "-I${privateHeaders}/include";
+  env.NIX_CFLAGS_COMPILE = lib.join " " [
+    "-I${privateHeaders}/include"
+    "-Wno-error=incompatible-pointer-types"
+  ];
 
   buildInputs = [
     libxo
@@ -95,9 +97,18 @@ mkAppleDerivation {
 
   meta = {
     description = "Advanced commands package for Darwin";
-    license = [
-      lib.licenses.apsl10
-      lib.licenses.apsl20
-    ];
+    license =
+      with lib.licenses;
+      AND [
+        apple-psl10
+        apple-psl20
+        bsd2
+        bsd2WithViews
+        bsd3
+        bsdOriginalUC
+        cddl
+        publicDomain
+        smlnj
+      ];
   };
 }

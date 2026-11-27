@@ -1,27 +1,29 @@
 {
   lib,
+  aws-lc,
   rustPlatform,
   buildNpmPackage,
   fetchFromGitHub,
   pkg-config,
   openssl,
+  sqlite,
   nix-update-script,
 }:
 let
   pname = "sql-studio";
-  version = "0.1.51";
+  version = "0.1.54";
 
   src = fetchFromGitHub {
     owner = "frectonz";
     repo = "sql-studio";
     tag = version;
-    hash = "sha256-LooRM7KlNmRHG5M18MLnV+hraQ1kRVEZp2GVYnwNScI=";
+    hash = "sha256-va1YSbbzrqOb1/CrQ9365zPinBI99tfL8xQmJ0EB4O8=";
   };
 
   ui = buildNpmPackage {
     pname = "sql-studio-ui";
     inherit version src;
-    npmDepsHash = "sha256-4mDe8b5J1wrHz7OCClkE5WTbtfs3TMZB/vhiVuaHiyQ=";
+    npmDepsHash = "sha256-kGwzNCb2LiPmzzgLYZl62CRGlKCK6BUW1b7Zzf3NT1c=";
     sourceRoot = "${src.name}/ui";
     installPhase = ''
       runHook preInstall
@@ -35,11 +37,15 @@ in
 rustPlatform.buildRustPackage {
   inherit pname version src;
 
-  cargoHash = "sha256-SJiPVvRYRkMHprGXtObNVSsO//2VNTpouCB+qcXlbjc=";
+  cargoHash = "sha256-Cw8Y1cTc9pSRhS/SAIkv5sa0DS3aS23P2PsoJMRoYiM=";
 
   nativeBuildInputs = [ pkg-config ];
 
-  buildInputs = [ openssl ];
+  buildInputs = [
+    aws-lc
+    openssl
+    sqlite
+  ];
 
   preBuild = ''
     cp -pr --reflink=auto -- ${ui} ui/dist

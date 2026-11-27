@@ -33,12 +33,14 @@ python3Packages.buildPythonApplication (finalAttrs: {
     runHook postInstall
   '';
 
+  passthru.updateScript = ./update.sh;
+
   meta = {
     description = "Scan a file to look for certain PDF keywords";
     homepage = "https://blog.didierstevens.com/programs/pdf-tools/";
-    license = with lib.licenses; [ free ];
+    license = lib.licenses.free;
     mainProgram = "pdfid";
-    maintainers = [ ];
+    maintainers = with lib.maintainers; [ eljamm ];
     platforms = lib.platforms.unix;
   };
 })

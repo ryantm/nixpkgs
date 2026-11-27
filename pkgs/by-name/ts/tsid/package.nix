@@ -1,11 +1,11 @@
 {
-  cmake,
-  doxygen,
   eiquadprog,
   fetchFromGitHub,
+  jrl-cmakemodules,
   lib,
+  daqp,
+  llvmPackages,
   osqp-eigen,
-  pkg-config,
   pinocchio,
   proxsuite,
   stdenv,
@@ -18,12 +18,13 @@ stdenv.mkDerivation (finalAttrs: {
   src = fetchFromGitHub {
     owner = "stack-of-tasks";
     repo = "tsid";
-    rev = "v${finalAttrs.version}";
+    tag = "v${finalAttrs.version}";
     hash = "sha256-f/SecQfEmrlelVR5584KIHFwwrp5Cy2aBMKI/rxuPmc=";
   };
 
-  cmakeFlags = [
+  cmakeFlags = jrl-cmakemodules.docsCmakeFlags ++ [
     (lib.cmakeBool "BUILD_PYTHON_INTERFACE" false)
+    (lib.cmakeBool "BUILD_WITH_DAQP" true)
     (lib.cmakeBool "BUILD_WITH_OSQP" true)
     (lib.cmakeBool "BUILD_WITH_PROXQP" true)
     (lib.cmakeBool "INSTALL_DOCUMENTATION" true)
@@ -34,13 +35,15 @@ stdenv.mkDerivation (finalAttrs: {
     "doc"
   ];
 
-  nativeBuildInputs = [
-    doxygen
-    cmake
-    pkg-config
-  ];
+  nativeBuildInputs = jrl-cmakemodules.docsNativeBuildInputs;
+
+  buildInputs = [
+    jrl-cmakemodules
+  ]
+  ++ lib.optional stdenv.cc.isClang llvmPackages.openmp;
 
   propagatedBuildInputs = [
+    daqp
     eiquadprog
     osqp-eigen
     pinocchio
@@ -48,6 +51,9 @@ stdenv.mkDerivation (finalAttrs: {
   ];
 
   doCheck = true;
+
+  __structuredAttrs = true;
+  strictDeps = true;
 
   meta = {
     description = "Efficient Task Space Inverse Dynamics (TSID) based on Pinocchio";

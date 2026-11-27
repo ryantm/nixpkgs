@@ -30,6 +30,7 @@
   withSqlite ? !withMinimalDeps,
   sqlite,
   xz,
+  withZlib ? !withMinimalDeps,
   zlib,
   withZstd ? !withMinimalDeps,
   zstd,
@@ -217,6 +218,7 @@ let
       executable = "python${pythonVersion}${abiFlags}";
       sitePackages = "lib/${libPrefix}/site-packages";
       inherit hasDistutilsCxxPatch pythonAttr;
+      isFreeThreaded = !enableGIL;
       inherit (splices)
         pythonOnBuildForBuild
         pythonOnBuildForHost
@@ -274,7 +276,6 @@ let
       libuuid
       ncurses
       xz
-      zlib
     ]
     ++ optionals withLibxcrypt [
       libxcrypt
@@ -290,6 +291,9 @@ let
     ]
     ++ optionals withExpat [
       expat
+    ]
+    ++ optionals withZlib [
+      zlib
     ]
     ++ optionals (withZstd && passthru.pythonAtLeast "3.14") [
       zstd
@@ -366,6 +370,8 @@ stdenv.mkDerivation (finalAttrs: {
     ]
     ++ buildInputs;
 
+  strictDeps = true;
+
   prePatch = optionalString stdenv.hostPlatform.isDarwin ''
     substituteInPlace configure --replace-fail '`/usr/bin/arch`' '"i386"'
   '';
@@ -393,9 +399,12 @@ stdenv.mkDerivation (finalAttrs: {
   ++ optionals (pythonAtLeast "3.13") [
     ./3.13/virtualenv-permissions.patch
   ]
-  ++ optionals mimetypesSupport [
+  ++ optionals (mimetypesSupport && pythonAtLeast "3.16") [
     # Make the mimetypes module refer to the right file
     ./mimetypes.patch
+  ]
+  ++ optionals (mimetypesSupport && pythonOlder "3.16") [
+    ./3.14/mimetypes.patch
   ]
   ++ optionals (hasDistutilsCxxPatch && pythonOlder "3.12") [
     # Fix for http://bugs.python.org/issue1222585
@@ -587,7 +596,7 @@ stdenv.mkDerivation (finalAttrs: {
     # Ensure that modern platform features are enabled on Darwin in spite of having no version suffix.
     sed -E -i -e 's|Darwin/\[12\]\[0-9\]\.\*|Darwin/*|' configure
   ''
-  + optionalString (pythonAtLeast "3.11") ''
+  + optionalString (pythonAtLeast "3.11" && pythonOlder "3.16") ''
     # Also override the auto-detection in `configure`.
     substituteInPlace configure \
       --replace-fail 'libmpdec_machine=universal' 'libmpdec_machine=${
@@ -833,6 +842,9 @@ stdenv.mkDerivation (finalAttrs: {
         sphinxHook
         python-docs-theme
       ];
+
+      strictDeps = true;
+      __structuredAttrs = true;
     };
 
     tests = passthru.tests // {
@@ -870,12 +882,19 @@ stdenv.mkDerivation (finalAttrs: {
       lib.platforms.linux ++ lib.platforms.darwin ++ lib.platforms.windows ++ lib.platforms.freebsd;
     mainProgram = executable;
     teams = [ lib.teams.python ];
-    # static build on x86_64-darwin/aarch64-darwin breaks with:
+    # static build on aarch64-darwin breaks with:
     # configure: error: C compiler cannot create executables
 
     # mingw patches only apply to Python 3.11 currently
     broken =
       (lib.versions.minor version != "11" && stdenv.hostPlatform.isWindows)
       || (stdenv.hostPlatform.isStatic && stdenv.hostPlatform.isDarwin);
+
+    identifiers.cpeParts = {
+      vendor = "python";
+      product = "python";
+      inherit version;
+      update = "*";
+    };
   };
 })

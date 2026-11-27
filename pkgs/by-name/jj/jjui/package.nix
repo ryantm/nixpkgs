@@ -1,23 +1,30 @@
 {
   lib,
-  buildGo125Module,
+  buildGo127Module,
   fetchFromGitHub,
   nix-update-script,
   versionCheckHook,
   stdenv,
 }:
-buildGo125Module (finalAttrs: {
+buildGo127Module (finalAttrs: {
   pname = "jjui";
-  version = "0.10.8";
+  version = "0.10.14";
+  __structuredAttrs = true;
+  strictDeps = true;
 
   src = fetchFromGitHub {
     owner = "idursun";
     repo = "jjui";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-ZbmCPCTsSbphLUy+lrTt4/6DVq70edKGI59U0HDbawE=";
+    hash = "sha256-/uj5cySCLq1Est2syr55zvYXiTSl52NNYykIqlMtxv8=";
   };
 
-  vendorHash = "sha256-thGlfZ0SwHpynYydxu6Sg8OUe5kr7jiPKvl6BXS5BWA=";
+  vendorHash = "sha256-HsS83QvwtKzQigmw3o04fYczvQdLSHXZ2TWsKYTsAoc=";
+
+  excludedPackages = [
+    # docker-based pty tests
+    "e2e"
+  ];
 
   ldflags = [ "-X main.Version=${finalAttrs.version}" ];
 

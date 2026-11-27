@@ -6,17 +6,20 @@
   installShellFiles,
   bash,
   openssh,
+  versionCheckHook,
 }:
 
 buildGoModule (finalAttrs: {
   pname = "k3sup";
-  version = "0.13.12";
+  version = "0.13.14";
+
+  __structuredAttrs = true;
 
   src = fetchFromGitHub {
     owner = "alexellis";
     repo = "k3sup";
-    rev = finalAttrs.version;
-    sha256 = "sha256-+YJacemEnUBEUZBKYgr/lBzt6Y8+U1rqgs/3vDxpLfs=";
+    tag = finalAttrs.version;
+    hash = "sha256-DzGW214/bOY21jbRGU2+ah1dI8OJ16TRdPyvqW5LMus=";
   };
 
   nativeBuildInputs = [
@@ -35,7 +38,6 @@ buildGoModule (finalAttrs: {
 
   ldflags = [
     "-s"
-    "-w"
     "-X github.com/alexellis/k3sup/cmd.GitCommit=ref/tags/${finalAttrs.version}"
     "-X github.com/alexellis/k3sup/cmd.Version=${finalAttrs.version}"
   ];
@@ -49,6 +51,10 @@ buildGoModule (finalAttrs: {
       --zsh <($out/bin/k3sup completion zsh) \
       --fish <($out/bin/k3sup completion fish)
   '';
+
+  nativeInstallCheckInputs = [ versionCheckHook ];
+  versionCheckProgramArg = "version";
+  doInstallCheck = true;
 
   meta = {
     homepage = "https://github.com/alexellis/k3sup";

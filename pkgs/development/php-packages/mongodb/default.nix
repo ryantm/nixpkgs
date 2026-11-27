@@ -13,15 +13,15 @@
   zlib,
 }:
 
-buildPecl rec {
+buildPecl (finalAttrs: {
   pname = "mongodb";
-  version = "2.3.3";
+  version = "2.5.9";
 
   src = fetchFromGitHub {
     owner = "mongodb";
     repo = "mongo-php-driver";
-    rev = version;
-    hash = "sha256-w8KKQDnVORm3OFV94H+rEzVP7+XtHN7ZdKoFpp6Idww=";
+    tag = finalAttrs.version;
+    hash = "sha256-vaM7p2ATwkT3Myna7EqswX1ANMoY3BO+kv2EB4FoLAQ=";
     fetchSubmodules = true;
   };
 
@@ -44,4 +44,4 @@ buildPecl rec {
     license = lib.licenses.asl20;
     teams = [ lib.teams.php ];
   };
-}
+})

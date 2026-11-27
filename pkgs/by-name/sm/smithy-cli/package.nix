@@ -1,37 +1,45 @@
 {
   lib,
-  stdenv,
+  stdenvNoCC,
   fetchFromGitHub,
-  gradle,
-  jdk,
+  gradle_9,
   jre,
   makeWrapper,
-  testers,
+  nix-update-script,
   runCommand,
+  versionCheckHook,
   writeText,
 }:
 
-stdenv.mkDerivation (finalAttrs: {
+stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "smithy-cli";
-  version = "1.68.0";
+  version = "1.75.0";
 
   src = fetchFromGitHub {
     owner = "smithy-lang";
     repo = "smithy";
     tag = finalAttrs.version;
-    hash = "sha256-jME/yF6i+hQFMr8lseRKS8uSv0s6HNWqBfsRuSSzonI=";
+    hash = "sha256-o7hGzMiLqu1qKUyUV81egrS1LDv4lIjfwG1xK7mBzVg=";
   };
 
+  strictDeps = true;
+  __structuredAttrs = true;
+
   nativeBuildInputs = [
-    gradle
-    jdk
+    gradle_9
     makeWrapper
   ];
 
   # Required on Darwin to avoid SocketException during Gradle operations
   __darwinAllowLocalNetworking = true;
 
-  mitmCache = gradle.fetchDeps {
+  # Java's dual-stack sockets prevent Gradle from connecting to its daemon
+  # inside the Darwin sandbox.
+  env = lib.optionalAttrs stdenvNoCC.hostPlatform.isDarwin {
+    JAVA_TOOL_OPTIONS = "-Djava.net.preferIPv4Stack=true";
+  };
+
+  mitmCache = gradle_9.fetchDeps {
     inherit (finalAttrs) pname;
     data = ./deps.json;
   };
@@ -49,32 +57,30 @@ stdenv.mkDerivation (finalAttrs: {
   installPhase = ''
     runHook preInstall
 
-    mkdir -p $out/share/smithy-cli/lib $out/bin
+    mkdir -p $out/{bin,share/smithy-cli/lib}
 
-    # Install the shadow JAR and the Smithy dependency JARs that it
-    # deliberately excludes (they are expected on the classpath separately)
-    cp smithy-cli/build/libs/smithy-cli-${finalAttrs.version}.jar $out/share/smithy-cli/lib/
-    for proj in smithy-utils smithy-model smithy-build smithy-diff; do
+    # Install the shadow JAR along with the Smithy dependency JARs that it
+    # deliberately excludes (they are expected on the classpath separately).
+    # smithy-syntax uses the shadow plugin too, so its shaded JAR also replaces
+    # the plain one rather than gaining a classifier.
+    for proj in smithy-cli smithy-utils smithy-model smithy-build smithy-diff smithy-syntax; do
       cp $proj/build/libs/$proj-${finalAttrs.version}.jar $out/share/smithy-cli/lib/
     done
-    # smithy-syntax uses the shadow plugin too, so its JAR has no classifier
-    cp smithy-syntax/build/libs/smithy-syntax-${finalAttrs.version}.jar $out/share/smithy-cli/lib/
 
-    # Create wrapper that puts all JARs on the classpath.
-    # Java's -cp wildcard syntax requires a literal '*' (not shell-expanded),
-    # so we construct the classpath explicitly.
-    classpath=$(find $out/share/smithy-cli/lib -name '*.jar' | tr '\n' ':' | sed 's/:$//')
     makeWrapper ${lib.getExe jre} $out/bin/smithy \
-      --add-flags "-cp $classpath software.amazon.smithy.cli.SmithyCli"
+      --set CLASSPATH "$out/share/smithy-cli/lib/*" \
+      --add-flags "software.amazon.smithy.cli.SmithyCli"
 
     runHook postInstall
   '';
 
-  passthru.tests = {
-    version = testers.testVersion {
-      package = finalAttrs.finalPackage;
-    };
-    validate = runCommand "smithy-cli-validate-test" { } ''
+  nativeInstallCheckInputs = [ versionCheckHook ];
+  doInstallCheck = true;
+
+  passthru = {
+    updateScript = nix-update-script { };
+
+    tests.validate = runCommand "smithy-cli-validate-test" { } ''
       ${lib.getExe finalAttrs.finalPackage} validate ${writeText "example.smithy" ''
         $version: "2.0"
         namespace example
@@ -101,7 +107,7 @@ stdenv.mkDerivation (finalAttrs: {
 
   meta = {
     description = "CLI for the Smithy interface definition language (IDL)";
-    homepage = "https://smithy.io/";
+    homepage = "https://smithy.io";
     changelog = "https://github.com/smithy-lang/smithy/releases/tag/${finalAttrs.version}";
     sourceProvenance = with lib.sourceTypes; [
       fromSource
@@ -110,6 +116,6 @@ stdenv.mkDerivation (finalAttrs: {
     license = lib.licenses.asl20;
     mainProgram = "smithy";
     maintainers = [ lib.maintainers.joshgodsiff ];
-    platforms = lib.platforms.unix;
+    inherit (jre.meta) platforms;
   };
 })

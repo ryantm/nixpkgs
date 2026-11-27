@@ -1,7 +1,10 @@
+import datetime as dt
 import json
 import logging
 import os
+import selectors
 import socket
+import time
 from collections.abc import Iterator
 from pathlib import Path
 from queue import Queue
@@ -11,11 +14,29 @@ logger = logging.getLogger(__name__)
 
 
 class QMPAPIError(RuntimeError):
+    """An error response from the QMP API.
+
+    >>> error = {"class": "GenericError", "desc": "boom"}
+    >>> print(QMPAPIError({"error": error, "id": 3}))
+    <QMP API error related to transaction 3 [GenericError]: boom>
+
+    The transaction id is absent from errors that the server hits before it
+    could read the id:
+
+    >>> print(QMPAPIError({"error": error}))
+    <QMP API error related to transaction None [GenericError]: boom>
+
+    >>> QMPAPIError({"error": {"class": "GenericError"}})
+    Traceback (most recent call last):
+    RuntimeError: Malformed QMP API error response
+    """
+
     def __init__(self, message: dict[str, Any]):
         assert "error" in message, "Not an error message!"
+        error = message["error"]
         try:
-            self.class_name = message["class"]
-            self.description = message["desc"]
+            self.class_name = error["class"]
+            self.description = error["desc"]
             # NOTE: Some errors can occur before the Server is able to read the
             # id member; in these cases the id member will not be part of the
             # error response, even if provided by the client.
@@ -55,13 +76,26 @@ class QMPSession:
     def _wait_for_new_result(self) -> dict[str, str]:
         assert self.results.empty(), "Results set is not empty, missed results!"
         while self.results.empty():
-            self.read_pending_messages()
+            if self.read_pending_messages():
+                continue
+
+            self._wait_for_socket_data()
+
         return self.results.get()
 
-    def read_pending_messages(self) -> None:
+    def _wait_for_socket_data(self, timeout: float | None = None) -> None:
+        with selectors.DefaultSelector() as selector:
+            selector.register(self.sock, selectors.EVENT_READ)
+            if not selector.select(timeout):
+                raise TimeoutError
+
+        if self.sock.recv(1, socket.MSG_PEEK) == b"":
+            raise ConnectionError("QMP connection closed while waiting for data")
+
+    def read_pending_messages(self) -> bool:
         line = self.reader.readline()
         if not line:
-            return
+            return False
         evt_or_result = json.loads(line)
         logger.debug(f"Received a message: {evt_or_result}")
 
@@ -74,15 +108,29 @@ class QMPSession:
         else:
             raise QMPAPIError(evt_or_result)
 
-    def wait_for_event(self, timeout: int = 10) -> dict[str, Any]:
+        return True
+
+    def wait_for_event(
+        self, timeout: dt.timedelta = dt.timedelta(seconds=10)
+    ) -> dict[str, Any]:
+        deadline = time.monotonic() + timeout.total_seconds()
         while self.pending_events.empty():
-            self.read_pending_messages()
+            if self.read_pending_messages():
+                continue
 
-        return self.pending_events.get(timeout=timeout)
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
+                raise TimeoutError
 
-    def events(self, timeout: int = 10) -> Iterator[dict[str, Any]]:
+            self._wait_for_socket_data(remaining)
+
+        return self.pending_events.get_nowait()
+
+    def events(
+        self, timeout: dt.timedelta = dt.timedelta(seconds=10)
+    ) -> Iterator[dict[str, Any]]:
         while not self.pending_events.empty():
-            yield self.pending_events.get(timeout=timeout)
+            yield self.pending_events.get(timeout=timeout.total_seconds())
 
     def send(self, cmd: str, args: dict[str, str] = {}) -> dict[str, str]:
         self.read_pending_messages()

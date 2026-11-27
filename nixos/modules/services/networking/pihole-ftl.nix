@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  utils,
   ...
 }:
 
@@ -9,6 +10,7 @@ with {
   inherit (lib)
     elemAt
     getExe
+    getExe'
     hasAttrByPath
     mkEnableOption
     mkIf
@@ -405,10 +407,29 @@ in
 
       pihole-ftl-log-deleter = mkIf cfg.queryLogDeleter.enable {
         description = "Pi-hole FTL DNS query log deleter";
+        # Avoid creating an empty database file if it doesn't yet exist
+        unitConfig.ConditionFileNotEmpty = cfg.settings.files.database;
         serviceConfig = {
           Type = "oneshot";
           User = cfg.user;
           Group = cfg.group;
+          ExecStart =
+            let
+              days = toString cfg.queryLogDeleter.age;
+              database = cfg.settings.files.database;
+            in
+            [
+              (utils.escapeSystemdExecArgs [
+                (getExe' pkgs.coreutils "echo")
+                "Deleting query logs older than ${days} days"
+              ])
+              (utils.escapeSystemdExecArgs [
+                (getExe cfg.package)
+                "sqlite3"
+                database
+                "DELETE FROM query_storage WHERE timestamp <= CAST(strftime('%s', date('now', '-${days} day')) AS INT); select changes() from query_storage limit 1"
+              ])
+            ];
           # Hardening
           NoNewPrivileges = true;
           PrivateTmp = true;
@@ -427,22 +448,6 @@ in
           MemoryDenyWriteExecute = true;
           LockPersonality = true;
         };
-        script =
-          let
-            days = toString cfg.queryLogDeleter.age;
-            database = cfg.settings.files.database;
-          in
-          ''
-            set -euo pipefail
-
-            # Avoid creating an empty database file if it doesn't yet exist
-            if [ ! -f "${database}" ]; then
-              exit 0;
-            fi
-
-            echo "Deleting query logs older than ${days} days"
-            ${getExe cfg.package} sqlite3 "${database}" "DELETE FROM query_storage WHERE timestamp <= CAST(strftime('%s', date('now', '-${days} day')) AS INT); select changes() from query_storage limit 1"
-          '';
       };
     };
 
@@ -475,6 +480,8 @@ in
           (map (
             port:
             lib.pipe port [
+              (lib.splitString ":")
+              lib.last
               (builtins.split "[[:alpha:]]+")
               builtins.head
               lib.toInt
@@ -500,16 +507,39 @@ in
       };
 
       "pihole/versions".text = ''
-        CORE_VERSION=${cfg.piholePackage.src.src.tag}
+        CORE_VERSION=${cfg.piholePackage.src.tag}
         FTL_VERSION=${cfg.package.src.tag}
       '';
     };
 
     environment.systemPackages = [ cfg.pihole ];
 
-    services.logrotate.settings.pihole-ftl = {
-      enable = true;
-      files = [ "${cfg.logDirectory}/FTL.log" ];
+    services.logrotate.settings = {
+      pihole-dnsmasq = {
+        files = [ "${cfg.logDirectory}/pihole.log" ];
+        frequency = "daily";
+        create = "640 ${cfg.user} ${cfg.group}";
+        rotate = 5;
+        compress = true;
+        delaycompress = true;
+        # FTL keeps this log open; SIGUSR2 closes and reopens it after rotation.
+        # https://docs.pi-hole.net/ftldns/signals/#sigusr2
+        postrotate = ''
+          ${getExe' pkgs.systemd "systemctl"} kill --kill-whom=main --signal=USR2 pihole-ftl.service 2>/dev/null || true
+        '';
+      };
+
+      pihole-ftl = {
+        files = [
+          "${cfg.logDirectory}/FTL.log"
+          "${cfg.logDirectory}/webserver.log"
+        ];
+        frequency = "weekly";
+        create = "640 ${cfg.user} ${cfg.group}";
+        rotate = 3;
+        compress = true;
+        delaycompress = true;
+      };
     };
   };
 

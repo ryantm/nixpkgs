@@ -2,6 +2,7 @@
   lib,
   rustPlatform,
   fetchFromGitHub,
+  installShellFiles,
 }:
 
 rustPlatform.buildRustPackage (finalAttrs: {
@@ -17,12 +18,20 @@ rustPlatform.buildRustPackage (finalAttrs: {
 
   cargoHash = "sha256-2YvpO8K5Y8Ul2k0sJXWMgrHnGY8e1sEcIZNWIEpKfqs=";
 
+  nativeBuildInputs = [ installShellFiles ];
+
+  postInstall = ''
+    installManPage "$releaseDir"/build/rnr-*/out/rnr*.1
+    installShellCompletion "$releaseDir"/build/rnr-*/out/rnr.{bash,fish} \
+      --zsh "$releaseDir"/build/rnr-*/out/_rnr
+  '';
+
   meta = {
     description = "Command-line tool to batch rename files and directories";
     mainProgram = "rnr";
     homepage = "https://github.com/ismaelgv/rnr";
     changelog = "https://github.com/ismaelgv/rnr/blob/v${finalAttrs.version}/CHANGELOG.md";
     license = lib.licenses.mit;
-    maintainers = [ ];
+    maintainers = with lib.maintainers; [ jm5905938 ];
   };
 })

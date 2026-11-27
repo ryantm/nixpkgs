@@ -55,13 +55,14 @@ buildPythonPackage (finalAttrs: {
   # fails to determine the version automatically
   env.SETUPTOOLS_SCM_PRETEND_VERSION = finalAttrs.version;
 
-  pythonRelaxDeps = [ "traits" ];
-
   build-system = [
     hatch-vcs
     hatchling
   ];
 
+  pythonRelaxDeps = [
+    "traits"
+  ];
   dependencies = [
     acres
     attrs

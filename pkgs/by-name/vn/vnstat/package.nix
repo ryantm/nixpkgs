@@ -7,11 +7,14 @@
   ncurses,
   sqlite,
   check,
+  nixosTests,
+
+  withImageOutput ? true,
 }:
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "vnstat";
-  version = "2.13";
+  version = "2.14";
 
   __structuredAttrs = true;
 
@@ -19,7 +22,7 @@ stdenv.mkDerivation (finalAttrs: {
     owner = "vergoh";
     repo = "vnstat";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-Xd3s4Wrtfwis0dxRijeWhfloHcXPUNAj0P91uWi1C3M=";
+    hash = "sha256-HHu3s+dfNpdMgJpX2afTSfamNVNOyL+jJgdLXkfC5cQ=";
   };
 
   strictDeps = true;
@@ -30,15 +33,21 @@ stdenv.mkDerivation (finalAttrs: {
 
   nativeBuildInputs = [ pkg-config ];
 
+  configureFlags = [
+    (lib.enableFeature withImageOutput "image-output")
+  ];
+
   buildInputs = [
-    gd
     ncurses
     sqlite
-  ];
+  ]
+  ++ lib.optional withImageOutput gd;
 
   checkInputs = [ check ];
 
   doCheck = true;
+
+  passthru.tests = { inherit (nixosTests) vnstat; };
 
   meta = {
     description = "Console-based network statistics utility for Linux";

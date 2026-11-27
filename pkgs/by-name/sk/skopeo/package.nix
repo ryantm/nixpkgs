@@ -19,13 +19,15 @@
 
 buildGoModule rec {
   pname = "skopeo";
-  version = "1.23.0";
+  version = "1.25.2";
+
+  __structuredAttrs = true;
 
   src = fetchFromGitHub {
     rev = "v${version}";
-    owner = "containers";
+    owner = "podman-container-tools";
     repo = "skopeo";
-    hash = "sha256-crt6TYEOQaBdP1lIixtnrMPeWQ/GAyA6N6K3Il+ZA1E=";
+    hash = "sha256-Q8TGnkAP18QESgEn85pLjI6rec6lRM4kxY4KlSeEHXs=";
   };
 
   outputs = [
@@ -95,10 +97,10 @@ buildGoModule rec {
   };
 
   meta = {
-    changelog = "https://github.com/containers/skopeo/releases/tag/${src.rev}";
+    changelog = "https://github.com/podman-container-tools/skopeo/releases/tag/${src.rev}";
     description = "Command line utility for various operations on container images and image repositories";
     mainProgram = "skopeo";
-    homepage = "https://github.com/containers/skopeo";
+    homepage = "https://github.com/podman-container-tools/skopeo";
     maintainers = with lib.maintainers; [
       lewo
       developer-guy

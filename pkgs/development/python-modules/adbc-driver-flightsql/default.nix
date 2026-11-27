@@ -15,14 +15,15 @@
 
 buildPythonPackage (finalAttrs: {
   pname = "adbc-driver-flightsql";
-  version = "1.11.0";
+  version = "1.13.0";
   pyproject = true;
-  __structuredAttrs = true;
 
+  # Updates should be correlated with arrow-adbc top-level attribute, so:
+  # nixpkgs-update: no auto update
   src = fetchPypi {
     pname = "adbc_driver_flightsql";
     inherit (finalAttrs) version;
-    hash = "sha256-dfcD7vGBLDky5fRkPF4htWkLI99+CeiLcn95UqpVnyo=";
+    hash = "sha256-sGer82TlJTwDPOht0fgxnrR4DSZu3cmzZssaEUna+cE=";
   };
 
   build-system = [

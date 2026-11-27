@@ -28,13 +28,13 @@ let
 in
 buildGoModule (finalAttrs: {
   pname = "perses";
-  version = "0.53.1";
+  version = "0.55.1";
 
   src = fetchFromGitHub {
     owner = "perses";
     repo = "perses";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-Oxq+zweg1mpgxKXWBwnsanD66TcD+kOkt3WCTU2FqnQ=";
+    hash = "sha256-uX+BKd1TRp/3Bi3pVhVQ8C+dhP8qOujAWVALKbDAuIE=";
   };
 
   outputs = [
@@ -53,7 +53,7 @@ buildGoModule (finalAttrs: {
     inherit (finalAttrs) version src;
     pname = "${finalAttrs.pname}-ui";
     sourceRoot = "${finalAttrs.src.name}/${finalAttrs.npmRoot}";
-    hash = "sha256-yhqpwxWhnYBewDsYYP5R1n45dDTz6Wz3IJri77FBdO8=";
+    hash = "sha256-cwefF6a+shBBKLrlS/Be11VpZzijwDIhAPOPwGYh3y4=";
   };
 
   npmRoot = "ui";
@@ -63,7 +63,7 @@ buildGoModule (finalAttrs: {
     preBuild = null;
   };
 
-  vendorHash = "sha256-dAvDBJGpY4Dlx4D9hR6VSUt+ppJLJPNNu5smsyutSC8=";
+  vendorHash = "sha256-yPJacB1rNezy+VrE8uCuR2BKGteakLmzJ4aOELD6Trc=";
 
   ldflags = [
     "-s"
@@ -86,6 +86,11 @@ buildGoModule (finalAttrs: {
   '';
 
   preBuild = ''
+    # Since @rspack/cli 2.x the CLI shim is installed in the workspace-level
+    # node_modules (ui/app/node_modules), which npmConfigHook's shebang
+    # patching (scoped to ui/node_modules) does not cover.
+    patchShebangs "$npmRoot"
+
     pushd "$npmRoot"
     npm run build
     popd
@@ -129,7 +134,9 @@ buildGoModule (finalAttrs: {
     homepage = "https://perses.dev/";
     changelog = "https://github.com/perses/perses/releases/tag/v${finalAttrs.version}";
     license = lib.licenses.asl20;
-    maintainers = with lib.maintainers; [ fooker ];
+    maintainers = with lib.maintainers; [
+      fooker
+    ];
     platforms = lib.platforms.unix;
     mainProgram = "perses";
   };

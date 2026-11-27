@@ -24,14 +24,17 @@ let
     backup = getComponentDeps "homeassistant_hardware";
     bluetooth = getComponentDeps "switchbot";
     braviatv = getComponentDeps "ssdp";
-    bthome = getComponentDeps "frontend";
+    bthome = getComponentDeps "frontend" ++ getComponentDeps "switchbot";
     camera = getComponentDeps "stream";
     deconz = getComponentDeps "frontend";
     elkm1 = getComponentDeps "frontend";
     emulated_hue = [
       defusedxml
     ];
-    esphome = getComponentDeps "homeassistant_hardware";
+    esphome = concatMap getComponentDeps [
+      "homeassistant_hardware"
+      "zwave_js"
+    ];
     gardena_bluetooth = getComponentDeps "husqvarna_automower_ble";
     go2rtc = [
       tqdm
@@ -64,10 +67,12 @@ let
       "stream"
     ];
     matter = getComponentDeps "homeassistant_hardware";
+    mcp_server = getComponentDeps "frontend";
     miele = getComponentDeps "cloud";
     mobile_app = getComponentDeps "frontend";
     mopeka = getComponentDeps "switchbot";
     mqtt = getComponentDeps "homeassistant_hardware";
+    music_assistant = getComponentDeps "homeassistant_hardware";
     nest = [
       av
     ];
@@ -112,22 +117,15 @@ let
   };
 
   extraDisabledTestPaths = {
-    ecovacs = [
-      # [2026.7.2] Outdated snapshots
-      "tests/components/ecovacs/test_vacuum.py::test_clean_area_room_from_not_current_map"
-      "tests/components/ecovacs/test_vacuum.py::test_clean_area_no_map"
-      "tests/components/ecovacs/test_vacuum.py::test_clean_area_invalid_map_id"
-    ];
-    izone = [
-      # [2026.7.2] Failed: Description not found for placeholder `host` in component.izone.config.step.confirm.description
-      "tests/components/izone/test_config_flow.py::test_not_found"
-      "tests/components/izone/test_config_flow.py::test_found"
-    ];
     jellyfin = [
       # AssertionError: assert 'audio/x-flac' == 'audio/flac'
       "tests/components/jellyfin/test_media_source.py::test_resolve"
       "tests/components/jellyfin/test_media_source.py::test_audio_codec_resolve"
       "tests/components/jellyfin/test_media_source.py::test_music_library"
+    ];
+    mastodon = [
+      # [2026.11.0] Our MIME database is more complete and recognises the midi extension
+      "tests/components/mastodon/test_services.py::test_service_post_media_source_errors[payload4-media_type_unknown]"
     ];
     minecraft_server = [
       # FileNotFoundError: [Errno 2] No such file or directory: '/etc/resolv.conf'
@@ -136,13 +134,10 @@ let
       "tests/components/minecraft_server/test_init.py"
       "tests/components/minecraft_server/test_sensor.py"
     ];
-    netatmo = [
-      # [2026.7.2] Language string mismatch (id vs ID)
-      "tests/components/netatmo/test_media_source.py::test_async_browse_media"
-    ];
-    wmspro = [
-      # [2026.7.2] Outdated snapshot
-      "tests/components/wmspro/test_number.py::test_number_update"
+    reolink = [
+      # [2026.11.0] fixture wants a bare path to ffmpeg
+      "tests/components/reolink/test_services.py::test_snapshot_past_service"
+      "tests/components/reolink/test_views.py::test_playback_baichuan"
     ];
     systemmonitor = [
       # sandbox doesn't grant access to /sys/class/power_supply
@@ -155,17 +150,9 @@ let
       # intent fixture mismatch on aarch64
       "test_error_no_device_on_floor"
     ];
-    homeassistant_connect_zbt2 = [
-      # [2026.6.1] AssertionError: assert <ConfigEntryState.LOADED: 'loaded'> is <ConfigEntryState.SETUP_RETRY: 'setup_retry'>
-      "test_usb_device_reactivity"
-    ];
     homeassistant = [
       # disabled via nixos-was-never-supported.patch
       "test_deprecated_installation_issue_core"
-    ];
-    smlight = [
-      # [2026.7.1] outdated snapshot
-      "test_entry_diagnostics"
     ];
     zeroconf = [
       # multicast socket bind, not possible in the sandbox
@@ -194,8 +181,6 @@ lib.genAttrs home-assistant.supportedComponentsWithTests (
     dontUsePytestXdist = true;
 
     enabledTestPaths = [ "tests/components/${component}" ];
-
-    pytestFlags = [ "-vvv" ];
 
     meta = old.meta // {
       broken = lib.elem component [ ];

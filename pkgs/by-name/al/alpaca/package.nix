@@ -3,27 +3,26 @@
   python3Packages,
   fetchFromGitHub,
   appstream,
+  bash,
+  blueprint-compiler,
+  desktop-file-utils,
+  glib-networking,
+  gobject-introspection,
+  gtksourceview5,
+  libadwaita,
+  libportal,
+  libspelling,
   meson,
   ninja,
-  pkg-config,
-  gobject-introspection,
-  wrapGAppsHook4,
-  desktop-file-utils,
-  libadwaita,
-  gtksourceview5,
-  xdg-utils,
-  ollama,
-  vte-gtk4,
-  libspelling,
   nix-update-script,
-  blueprint-compiler,
-  libportal,
-  webkitgtk_6_0,
+  ollama,
   pipewire,
-  glib-networking,
-  bash,
+  pkg-config,
+  vte-gtk4,
+  webkitgtk_6_0,
+  wrapGAppsHook4,
+  xdg-utils,
 }:
-
 let
   pythonPackages = python3Packages.overrideScope (
     self: super: {
@@ -33,14 +32,14 @@ let
 in
 pythonPackages.buildPythonApplication rec {
   pname = "alpaca";
-  version = "9.2.4";
+  version = "9.2.5";
   pyproject = false; # Built with meson
 
   src = fetchFromGitHub {
     owner = "Jeffser";
     repo = "Alpaca";
     tag = version;
-    hash = "sha256-rZ1H4QfxkBo+fVFCDODaio+1NEwRVjIY388Q9sR8qO4=";
+    hash = "sha256-tKbxWDTGiblXBr4LOap0ZjojM2ommERRU/i/WpFykdE=";
   };
 
   postPatch = ''
@@ -50,45 +49,50 @@ pythonPackages.buildPythonApplication rec {
 
   nativeBuildInputs = [
     appstream
+    blueprint-compiler
+    desktop-file-utils
+    gobject-introspection
     meson
     ninja
     pkg-config
-    gobject-introspection
     wrapGAppsHook4
-    desktop-file-utils
-    blueprint-compiler
   ];
 
   buildInputs = [
-    libadwaita
-    gtksourceview5
-    vte-gtk4
-    libspelling
-    libportal
-    webkitgtk_6_0
-    pipewire # pipewiresrc
     glib-networking
+    gtksourceview5
+    libadwaita
+    libportal
+    libspelling
+    pipewire # pipewiresrc
+    vte-gtk4
+    webkitgtk_6_0
   ];
 
   dependencies =
     with pythonPackages;
     [
-      pygobject3
-      requests
-      pillow
-      html2text
-      youtube-transcript-api
-      pydbus
-      odfpy
-      pyicu
-      matplotlib
-      openai
-      markitdown
       gst-python
+      html2text
+      markitdown
+      matplotlib
+      odfpy
+      openai
       opencv4
-      zstandard
+      pandas
+      pillow
+      pydbus
+      pygobject3
+      pyicu
       pythonPackages.ollama
+      requests
+      youtube-transcript-api
+      zstandard
     ]
+    ++ markitdown.optional-dependencies.docx
+    ++ markitdown.optional-dependencies.pdf
+    ++ markitdown.optional-dependencies.pptx
+    ++ markitdown.optional-dependencies.youtube-transcription
     ++ lib.concatAttrValues optional-dependencies;
 
   optional-dependencies = with pythonPackages; {
@@ -107,14 +111,18 @@ pythonPackages.buildPythonApplication rec {
   dontWrapGApps = true;
 
   makeWrapperArgs = [
-    "\${gappsWrapperArgs[@]}"
-    "--prefix PATH : ${
-      lib.makeBinPath [
-        xdg-utils
-        ollama
-      ]
-    }"
+    "--prefix"
+    "PATH"
+    ":"
+    "${lib.makeBinPath [
+      xdg-utils
+      ollama
+    ]}"
   ];
+
+  preFixup = ''
+    makeWrapperArgs+=("''${gappsWrapperArgs[@]}")
+  '';
 
   passthru.updateScript = nix-update-script { };
 

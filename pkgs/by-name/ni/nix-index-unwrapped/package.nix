@@ -11,18 +11,18 @@
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "nix-index";
-  version = "0.1.10";
+  version = "0.1.11";
 
   __structuredAttrs = true;
 
   src = fetchFromGitHub {
-    owner = "nix-community";
+    owner = "NixOS";
     repo = "nix-index";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-IBVI/4hwq84/vZx7Kr/Ci/P/CzPTsn1/oiCIF2vPHXg=";
+    hash = "sha256-yl/acohrgP0C5w4eozNcWcpCGhmMMjFbzgHsKwXKw00=";
   };
 
-  cargoHash = "sha256-9xzC5PE2nyEtbhWGagCX2yZ0/tfo2v3fatnNU+GdVH8=";
+  cargoHash = "sha256-EJbNptLskphe+xfI8oQ0DVUx6y4dO52eeuPiG6FSQbI=";
 
   nativeBuildInputs = [ pkg-config ];
   buildInputs = [
@@ -45,9 +45,9 @@ rustPlatform.buildRustPackage (finalAttrs: {
 
   meta = {
     description = "Files database for nixpkgs";
-    homepage = "https://github.com/nix-community/nix-index";
-    changelog = "https://github.com/nix-community/nix-index/blob/${finalAttrs.src.rev}/CHANGELOG.md";
-    license = with lib.licenses; [ bsd3 ];
+    homepage = "https://github.com/NixOS/nix-index";
+    changelog = "https://github.com/NixOS/nix-index/blob/${finalAttrs.src.rev}/CHANGELOG.md";
+    license = lib.licenses.bsd3;
     maintainers = with lib.maintainers; [
       bennofs
       ncfavier

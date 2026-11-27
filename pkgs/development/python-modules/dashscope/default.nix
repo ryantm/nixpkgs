@@ -11,21 +11,30 @@
   websocket-client,
   cryptography,
   certifi,
+  typer,
+  rich,
+  httpx,
+  httpx-sse,
+  pyyaml,
+  # Optional dependencies
+  tiktoken,
   # Test
   pytestCheckHook,
-  tiktoken,
+  pytest-asyncio,
+  pydantic,
+  tenacity,
 }:
 
 buildPythonPackage rec {
   pname = "dashscope";
-  version = "1.25.9";
+  version = "1.26.6";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "dashscope";
     repo = "dashscope-sdk-python";
     tag = "v${version}";
-    hash = "sha256-VR7Auso+0al9qAE3IDFAPl5zIX0Yp9OfJchR+Q9DB1o=";
+    hash = "sha256-4plniNvpRNIUquTRDJZonQsa4inktGS7AluxKsX+Mpg=";
   };
 
   build-system = [ setuptools ];
@@ -36,7 +45,17 @@ buildPythonPackage rec {
     websocket-client
     cryptography
     certifi
+    typer
+    rich
+    httpx
+    httpx-sse
+    # Not listed in requirements.txt
+    pyyaml
   ];
+
+  optional-dependencies = {
+    tokenizer = [ tiktoken ];
+  };
 
   # Specify the version explicitly
   postPatch = ''
@@ -46,8 +65,11 @@ buildPythonPackage rec {
 
   nativeCheckInputs = [
     pytestCheckHook
-    tiktoken
-  ];
+    pytest-asyncio
+    pydantic
+    tenacity
+  ]
+  ++ optional-dependencies.tokenizer;
 
   pythonImportsCheck = [ "dashscope" ];
 
@@ -55,6 +77,9 @@ buildPythonPackage rec {
     # Needs network access and/or API key
     "TestAsyncImageSynthesisRequest"
     "TestAsyncRequest"
+    "TestAsyncSessionLifecycle"
+    "TestAsyncSessionUsage"
+    "TestAsyncSessionWithDifferentMethods"
     "TestAsyncVideoSynthesisRequest"
     "TestEncryption"
     "TestSpeechRecognition"

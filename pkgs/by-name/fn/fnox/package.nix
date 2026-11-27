@@ -5,40 +5,58 @@
   rustPlatform,
   perl,
   pkg-config,
-  testers,
+  aws-lc,
+  openssl,
+  sqlcipher,
   dbus,
   udev,
+  cacert,
+  versionCheckHook,
   nix-update-script,
 }:
 
 rustPlatform.buildRustPackage (finalAttrs: {
-  __structuredAttrs = true;
   pname = "fnox";
-  version = "1.30.0";
+  version = "1.42.1";
+
+  __structuredAttrs = true;
+  __darwinAllowLocalNetworking = true;
 
   src = fetchFromGitHub {
     owner = "jdx";
     repo = "fnox";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-maG2+KBPBsZqRvs/Iddl7egs478s3IWOF+lJKQrjyjs=";
+    hash = "sha256-Hsl0MYwRkZpixeeyWFB7MY9c93Z/FuHQqCWfG06C0go=";
   };
 
-  cargoHash = "sha256-s3Cv7uAZlk67IiolLkFgcwonfYi9qUh8xXqyNPIPesM=";
+  cargoHash = "sha256-pqkwjWftAP8K7vEopAcPiauUro8XsEwHZS2DcPHgR9c=";
 
   nativeBuildInputs = [
     perl
     pkg-config
   ];
 
-  buildInputs = lib.optionals stdenv.hostPlatform.isLinux [
+  buildInputs = [
+    aws-lc
+    openssl
+    sqlcipher
+  ]
+  ++ lib.optionals stdenv.hostPlatform.isLinux [
     dbus
     udev
   ];
 
-  passthru = {
-    tests.version = testers.testVersion { package = finalAttrs.finalPackage; };
-    updateScript = nix-update-script { };
+  nativeCheckInputs = [ cacert ];
+
+  env = {
+    SSL_CERT_FILE = "${cacert}/etc/ssl/certs/ca-bundle.crt";
+    OPENSSL_NO_VENDOR = 1;
   };
+
+  nativeInstallCheckInputs = [ versionCheckHook ];
+  doInstallCheck = true;
+
+  passthru.updateScript = nix-update-script { };
 
   checkFlags = [
     # requires a D-Bus session unavailable in the sandbox

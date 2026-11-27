@@ -35,6 +35,8 @@ stdenv.mkDerivation (finalAttrs: {
 
   doCheck = true; # not cross;
 
+  __structuredAttrs = true;
+
   meta = {
     description = "Library for multiprecision complex arithmetic with exact rounding";
 
@@ -45,9 +47,9 @@ stdenv.mkDerivation (finalAttrs: {
     '';
 
     homepage = "https://www.multiprecision.org/mpc/";
-    license = lib.licenses.lgpl2Plus;
+    license = lib.licenses.lgpl3Plus;
 
     platforms = lib.platforms.all;
-    maintainers = [ ];
+    maintainers = with lib.maintainers; [ coolcuber ];
   };
 })

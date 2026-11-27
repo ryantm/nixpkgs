@@ -8,14 +8,14 @@
   python,
 }:
 
-buildPythonPackage rec {
+buildPythonPackage (finalAttrs: {
   pname = "berkeleydb";
-  version = "18.1.15";
+  version = "18.1.18";
   pyproject = true;
 
   src = fetchPypi {
-    inherit pname version;
-    hash = "sha256-evpTFD11TGuyyFZWwTJeuuUYrc/NG1nhPMKruI3fdY4=";
+    inherit (finalAttrs) pname version;
+    hash = "sha256-8hdPLI/eEMZWaObz7ZjsrAAGXPMIkgFD9lCjNmVN6ls=";
   };
 
   build-system = [ setuptools ];
@@ -37,7 +37,7 @@ buildPythonPackage rec {
   meta = {
     description = "Python bindings for Oracle Berkeley DB";
     homepage = "https://www.jcea.es/programacion/pybsddb.htm";
-    license = with lib.licenses; [ bsd3 ];
+    license = lib.licenses.bsd3;
     maintainers = [ ];
   };
-}
+})

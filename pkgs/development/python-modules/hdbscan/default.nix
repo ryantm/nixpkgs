@@ -16,14 +16,14 @@
 
 buildPythonPackage rec {
   pname = "hdbscan";
-  version = "0.8.41";
+  version = "0.8.44";
   format = "setuptools";
 
   src = fetchFromGitHub {
     owner = "scikit-learn-contrib";
     repo = "hdbscan";
     tag = "release-${version}";
-    hash = "sha256-4uwWoNkrdLB2KzDAksPupdgkIFBgTahzravOtu1WYws=";
+    hash = "sha256-mJz2CGiAgrz1M5w8XwCRjgQFBygQdVKyi2B8wFHWqGI=";
   };
 
   pythonRemoveDeps = [ "cython" ];
@@ -68,7 +68,7 @@ buildPythonPackage rec {
   meta = {
     description = "Hierarchical Density-Based Spatial Clustering of Applications with Noise, a clustering algorithm with a scikit-learn compatible API";
     homepage = "https://github.com/scikit-learn-contrib/hdbscan";
-    changelog = "https://github.com/scikit-learn-contrib/hdbscan/releases/tag/release-${src.tag}";
+    changelog = "https://github.com/scikit-learn-contrib/hdbscan/releases/tag/release-${version}";
     license = lib.licenses.bsd3;
     maintainers = [ ];
   };

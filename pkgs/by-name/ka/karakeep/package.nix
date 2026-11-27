@@ -11,20 +11,20 @@
   python3,
   srcOnly,
   removeReferencesTo,
-  pnpm_9,
+  pnpm_11,
   fetchPnpmDeps,
   pnpmConfigHook,
   versionCheckHook,
 }:
 stdenv.mkDerivation (finalAttrs: {
   pname = "karakeep";
-  version = "0.32.0";
+  version = "0.35.0";
 
   src = fetchFromGitHub {
     owner = "karakeep-app";
     repo = "karakeep";
     tag = "cli/v${finalAttrs.version}";
-    hash = "sha256-P88DQi0T7tmBH7cjs8/Hz77bU0oG7u67XPoLsdePNhI=";
+    hash = "sha256-YjpgGinZe8kekSEQ9x6ASHbNx3jzY2XM9RzhhqbUnLo=";
   };
 
   patches = [
@@ -33,6 +33,10 @@ stdenv.mkDerivation (finalAttrs: {
   ];
 
   postPatch = ''
+    # we don't care about git hooks
+    substituteInPlace package.json \
+      --replace-fail '"prepare": "husky",' ""
+
     ln -s ${inter}/share/fonts/truetype ./apps/web/app/fonts
 
     substituteInPlace apps/cli/src/commands/dump.ts \
@@ -44,7 +48,7 @@ stdenv.mkDerivation (finalAttrs: {
     nodejs
     node-gyp
     pnpmConfigHook
-    pnpm_9
+    pnpm_11
   ];
 
   buildInputs = [
@@ -58,9 +62,9 @@ stdenv.mkDerivation (finalAttrs: {
       src
       patches
       ;
-    pnpm = pnpm_9;
-    fetcherVersion = 3;
-    hash = "sha256-aT4JPx3iYw4kw8GHXKWMnelSVT0q2S3PK8DgSCQCyKQ=";
+    pnpm = pnpm_11;
+    fetcherVersion = 4;
+    hash = "sha256-U/dnNYmYXl6ZJq+w1tZmloi26YcSnFbLTDprHu6RacY=";
   };
   buildPhase = ''
     runHook preBuild
@@ -87,6 +91,8 @@ stdenv.mkDerivation (finalAttrs: {
     pushd apps/workers
     pnpm run build
     popd
+
+    pnpm prune --prod
 
     runHook postBuild
   '';

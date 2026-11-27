@@ -8,20 +8,16 @@
 let
 
   pname = "lens-desktop";
-  version = "2026.6.260931";
+  version = "2026.11.91422";
 
   sources = {
     x86_64-linux = {
       url = "https://api.k8slens.dev/binaries/Lens-${version}-latest.x86_64.AppImage";
-      hash = "sha512-P9PrtbGKaHNlzZsm10ovkYCBBfQpVWBgcVsYLETMwINP2bzrIIK5HVbkbcTEUsxK90L7MQmFwpAssojW0b9G5Q==";
-    };
-    x86_64-darwin = {
-      url = "https://api.k8slens.dev/binaries/Lens-${version}-latest.dmg";
-      hash = "sha512-I/i9s7O3jT+eNqqUu6B+rB+YbegKhAsZwHlc3mp2wNWW9YDilQbzKrhF9Fq2dSz2WKVZUscBtSGtXCuiPcFXzw==";
+      hash = "sha512-uAD0Ikh6K67mqwDymu0D0MeWL3XBhn+kVSvMPhTWbKnqtiQmDxj1KG21NMw8y+duZMoDQrp5fsR8oneOIA2LQQ==";
     };
     aarch64-darwin = {
       url = "https://api.k8slens.dev/binaries/Lens-${version}-latest-arm64.dmg";
-      hash = "sha512-eCE3w7NlYrHiexCirH2wFN0nOO3qAt5acbldXbDMVIrG94tbgM8Y5ZO8/YIUN45XbotYtKW8/Nw+WsrTp6DPBg==";
+      hash = "sha512-MPmq30YrYxTho+FBXFe6eBKWibpaFxFSzxHJSWNbwg+mxKDWnAm3Bki9RmWCuyPoRXdiJktn3uPa/HO1ShwNyQ==";
     };
   };
 

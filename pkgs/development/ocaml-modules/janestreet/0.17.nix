@@ -177,6 +177,7 @@ with self;
       async_websocket
       cohttp_async_websocket
     ];
+    __darwinAllowLocalNetworking = true;
   };
 
   async_sendfile = janePackage {
@@ -438,6 +439,7 @@ with self;
       ppx_jane
       uri-sexp
     ];
+    __darwinAllowLocalNetworking = true;
   };
 
   cohttp_static_handler = janePackage {
@@ -445,6 +447,7 @@ with self;
     hash = "sha256-RB/sUq1tL8A3m9YhHHx2LFqoExTX187VeZI9MRb1NeA=";
     meta.description = "Library for easily creating a cohttp handler for static files";
     propagatedBuildInputs = [ cohttp-async_5_3 ];
+    __darwinAllowLocalNetworking = true;
   };
 
   content_security_policy = janePackage {
@@ -787,27 +790,6 @@ with self;
     ];
   };
 
-  janestreet_csv = janePackage {
-    pname = "janestreet_csv";
-    hash = "sha256-at7ywGDaYIDsqhxxLYJhB8a697ccfPtKKI8LvCmRgG8=";
-    propagatedBuildInputs = [
-      async
-      bignum
-      core_kernel
-      core_unix
-      csvfields
-      delimited_parsing
-      fieldslib
-      numeric_string
-      ppx_jane
-      re2
-      textutils
-      tyxml
-      ocaml_pcre
-    ];
-    meta.description = "Tools for working with CSVs on the command line";
-  };
-
   jane_rope = janePackage {
     pname = "jane_rope";
     hash = "sha256-Lo4+ZUX9R2EGrz4BN+LqdJgVXB3hQqNifgwsjFC1Hfs=";
@@ -1025,7 +1007,6 @@ with self;
     propagatedBuildInputs = [
       core_unix
       patience_diff
-      ocaml_pcre
     ];
     meta = {
       description = "File Diff using the Patience Diff algorithm";
@@ -2301,7 +2282,8 @@ with self;
 
   zstandard = janePackage {
     pname = "zstandard";
-    hash = "sha256-EUI7fnN8ZaM1l0RBsgSAMWO+VXA8VoCv/lO5kcj+j4E=";
+    version = "0.17.1";
+    hash = "sha256-xGwKQOv2mSBKf1LfNtQpb6htGRVbNPujKhjMEVHvsxU=";
     meta.description = "OCaml bindings to Zstandard";
     buildInputs = [ ppx_jane ];
     propagatedBuildInputs = [

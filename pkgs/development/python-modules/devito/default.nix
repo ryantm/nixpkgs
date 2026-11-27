@@ -32,15 +32,14 @@
 
 buildPythonPackage (finalAttrs: {
   pname = "devito";
-  version = "4.8.22";
+  version = "4.8.23";
   pyproject = true;
-  __structuredAttrs = true;
 
   src = fetchFromGitHub {
     owner = "devitocodes";
     repo = "devito";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-7bHMMZKm+n+wSVGUSSoYQjXklxzdTeyCkjMuK0Z8qTI=";
+    hash = "sha256-y+Ao+uJAEHOxegz/AJ7Xs1FUzcfPdEPRWRGTouUpEeg=";
   };
 
   patches = [
@@ -113,15 +112,10 @@ buildPythonPackage (finalAttrs: {
 
     # AssertionError: assert(np.allclose(grad_u.data, grad_v.data, rtol=tolerance, atol=tolerance))
     "test_gradient_equivalence"
-  ]
-  ++ lib.optionals (stdenv.hostPlatform.isDarwin && stdenv.hostPlatform.isAarch64) [
+
     # Numerical tests
     "test_lm_fb"
     "test_lm_ds"
-  ]
-  ++ lib.optionals (stdenv.hostPlatform.isDarwin && stdenv.hostPlatform.isx86_64) [
-    # Numerical error
-    "test_pow_precision"
   ];
 
   disabledTestPaths =

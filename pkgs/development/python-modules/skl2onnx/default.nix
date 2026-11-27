@@ -43,9 +43,8 @@ buildPythonPackage (finalAttrs: {
     unittestCheckHook
   ];
 
-  unittestFlagsArray = [
-    "-s"
-    "tests"
+  unittestFlags = [
+    "--start-directory=tests"
   ];
 
   # Core dump
@@ -56,6 +55,6 @@ buildPythonPackage (finalAttrs: {
   meta = {
     description = "Convert scikit-learn models to ONNX";
     changelog = "https://github.com/onnx/sklearn-onnx/releases/tag/${finalAttrs.version}";
-    license = with lib.licenses; [ asl20 ];
+    license = lib.licenses.asl20;
   };
 })

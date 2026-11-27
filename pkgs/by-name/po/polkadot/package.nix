@@ -2,6 +2,7 @@
   cacert,
   fetchFromGitHub,
   lib,
+  nix-update-script,
   openssl,
   pkg-config,
   protobuf,
@@ -10,17 +11,18 @@
   rustPlatform,
   rustc,
   stdenv,
+  zstd,
 }:
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "polkadot";
-  version = "2603-3";
+  version = "2609-2";
 
   src = fetchFromGitHub {
     owner = "paritytech";
     repo = "polkadot-sdk";
     rev = "polkadot-stable${finalAttrs.version}";
-    hash = "sha256-uNyB7N9M4wQTKQOSFMMOzqhRVwxCJfS+YYE04D3OACQ=";
+    hash = "sha256-kXMJWznzWwneC7h23i3WdFzLRHSP8rwyE5Iox4G3MPk=";
 
     # the build process of polkadot requires a .git folder in order to determine
     # the git commit hash that is being built and add it to the version string.
@@ -41,12 +43,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
     rm .git_commit
   '';
 
-  cargoPatches = [
-    # make picosimd compile on nix (https://github.com/koute/picosimd/pull/3)
-    ./picosimd-0.9.3.patch
-  ];
-
-  cargoHash = "sha256-Y0D7M01fAgDrXKOXsyi4qsyb/2cLRWUcuo0Za01yD8k=";
+  cargoHash = "sha256-Ia4AN9XamXvBEN3q7LZASoPAD7dhnhgz2Sl8Swmmmo8=";
 
   buildType = "production";
   buildAndTestSubdir = "polkadot";
@@ -61,6 +58,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
   # NOTE: jemalloc is used by default on Linux with unprefixed enabled
   buildInputs = [
     openssl
+    zstd
   ]
   ++ lib.optionals stdenv.hostPlatform.isLinux [ rust-jemalloc-sys-unprefixed ];
 
@@ -74,6 +72,10 @@ rustPlatform.buildRustPackage (finalAttrs: {
     OPENSSL_NO_VENDOR = 1;
     PROTOC = "${protobuf}/bin/protoc";
     ROCKSDB_LIB_DIR = "${rocksdb}/lib";
+  };
+
+  passthru.updateScript = nix-update-script {
+    extraArgs = [ "--version-regex=polkadot-stable(\\d{4}(?:-\\d+)?)$" ];
   };
 
   meta = {
@@ -90,5 +92,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
     platforms = lib.intersectLists lib.platforms.unix (
       lib.platforms.aarch64 ++ lib.platforms.s390x ++ lib.platforms.riscv64 ++ lib.platforms.x86
     );
+    # last successful hydra build on darwin was in 2025
+    broken = stdenv.hostPlatform.isDarwin;
   };
 })

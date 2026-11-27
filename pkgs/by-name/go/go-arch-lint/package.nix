@@ -4,7 +4,7 @@
   # rather than buildGoLatestModule.
   # This can be bumped when the release notes of go-arch-lint detail support for
   # new version of go.
-  buildGo125Module,
+  buildGo127Module,
   buildPackages,
   fetchFromGitHub,
   installShellFiles,
@@ -12,18 +12,18 @@
   stdenv,
 }:
 
-buildGo125Module (finalAttrs: {
+buildGo127Module (finalAttrs: {
   pname = "go-arch-lint";
-  version = "1.16.0";
+  version = "1.19.2";
 
   src = fetchFromGitHub {
     owner = "fe3dback";
     repo = "go-arch-lint";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-oEbHuwQOHWglYHDG8gOKndjl6avSwK4+GyQHOj76ojA=";
+    hash = "sha256-8P9BqA03F6xvrMMOYqBlIH5bgScgUEgJd6g51nTJb7Y=";
   };
 
-  vendorHash = "sha256-2n7OjF4gl+qq9M5EtU0nmgWwRPZ3YvmLQDAgJ8w9S1M=";
+  vendorHash = "sha256-ZHgggZ97U89Kz8qMNsCPTFvVtfSQ2WmFc7bg+Q9Amf4=";
 
   nativeBuildInputs = [ installShellFiles ];
 

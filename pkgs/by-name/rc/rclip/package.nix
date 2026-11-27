@@ -1,30 +1,42 @@
 {
   lib,
+  stdenv,
   python3Packages,
   fetchFromGitHub,
   versionCheckHook,
 }:
 python3Packages.buildPythonApplication (finalAttrs: {
   pname = "rclip";
-  version = "3.2.3";
+  version = "4.1.3";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "yurijmikhalevich";
     repo = "rclip";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-LiqhJNt6wSSmwJ6kQJQpIHXYjdQI9eR2rrqkYPZknrQ=";
+    hash = "sha256-zbAtpIHfmSRJXZ6A2NHa9Pka3h35ZW/Azlds4CHheuQ=";
   };
 
   postPatch = ''
-    substituteInPlace pyproject.toml \
-      --replace-fail "uv_build>=0.11.12,<0.12.0" uv_build
+    substituteInPlace pyproject.toml --replace-fail "uv_build>=0.11.12,<0.12.0" "uv-build"
   '';
 
   build-system = with python3Packages; [
     uv-build
   ];
 
+  pythonRelaxDeps = [
+    "huggingface-hub"
+    "numpy"
+    "pillow"
+    "rawpy"
+    "regex"
+    "textual-image"
+  ];
+  pythonRemoveDeps = lib.optionals stdenv.hostPlatform.isDarwin [
+    # unpackaged
+    "coremltools"
+  ];
   dependencies = with python3Packages; [
     ftfy
     huggingface-hub
@@ -34,14 +46,10 @@ python3Packages.buildPythonApplication (finalAttrs: {
     pillow-heif
     regex
     requests
+    textual
+    textual-image
     tqdm
     rawpy
-  ];
-
-  pythonRelaxDeps = [
-    "numpy"
-    "pillow"
-    "rawpy"
   ];
 
   pythonImportsCheck = [ "rclip" ];
@@ -51,6 +59,20 @@ python3Packages.buildPythonApplication (finalAttrs: {
     python3Packages.jinja2
   ]
   ++ (with python3Packages; [ pytestCheckHook ]);
+
+  disabledTests = [
+    # requires rawpy to be built with DEMOSAIC_PACK_GPL2
+    "test_collects_native_versions_from_runtime_apis"
+    # requires rclip to be built with uv before inspecting the artifacts
+    "test_sdist_includes_compliance_inputs"
+    "test_wheel_includes_clip_legal_files"
+  ]
+  ++ lib.optionals stdenv.hostPlatform.isDarwin [
+    # NativeHeifDecodeError: macOS could not render the HEIF image (in the sandbox)
+    "test_decode_path_downscales_large_heic_to_min_side"
+    "test_decode_path_returns_the_full_frame_by_default"
+    "test_thumbnail_decode_matches_the_full_frame_decode"
+  ];
 
   disabledTestPaths = [
     # requires network

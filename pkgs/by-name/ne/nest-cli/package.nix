@@ -9,16 +9,16 @@
 
 buildNpmPackage (finalAttrs: {
   pname = "nest-cli";
-  version = "11.0.18";
+  version = "12.0.15";
 
   src = fetchFromGitHub {
     owner = "nestjs";
     repo = "nest-cli";
     tag = finalAttrs.version;
-    hash = "sha256-fqVsvox7c50bZ5jqGrpu3QiQG+ghY3eh8SETrdKnRCY=";
+    hash = "sha256-y8cC8ytRUCXHWa0f2aQShtSG63IVome2i3H2ZmwXzKQ=";
   };
 
-  npmDepsHash = "sha256-1M53H0tLD3+9To4kxt136P7kOvzo3gfWEFkFlcUSy6g=";
+  npmDepsHash = "sha256-8t4eoJ1HEOCMO2/cYsbz0f1mKGOtvYfhfE/hp9OVrzw=";
   npmFlags = [ "--legacy-peer-deps" ];
 
   env = {
@@ -28,7 +28,7 @@ buildNpmPackage (finalAttrs: {
   nativeBuildInputs = [
     python3
   ]
-  ++ lib.optionals (stdenv.hostPlatform.isDarwin && stdenv.hostPlatform.isAarch64) [ clang_20 ]; # clang_21 breaks gyp builds
+  ++ lib.optionals stdenv.hostPlatform.isDarwin [ clang_20 ]; # clang_21 breaks gyp builds
 
   meta = {
     changelog = "https://github.com/nestjs/nest-cli/releases/tag/${finalAttrs.version}";

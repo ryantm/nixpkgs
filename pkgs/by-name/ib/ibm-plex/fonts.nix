@@ -6,16 +6,23 @@
     version = "1.1.0";
   };
   mono = {
-    hash = "sha256-OwUmrPfEehLDz0fl2ChYLK8FQM2p0G1+EMrGsYEq+6g=";
+    hash = "sha256-GK9KStu5KQ5g5+IUwJq4L+a5gOwzsNXH80OOIbyvOnM=";
     name = "IBM Plex Mono";
-    url = "https://github.com/IBM/plex/releases/download/@ibm/plex-mono@1.1.0/ibm-plex-mono.zip";
-    version = "1.1.0";
+    url = "https://github.com/IBM/plex/releases/download/%40ibm/plex-mono%402.5.0/ibm-plex-mono.zip";
+    version = "2.5.0";
+  };
+  mono-variable = {
+    hash = "sha256-lvgkqijKYDpUUJF/YsFHesy8I4w+qhduObzM7m3xZas=";
+    name = "IBM Plex Mono (Variable)";
+    stripRoot = false;
+    url = "https://github.com/IBM/plex/releases/download/%40ibm/plex-mono-variable%401.0.0/plex-mono-variable.zip";
+    version = "1.0.0";
   };
   sans = {
-    hash = "sha256-mK+8GGl2ugF2+fS6yd3p5NWPHHcKEJWiShDS3lihOlI=";
+    hash = "sha256-E8vHnrJvMmk3bl0FH/9HVV2mLH35AuDuS3kiWTjDdNw=";
     name = "IBM Plex Sans";
-    url = "https://github.com/IBM/plex/releases/download/@ibm/plex-sans@1.1.0/ibm-plex-sans.zip";
-    version = "1.1.0";
+    url = "https://github.com/IBM/plex/releases/download/%40ibm/plex-sans%401.3.6/ibm-plex-sans.zip";
+    version = "1.3.6";
   };
   sans-arabic = {
     hash = "sha256-qi4k7kMLftIuq87idyxq46FOD6QYycdG6j3zJmu8mhI=";
@@ -24,10 +31,10 @@
     version = "1.1.0";
   };
   sans-condensed = {
-    hash = "sha256-prqyJIPs+UpQxFTbn/eAfsG/jKwQTOO72fZNzAtXUWg=";
+    hash = "sha256-DbMy5oZjPkjrGl3CMP2gH93ydvNIgJnxRzx3H8yAYTw=";
     name = "IBM Plex Sans Condensed";
-    url = "https://github.com/IBM/plex/releases/download/@ibm/plex-sans-condensed@2.0.0/ibm-plex-sans-condensed.zip";
-    version = "2.0.0";
+    url = "https://github.com/IBM/plex/releases/download/%40ibm/plex-sans-condensed%402.3.1/ibm-plex-sans-condensed.zip";
+    version = "2.3.1";
   };
   sans-devanagari = {
     hash = "sha256-K57OVqcH5r9tZx8NFEoz1P3xpUooqpF7xxJzNmnObwE=";
@@ -78,10 +85,10 @@
     version = "1.1.0";
   };
   sans-variable = {
-    hash = "sha256-W45wPOmmP4KuJ3TVes2x0n25KgyDzX48ce1lQrjAXpw=";
+    hash = "sha256-LKDQTrStJ9GdV2hZ0byBPHkfbD5MDgmzQjsIh+eCWIg=";
     name = "IBM Plex Sans (Variable)";
-    url = "https://github.com/IBM/plex/releases/download/@ibm/plex-sans-variable@0.2.0/plex-sans-variable.zip";
-    version = "0.2.0";
+    url = "https://github.com/IBM/plex/releases/download/%40ibm/plex-sans-condensed%400.3.1/ibm-plex-sans-variable.zip";
+    version = "0.3.1";
   };
   serif = {
     hash = "sha256-PO9KxV4K3a7fB4fR/i7LSf0mhK4I2eUDMsbSYWDQcb4=";

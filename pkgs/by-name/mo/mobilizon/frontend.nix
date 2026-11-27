@@ -9,9 +9,13 @@ let
   common = callPackage ./common.nix { };
 in
 buildNpmPackage {
-  inherit (common) pname version src;
+  inherit (common)
+    pname
+    version
+    src
+    ;
 
-  npmDepsHash = "sha256-nqjqRdIF583cmUd/mg9+PogA8Tpo5mfh0R9IylDpWZg=";
+  npmDepsHash = "sha256-2cMsZPSDCBXx/U+ymOImHpoBBQ4rs69dbL3bZBA0dY0=";
 
   nativeBuildInputs = [ imagemagick ];
 
@@ -24,7 +28,6 @@ buildNpmPackage {
     homepage = "https://joinmobilizon.org/";
     license = lib.licenses.agpl3Plus;
     maintainers = with lib.maintainers; [
-      minijackson
       erictapen
     ];
   };

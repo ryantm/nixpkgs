@@ -7,24 +7,29 @@
   doxygen,
   ffmpeg,
   freetype,
-  lua,
+  libpng,
+  lua5_5,
   makeWrapper,
   SDL2,
   SDL2_mixer,
   timidity,
+  zlib,
   # Update
   nix-update-script,
 }:
 
+let
+  lua = lua5_5;
+in
 stdenv.mkDerivation (finalAttrs: {
   pname = "corsix-th";
-  version = "0.69.2";
+  version = "0.70.3";
 
   src = fetchFromGitHub {
     owner = "CorsixTH";
     repo = "CorsixTH";
     rev = "v${finalAttrs.version}";
-    hash = "sha256-Dohql0AJspcnGhoDKvszw84/YKGy7IlIfk4pWvjG+8o=";
+    hash = "sha256-Uo1kLbsSlV86Hws7r8PCDgcDI7cjUq6nDG9LscGUKtM=";
   };
 
   patches = [
@@ -52,14 +57,19 @@ stdenv.mkDerivation (finalAttrs: {
       curl
       ffmpeg
       freetype
+      libpng
       lua
       luaEnv
       SDL2
       SDL2_mixer
       timidity
+      zlib
     ];
 
-  cmakeFlags = [ "-Wno-dev" ];
+  cmakeFlags = [
+    "-Wno-dev"
+    (lib.cmakeBool "WITH_MIDI_DEVICE" false)
+  ];
 
   postInstall =
     lib.optionalString stdenv.hostPlatform.isLinux ''
@@ -84,7 +94,6 @@ stdenv.mkDerivation (finalAttrs: {
     license = lib.licenses.mit;
     maintainers = with lib.maintainers; [
       hughobrien
-      matteopacini
     ];
     platforms = lib.platforms.linux ++ lib.platforms.darwin;
   };

@@ -7,7 +7,6 @@
   libjpeg,
   openssl,
   zlib,
-  libgcrypt,
   libpng,
   withSystemd ? lib.meta.availableOn stdenv.hostPlatform systemd,
   systemd,
@@ -41,6 +40,30 @@ stdenv.mkDerivation (finalAttrs: {
       url = "https://github.com/LibVNC/libvncserver/commit/e64fa928170f22a2e21b5bbd6d46c8f8e7dd7a96.patch";
       hash = "sha256-AAZ3H34+nLqQggb/sNSx2gIGK96m4zatHX3wpyjNLOA=";
     })
+
+    (fetchpatch {
+      name = "CVE-2026-32854.patch";
+      url = "https://github.com/LibVNC/libvncserver/commit/dc78dee51a7e270e537a541a17befdf2073f5314.patch";
+      hash = "sha256-CgVfvsrgZWnjIzu/0UegoAuCqO7WHhCDVvhH8Yk1cXo=";
+    })
+
+    (fetchpatch {
+      name = "CVE-2026-32853.patch";
+      url = "https://github.com/LibVNC/libvncserver/commit/009008e2f4d5a54dd71f422070df3af7b3dbc931.patch";
+      hash = "sha256-ZgpiIS7KoRzDmVLQ0J86wTFFykCBVMt6bZwJsFvIO74=";
+    })
+
+    # libvncclient: dynamic resolution resizing support for wayvnc
+    (fetchpatch {
+      name = "libvncclient-maintain-screen-data-extdesktopsize.patch";
+      url = "https://github.com/LibVNC/libvncserver/commit/8ea6ed0629cc9aeee2f1447c029cc7cc5be5602d.patch";
+      hash = "sha256-Fa23Xon5IPn0o3rTgbJe/3ObkKETyLJvws9fUvLVPCA=";
+    })
+    (fetchpatch {
+      name = "libvncclient-allow-screen-id-0.patch";
+      url = "https://github.com/LibVNC/libvncserver/commit/041ea576c3dddd6c7169935aaf8889673024fbfc.patch";
+      hash = "sha256-XWEhoGBYdW4k4mUK95iSWuCSgEaBcn4rgacMnEUHpj8=";
+    })
   ];
 
   nativeBuildInputs = [
@@ -51,7 +74,7 @@ stdenv.mkDerivation (finalAttrs: {
     (lib.cmakeBool "WITH_SYSTEMD" withSystemd)
     (lib.cmakeBool "BUILD_SHARED_LIBS" enableShared)
     (lib.cmakeBool "WITH_EXAMPLES" buildExamples)
-    (lib.cmakeBool "WITH_TESTS" finalAttrs.doCheck)
+    (lib.cmakeBool "WITH_TESTS" finalAttrs.finalPackage.doCheck)
   ];
 
   # This test checks if using the **installed** headers works.
@@ -65,7 +88,6 @@ stdenv.mkDerivation (finalAttrs: {
   buildInputs = [
     libjpeg
     openssl
-    libgcrypt
     libpng
   ]
   ++ lib.optionals withSystemd [

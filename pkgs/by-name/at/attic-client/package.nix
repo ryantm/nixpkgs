@@ -5,6 +5,8 @@
   nixVersions,
   nixosTests,
   boost,
+  sqlite,
+  zstd,
   pkg-config,
   stdenv,
   installShellFiles,
@@ -21,13 +23,15 @@ in
 
 rustPlatform.buildRustPackage {
   pname = "attic";
-  version = "0-unstable-2026-06-26";
+  version = "0-unstable-2026-07-06";
+
+  __structuredAttrs = true;
 
   src = fetchFromGitHub {
     owner = "zhaofengli";
     repo = "attic";
-    rev = "b7c905657cb81b8ec9c26b0d9f53aa2e4f231810";
-    hash = "sha256-//gQFVLVFhwHyI9yrpPqX0MQJGYqS6nE/iLV872K+PU=";
+    rev = "7a19204df10d606c5070e6bb72615c3461900c05";
+    hash = "sha256-AyXLhsc2drC+lunm+TB6Xs6XMMJ/m4B1YjMM1N8JXhU=";
   };
 
   nativeBuildInputs = [
@@ -35,10 +39,17 @@ rustPlatform.buildRustPackage {
     installShellFiles
   ];
 
-  buildInputs = lib.optional needNixInclude nix ++ [ boost ];
+  buildInputs = [
+    boost
+  ]
+  ++ lib.optionals needNixInclude [ nix ]
+  ++ lib.optionals (lib.elem "attic-server" crates) [
+    sqlite
+    zstd
+  ];
 
-  cargoBuildFlags = lib.concatMapStrings (c: "-p ${c} ") crates;
-  cargoHash = "sha256-fYWRlgP3uwntULe6o2MC1yB/ea2x+27m1Op7o2wUd+U=";
+  cargoBuildFlags = map (c: "--package=${c}") crates;
+  cargoHash = "sha256-UGgM78QEWJ2QgbQhxEI+yLYXH6T4ey+1oenPTMlJ3GU=";
 
   env = {
     ATTIC_DISTRIBUTOR = "nixpkgs";

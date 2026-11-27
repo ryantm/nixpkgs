@@ -41,20 +41,20 @@
 
 let
   pname = "pcloud";
-  version = "2.1.1";
-  code = "XZtwII5Zjf5noLYtDwJ1qkyAXaqujuvVKBbX";
+  version = "2.3.1";
+  code = "XZtJmbJZp6YyRQOCSjbAwPVct6fTXJloyHhy";
 
   # Archive link's codes: https://www.pcloud.com/release-notes/linux.html
   src = fetchzip {
     url = "https://api.pcloud.com/getpubzip?code=${code}&filename=pcloud-${version}.zip";
-    hash = "sha256-x7nlJ/kLfEbEKUso8p0dj3WM6o0EsQ0ZBaTnaxxuI6s=";
+    hash = "sha256-MrEuAwKsGXHwTr7garKLN0OQYkqRji/RxN/DACKcLa0=";
   };
 
 in
 stdenv.mkDerivation {
   inherit pname version;
 
-  src = appimageTools.extractType2 {
+  src = appimageTools.extract {
     inherit pname version;
 
     src = "${src}/pCloud.AppImage";

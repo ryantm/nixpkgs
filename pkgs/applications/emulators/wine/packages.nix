@@ -59,7 +59,7 @@ in
         ;
       pkgArches = [ pkgsi686Linux ];
       geckos = [ gecko32 ];
-      mingwGccs = with pkgsCross; [ mingw32.buildPackages.gcc ];
+      mingwGccs = with pkgsCross; [ mingw-msvcrt-i686.buildPackages.gcc ];
       monos = [ mono ];
       platforms = [
         "i686-linux"
@@ -77,14 +77,13 @@ in
         if pkgs.stdenv.hostPlatform.isAarch64 then
           [ llvm-mingw ]
         else
-          with pkgsCross; [ mingwW64.buildPackages.gcc ];
+          with pkgsCross; [ mingw-msvcrt-x86_64.buildPackages.gcc ];
       geckos = [ gecko64 ];
       monos = [ mono ];
       configureFlags =
         if pkgs.stdenv.hostPlatform.isAarch64 then [ "--enable-archs=aarch64" ] else [ "--enable-win64" ];
       platforms = [
         "x86_64-linux"
-        "x86_64-darwin"
         "aarch64-linux"
       ];
       mainProgram = "wine";
@@ -105,8 +104,8 @@ in
         gecko64
       ];
       mingwGccs = with pkgsCross; [
-        mingw32.buildPackages.gcc
-        mingwW64.buildPackages.gcc
+        mingw-msvcrt-i686.buildPackages.gcc
+        mingw-msvcrt-x86_64.buildPackages.gcc
       ];
       monos = [ mono ];
       buildScript = replaceVars ./builder-wow.sh {
@@ -133,8 +132,8 @@ in
         else
           with pkgsCross;
           [
-            mingw32.buildPackages.gcc
-            mingwW64.buildPackages.gcc
+            mingw-msvcrt-i686.buildPackages.gcc
+            mingw-msvcrt-x86_64.buildPackages.gcc
           ];
       geckos = [ gecko64 ];
       monos = [ mono ];
@@ -145,7 +144,6 @@ in
           [ "--enable-archs=x86_64,i386" ];
       platforms = [
         "x86_64-linux"
-        "x86_64-darwin"
         "aarch64-linux"
       ];
       mainProgram = "wine";

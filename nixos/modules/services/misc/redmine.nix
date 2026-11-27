@@ -80,7 +80,7 @@ in
       enable = lib.mkEnableOption "Redmine, a project management web application";
 
       package = lib.mkPackageOption pkgs "redmine" {
-        example = "redmine.override { ruby = pkgs.ruby_3_3; }";
+        example = "redmine.override { ruby = pkgs.ruby_3_4; }";
       };
 
       user = lib.mkOption {
@@ -460,7 +460,7 @@ in
         Group = cfg.group;
         TimeoutSec = "300";
         WorkingDirectory = "${cfg.package}/share/redmine";
-        ExecStart = "${bundle} exec rails server -u webrick -e production -b ${toString cfg.address} -p ${toString cfg.port} -P '${cfg.stateDir}/redmine.pid'";
+        ExecStart = "${bundle} exec rails server -u webrick -e production -b ${toString cfg.address} -p ${toString cfg.port}";
         RuntimeDirectory = "redmine";
         RuntimeDirectoryMode = "0750";
         AmbientCapabilities = "";

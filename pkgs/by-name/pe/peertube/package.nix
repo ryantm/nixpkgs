@@ -3,6 +3,7 @@
   stdenv,
   fetchFromGitHub,
   fetchPnpmDeps,
+  nix-update-script,
 
   # build
   brotli,
@@ -21,7 +22,7 @@
 }:
 stdenv.mkDerivation (finalAttrs: {
   pname = "peertube";
-  version = "8.2.2";
+  version = "8.3.2";
 
   __structuredAttrs = true;
   strictDeps = true;
@@ -30,7 +31,7 @@ stdenv.mkDerivation (finalAttrs: {
     owner = "Chocobozzz";
     repo = "PeerTube";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-huyuaCWJ3w1KHCcQFjH2ZcofPjqwjLpLt+dg6auD/dQ=";
+    hash = "sha256-x41ngH8fiuMm0xG/YP+qRQRWJ9bGd5vFae6aoK3j6qk=";
   };
 
   outputs = [
@@ -43,7 +44,7 @@ stdenv.mkDerivation (finalAttrs: {
     inherit (finalAttrs) pname version src;
     pnpm = pnpm_10;
     fetcherVersion = 3;
-    hash = "sha256-qrx8JtIAmn0JEsFwptrHlOL0IaYPJPLzjuDWNs7XFfc=";
+    hash = "sha256-nGmDbJ+2ChGccC5cGJuG/Cbc/QVqH0t0S9/M/hbGY8A=";
   };
 
   nativeBuildInputs = [
@@ -120,6 +121,8 @@ stdenv.mkDerivation (finalAttrs: {
     mv ./packages/server-commands/{dist,package.json} $out/packages/server-commands
     mv ./packages/transcription/{dist,package.json} $out/packages/transcription
     mv ./packages/typescript-utils/{dist,package.json} $out/packages/typescript-utils
+    mkdir -p $out/share
+    mv ./config/config-schema.json $out/share/config-schema.json
     mv ./{config,support,CREDITS.md,FAQ.md,LICENSE,README.md,package.json,pnpm-lock.yaml} $out
 
     # Remove broken symlinks in node_modules from workspace packages that aren't needed
@@ -150,6 +153,7 @@ stdenv.mkDerivation (finalAttrs: {
   passthru = {
     nodejs = nodejs_24;
     tests.peertube = nixosTests.peertube;
+    updateScript = nix-update-script { };
   };
 
   meta = {
@@ -170,11 +174,12 @@ stdenv.mkDerivation (finalAttrs: {
     '';
     license = lib.licenses.agpl3Plus;
     homepage = "https://joinpeertube.org/";
+    changelog = "https://github.com/Chocobozzz/PeerTube/blob/${finalAttrs.src.rev}/CHANGELOG.md";
     platforms = [
       "x86_64-linux"
       "aarch64-linux"
       # feasible, looking for maintainer to help out
-      # "x86_64-darwin" "aarch64-darwin"
+      # "aarch64-darwin"
     ];
     maintainers = with lib.maintainers; [
       immae

@@ -10,13 +10,13 @@
 stdenv.mkDerivation (finalAttrs: {
   pname = "simpledbus";
 
-  version = "0.11.0";
+  version = "1.4.0";
 
   src = fetchFromGitHub {
-    owner = "OpenBluetoothToolbox";
+    owner = "simpleble";
     repo = "SimpleBLE";
     rev = "v${finalAttrs.version}";
-    hash = "sha256-SWZdVWBC8udwkn195FdvsXSniMtzd8+WfnMsARLYSQ4=";
+    hash = "sha256-LhWL2Ukw2/rfgrHUbnH3Xbhf9y8aW99zmaxDn0vnL7c=";
   };
 
   outputs = [
@@ -39,7 +39,7 @@ stdenv.mkDerivation (finalAttrs: {
 
   meta = {
     description = "C++ wrapper for libdbus-1";
-    homepage = "https://github.com/OpenBluetoothToolbox/SimpleBLE";
+    homepage = "https://github.com/simpleble/simpleble";
     # SimpleBLE (which SimpleDBus is part of) is under the Business Source License 1.1 (BUSL-1.1)
     # since version 0.9.0
     license = lib.licenses.bsl11;

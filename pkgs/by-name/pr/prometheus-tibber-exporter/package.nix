@@ -8,13 +8,13 @@
 
 buildGoModule (finalAttrs: {
   pname = "prometheus-tibber-exporter";
-  version = "3.10.2";
+  version = "3.11.0";
 
   src = fetchFromGitHub {
     owner = "terjesannum";
     repo = "tibber-exporter";
     tag = "tibber-exporter-${finalAttrs.version}";
-    hash = "sha256-by7/c2a/8jM4ShoeQnYC+L+EVLk2NwQoRTAMiZZcMn0=";
+    hash = "sha256-ImVACl7p7PBLYwFJCpk66sm7KLTuQdOupZVKdvSqYuE=";
     leaveDotGit = true;
     postFetch = ''
       cd "$out"
@@ -23,7 +23,7 @@ buildGoModule (finalAttrs: {
     '';
   };
 
-  # do not use real BuildDate, but fixed imagenary (commit date) for binary reproducibility
+  # do not use real BuildDate, but fixed imaginary (commit date) for binary reproducibility
   preBuild = ''
     ldflags+=" -X github.com/prometheus/common/version.BuildDate=$(cat BUILD_COMMIT_DATE)"
   '';
@@ -37,7 +37,7 @@ buildGoModule (finalAttrs: {
     "-X github.com/prometheus/common/version.BuildUser=nix@nixpkgs"
   ];
 
-  vendorHash = "sha256-rjM2M9auiyFvGcq/D8N5YPoFOPeC9r1Y1JPssT7nvew=";
+  vendorHash = "sha256-hYRna6NaBbRW6jYLB6ioOjsesjFMaJUKMm9MD2p4XaM=";
 
   passthru.updateScript = nix-update-script {
     extraArgs = [

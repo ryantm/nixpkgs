@@ -1,28 +1,79 @@
 {
-  fetchFromGitHub,
-  buildNpmPackage,
-  python3,
+  python3Packages,
   stdenv,
+  fetchFromGitHub,
   makeWrapper,
+  buildNpmPackage,
   lib,
-  ffmpeg,
+  ffmpeg-headless,
+  nix-update-script,
 }:
 let
-  version = "0.2.4.8";
+  # https://github.com/maziggy/bambuddy/blob/main/requirements.txt
+  pythonPackages = with python3Packages; [
+    aiofiles
+    aioftp
+    aiosqlite
+    asyncpg
+    asyncssh
+    bcrypt
+    certifi
+    cryptography
+    curl-cffi
+    defusedxml
+    fastapi
+    fast-simplification
+    greenlet
+    httpx
+    ldap3
+    lxml
+    matplotlib
+    networkx
+    numpy
+    opencv4
+    openpyxl
+    paho-mqtt
+    passlib
+    pillow
+    psutil
+    pydantic
+    pydantic-settings
+    pyftpdlib
+    pyjwt
+    pyopenssl
+    pyotp
+    python-multipart
+    pywebpush
+    qrcode
+    reportlab
+    sqlalchemy
+    trimesh
+    uvicorn
+    websockets
+  ];
+in
+stdenv.mkDerivation (finalAttrs: {
+  pname = "bambuddy";
+  version = "1.3.1";
 
   src = fetchFromGitHub {
     owner = "maziggy";
     repo = "bambuddy";
-    tag = "v${version}";
-    hash = "sha256-6qeIidvi62NUok7I9UQ8DblT0/Wscju4FMnVuPXzMdM=";
+    tag = "v${finalAttrs.version}";
+    hash = "sha256-iM4JQnh7qWiMkEVfw6yke2JXQN/kR7OP8CLwSrJ3ZhM=";
   };
 
-  frontend = buildNpmPackage {
-    pname = "bambuddy-frontend";
-    inherit version src;
+  strictDeps = true;
+  __structuredAttrs = true;
 
-    sourceRoot = "${src.name}/frontend";
-    npmDepsHash = "sha256-/22FkXus5f3wYivyadZWU6ZKPYFLF8xA8mkVGxvdXm0=";
+  nativeBuildInputs = [ makeWrapper ];
+
+  frontend = buildNpmPackage {
+    pname = "${finalAttrs.pname}-frontend";
+    inherit (finalAttrs) version src;
+
+    sourceRoot = "${finalAttrs.src.name}/frontend";
+    npmDepsHash = "sha256-0/3Bmhp7HQrI9SxXIfm+bVVw12/GczymFeR1vsNJlQU=";
 
     preBuild = "chmod -R u+w ../static";
 
@@ -36,59 +87,6 @@ let
     '';
   };
 
-  # https://github.com/maziggy/bambuddy/blob/main/requirements.txt
-  python = python3.withPackages (
-    ps: with ps; [
-      aiofiles
-      aioftp
-      aiosqlite
-      asyncpg
-      asyncssh
-      bcrypt
-      cryptography
-      curl-cffi
-      defusedxml
-      fastapi
-      fast-simplification
-      greenlet
-      httpx
-      ldap3
-      lxml
-      matplotlib
-      networkx
-      numpy
-      opencv4
-      openpyxl
-      paho-mqtt
-      passlib
-      pillow
-      psutil
-      pydantic
-      pydantic-settings
-      pyftpdlib
-      pyjwt
-      pyopenssl
-      pyotp
-      python-multipart
-      pywebpush
-      qrcode
-      reportlab
-      sqlalchemy
-      trimesh
-      uvicorn
-      websockets
-    ]
-  );
-in
-stdenv.mkDerivation {
-  pname = "bambuddy";
-  inherit version src;
-
-  strictDeps = true;
-  __structuredAttrs = true;
-
-  nativeBuildInputs = [ makeWrapper ];
-
   installPhase = ''
     runHook preInstall
 
@@ -96,26 +94,40 @@ stdenv.mkDerivation {
     cp -r . $out/lib/bambuddy/
 
     rm -rf $out/lib/bambuddy/static
-    ln -s ${frontend} $out/lib/bambuddy/static
+    ln -s ${finalAttrs.frontend} $out/lib/bambuddy/static
 
     mkdir -p $out/bin
 
-    makeWrapper ${lib.getExe' python "uvicorn"} $out/bin/bambuddy \
+    makeWrapper ${lib.getExe' finalAttrs.passthru.python "uvicorn"} $out/bin/bambuddy \
       --chdir "$out/lib/bambuddy" \
       --prefix PYTHONPATH : "$out/lib/bambuddy" \
-      --prefix PATH : ${ffmpeg}/bin \
+      --suffix PATH : ${lib.makeBinPath [ ffmpeg-headless ]} \
       --add-flags "backend.app.main:app"
 
     runHook postInstall
   '';
 
+  passthru = {
+    inherit (finalAttrs) frontend;
+    inherit pythonPackages;
+    python = python3Packages.python.withPackages (_: finalAttrs.passthru.pythonPackages);
+
+    updateScript = nix-update-script {
+      extraArgs = [
+        "--use-github-releases"
+        "--subpackage"
+        "frontend"
+      ];
+    };
+  };
+
   meta = {
     description = "Self-hosted command center for Bambu Lab";
     homepage = "https://bambuddy.cool/";
-    changelog = "https://github.com/maziggy/bambuddy/blob/v${version}/CHANGELOG.md";
+    changelog = "https://github.com/maziggy/bambuddy/blob/${finalAttrs.src.tag}/CHANGELOG.md";
     license = lib.licenses.agpl3Only;
     maintainers = with lib.maintainers; [ onatustun ];
     mainProgram = "bambuddy";
-    platforms = with lib.platforms; linux ++ darwin;
+    platforms = with lib.platforms; darwin ++ linux;
   };
-}
+})

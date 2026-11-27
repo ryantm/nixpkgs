@@ -4,7 +4,7 @@
   stdenv,
 }:
 rec {
-  version = "9.2.0541";
+  version = "9.2.1252";
 
   outputs = [
     "out"
@@ -15,7 +15,7 @@ rec {
     owner = "vim";
     repo = "vim";
     rev = "v${version}";
-    hash = "sha256-M2vdIAM3P2MZdcMvFX/3/fixliTosR06nvPIX7NXFNo=";
+    hash = "sha256-k5Na69KYXb7kxajpJFv9+vBymApaio7TwHrETudAGrk=";
   };
 
   enableParallelBuilding = true;
@@ -44,7 +44,6 @@ rec {
     homepage = "https://www.vim.org";
     license = lib.licenses.vim;
     maintainers = with lib.maintainers; [
-      das_j
       equirosa
       philiptaron
     ];

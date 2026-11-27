@@ -1,34 +1,31 @@
 {
   buildNpmPackage,
   copyDesktopItems,
-  electron_41,
+  electron_44,
   fetchFromGitHub,
+  gitMinimal,
   lib,
   makeDesktopItem,
   nix-update-script,
   prefetch-npm-deps,
   rsync,
   stdenv,
-  nodejs_22,
   rustPlatform,
   cacert,
   cargo,
 }:
 let
-  electron = electron_41;
-  nodejs = nodejs_22;
+  electron = electron_44;
 in
-buildNpmPackage rec {
+buildNpmPackage (finalAttrs: {
   pname = "super-productivity";
-  version = "18.13.1";
-
-  inherit nodejs;
+  version = "20.1.0";
 
   src = fetchFromGitHub {
-    owner = "johannesjo";
+    owner = "super-productivity";
     repo = "super-productivity";
-    tag = "v${version}";
-    hash = "sha256-gfoGGLJ2Pyl2BPcCAukk2eNPTsGYofT2G6a9FmlDwTE=";
+    tag = "v${finalAttrs.version}";
+    hash = "sha256-w6vPWekIHow9if1pULoqEezTK7tvp5xGQ3XGLzBVCmU=";
   };
 
   # Use custom fetcher for deps because super-productivity uses multiple
@@ -38,7 +35,7 @@ buildNpmPackage rec {
   npmDeps = stdenv.mkDerivation (
     lib.fetchers.normalizeHash { } {
       pname = "super-productivity-deps";
-      inherit version src;
+      inherit (finalAttrs) version src;
 
       nativeBuildInputs = [
         prefetch-npm-deps
@@ -60,10 +57,11 @@ buildNpmPackage rec {
       buildPhase = ''
         mkdir -p $out
         find -name package-lock.json | sort | while read -r lockfile; do
-          prefetch-npm-deps $lockfile /tmp/cache
+          cacheDir=$(mktemp -d)
+          prefetch-npm-deps "$lockfile" "$cacheDir"
           # Merge output
-          rsync -a /tmp/cache/ $out
-          rm -rf /tmp/cache
+          rsync -a "$cacheDir/" "$out"
+          rm -rf "$cacheDir"
         done
         # Ensure that the root package-lock.json is placed in the output.
         # This means only the root lockfile is checked for consistancy,
@@ -74,7 +72,7 @@ buildNpmPackage rec {
       dontInstall = true;
 
       outputHashMode = "recursive";
-      hash = "sha256-staJsDxwcF2TC+Y8wr9iaq7TmfQVG3ZIQh17UTCP/9I=";
+      hash = "sha256-0W7LWxsyQQ/qtmD6pPgL7K27ayTR2xFWltqG0mN3bDQ=";
     }
   );
 
@@ -83,7 +81,7 @@ buildNpmPackage rec {
 
   cargoRoot = "electron/wayland-idle-helper";
   cargoDeps = rustPlatform.fetchCargoVendor {
-    inherit
+    inherit (finalAttrs)
       pname
       version
       src
@@ -95,9 +93,15 @@ buildNpmPackage rec {
   env = {
     ELECTRON_SKIP_BINARY_DOWNLOAD = "1";
     CHROMEDRIVER_SKIP_DOWNLOAD = "true";
+    # Use JavaScript Sass implementation instead bundled Dart executable.
+    NG_BUILD_SASS_EMBEDDED = "false";
   };
 
-  nativeBuildInputs = lib.optionals stdenv.hostPlatform.isLinux [
+  nativeBuildInputs = [
+    # Required by the build-time tests.
+    gitMinimal
+  ]
+  ++ lib.optionals stdenv.hostPlatform.isLinux [
     cargo
     copyDesktopItems
     rustPlatform.cargoSetupHook
@@ -112,6 +116,12 @@ buildNpmPackage rec {
     # not our app directory, so it would search the wrong location.
     substituteInPlace electron/idle-time-handler.ts \
       --replace-fail "path.dirname(process.execPath)" "path.dirname(app.getAppPath())"
+  ''
+  + lib.optionalString stdenv.hostPlatform.isDarwin ''
+    # build/icon.icns is checked in and already contains all ten macOS icon
+    # representations. Avoid regenerating it with sandbox-unavailable iconutil.
+    substituteInPlace electron-builder.yaml \
+      --replace-fail "beforePack: ./tools/beforePack.js" ""
   '';
 
   buildPhase = ''
@@ -202,7 +212,8 @@ buildNpmPackage rec {
     maintainers = with lib.maintainers; [
       pineapplehunter
       tebriel
+      yzx9
     ];
     mainProgram = "superproductivity";
   };
-}
+})

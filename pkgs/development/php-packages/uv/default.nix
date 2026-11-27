@@ -5,15 +5,15 @@
   libuv,
 }:
 
-buildPecl rec {
+buildPecl (finalAttrs: {
   pname = "uv";
-  version = "0.3.0";
+  version = "0.3.1";
 
   src = fetchFromGitHub {
     owner = "amphp";
     repo = "ext-uv";
-    rev = "v${version}";
-    hash = "sha256-RYb7rszHbdTLfBi66o9hVkFwX+7RlcxH5PAw5frjpFg=";
+    tag = "v${finalAttrs.version}";
+    hash = "sha256-CM81dStUgQpLIb7s6jlWkP3v4WyyxjZ+3EX80tdSPc0=";
   };
 
   buildInputs = [ libuv ];
@@ -25,4 +25,4 @@ buildPecl rec {
     teams = [ lib.teams.php ];
     platforms = lib.platforms.linux;
   };
-}
+})

@@ -12,6 +12,7 @@
   glib,
   gtk3,
   openssl,
+  libgit2,
   libGL,
   libxkbcommon,
   wrapGAppsHook3,
@@ -76,6 +77,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
     ++ [
       glib
       gtk3
+      libgit2
       openssl
     ]
     ++ lib.optionals stdenv.hostPlatform.isLinux [
@@ -107,7 +109,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
     description = "Lightning-fast and Powerful Code Editor written in Rust";
     homepage = "https://github.com/lapce/lapce";
     changelog = "https://github.com/lapce/lapce/releases/tag/v${finalAttrs.version}";
-    license = with lib.licenses; [ asl20 ];
+    license = lib.licenses.asl20;
     mainProgram = "lapce";
   };
 })

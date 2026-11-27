@@ -19,6 +19,7 @@
   desktop-file-utils,
   appstream-glib,
   openssl,
+  aws-lc,
   pipewire,
   libshumate,
   wrapGAppsHook4,
@@ -33,19 +34,22 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "fractal";
-  version = "14";
+  version = "14.3";
+
+  strictDeps = true;
+  __structuredAttrs = true;
 
   src = fetchFromGitLab {
     domain = "gitlab.gnome.org";
     owner = "World";
     repo = "fractal";
     tag = finalAttrs.version;
-    hash = "sha256-pgu+O9fRyZiRYkxRTlPgnd5jaGPL1nN0agMR+x6+oGg=";
+    hash = "sha256-AHksQ+DXIf/wFj/K24xbiT5Qr6tbzRHOLnCDMlAbTC0=";
   };
 
   cargoDeps = rustPlatform.fetchCargoVendor {
-    inherit (finalAttrs) src;
-    hash = "sha256-Fsw0hIAYiF+31PNuC5a9SatRatY7A8OwABhlyHIl1Lc=";
+    inherit (finalAttrs) pname version src;
+    hash = "sha256-wRTXNnM8NscEjNbO7sXaO8LM1u2iuDYUtVuot7csBcg=";
   };
 
   patches = [
@@ -88,6 +92,7 @@ stdenv.mkDerivation (finalAttrs: {
     libadwaita
     libglycin-gtk4
     openssl
+    aws-lc
     pipewire
     libshumate
     sqlite

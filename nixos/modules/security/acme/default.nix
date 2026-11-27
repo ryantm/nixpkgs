@@ -242,8 +242,6 @@ let
         + lib.optionalString (data.csr != null) " - ${data.csr}"
         + lib.optionalString (data.profile != null) " - ${data.profile}";
       certDir = mkHash hashData;
-      # TODO remove domainHash usage entirely. Waiting on go-acme/lego#1532
-      domainHash = mkHash "${lib.concatStringsSep " " extraDomains} ${data.domain}";
       accountHash = (mkAccountHash acmeServer data);
       accountDir = accountDirRoot + accountHash;
 
@@ -254,7 +252,12 @@ let
               "--dns"
               data.dnsProvider
             ]
-            ++ lib.optionals (!data.dnsPropagationCheck) [ "--dns.propagation-disable-ans" ]
+            ++ lib.optionals (!data.dnsAuthoritativePropagationCheck) [
+              "--dns.propagation.disable-ans"
+            ]
+            ++ lib.optionals (!data.dnsRecursivePropagationCheck) [
+              "--dns.propagation.disable-rns"
+            ]
             ++ lib.optionals (data.dnsResolver != null) [
               "--dns.resolvers"
               data.dnsResolver
@@ -269,7 +272,7 @@ let
         else if data.listenHTTP != null then
           [
             "--http"
-            "--http.port"
+            "--http.address"
             data.listenHTTP
           ]
         else
@@ -309,21 +312,27 @@ let
       ]) extraDomains
       ++ data.extraLegoFlags;
 
-      # Although --must-staple is common to both modes, it is not declared as a
-      # mode-agnostic argument in lego and thus must come after the mode.
+      # `lego run` renews when its state still contains a certificate resource. The full
+      # path is also a recovery path, so force renewal without an ARI `replaces`
+      # identifier that may refer to a stale certificate.
       runOpts = lib.escapeShellArgs (
-        commonOpts
-        ++ [ "run" ]
+        [ "run" ]
+        ++ commonOpts
+        ++ [
+          "--no-random-sleep"
+          "--renew-force"
+          "--ari-disable"
+        ]
+        ++ lib.optionals (data.csr == null) [ "--force-cert-domains" ]
         ++ lib.optionals data.ocspMustStaple [ "--must-staple" ]
         ++ lib.optionals (data.profile != null) [ "--profile=${data.profile}" ]
         ++ data.extraLegoRunFlags
       );
       renewOpts = lib.escapeShellArgs (
-        commonOpts
-        ++ [
-          "renew"
-          "--no-random-sleep"
-        ]
+        [ "run" ]
+        ++ commonOpts
+        ++ [ "--no-random-sleep" ]
+        ++ lib.optionals (data.csr == null) [ "--force-cert-domains" ]
         ++ lib.optionals data.ocspMustStaple [ "--must-staple" ]
         ++ lib.optionals (data.profile != null) [ "--profile=${data.profile}" ]
         ++ data.extraLegoRenewFlags
@@ -471,9 +480,9 @@ let
           // {
             Group = data.group;
 
-            # Let's Encrypt Failed Validation Limit allows 5 retries per hour, per account, hostname and hour.
-            # This avoids eating them all up if something is misconfigured upon the first try.
-            RestartSec = 15 * 60;
+            RestartSec = data.renewIntervalFailed;
+
+            Restart = "on-failure";
 
             # Keep in mind that these directories will be deleted if the user runs
             # systemctl clean --what=state
@@ -575,13 +584,18 @@ let
             }
           }
 
-          echo '${domainHash}' > domainhash.txt
+          # Multiple certificates can share an account. Serialize the check and
+          # migration because lego v5 moves the shared key out of keys/.
+          exec {MIGRATION_LOCK_FD}> "${lockdir}migration-${accountHash}.lock"
+          ${pkgs.flock}/bin/flock "$MIGRATION_LOCK_FD"
+          if [ -n "$(find accounts -path '*/keys/*.key' -print -quit)" ]; then
+            printf 'Y\n' | lego migrate --account-only --path .
+          fi
+          exec {MIGRATION_LOCK_FD}>&-
 
-          # Check if a new order is needed
-          # We can only renew if the list of domains has not changed.
+          # Check if the existing certificate can be renewed.
           # We also need an account key. Avoids #190493
-          if cmp -s domainhash.txt certificates/domainhash.txt && [ -e '${certificateKey}' ] && \
-            [ -e 'certificates/${keyName}.crt' ] && \
+          if [ -e '${certificateKey}' ] && [ -e 'certificates/${keyName}.crt' ] && \
             [ -n "$(find accounts -name '${
               if (data.email != null) then data.email else placeholderEmail
             }.key')" ];
@@ -590,7 +604,7 @@ let
             # Try to renew, and silently fail if the cert is not expired.
             # Avoids #85794 and resolves #129838
             if ! lego ${renewOpts} ${
-              if data.validMinDays != null then "--days ${toString data.validMinDays}" else "--dynamic"
+              if data.validMinDays != null then "--renew-days ${toString data.validMinDays}" else ""
             }; then
               if is_expiration_skippable out/full.pem; then
                 echo 1>&2 "nixos-acme: Ignoring failed renewal because expiration isn't due yet"
@@ -609,8 +623,6 @@ let
             # High number to avoid Systemd reserved codes.
             exit 10
           fi
-
-          mv domainhash.txt certificates/
 
           touch out/acme-success
 
@@ -663,6 +675,25 @@ let
       };
     in
     {
+      imports = [
+        ../../misc/assertions.nix
+        (lib.mkRemovedOptionModule [ "dnsPropagationCheck" ] ''
+          This option has been split into `dnsAuthoritativePropagationCheck`
+          and `dnsRecursivePropagationCheck`
+
+          The authoritative check queries the zone's authoritative nameservers
+          directly to verify that they serve the updated DNS records. The
+          recursive check queries your locally configured DNS resolvers, which
+          may still return cached records until their TTL expires.
+
+          If you previously disabled `dnsPropagationCheck`, review
+          which propagation checks you intended to skip and disable the
+          corresponding new options. To preserve the previous behavior, you
+          may need to disable both `dnsAuthoritativePropagationCheck` and
+          `dnsRecursivePropagationCheck`.
+        '')
+      ];
+
       options = {
         validMinDays = lib.mkOption {
           type = lib.types.nullOr lib.types.int;
@@ -684,6 +715,18 @@ let
             {manpage}`systemd.time(7)`.
 
             If you reduce this from daily you might also want to adapt {option}`security.acme.defaults.renewJitter`.
+          '';
+        };
+
+        renewIntervalFailed = lib.mkOption {
+          type = lib.types.str;
+          inherit (defaultAndText "renewIntervalFailed" "${toString (60 * 15)}") default defaultText;
+          description = ''
+            Systemd time-span value when to retry a renewal in case the service has failed.
+            See {manpage}`systemd.time(7)`
+
+            Let's Encrypt Failed Validation Limit allows 5 retries per hour, per account, hostname and hour.
+            The default avoids eating them all up if something is misconfigured upon the first try.
           '';
         };
 
@@ -772,7 +815,7 @@ let
           description = ''
             Key type to use for private keys.
             For an up to date list of supported values check the --key-type option
-            at <https://go-acme.github.io/lego/usage/cli/options/>.
+            at <https://go-acme.github.io/lego/references/ref-flags/index.html#options>.
           '';
         };
 
@@ -833,17 +876,33 @@ let
           '';
           example = lib.literalExpression ''
             {
-              "RFC2136_TSIG_SECRET_FILE" = "/run/secrets/tsig-secret-example.org";
+              "DNSUPDATE_TSIG_SECRET_FILE" = "/run/secrets/tsig-secret-example.org";
             }
           '';
         };
 
-        dnsPropagationCheck = lib.mkOption {
+        dnsAuthoritativePropagationCheck = lib.mkOption {
           type = lib.types.bool;
-          inherit (defaultAndText "dnsPropagationCheck" true) default defaultText;
+          inherit (defaultAndText "dnsAuthoritativePropagationCheck" true) default defaultText;
           description = ''
-            Toggles lego DNS propagation check, which is used alongside DNS-01
-            challenge to ensure the DNS entries required are available.
+            Toggles lego's authoritative DNS propagation check, which is used
+            alongside DNS-01 challenge to ensure the DNS entries required are
+            available.
+          '';
+        };
+
+        dnsRecursivePropagationCheck = lib.mkOption {
+          type = lib.types.bool;
+          inherit (defaultAndText "dnsRecursivePropagationCheck" false) default defaultText;
+          description = ''
+            Toggles lego's recursive DNS propagation check, which is used
+            alongside DNS-01 challenge to ensure the DNS entries required are
+            available.
+
+            :::{.warning}
+            Recursive DNS queries can result in negative caching, which can
+            break the propagation check.
+            :::
           '';
         };
 
@@ -852,8 +911,9 @@ let
           inherit (defaultAndText "ocspMustStaple" false) default defaultText;
           description = ''
             Turns on the OCSP Must-Staple TLS extension.
-            Make sure you know what you're doing! See:
-
+            Make sure you know what you're doing!
+            OCSP Must-Staple can be considered a legacy feature, that is no longer superted by Let's Encrypt. See:
+            - <https://letsencrypt.org/2024/12/05/ending-ocsp>
             - <https://blog.apnic.net/2019/01/15/is-the-web-ready-for-ocsp-must-staple/>
             - <https://blog.hboeck.de/archives/886-The-Problem-with-OCSP-Stapling-and-Must-Staple-and-why-Certificate-Revocation-is-still-broken.html>
           '';
@@ -871,7 +931,7 @@ let
           type = lib.types.listOf lib.types.str;
           inherit (defaultAndText "extraLegoFlags" [ ]) default defaultText;
           description = ''
-            Additional global flags to pass to all lego commands.
+            Additional flags to pass to both `lego run` invocations.
           '';
         };
 
@@ -879,7 +939,7 @@ let
           type = lib.types.listOf lib.types.str;
           inherit (defaultAndText "extraLegoRenewFlags" [ ]) default defaultText;
           description = ''
-            Additional flags to pass to lego renew.
+            Additional flags to pass to the non-forced renewal `lego run` invocation.
           '';
         };
 
@@ -887,7 +947,7 @@ let
           type = lib.types.listOf lib.types.str;
           inherit (defaultAndText "extraLegoRunFlags" [ ]) default defaultText;
           description = ''
-            Additional flags to pass to lego run.
+            Additional flags to pass to the forced obtain/reissue `lego run` invocation.
           '';
         };
       };
@@ -1118,7 +1178,12 @@ in
         let
           certs = lib.attrValues cfg.certs;
         in
-        [
+        cfg.defaults.assertions
+        ++ (lib.foldlAttrs (
+          assertions: _: cert:
+          assertions ++ cert.assertions
+        ) [ ] cfg.certs)
+        ++ [
           {
             assertion = cfg.acceptTerms;
             message = ''

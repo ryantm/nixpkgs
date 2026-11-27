@@ -30,8 +30,8 @@ stdenv.mkDerivation (finalAttrs: {
   pnpmDeps = fetchPnpmDeps {
     inherit (finalAttrs) pname version src;
     pnpm = pnpm_11;
-    fetcherVersion = 3;
-    hash = "sha256-geA40z7KH4kluCgz1EmmYqeGkBjEXgmrUDsUewpD7Xc=";
+    fetcherVersion = 5;
+    hash = "sha256-Z0TGkxxmLh6ddmydsagc/bGA3oqlccvMNAq3msKCd8c=";
   };
 
   buildPhase = ''
@@ -82,7 +82,7 @@ stdenv.mkDerivation (finalAttrs: {
   meta = {
     description = "Simple deobfuscator for mangled or obfuscated JavaScript files";
     homepage = "https://deobfuscate.relative.im/";
-    license = with lib.licenses; [ gpl3Only ];
+    license = lib.licenses.gpl3Only;
     maintainers = with lib.maintainers; [ pluiedev ];
     inherit (nodejs.meta) platforms;
     mainProgram = "synchrony";

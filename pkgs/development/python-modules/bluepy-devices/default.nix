@@ -11,8 +11,6 @@ buildPythonPackage (finalAttrs: {
   version = "0.2.1";
   pyproject = true;
 
-  __structuredAttrs = true;
-
   src = fetchPypi {
     pname = "bluepy_devices";
     inherit (finalAttrs) version;
@@ -30,7 +28,7 @@ buildPythonPackage (finalAttrs: {
   meta = {
     description = "Python BTLE Device Interface for bluepy";
     homepage = "https://github.com/bimbar/bluepy_devices";
-    license = with lib.licenses; [ mit ];
+    license = lib.licenses.mit;
     maintainers = with lib.maintainers; [ fab ];
   };
 })

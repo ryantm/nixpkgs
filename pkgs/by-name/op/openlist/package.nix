@@ -12,13 +12,13 @@
 
 buildGoModule (finalAttrs: {
   pname = "openlist";
-  version = "4.2.3";
+  version = "4.2.10";
 
   src = fetchFromGitHub {
     owner = "OpenListTeam";
     repo = "OpenList";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-q7s6u/pQ+bvSbz19029uO9CzVc1KVoISpcStngVUffs=";
+    hash = "sha256-8eh9bE+W746uTOWKby5dhwxe7PvxUcTsW4i+TU0UzPA=";
     # populate values that require us to use git. By doing this in postFetch we
     # can delete .git afterwards and maintain better reproducibility of the src.
     leaveDotGit = true;
@@ -34,7 +34,7 @@ buildGoModule (finalAttrs: {
   frontend = callPackage ./frontend.nix { };
 
   proxyVendor = true;
-  vendorHash = "sha256-a4v2JP/+feit3uTqnACWgl77fWZU8yVE/0Hm7qxoI8E=";
+  vendorHash = "sha256-mpbNdsTPDRnx1pmPFF9TdsedsEaVqhV3gPzUApwMfuY=";
 
   nativeBuildInputs = [
     installShellFiles
@@ -50,7 +50,7 @@ buildGoModule (finalAttrs: {
 
   ldflags = [
     "-s"
-    "-X \"github.com/OpenListTeam/OpenList/v4/internal/conf.GitAuthor=The OpenList Projects Contributors <noreply@openlist.team>\""
+    "-X \"github.com/OpenListTeam/OpenList/v4/internal/conf.GitAuthor=The OpenList Projects Contributors <noreply@oplist.org>\""
     "-X github.com/OpenListTeam/OpenList/v4/internal/conf.Version=${finalAttrs.version}"
     "-X github.com/OpenListTeam/OpenList/v4/internal/conf.WebVersion=${finalAttrs.frontend.version}"
   ];
@@ -77,12 +77,6 @@ buildGoModule (finalAttrs: {
         "TestWebsocketAll"
         "TestWebsocketCaller"
         "TestDownloadOrder"
-      ]
-      ++ lib.optionals (stdenv.hostPlatform.isDarwin && stdenv.hostPlatform.isx86_64) [
-        # --- FAIL: TestTask_Cancel (0.01s)
-        # task_test.go:48: task is running
-        # task_test.go:61: task status not canceled: canceling
-        "TestTask_Cancel"
       ];
     in
     [ "-skip=^${builtins.concatStringsSep "$|^" skippedTests}$" ];

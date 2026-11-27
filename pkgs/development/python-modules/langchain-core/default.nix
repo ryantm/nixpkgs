@@ -37,15 +37,14 @@
 
 buildPythonPackage (finalAttrs: {
   pname = "langchain-core";
-  version = "1.4.8";
+  version = "1.8.1";
   pyproject = true;
-  __structuredAttrs = true;
 
   src = fetchFromGitHub {
     owner = "langchain-ai";
     repo = "langchain";
     tag = "langchain-core==${finalAttrs.version}";
-    hash = "sha256-fJKr1NlpCujGoVxxqjaEXGOVZO5NH9+71dWHyMuQ2jw=";
+    hash = "sha256-Ke+HhhwZTsP3aUYnl3QMoO4GLrKWyL1vvo0SLDaX9IM=";
   };
 
   sourceRoot = "${finalAttrs.src.name}/libs/core";

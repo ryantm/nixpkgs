@@ -6,7 +6,7 @@
   makeWrapper,
   makeDesktopItem,
   copyDesktopItems,
-  electron_41,
+  electron_45,
   python3Packages,
   pipewire,
   libpulseaudio,
@@ -18,17 +18,17 @@
   withMiddleClickScroll ? false,
 }:
 let
-  electron = electron_41;
+  electron = electron_45;
 in
 stdenv.mkDerivation (finalAttrs: {
   pname = "equibop";
-  version = "3.2.1";
+  version = "3.3.4";
 
   src = fetchFromGitHub {
     owner = "Equicord";
     repo = "Equibop";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-WqfxrVAJvD6Y6ZjkhbvibL6Bps7PL2lx3JBY94Yd6kk=";
+    hash = "sha256-wsaVqBYETYFTsG78UInY5Z6VvUr8RLWMC8/eW8lTldY=";
   };
 
   postPatch = ''
@@ -38,13 +38,9 @@ stdenv.mkDerivation (finalAttrs: {
     # disable auto updates
     substituteInPlace src/main/updater.ts \
       --replace-fail 'const isOutdated = autoUpdater.checkForUpdates().then(res => Boolean(res?.isUpdateAvailable));' 'const isOutdated = false;'
-
-    # disable auto update for bun
-    substituteInPlace scripts/build/compileArrpc.mts \
-      --replace-fail -baseline ""
   '';
 
-  node-modules = callPackage ./node-modules.nix { };
+  node-modules = callPackage ./node-modules.nix { equibop = finalAttrs.finalPackage; }; # helps when the parent package is overidden
 
   nativeBuildInputs = [
     bun
@@ -93,8 +89,6 @@ stdenv.mkDerivation (finalAttrs: {
 
     bun run build
 
-    bun run compileArrpc
-
     # can't run it via bunx / npx since fixupPhase was skipped for node_modules
     node node_modules/electron-builder/out/cli/cli.js \
       --dir \
@@ -128,6 +122,8 @@ stdenv.mkDerivation (finalAttrs: {
   '';
 
   postFixup = ''
+    # NOTE: LD_LIBRARY_PATH is needed, because equibop raises a warning at the start
+    # and it fixes a couple of bugs
     makeWrapper ${electron}/bin/electron $out/bin/equibop \
       --add-flags $out/opt/Equibop/resources/app.asar \
       ${lib.optionalString withTTS ''
@@ -135,7 +131,8 @@ stdenv.mkDerivation (finalAttrs: {
         --add-flags "\''${NIXOS_SPEECH:+--enable-speech-dispatcher}" \
       ''} \
       ${lib.optionalString withMiddleClickScroll "--add-flags \"--enable-blink-features=MiddleClickAutoscroll\""} \
-      --add-flags "\''${NIXOS_OZONE_WL:+\''${WAYLAND_DISPLAY:+--ozone-platform-hint=auto --enable-features=WaylandWindowDecorations --enable-wayland-ime=true}}"
+      --add-flags "\''${NIXOS_OZONE_WL:+\''${WAYLAND_DISPLAY:+--ozone-platform-hint=auto --enable-features=WaylandWindowDecorations --enable-wayland-ime=true}}" \
+      --prefix LD_LIBRARY_PATH : "${lib.makeLibraryPath [ (lib.getLib stdenv.cc.cc) ]}"
   '';
 
   desktopItems = makeDesktopItem {

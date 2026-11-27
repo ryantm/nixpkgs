@@ -1,0 +1,18 @@
+{
+  "version": "2026.3.0.1",
+  "buildNumber": "263.7307.350",
+  "urls": {
+    "x86_64-linux": {
+      "url": "https://download.jetbrains.com/ruby/RubyMine-2026.3.0.1.tar.gz",
+      "hash": "sha256-z9tPoJxL5rpktKz6amGiWgtwq5htxynbuJ7vjXoGVCE="
+    },
+    "aarch64-linux": {
+      "url": "https://download.jetbrains.com/ruby/RubyMine-2026.3.0.1-aarch64.tar.gz",
+      "hash": "sha256-CjkSKybH5Euzpzp2U5UiO1yiyhmNgJZztQtV7IK81Bw="
+    },
+    "aarch64-darwin": {
+      "url": "https://download.jetbrains.com/ruby/RubyMine-2026.3.0.1-aarch64.dmg",
+      "hash": "sha256-tAJXiN2esP4idETVZZDIBmFFbxj7SnkEeh3/7w3Kn1M="
+    }
+  }
+}

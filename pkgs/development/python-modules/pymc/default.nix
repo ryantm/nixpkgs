@@ -9,8 +9,10 @@
 
   # dependencies
   arviz,
+  better-optimize,
   cachetools,
   cloudpickle,
+  matplotlib,
   numpy,
   pandas,
   pytensor,
@@ -22,15 +24,14 @@
 
 buildPythonPackage (finalAttrs: {
   pname = "pymc";
-  version = "6.1.0";
+  version = "6.4.0";
   pyproject = true;
-  __structuredAttrs = true;
 
   src = fetchFromGitHub {
     owner = "pymc-devs";
     repo = "pymc";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-veJ42myRo23JXh33qC1OXxiGVI0VAARuYKVs7ObFr+Q=";
+    hash = "sha256-81/9vKHsuK9MF2MquMxZZsHO7GKCIQpJwrPYyGz6ar0=";
   };
 
   build-system = [
@@ -38,10 +39,17 @@ buildPythonPackage (finalAttrs: {
     versioneer
   ];
 
+  pythonRelaxDeps = [
+    "cachetools"
+  ];
   dependencies = [
     arviz
+    better-optimize
     cachetools
     cloudpickle
+    # `matplotlib` is an undeclared runtime dependency: the default (`progressbar = True`) sampling
+    # path imports it in `pymc/progress_bar/rich_progress.py`.
+    matplotlib
     numpy
     pandas
     pytensor

@@ -1,76 +1,107 @@
 {
   lib,
-  stdenv,
-  callPackage,
+  buildNpmPackage,
+  codex,
   fetchFromGitHub,
-  rustPlatform,
-  pkg-config,
-  openssl,
-  libcap,
-  bubblewrap,
-  librusty_v8 ? callPackage ./librusty_v8.nix { },
+  jq,
+  makeBinaryWrapper,
+  nix-update-script,
+  runCommand,
+  stdenv,
+  versionCheckHook,
+  writableTmpDirAsHomeHook,
 }:
-let
-  # codex-acp 0.13.0 pins openai/codex rust-v0.128.0 in Cargo.lock.
-  codexRev = "e4310be51f617f5e60382038fa9cbf53a2429ca4";
-  codexHash = "sha256-v2W0eslPOPHxHX76+bnkE/f4y+MnQuopeOoAC5X16TA=";
-  codexSrc = fetchFromGitHub {
-    owner = "openai";
-    repo = "codex";
-    rev = codexRev;
-    hash = codexHash;
-  };
-in
-rustPlatform.buildRustPackage (finalAttrs: {
+
+buildNpmPackage (finalAttrs: {
   pname = "codex-acp";
-  version = "0.13.0";
+  version = "2.9.0";
 
   src = fetchFromGitHub {
-    owner = "zed-industries";
+    owner = "agentclientprotocol";
     repo = "codex-acp";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-8Mz3xPhGSjaucZ9c0etGOe4JJC8vJhGFOnAhkwXmhyY=";
+    hash = "sha256-NckS6O9VCWcPnUfyaAwbH+M9PB1nFTIV9QUez91XXEo=";
   };
 
-  cargoHash = "sha256-kneMay6MGXhHA0q/usKsLFs/YKmdSHmrgSthzhaPgbk=";
+  npmDepsHash = "sha256-zfBG6JMb1bv+bGr/FilhbJaeTNXww5DVIsq9baFLLBI=";
 
-  # fetchCargoVendor only keeps the individual git crate subtrees. Older Codex
-  # crates included this workspace-root file from codex-core.
-  postPatch = ''
-    if [ -e ${codexSrc}/codex-rs/node-version.txt ]; then
-      cp ${codexSrc}/codex-rs/node-version.txt "$cargoDepsCopy/source-git-0/node-version.txt"
-    fi
+  nativeBuildInputs = [ makeBinaryWrapper ];
+
+  env.CODEX_PATH = lib.getExe codex;
+
+  postInstall = ''
+    # Use the source-built Nixpkgs package instead of npm's bundled Codex binaries.
+    rm -r $out/lib/node_modules/@agentclientprotocol/codex-acp/node_modules/@openai/codex*
+    rm $out/lib/node_modules/@agentclientprotocol/codex-acp/node_modules/.bin/codex
+    wrapProgram $out/bin/codex-acp \
+      --set-default CODEX_PATH ${lib.getExe codex}
   '';
 
-  env = {
-    RUSTY_V8_ARCHIVE = librusty_v8;
-  }
-  // lib.optionalAttrs stdenv.hostPlatform.isLinux {
-    CODEX_BWRAP_SOURCE_DIR = "${bubblewrap.src}";
+  # Codex's managed preferences sync fails for Darwin build users with /var/empty homes.
+  # https://github.com/openai/codex/issues/50072
+  doCheck = !stdenv.hostPlatform.isDarwin;
+
+  checkPhase = ''
+    runHook preCheck
+    npm test
+    runHook postCheck
+  '';
+
+  postCheck = ''
+    rm -r node_modules/.vite
+  '';
+
+  doInstallCheck = true;
+  nativeInstallCheckInputs = [ versionCheckHook ];
+
+  passthru = {
+    updateScript = nix-update-script {
+      extraArgs = [ "--use-github-releases" ];
+    };
+    tests.e2e =
+      runCommand "check-codex-acp"
+        {
+          nativeBuildInputs = [
+            jq
+            writableTmpDirAsHomeHook
+          ];
+        }
+        ''
+          coproc ACP { timeout 30s ${lib.getExe finalAttrs.finalPackage}; }
+          acpPid=$ACP_PID
+          acpInput=''${ACP[1]}
+
+          printf '%s\n' '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":1,"clientCapabilities":{}}}' >&"$acpInput"
+          while IFS= read -r line; do
+            printf '%s\n' "$line" >> "$out"
+            if jq --exit-status '.id == 1' <<< "$line" > /dev/null; then
+              break
+            fi
+          done <&"''${ACP[0]}"
+          exec {acpInput}>&-
+          wait "$acpPid"
+
+          jq --exit-status --slurp '
+            any(.[];
+              .id == 1 and
+              .result.protocolVersion == 1 and
+              .result.agentInfo.name == "@agentclientprotocol/codex-acp"
+            )
+          ' "$out"
+        '';
   };
 
-  nativeBuildInputs = [
-    pkg-config
-  ];
-
-  buildInputs = [
-    openssl
-  ]
-  ++ lib.optionals stdenv.hostPlatform.isLinux [
-    libcap
-  ];
-
-  doCheck = false;
-
-  passthru.updateScript = ./update.sh;
-
   meta = {
-    description = "An ACP-compatible coding agent powered by Codex";
-    homepage = "https://github.com/zed-industries/codex-acp";
-    changelog = "https://github.com/zed-industries/codex-acp/releases/tag/v${finalAttrs.version}";
+    description = "ACP adapter for Codex CLI";
+    homepage = "https://github.com/agentclientprotocol/codex-acp";
+    changelog = "https://github.com/agentclientprotocol/codex-acp/releases/tag/v${finalAttrs.version}";
     license = lib.licenses.asl20;
-    maintainers = with lib.maintainers; [ tlvince ];
-    platforms = lib.platforms.unix;
+    maintainers = with lib.maintainers; [ tpansino ];
+    platforms = [
+      "x86_64-linux"
+      "aarch64-linux"
+      "aarch64-darwin"
+    ];
     sourceProvenance = with lib.sourceTypes; [ fromSource ];
     mainProgram = "codex-acp";
   };

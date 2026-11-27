@@ -8,16 +8,16 @@
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "steamguard-cli";
-  version = "0.18.2";
+  version = "0.19.0";
 
   src = fetchFromGitHub {
     owner = "dyc3";
     repo = "steamguard-cli";
     rev = "v${finalAttrs.version}";
-    hash = "sha256-+WqqByn15UBcZzNqNNxt1NjTH6cCeCIpaCOeTFR1XB0=";
+    hash = "sha256-etEWylCpC+nm3FiZKqQkhsuyJ3++EuOpi9nZXN0J6GA=";
   };
 
-  cargoHash = "sha256-AKkMx0FzNGPHPTja1Hll1+qvHtCzSUI44sGpU3OEkpc=";
+  cargoHash = "sha256-DSzzoKDo8B48TOtYqD8EOcVA2AvXO1mcoOGdRvtAW3M=";
 
   # disable update check
   buildNoDefaultFeatures = true;
@@ -38,7 +38,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
     changelog = "https://github.com/dyc3/steamguard-cli/releases/tag/v${finalAttrs.version}";
     description = "Linux utility for generating 2FA codes for Steam and managing Steam trade confirmations";
     homepage = "https://github.com/dyc3/steamguard-cli";
-    license = with lib.licenses; [ gpl3Only ];
+    license = lib.licenses.gpl3Only;
     mainProgram = "steamguard";
     maintainers = with lib.maintainers; [
       surfaceflinger

@@ -7,13 +7,13 @@
 
 python3Packages.buildPythonApplication rec {
   pname = "ffmpeg-normalize";
-  version = "1.41.1";
+  version = "1.44.0";
   pyproject = true;
 
   src = fetchPypi {
     inherit version;
     pname = "ffmpeg_normalize";
-    hash = "sha256-v5icrioELMBi2uJSdoojgY4EMnwHGxncanrT6GpSpSc=";
+    hash = "sha256-7Y4f1psfVHHcPkEcrYEG/mog8dYP9zmCc0rJpoUmugg=";
   };
 
   build-system = with python3Packages; [ uv-build ];
@@ -27,12 +27,9 @@ python3Packages.buildPythonApplication rec {
     ]
     ++ [ ffmpeg ];
 
-  postPatch = with python3Packages; ''
-    substituteInPlace pyproject.toml \
-      --replace-fail \
-      'colorlog==6.7.0' \
-      'colorlog==${colorlog.version}'
-  '';
+  pythonRelaxDeps = [
+    "colorlog"
+  ];
 
   checkPhase = ''
     runHook preCheck

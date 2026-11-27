@@ -24,15 +24,14 @@
 
 buildPythonPackage (finalAttrs: {
   pname = "sciline";
-  version = "25.11.1";
+  version = "26.11.0";
   pyproject = true;
-  __structuredAttrs = true;
 
   src = fetchFromGitHub {
     owner = "scipp";
     repo = "sciline";
     tag = finalAttrs.version;
-    hash = "sha256-BTdvPAeI7SWV8gNfXVC63YKghZOfJ9eFousOqycpTAw=";
+    hash = "sha256-Y65e1e53dao7UwxmP42WSEcsLtGV8YV8ueEKsE7IjfE=";
   };
 
   build-system = [

@@ -2,6 +2,7 @@
   lib,
   stdenv,
   fetchFromGitHub,
+  fetchpatch,
   pkg-config,
   libuuid,
   libsodium,
@@ -20,6 +21,7 @@
   rustc,
   rustPlatform,
   rust-bindgen,
+  jq,
   makeWrapper,
   nix-update-script,
   versionCheckHook,
@@ -31,18 +33,26 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "bcachefs-tools";
-  version = "1.38.8";
+  version = "1.39.7";
 
   src = fetchFromGitHub {
     owner = "koverstreet";
     repo = "bcachefs-tools";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-9sDE7ua3WMCfV9ZbwQdAbpatv2IhvcwHzzPr+/l2au0=";
+    hash = "sha256-H8uzTohV30NU1wYhr/WXN76g1zDqGEzRE5QZcmcM7Jc=";
   };
+
+  # Fix build with linux-headers 7.3
+  patches = [
+    (fetchpatch {
+      url = "https://github.com/koverstreet/bcachefs-tools/commit/adef3bf68249ac674ddc2cbdfe8c7d0d153e15a8.diff";
+      hash = "sha256-nQsL+1fTQ4ltVyTIwIpO9z9nS66Dtr6WTepBZQ0phL8=";
+    })
+  ];
 
   cargoDeps = rustPlatform.fetchCargoVendor {
     inherit (finalAttrs) src;
-    hash = "sha256-F1+FeAlYSqOxeWJI8vHShpXrOZqYXjNGvty/s6f6u8w=";
+    hash = "sha256-4ZStyYaT+6Suup1ue2wFFCTAlnsnEO9WaUJHe47BKXY=";
   };
 
   postPatch = ''
@@ -60,6 +70,7 @@ stdenv.mkDerivation (finalAttrs: {
     rustPlatform.cargoSetupHook
     rustPlatform.bindgenHook
     rust-bindgen
+    jq
     makeWrapper
     installShellFiles
   ];
@@ -101,6 +112,7 @@ stdenv.mkDerivation (finalAttrs: {
   env = {
     CARGO_BUILD_TARGET = stdenv.hostPlatform.rust.rustcTargetSpec;
     "CARGO_TARGET_${stdenv.hostPlatform.rust.cargoEnvVarTarget}_LINKER" = "${stdenv.cc.targetPrefix}cc";
+    PKG_CONFIG_SYSTEMD_SYSTEMDSYSTEMGENERATORDIR = "${placeholder "out"}/lib/systemd/system-generators";
   };
 
   # FIXME: Try enabling this once the default linux kernel is at least 6.7
@@ -136,7 +148,13 @@ stdenv.mkDerivation (finalAttrs: {
 
     tests = {
       smoke-test = nixosTests.bcachefs;
-      inherit (nixosTests.installer) bcachefsSimple bcachefsEncrypted bcachefsMulti;
+      inherit (nixosTests.installer)
+        bcachefsSimple
+        bcachefsEncrypted
+        bcachefsMulti
+        bcachefsEncryptedLatestKernel
+        bcachefsEncryptedRcKernel
+        ;
     };
 
     updateScript = nix-update-script { };
@@ -153,6 +171,5 @@ stdenv.mkDerivation (finalAttrs: {
     ];
     platforms = lib.platforms.linux;
     mainProgram = "bcachefs";
-    broken = stdenv.hostPlatform.isi686; # error: stack smashing detected
   };
 })

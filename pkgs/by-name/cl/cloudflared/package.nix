@@ -3,22 +3,23 @@
   stdenv,
   buildGoModule,
   fetchFromGitHub,
+  writableTmpDirAsHomeHook,
   callPackage,
   gitUpdater,
 }:
 
 buildGoModule (finalAttrs: {
   pname = "cloudflared";
-  version = "2026.6.1";
+  version = "2026.11.1";
 
   src = fetchFromGitHub {
     owner = "cloudflare";
     repo = "cloudflared";
     tag = finalAttrs.version;
-    hash = "sha256-TQW0XnYS96sX/+dTGocKzz91fJG58cSV3jGZI3TBaeg=";
+    hash = "sha256-8QtcFT7H+pNrphkp0dM6RnVahLiOlvLv5A8C4jowdJQ=";
   };
 
-  vendorHash = null;
+  vendorHash = "sha256-F6uCv7vxiRx7AZRqK37b4QG++JnEMez6yhM1qjipxdQ=";
 
   ldflags = [
     "-s"
@@ -27,15 +28,10 @@ buildGoModule (finalAttrs: {
     "-X github.com/cloudflare/cloudflared/cmd/cloudflared/updater.BuiltForPackageManager=nixpkgs"
   ];
 
+  # Workaround for: sshgen_test.go:74: mkdir /homeless-shelter/.cloudflared: no such file or directory
+  nativeCheckInputs = [ writableTmpDirAsHomeHook ];
+
   preCheck = ''
-    # Workaround for: sshgen_test.go:74: mkdir /homeless-shelter/.cloudflared: no such file or directory
-    export HOME="$(mktemp -d)"
-
-    # Workaround for: protocol_test.go:11:
-    #   lookup protocol-v2.argotunnel.com on [::1]:53: read udp [::1]:51876->[::1]:53: read: connection refused
-    substituteInPlace "edgediscovery/protocol_test.go" \
-      --replace-warn "TestProtocolPercentage" "SkipProtocolPercentage"
-
     # Workaround for: origin_icmp_proxy_test.go:46:
     #   cannot create ICMPv4 proxy: socket: permission denied nor ICMPv6 proxy: socket: permission denied
     substituteInPlace "ingress/origin_icmp_proxy_test.go" \

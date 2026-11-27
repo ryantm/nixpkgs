@@ -4,6 +4,7 @@
   jdk25_headless,
   makeWrapper,
   maven,
+  nix-update-script,
   stdenvNoCC,
   testers,
 }:
@@ -13,11 +14,11 @@ let
 in
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "maven";
-  version = "4.0.0-rc-5";
+  version = "4.0.0-rc-7";
 
   src = fetchurl {
     url = "mirror://apache/maven/maven-4/${finalAttrs.version}/binaries/apache-maven-${finalAttrs.version}-bin.tar.gz";
-    hash = "sha256-7OalyZ09BBx25/7RgU656jogoSC8s8I1pz0sTo2xbKE=";
+    hash = "sha256-lRxjJnaH1Bi7nAbAjiVUQyhYNRmRm5Zheqci+BOxnm8=";
   };
 
   sourceRoot = ".";
@@ -42,8 +43,23 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   '';
 
   passthru = {
+    jdk = jdk_headless;
+
     # Reuse maven's builder so build-maven-package.nix is not duplicated.
     buildMavenPackage = maven.mkBuildMavenPackage finalAttrs.finalPackage;
+
+    updateScript = nix-update-script {
+      extraArgs = [
+        "--url"
+        "https://github.com/apache/maven"
+        "--use-github-releases"
+        "--version-regex"
+        "maven-(4\\..*)"
+        # required as long as Maven 4 only releases RC versions. Remove once
+        # Maven 4 goes GA
+        "--version=unstable"
+      ];
+    };
 
     tests = {
       version = testers.testVersion {

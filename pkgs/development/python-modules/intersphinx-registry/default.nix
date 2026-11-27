@@ -2,6 +2,7 @@
   lib,
   buildPythonPackage,
   fetchFromGitHub,
+  pyprojectVersionPatchHook,
 
   # build-system
   flit-core,
@@ -22,16 +23,19 @@
 
 buildPythonPackage (finalAttrs: {
   pname = "intersphinx-registry";
-  version = "0.2705.27";
+  version = "0.2611.10";
   pyproject = true;
-  __structuredAttrs = true;
 
   src = fetchFromGitHub {
     owner = "Quansight-labs";
     repo = "intersphinx_registry";
     tag = finalAttrs.version;
-    hash = "sha256-yFpk3NZO2iCjuJ43WvssbDYxNJ6G6KfY5pcTCilsGQs=";
+    hash = "sha256-wnhIBuTHWOAkw5pFEe83kpTo4Qc6mynnihOyYhcicvY=";
   };
+
+  nativeBuildInputs = [
+    pyprojectVersionPatchHook
+  ];
 
   build-system = [
     flit-core
@@ -73,5 +77,6 @@ buildPythonPackage (finalAttrs: {
     mainProgram = "intersphinx-registry";
     license = lib.licenses.mit;
     maintainers = with lib.maintainers; [ eljamm ];
+    teams = with lib.teams; [ ngi ];
   };
 })

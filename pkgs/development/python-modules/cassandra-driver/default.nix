@@ -26,14 +26,14 @@
 
 buildPythonPackage (finalAttrs: {
   pname = "cassandra-driver";
-  version = "3.30.0";
+  version = "3.31.0";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "apache";
     repo = "cassandra-python-driver";
     tag = finalAttrs.version;
-    hash = "sha256-4ElOiADaldT/TyLqg/5ijFk9Ygb3GEF37P2d8WdAxkw=";
+    hash = "sha256-8V5ukmLReJt4BtK8YZAnw+Im+mjpOEUl7yLKQa5H7uQ=";
   };
 
   pythonRelaxDeps = [ "geomet" ];

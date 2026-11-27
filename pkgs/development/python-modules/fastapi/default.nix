@@ -18,6 +18,7 @@
   a2wsgi,
   dirty-equals,
   flask,
+  httpx2,
   inline-snapshot,
   pwdlib,
   pyjwt,
@@ -38,16 +39,16 @@
   pydantic-extra-types,
 }:
 
-buildPythonPackage rec {
+buildPythonPackage (finalAttrs: {
   pname = "fastapi";
-  version = "0.136.3";
+  version = "0.141.1";
   pyproject = true;
 
   src = fetchFromGitHub {
-    owner = "tiangolo";
+    owner = "fastapi";
     repo = "fastapi";
-    tag = version;
-    hash = "sha256-lfmk8ZveKPukEEfwWq2mKtWmOHAtVzGuE5BsOskDzh0=";
+    tag = finalAttrs.version;
+    hash = "sha256-5P9aDMS7gLti2CBlrucvjgl4Od1mti9ityPdqxI1RIM=";
   };
 
   build-system = [ pdm-backend ];
@@ -108,6 +109,7 @@ buildPythonPackage rec {
     a2wsgi
     dirty-equals
     flask
+    httpx2
     inline-snapshot
     pwdlib
     pyjwt
@@ -116,7 +118,7 @@ buildPythonPackage rec {
     pytest-timeout
   ]
   ++ anyio.optional-dependencies.trio
-  ++ optional-dependencies.all;
+  ++ finalAttrs.finalPackage.passthru.optional-dependencies.all;
 
   disabledTests = [
     # Coverage test
@@ -134,10 +136,13 @@ buildPythonPackage rec {
   pythonImportsCheck = [ "fastapi" ];
 
   meta = {
-    changelog = "https://github.com/fastapi/fastapi/releases/tag/${src.tag}";
+    changelog = "https://github.com/fastapi/fastapi/releases/tag/${finalAttrs.src.tag}";
     description = "Web framework for building APIs";
     homepage = "https://github.com/fastapi/fastapi";
     license = lib.licenses.mit;
-    maintainers = with lib.maintainers; [ wd15 ];
+    maintainers = with lib.maintainers; [
+      booxter
+      wd15
+    ];
   };
-}
+})

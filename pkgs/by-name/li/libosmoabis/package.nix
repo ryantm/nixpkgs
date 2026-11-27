@@ -6,25 +6,33 @@
   pkg-config,
   libosmocore,
   libosmo-netif,
+  # some linphone packages are marked as insecure
+  enableOrtp ? false,
   linphonePackages,
 }:
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "libosmoabis";
-  version = "2.1.0";
+  version = "2.2.0";
 
   src = fetchFromGitHub {
     owner = "osmocom";
     repo = "libosmo-abis";
     rev = finalAttrs.version;
-    hash = "sha256-jJD7XvwOBisN6womVSrY+V78KpFZ7WBvvh757dAS8y0=";
+    hash = "sha256-VIUEP0fOfahGq0jCJWRiaBYd+rZRSFqjyR0i7a0Rvg0=";
   };
 
-  configureFlags = [ "enable_dahdi=false" ];
+  configureFlags = [
+    "enable_dahdi=false"
+  ]
+  ++ lib.optional (!enableOrtp) "--disable-ortp";
 
   postPatch = ''
     echo "${finalAttrs.version}" > .tarball-version
   '';
+
+  strictDeps = true;
+  __structuredAttrs = true;
 
   nativeBuildInputs = [
     autoreconfHook
@@ -34,6 +42,8 @@ stdenv.mkDerivation (finalAttrs: {
   buildInputs = [
     libosmocore
     libosmo-netif
+  ]
+  ++ lib.optionals enableOrtp [
     linphonePackages.ortp
     linphonePackages.bctoolbox
   ];

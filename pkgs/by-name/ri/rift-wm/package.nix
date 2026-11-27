@@ -3,32 +3,39 @@
   rustPlatform,
   fetchFromGitHub,
   apple-sdk,
+  nix-update-script,
 }:
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "rift-wm";
-  version = "0.4.3";
+  version = "0.8.5";
   __structuredAttrs = true;
 
   src = fetchFromGitHub {
     owner = "acsandmann";
     repo = "rift";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-oOVNq4/hdiRcCbc9kaMxynnq2gXVezviQRTvjrdkfPs=";
+    hash = "sha256-5DBFfe4WIbFRg1hCg61h33QMvORrLkA6iHBSmUA2LJo=";
   };
 
   nativeBuildInputs = [
     apple-sdk
   ];
 
-  cargoHash = "sha256-eb3Z5NIUusJApQWa6sDMRP//Y0BOToQsEIhQqqR728o=";
+  cargoHash = "sha256-UbXSHPfv69Pq7X/JWAwK4mf2Kx9Reap35ubgUzKrnME=";
+  useNextest = true; # CI uses nextest.
+
+  passthru.updateScript = nix-update-script { };
 
   meta = {
     description = "Tiling window manager for macos";
     homepage = "https://github.com/acsandmann/rift";
     changelog = "https://github.com/acsandmann/rift/releases/tag/${finalAttrs.src.tag}";
     license = lib.licenses.asl20;
-    maintainers = with lib.maintainers; [ eveeifyeve ];
+    maintainers = with lib.maintainers; [
+      KristijanZic
+      eveeifyeve
+    ];
     mainProgram = "rift";
     platforms = lib.platforms.darwin;
   };

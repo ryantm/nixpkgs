@@ -11,8 +11,6 @@ buildPythonPackage (finalAttrs: {
   version = "0.2.1";
   pyproject = true;
 
-  __structuredAttrs = true;
-
   src = fetchPypi {
     inherit (finalAttrs) pname version;
     hash = "sha256-tBWOZqoeYu459/gOsv5PdnZwujwNXemARCDcU0J/3sg=";
@@ -28,7 +26,7 @@ buildPythonPackage (finalAttrs: {
     description = "Converts XML into dictionary structures and vice-versa";
     mainProgram = "xml2json";
     homepage = "https://github.com/sanand0/xmljson";
-    license = with lib.licenses; [ mit ];
+    license = lib.licenses.mit;
     maintainers = with lib.maintainers; [ rakesh4g ];
   };
 })

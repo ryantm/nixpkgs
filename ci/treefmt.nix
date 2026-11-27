@@ -10,12 +10,13 @@
   ];
 
   settings = {
-    # numtide/treefmt-nix defaults
+    # Based on numtide/treefmt-nix defaults
     excludes = [
       "*.lock"
       "*.patch"
       "*.diff"
       "package-lock.json"
+      "pnpm-lock.yaml"
       "go.mod"
       "go.sum"
       ".gitattributes"
@@ -38,6 +39,11 @@
         includes = [
           ".github/workflows/*.yml"
           ".github/workflows/*.yaml"
+        ];
+        options = [
+          # Support self-repository syntax
+          ''-ignore=reusable workflow call "\$/.+" at "uses" is not following the format''
+          ''-ignore=specifying action "\$/.+" in invalid format because ref is missing.''
         ];
       };
 
@@ -81,6 +87,31 @@
         ];
         includes = [ "*" ];
         priority = 1;
+      };
+
+      jq = {
+        command = lib.getExe (
+          pkgs.writeShellApplication {
+            name = "jq-wrapper";
+            runtimeInputs = [
+              pkgs.jq
+              pkgs.diffutils
+            ];
+            text = ''
+              tmp=$(mktemp)
+              trap 'rm -f "$tmp"' EXIT
+              for file in "$@"; do
+                jq --sort-keys . "$file" >"$tmp"
+                if ! cmp -s "$tmp" "$file"; then
+                  cp "$tmp" "$file"
+                fi
+              done
+            '';
+          }
+        );
+        includes = [
+          "pkgs/applications/networking/cluster/terraform-providers/providers.json"
+        ];
       };
 
       keep-sorted = {

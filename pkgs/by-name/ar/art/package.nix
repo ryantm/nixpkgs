@@ -25,7 +25,7 @@
   fftwSinglePrec,
   expat,
   pcre2,
-  libsigcxx,
+  libsigcxx_2_0,
   lensfun,
   librsvg,
   libcanberra-gtk3,
@@ -39,13 +39,13 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "art";
-  version = "1.26.7";
+  version = "1.26.11";
 
   src = fetchFromGitHub {
     owner = "artraweditor";
     repo = "ART";
     tag = finalAttrs.version;
-    hash = "sha256-HuXDdrfb3r8B5u4Ifvb3EfbF/b1mMbDAunOIBtEaKtk=";
+    hash = "sha256-K8cnAnYbRKzEIoo98QsWn4Z4Sstnr2rAsB5+OZoTb+8=";
   };
 
   # Fix the build with CMake 4.
@@ -83,7 +83,7 @@ stdenv.mkDerivation (finalAttrs: {
     fftwSinglePrec
     expat
     pcre2
-    libsigcxx
+    libsigcxx_2_0
     lensfun
     librsvg
     exiv2

@@ -1,10 +1,10 @@
 {
   lib,
   fetchFromGitHub,
-  buildGo127Module,
+  buildGoModule,
   stdenvNoCC,
   nodejs,
-  pnpm_10,
+  pnpm_11,
   fetchPnpmDeps,
   pnpmConfigHook,
   pnpmBuildHook,
@@ -12,20 +12,20 @@
   nix-update-script,
   versionCheckHook,
 }:
-buildGo127Module (finalAttrs: {
+buildGoModule (finalAttrs: {
   pname = "pocket-id";
-  version = "2.10.0";
+  version = "2.19.3";
 
   src = fetchFromGitHub {
     owner = "pocket-id";
     repo = "pocket-id";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-ad8YlWwWeGEwsrx29qpq1asEr4UNN7BueGTBPfFrRuE=";
+    hash = "sha256-OUMV3F9exAEQEJYndv1aToncDaMQ0ILck7RF3gBM63g=";
   };
 
   sourceRoot = "${finalAttrs.src.name}/backend";
 
-  vendorHash = "sha256-bQNeocRCmhiV7gwCJppjsNw7K5MnsJMK9M18jf0X/oM=";
+  vendorHash = "sha256-Cm/YWyByIaLgF/AVVo94kCQFncZlHafNP5aRA58rcDM=";
 
   env.CGO_ENABLED = 0;
   ldflags = [
@@ -38,12 +38,15 @@ buildGo127Module (finalAttrs: {
   '';
 
   checkFlags = [
-    # requires networking
-    "-skip=TestOidcService_downloadAndSaveLogoFromURL"
+    "-tags=unit"
   ];
 
-  # required for TestIsURLPrivate
-  __darwinAllowLocalNetworking = finalAttrs.doCheck;
+  # many tests time out on darwin when waiting for 127.0.0.1 with only `__darwinAllowLocalNetworking = true`
+  # caused by `quic.DialAddr` of `quic-go`, works after loosening the sandbox
+  __darwinAllowLocalNetworking = finalAttrs.finalPackage.doCheck;
+  sandboxProfile = lib.optionalString stdenvNoCC.hostPlatform.isDarwin ''
+    (allow network* (remote ip "*:*"))
+  '';
 
   preFixup = ''
     mv $out/bin/cmd $out/bin/pocket-id
@@ -61,13 +64,13 @@ buildGo127Module (finalAttrs: {
       nodejs
       pnpmConfigHook
       pnpmBuildHook
-      pnpm_10
+      pnpm_11
     ];
     pnpmDeps = fetchPnpmDeps {
       inherit (finalAttrs) pname version src;
-      pnpm = pnpm_10;
-      fetcherVersion = 4;
-      hash = "sha256-LVhTS3ertpGqLMsoodaoEgDb7sK3kTRTVB3KOyvJwpE=";
+      pnpm = pnpm_11;
+      fetcherVersion = 5;
+      hash = "sha256-ioO8DfAs5UgqsRdwIHYhqQv67PLOslk03k+LXd1yKXA=";
     };
 
     env.BUILD_OUTPUT_PATH = "dist";
@@ -105,9 +108,14 @@ buildGo127Module (finalAttrs: {
     maintainers = with lib.maintainers; [
       gepbird
       marcusramberg
-      tmarkus
+      AAAAAASomeThingsFailToEvaluate
       ymstnt
+      esch
     ];
     platforms = lib.platforms.unix;
+    identifiers.cpeParts = lib.meta.cpeFullVersionWithVendor "pocket-id" finalAttrs.version // {
+      # Vendor is pocket-id while product is pocket_id, deviating from pname.
+      product = "pocket_id";
+    };
   };
 })

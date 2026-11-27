@@ -6,16 +6,16 @@
 
 buildGoModule rec {
   pname = "cni-plugin-flannel";
-  version = "1.9.1-flannel1";
+  version = "1.10.0-flannel1";
 
   src = fetchFromGitHub {
     owner = "flannel-io";
     repo = "cni-plugin";
     rev = "v${version}";
-    sha256 = "sha256-iCSYr7S4oC8a5ijBgqMO/Gn0x/2had372Tx7lkg+X9I=";
+    sha256 = "sha256-4grkDKK1hCogP9iuNXBIIoQ8PxQWhEv4vUlezTfUBak=";
   };
 
-  vendorHash = "sha256-PVkhwoGepRhD6VFJxhPA2tZ+zOkhQw0aI2yIWVYQnz8=";
+  vendorHash = "sha256-99fMvzVSkZtt4xkxPwgnbWJjJWpVDx1P+XR/4G28ivs=";
 
   ldflags = [
     "-s"
@@ -44,6 +44,9 @@ buildGoModule rec {
     homepage = "https://github.com/flannel-io/cni-plugin/";
     license = lib.licenses.asl20;
     platforms = lib.platforms.linux;
-    maintainers = with lib.maintainers; [ abbe ];
+    maintainers = with lib.maintainers; [
+      abbe
+      antoineco
+    ];
   };
 }

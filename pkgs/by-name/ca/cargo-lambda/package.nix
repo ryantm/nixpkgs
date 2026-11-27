@@ -1,5 +1,6 @@
 {
   lib,
+  aws-lc,
   cacert,
   curl,
   rustPlatform,
@@ -8,22 +9,23 @@
   pkg-config,
   openssl,
   stdenv,
-  zig_0_13,
+  zig,
+  zstd,
   nix-update-script,
 }:
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "cargo-lambda";
-  version = "1.9.1";
+  version = "1.9.2";
 
   src = fetchFromGitHub {
     owner = "cargo-lambda";
     repo = "cargo-lambda";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-Fbrt5zUC5dIfQO6UI0GnZxxLlI4q6tYoDw6ucKR+ouM=";
+    hash = "sha256-WF/s+bSwFG94ooFNBmbZVXCrCzDFxWDBQ7QMXUrcCzg=";
   };
 
-  cargoHash = "sha256-AlKty5tpb9plk/rmFso6kWKKbhuxcsH5zDX/xvK5oao=";
+  cargoHash = "sha256-vJBviHdHMtff7QA7xW2D7rX7UYtaYFnW2zB6wvvEtOU=";
 
   nativeCheckInputs = [ cacert ];
 
@@ -33,7 +35,9 @@ rustPlatform.buildRustPackage (finalAttrs: {
   ];
 
   buildInputs = [
+    aws-lc
     openssl
+    zstd
   ]
   ++ lib.optionals stdenv.hostPlatform.isDarwin [
     curl
@@ -48,7 +52,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
   '';
 
   postInstall = ''
-    wrapProgram $out/bin/cargo-lambda --prefix PATH : ${lib.makeBinPath [ zig_0_13 ]}
+    wrapProgram $out/bin/cargo-lambda --prefix PATH : ${lib.makeBinPath [ zig ]}
   '';
 
   env.CARGO_LAMBDA_BUILD_INFO = "(nixpkgs)";

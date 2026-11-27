@@ -7,13 +7,13 @@
 
 buildPythonPackage (finalAttrs: {
   pname = "types-six";
-  version = "1.17.0.20260518";
+  version = "1.17.0.20261008";
   pyproject = true;
 
   src = fetchPypi {
     pname = "types_six";
     inherit (finalAttrs) version;
-    hash = "sha256-sBltUYi9WJvFq5KQHtwaT/PF/UsNwZ0HSl8fghPlITo=";
+    hash = "sha256-eY0oKDNMSw2xYV1AIjzNjXn9Y+7HjLkgVsgpLBH4vfY=";
   };
 
   build-system = [ setuptools ];

@@ -1,28 +1,43 @@
 {
+  stdenv,
   lib,
   rustPlatform,
   fetchFromGitHub,
+  cacert,
+  installShellFiles,
   versionCheckHook,
   nix-update-script,
 }:
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "stakk";
-  version = "1.17.1";
+  version = "3.0.9";
 
   src = fetchFromGitHub {
     owner = "glennib";
     repo = "stakk";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-5wEZOxXg30F0MqeszDRYrOBnsOzfXxld8iQkZSPqUIY=";
+    hash = "sha256-LQNerXT9bb7kcTz9oGhhOKyy43Gc3bl50Dv4IJHrfH8=";
   };
 
-  cargoHash = "sha256-iEGrGSia/Da1bpXVAOI9M7QNNVHUAB/RFRgzl+IrFlU=";
+  cargoHash = "sha256-+4QLwx0wn8zMjj8/ulnYJjL+cettFmkksR7oftFLkqY=";
 
   useNextest = true;
+  # The forgejo transport tests build a reqwest client, which needs a CA bundle.
+  nativeCheckInputs = [ cacert ];
 
   doInstallCheck = true;
-  nativeInstallCheckInputs = [ versionCheckHook ];
+  nativeInstallCheckInputs = [
+    installShellFiles
+    versionCheckHook
+  ];
+
+  postInstall = lib.optionalString (stdenv.buildPlatform.canExecute stdenv.hostPlatform) ''
+    installShellCompletion --cmd stakk \
+      --bash <($out/bin/stakk completions bash) \
+      --fish <($out/bin/stakk completions fish) \
+      --zsh <($out/bin/stakk completions zsh) \
+  '';
 
   passthru.updateScript = nix-update-script { };
   __structuredAttrs = true;

@@ -4,8 +4,6 @@
   lib,
   bats,
   fetchFromGitHub,
-  fetchpatch,
-  python,
   buildPythonApplication,
   callPackage,
   kicad,
@@ -16,7 +14,6 @@
   pytestCheckHook,
   commentjson,
   wxpython,
-  pcbnewtransition,
   pybars3,
   versioneer,
   shapely,
@@ -29,14 +26,14 @@ let
 in
 buildPythonApplication (finalAttrs: {
   pname = "kikit";
-  version = "1.8.0";
+  version = "1.8.1";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "yaqwsx";
     repo = "KiKit";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-QhtdQgMgHaB0xj2hQ4MCptr5DDgCOfRClUSyYzrFQis=";
+    hash = "sha256-kwZ+lhC0rdmz6kCdjHvnz+lhYtN9y7xNtmHPMhOwwVI=";
     # Upstream uses versioneer, which relies on gitattributes substitution.
     # This leads to non-reproducible archives on GitHub.
     # See
@@ -47,14 +44,6 @@ buildPythonApplication (finalAttrs: {
       rm "$out/kikit/_version.py"
     '';
   };
-
-  patches = [
-    (fetchpatch {
-      name = "fix-stencil-arc-numpy2.patch";
-      url = "https://github.com/yaqwsx/KiKit/commit/036ca08fc380dd2c5b8b3ba2adc4215f4114e975.patch?full_index=1";
-      hash = "sha256-AmvH822nAubqVhl1PEKvE0Ij/K0NrBsSvnMUJXgxmfI=";
-    })
-  ];
 
   build-system = [
     setuptools
@@ -71,7 +60,6 @@ buildPythonApplication (finalAttrs: {
     commentjson
     # https://github.com/yaqwsx/KiKit/issues/575
     wxpython
-    pcbnewtransition
     pybars3
     shapely
     # https://github.com/yaqwsx/KiKit/issues/576
@@ -95,9 +83,21 @@ buildPythonApplication (finalAttrs: {
   ];
 
   # Recreate _version.py, deleted at fetch time due to non-reproducibility.
-  # should be done in postInstall to overwrite what versioneer generates again during the build phase
-  postInstall = ''
-    echo 'def get_versions(): return {"version": "${finalAttrs.version}"}' > $out/${python.sitePackages}/kikit/_version.py
+  # Must include version_json block because versioneer uses regex parsing on this file.
+  postPatch = ''
+    cat > kikit/_version.py <<'EOF'
+    # DO NOT EDIT! nixpkgs GENERATED FILE
+    import json
+
+    version_json = ''''
+    {
+     "version": "${finalAttrs.version}"
+    }
+    ''''  # END VERSION_JSON
+
+    def get_versions():
+        return json.loads(version_json)
+    EOF
   '';
 
   preCheck = ''

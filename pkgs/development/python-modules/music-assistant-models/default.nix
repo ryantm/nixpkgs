@@ -2,11 +2,13 @@
   lib,
   buildPythonPackage,
   fetchFromGitHub,
+  pyprojectVersionPatchHook,
 
   # build-system
   setuptools,
 
   # dependencies
+  anyascii,
   mashumaro,
   orjson,
 
@@ -23,24 +25,22 @@ buildPythonPackage (finalAttrs: {
   pname = "music-assistant-models";
   # Must be compatible with music-assistant-client package
   # nixpkgs-update: no auto update
-  version = "1.1.139";
+  version = "1.1.214";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "music-assistant";
     repo = "models";
     tag = finalAttrs.version;
-    hash = "sha256-AT+R0Sor3aDqydGfT8gJfk9/rEpqEOad5ytnGnW7B1U=";
+    hash = "sha256-Xs0p6ioIFNFOOHSGOWVB7TBa2MY/U6LvJbejD+Z1EF4=";
   };
 
-  postPatch = ''
-    substituteInPlace pyproject.toml \
-      --replace-fail "0.0.0" "${finalAttrs.version}"
-  '';
+  nativeBuildInputs = [ pyprojectVersionPatchHook ];
 
   build-system = [ setuptools ];
 
   dependencies = [
+    anyascii
     mashumaro
     orjson
   ];

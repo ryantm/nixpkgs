@@ -1,30 +1,24 @@
 {
   lib,
-  gcc15Stdenv,
+  gcc16Stdenv,
   fetchFromGitHub,
   cmake,
   pkg-config,
   hyprtoolkit,
-  hyprutils,
-  pixman,
-  libdrm,
   glaze,
-  aquamarine,
-  hyprgraphics,
-  cairo,
   nix-update-script,
   versionCheckHook,
 }:
 
-gcc15Stdenv.mkDerivation (finalAttrs: {
+gcc16Stdenv.mkDerivation (finalAttrs: {
   pname = "hyprshutdown";
-  version = "0.1.1";
+  version = "0.1.2";
 
   src = fetchFromGitHub {
     owner = "hyprwm";
     repo = "hyprshutdown";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-msCMXV9k9+1siOPaxSzNJwx/o8pn2srCR4h0pxyW/WE=";
+    hash = "sha256-0EIGGy6ARdYjzm8vQncIxFbsLAxt6QK28ZJA44IoGWI=";
   };
 
   nativeBuildInputs = [
@@ -34,12 +28,6 @@ gcc15Stdenv.mkDerivation (finalAttrs: {
 
   buildInputs = [
     hyprtoolkit
-    hyprutils
-    pixman
-    libdrm
-    aquamarine
-    hyprgraphics
-    cairo
     (glaze.override { enableSSL = false; })
   ];
 

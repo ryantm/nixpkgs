@@ -12,16 +12,17 @@
   mupdf,
   openjpeg,
   qt6,
+  wrapGAppsHook3,
 }:
 stdenv.mkDerivation (finalAttrs: {
   pname = "sioyek";
-  version = "2.0.0-unstable-2026-07-11";
+  version = "2.0.0-unstable-2026-11-04";
 
   src = fetchFromGitHub {
     owner = "ahrm";
     repo = "sioyek";
-    rev = "8c4008653f3279633fe1e7e2a1be057aa210fe73";
-    hash = "sha256-5GJpXyLhRziSWJLrDIfzXZS4QPMqiRhEp6gcPoSy1/8=";
+    rev = "1e2f8037353724a83ccb10a697e28e295383e017";
+    hash = "sha256-wfV4Mwpj1WE00UMTE+8OzVTf3IwF5+ReM4NlBbsy5Ec=";
   };
 
   buildInputs = [
@@ -42,7 +43,8 @@ stdenv.mkDerivation (finalAttrs: {
     installShellFiles
     qt6.qmake
     qt6.wrapQtAppsHook
-  ];
+  ]
+  ++ lib.optionals stdenv.hostPlatform.isLinux [ wrapGAppsHook3 ];
 
   qmakeFlags = lib.optionals stdenv.hostPlatform.isDarwin [ "CONFIG+=non_portable" ];
 
@@ -69,7 +71,7 @@ stdenv.mkDerivation (finalAttrs: {
       ''
         install -Dm644 tutorial.pdf $out/share/tutorial.pdf
         cp -r pdf_viewer/shaders $out/share/
-        install -Dm644 -t $out/etc/ pdf_viewer/{keys,prefs}.config
+        install -Dm644 -t $out/share/ pdf_viewer/{keys,prefs}.config
         installManPage resources/sioyek.1
       '';
 

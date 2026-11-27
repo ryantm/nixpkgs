@@ -1,45 +1,63 @@
 {
   lib,
+  stdenv,
   fetchFromGitHub,
   rustPlatform,
+  aws-lc,
   cacert,
-  gdk-pixbuf,
+  cargo,
+  cmake,
+  glib,
+  glib-networking,
   gettext,
   gst_all_1,
   gtk4,
   libadwaita,
+  ninja,
   pkg-config,
+  rustc,
+  sqlite,
   wrapGAppsHook4,
 }:
 
-rustPlatform.buildRustPackage (finalAttrs: {
+stdenv.mkDerivation (finalAttrs: {
   pname = "rufin";
-  version = "0.8.0";
+  version = "0.20.0";
 
   __structuredAttrs = true;
 
   src = fetchFromGitHub {
-    owner = "screwys";
-    repo = "Rufin";
+    owner = "rufin-app";
+    repo = "rufin";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-N2JM0sRg32lQhRhajwfla0SVhxBgEp5cVEetFOXBqKE=";
+    hash = "sha256-LwfJsM71neip2/S6D9c81cvRLX3YKAKIYqOSwv7TxdE=";
   };
 
-  cargoHash = "sha256-1KTEVLqlvgUO02hLnTbqjdfPS5z8Ra6qQG5s5H0S2fY=";
+  cargoDeps = rustPlatform.fetchCargoVendor {
+    inherit (finalAttrs) pname version src;
+    hash = "sha256-4S69PzFxNlu6MqPidCNMf8XECDpp7AS/uWsRKry8ywk=";
+  };
 
   strictDeps = true;
 
   nativeBuildInputs = [
+    cargo
+    cmake
     gettext
+    ninja
     pkg-config
+    rustPlatform.cargoSetupHook
+    rustc
     wrapGAppsHook4
   ];
 
   buildInputs = [
-    gdk-pixbuf
-    gettext
+    aws-lc
+    glib
+    glib-networking
     gtk4
     libadwaita
+    sqlite
   ]
   ++ (with gst_all_1; [
     gstreamer
@@ -50,54 +68,36 @@ rustPlatform.buildRustPackage (finalAttrs: {
     gst-libav
   ]);
 
-  cargoBuildFlags = [
-    "-p"
-    "rufin"
-  ];
-
   doCheck = false;
 
-  postInstall = ''
-    install -Dm644 data/io.github.screwys.Rufin.desktop \
-      "$out/share/applications/io.github.screwys.Rufin.desktop"
-    substituteInPlace "$out/share/applications/io.github.screwys.Rufin.desktop" \
-      --replace-fail "Exec=rufin" "Exec=$out/bin/rufin"
-    install -Dm644 data/io.github.screwys.Rufin.metainfo.xml \
-      "$out/share/metainfo/io.github.screwys.Rufin.metainfo.xml"
-    install -Dm644 data/icons/hicolor/scalable/apps/io.github.screwys.Rufin.svg \
-      "$out/share/icons/hicolor/scalable/apps/io.github.screwys.Rufin.svg"
-    install -Dm644 -t "$out/share/icons/hicolor/scalable/actions" \
-      data/icons/hicolor/scalable/actions/*.svg
-    install -Dm644 -t "$out/share/icons/hicolor/scalable/status" \
-      data/icons/hicolor/scalable/status/*.svg
-    install -Dm644 -t "$out/share/icons/hicolor/512x512/apps" \
-      data/icons/hicolor/512x512/apps/*.png
-    install -Dm644 -t "$out/share/icons/hicolor/64x64/apps" \
-      data/icons/hicolor/64x64/apps/*.png
+  env.SSL_CERT_FILE = "${cacert}/etc/ssl/certs/ca-bundle.crt";
 
-    for po_file in locales/*.po; do
-      if [ -f "$po_file" ]; then
-        lang="$(basename "$po_file" .po)"
-        mkdir -p "$out/share/locale/$lang/LC_MESSAGES"
-        msgfmt "$po_file" -o "$out/share/locale/$lang/LC_MESSAGES/rufin.mo"
-      fi
-    done
+  cmakeFlags = [
+    (lib.cmakeFeature "RUFIN_BUILD_IDENTITY" "stable")
+    (lib.cmakeBool "RUFIN_CARGO_FROZEN" true)
+  ];
+
+  postInstall = ''
+    substituteInPlace "$out/share/applications/app.rufin.rufin.desktop" \
+      --replace-fail "Exec=rufin" "Exec=$out/bin/rufin"
   '';
 
   preFixup = ''
     gappsWrapperArgs+=(
       --set-default RUFIN_LOCALEDIR "$out/share/locale"
       --set-default SSL_CERT_FILE "${cacert}/etc/ssl/certs/ca-bundle.crt"
-      --prefix GST_PLUGIN_SYSTEM_PATH_1_0 : "$GST_PLUGIN_SYSTEM_PATH_1_0"
     )
   '';
 
   meta = {
-    description = "Native GTK music client for Jellyfin";
-    homepage = "https://github.com/screwys/Rufin";
-    changelog = "https://github.com/screwys/Rufin/releases/tag/v${finalAttrs.version}";
+    description = "Native music player for Jellyfin, Navidrome/OpenSubsonic, Plex, and Emby servers;  local folders,  WebDAV including a direct Nextcloud browser login path, Samba and NAS shares";
+    homepage = "https://github.com/rufin-app/rufin";
+    changelog = "https://github.com/rufin-app/rufin/releases/tag/v${finalAttrs.version}";
     license = lib.licenses.gpl3Plus;
-    maintainers = with lib.maintainers; [ screwys ];
+    maintainers = with lib.maintainers; [
+      screwys
+      Superredstone
+    ];
     mainProgram = "rufin";
     platforms = lib.platforms.linux;
   };

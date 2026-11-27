@@ -12,6 +12,7 @@
   vte-gtk4,
   gsettings-desktop-schemas,
   gtksourceview5,
+  glib-networking,
   webkitgtk_6_0,
   lsb-release,
   bash,
@@ -20,9 +21,16 @@
 }:
 
 let
-  version = "1.4.5";
+  pythonPackages = python3Packages.overrideScope (
+    final: prev: {
+      # Necessary until newelle works with mcp 2.x
+      mcp = final.mcp_1;
+    }
+  );
+
+  version = "1.6.1";
 in
-python3Packages.buildPythonApplication {
+pythonPackages.buildPythonApplication {
   pname = "newelle";
   inherit version;
   pyproject = false; # uses meson
@@ -31,12 +39,12 @@ python3Packages.buildPythonApplication {
     owner = "qwersyk";
     repo = "Newelle";
     tag = version;
-    hash = "sha256-GcNAwrk5y6F0BgRy69nRePkX4WoYviWsB+8X/+N5QwE=";
+    hash = "sha256-myVEdqIcAKx+RAoy3h4rmhW+vYAlBwnXTa8uiwvLfiY=";
   };
 
   postPatch = ''
     substituteInPlace src/utility/pip.py \
-      --replace-fail "# Manage pip path locking" "return None"
+      --replace-fail "global PIP_INSTALLED" "return None"
   '';
 
   nativeBuildInputs = [
@@ -54,11 +62,13 @@ python3Packages.buildPythonApplication {
     gsettings-desktop-schemas
     gtksourceview5
     webkitgtk_6_0
+    glib-networking
   ];
 
-  dependencies = with python3Packages; [
+  dependencies = with pythonPackages; [
     pygobject3
     libxml2
+    cssselect
     pydub
     gtts
     speechrecognition
@@ -71,13 +81,17 @@ python3Packages.buildPythonApplication {
     tiktoken
     openai
     ollama
+    faiss-cpu
     llama-index-core
     llama-index-readers-file
+    llama-index-vector-stores-faiss
     google-genai
     anthropic
+    mcp
+    ddgs
+    markdownify
+    huggingface-hub
   ];
-
-  strictDeps = true;
 
   postInstallCheck = ''
     mesonCheckPhase
@@ -85,15 +99,19 @@ python3Packages.buildPythonApplication {
 
   dontWrapGApps = true;
 
+  preFixup = ''
+    makeWrapperArgs+=("''${gappsWrapperArgs[@]}")
+  '';
+
   makeWrapperArgs = [
-    "\${gappsWrapperArgs[@]}"
-    "--prefix PATH : ${
-      lib.makeBinPath [
-        lsb-release
-        bash
-        ffmpeg
-      ]
-    }"
+    "--prefix"
+    "PATH"
+    ":"
+    (lib.makeBinPath [
+      lsb-release
+      bash
+      ffmpeg
+    ])
   ];
 
   passthru.updateScript = nix-update-script { };

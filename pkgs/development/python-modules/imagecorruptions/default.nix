@@ -1,21 +1,24 @@
 {
   buildPythonPackage,
-  fetchPypi,
+  fetchFromGitHub,
   setuptools,
   numpy,
   scikit-image,
   lib,
   opencv-python,
+  standard-pkg-resources,
 }:
 
-buildPythonPackage rec {
+buildPythonPackage (finalAttr: {
   pname = "imagecorruptions";
   version = "1.1.2";
   pyproject = true;
 
-  src = fetchPypi {
-    inherit pname version;
-    sha256 = "044e173f24d5934899bdbf3596bfbec917e8083e507eed583ab217abebbe084d";
+  src = fetchFromGitHub {
+    owner = "bethgelab";
+    repo = "imagecorruptions";
+    tag = "v${finalAttr.version}";
+    hash = "sha256-xAFBFe6D0lspenDwa7Sly+/QWBQiAfuNUf3ZuaYqD54=";
   };
 
   build-system = [ setuptools ];
@@ -24,9 +27,9 @@ buildPythonPackage rec {
     numpy
     scikit-image
     opencv-python
+    standard-pkg-resources
   ];
 
-  doCheck = false;
   pythonImportsCheck = [ "imagecorruptions" ];
 
   meta = {
@@ -35,4 +38,4 @@ buildPythonPackage rec {
     license = lib.licenses.asl20;
     maintainers = with lib.maintainers; [ rakesh4g ];
   };
-}
+})

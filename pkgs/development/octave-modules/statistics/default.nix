@@ -11,13 +11,13 @@
 
 buildOctavePackage rec {
   pname = "statistics";
-  version = "1.8.3";
+  version = "2.1.3";
 
   src = fetchFromGitHub {
     owner = "gnu-octave";
     repo = "statistics";
     tag = "release-${version}";
-    hash = "sha256-1u/uXrbRNT14TbW89J8noCnwShD/B/Wz0cpurmsTzTU=";
+    hash = "sha256-Xw2kIeZzQ9Za+JrRcsgcC7qmwnAUTAogAe04CJF7VOs=";
   };
 
   requiredOctavePackages = [

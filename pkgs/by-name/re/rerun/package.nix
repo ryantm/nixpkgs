@@ -6,13 +6,14 @@
   arrow-cpp,
 
   # nativeBuildInputs
-  binaryen,
   lld,
   llvmPackages,
   pkg-config,
   protobuf,
+  python3,
   rustfmt,
   nasm,
+  wasm-bindgen-cli_0_2_129,
 
   # buildInputs
   freetype,
@@ -35,12 +36,13 @@
   # More information can be found in there README:
   # https://raw.githubusercontent.com/rerun-io/rerun/5a9794990c4903c088ad77174e65eb2573162d97/crates/utils/re_analytics/README.md
   buildWebViewerFeatures ? [
+    "audio"
     "map_view"
   ],
 }:
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "rerun";
-  version = "0.34.1";
+  version = "0.43.2";
 
   __structuredAttrs = true;
 
@@ -53,16 +55,27 @@ rustPlatform.buildRustPackage (finalAttrs: {
     owner = "rerun-io";
     repo = "rerun";
     tag = finalAttrs.version;
-    hash = "sha256-z/9uzp/7+xxmJCcgV+LJqdWWEhE85+upgW1EFfyBvYM=";
+    hash = "sha256-8rxmqpOZm8VS8sky71sh2eoUMrnlN8Ck/+g4PKJBGf4=";
   };
 
-  # The path in `build.rs` is wrong for some reason, so we patch it to make the passthru tests work
-  postPatch = ''
-    substituteInPlace rerun_py/build.rs \
-      --replace-fail '"rerun_sdk/rerun_cli/rerun"' '"rerun_sdk/rerun"'
-  '';
+  postPatch =
+    # The path in `build.rs` is wrong for some reason, so we patch it to make the passthru tests work
+    ''
+      substituteInPlace rerun_py/build.rs \
+        --replace-fail \
+          '"rerun_sdk/rerun_cli/rerun"' \
+          '"rerun_sdk/rerun"'
+    ''
+    # cargo-auditable forwards `--config` to a `cargo metadata` call that runs from a different
+    # directory, where the relative path doesn't resolve. Use an absolute path instead.
+    + ''
+      substituteInPlace scripts/build_web_viewer.py \
+        --replace-fail \
+          '"--config=.cargo/config.toml",' \
+          'f"--config={WORKSPACE_ROOT / '"'"'.cargo/config.toml'"'"'}",'
+    '';
 
-  cargoHash = "sha256-nvLT+iIsi1C283aJ8qP3Ijw+oizrDKwnQpSG2OchMwE=";
+  cargoHash = "sha256-qRBf5F5cse4s+Hd4uh+A2AEoQ11tQArpgcvRwkeRdmw=";
 
   cargoBuildFlags = [
     "--package"
@@ -86,38 +99,36 @@ rustPlatform.buildRustPackage (finalAttrs: {
 
   # When web_viewer is compiled, the wasm webviewer first needs to be built
   # If this doesn't exist, the build will fail. More information: https://github.com/rerun-io/rerun/issues/6028
-  # The command is taken from https://github.com/rerun-io/rerun/blob/dd025f1384f9944d785d0fb75ca4ca1cd1792f17/pixi.toml#L198C72-L198C187
+  # The command is taken from https://github.com/rerun-io/rerun/blob/0.42.0/pixi.toml#L231
   # Note that cargoBuildFeatures reference what buildFeatures is set to in stdenv.mkDerivation,
   # so that user can easily create an overlay to set cargoBuildFeatures to what he needs
   preBuild = ''
     if [[ " ''${cargoBuildFeatures[*]} " == *" web_viewer "* ]]; then
       # join the bash array into a comma-separated list for cargo's --features flag
       buildWebViewerFeaturesJoined=$(IFS=,; echo "''${buildWebViewerFeatures[*]}")
-      # Create the features option only if there are features to pass
-      buildWebViewerFeaturesCargoOption=()
-      if [[ -n "$buildWebViewerFeaturesJoined" ]]; then
-        buildWebViewerFeaturesCargoOption=("--features" "$buildWebViewerFeaturesJoined")
-        echo "Features passed to the web viewer build: $buildWebViewerFeaturesJoined"
-      else
-        echo "No features will be passed to the web viewer build"
-      fi
+      echo "Features passed to the web viewer build: '$buildWebViewerFeaturesJoined'"
       echo "Building the wasm web viewer for rerun's web_viewer feature"
-      cargo run -p re_dev_tools -- build-web-viewer --no-default-features "''${buildWebViewerFeaturesCargoOption[@]}" --release -g
+      # `--features` replaces re_viewer's default web features (`analytics,default_web`).
+      # Always pass it (even empty) so that analytics does not get enabled.
+      # The cargo setup hook exports `ZSTD_SYS_USE_PKG_CONFIG`, but pkg-config can't provide zstd
+      # for wasm32-unknown-unknown. Unset it so that zstd-sys builds its vendored copy instead.
+      env -u ZSTD_SYS_USE_PKG_CONFIG \
+        python3 scripts/build_web_viewer.py --features "$buildWebViewerFeaturesJoined" --release -g
     else
       echo "web_viewer feature not enabled, skipping web viewer build."
     fi
   '';
 
   nativeBuildInputs = [
-    (lib.getBin binaryen) # wasm-opt
-
     # @SomeoneSerge: Upstream suggests `mold`, but I didn't get it to work
     lld
 
     pkg-config
     protobuf
+    python3
     rustfmt
     nasm
+    wasm-bindgen-cli_0_2_129
   ];
 
   # NOTE: Without setting these environment variables the web-viewer
@@ -136,7 +147,10 @@ rustPlatform.buildRustPackage (finalAttrs: {
     in
     {
       CC_wasm32_unknown_unknown = lib.getExe clang-unwrapped;
-      CFLAGS_wasm32_unknown_unknown = "-isystem ${includeDir} -resource-dir ${resourceDir}";
+      CFLAGS_wasm32_unknown_unknown = toString [
+        "-isystem ${includeDir}"
+        "-resource-dir ${resourceDir}"
+      ];
     };
 
   buildInputs = [
@@ -206,7 +220,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
   passthru = {
     updateScript = nix-update-script { };
     tests = {
-      inherit (python3Packages) rerun-sdk;
+      inherit (python3Packages) rerun-sdk rerun-notebook;
     };
   };
 

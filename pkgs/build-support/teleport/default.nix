@@ -13,6 +13,7 @@
   pnpm_10,
   fetchPnpmDeps,
   pnpmConfigHook,
+  replaceVars,
   rustc,
   stdenv,
   xdg-utils,
@@ -159,13 +160,16 @@ buildGoModule (finalAttrs: {
 
   patches =
     extPatches
-    ++ [
-      ./rdpclient.patch
+    # Refer to rdpClient by its store path rather than linking it into the source
+    # tree. Since Go 1.26.11, cmd/go rejects libraries in source-tree -L
+    # directories that contain LTO bitcode, which the Rust staticlib does.
+    ++ lib.optionals withRdpClient [
+      (replaceVars ./rdpclient.patch { inherit rdpClient; })
     ]
-    ++ lib.optional (lib.versionOlder version "18.8.0") [
+    ++ lib.optionals (lib.versionOlder version "18.8.0") [
       ./0001-fix-add-nix-path-to-exec-env.patch
     ]
-    ++ lib.optional (lib.versionAtLeast version "18.8.0") [
+    ++ lib.optionals (lib.versionAtLeast version "18.8.0") [
       ./0001-fix-add-nix-path-to-exec-env-reexec.patch
     ];
 
@@ -177,10 +181,6 @@ buildGoModule (finalAttrs: {
 
   preBuild = ''
     cp -r ${webassets} webassets
-  ''
-  + lib.optionalString withRdpClient ''
-    ln -s ${rdpClient}/lib/* lib/
-    ln -s ${rdpClient}/include/* lib/srv/desktop/rdp/rdpclient/
   '';
 
   # Multiple tests fail in the build sandbox
@@ -213,6 +213,7 @@ buildGoModule (finalAttrs: {
     homepage = "https://goteleport.com/";
     license = lib.licenses.agpl3Plus;
     maintainers = with lib.maintainers; [
+      andersk
       arianvp
       justinas
       sigma

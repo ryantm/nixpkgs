@@ -8,21 +8,27 @@
 
 buildGoModule (finalAttrs: {
   pname = "versitygw";
-  version = "1.6.0";
+  version = "1.11.0";
 
   src = fetchFromGitHub {
     owner = "versity";
     repo = "versitygw";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-vy8wveTwK8lXpZlKyeUc/3qpQZ96vExJCfw/RiLt2Eo=";
+    hash = "sha256-s6AMOQzPOGvBCtkqi24s3iqhHmO36yLlFaCnqyoNj24=";
   };
 
-  vendorHash = "sha256-/vLR7XZWzzj35rXLj7EJ3H3WP0RX3qBqIn/PlkM/j/k=";
+  vendorHash = "sha256-Lknd6Bp5ESJQoPjZbPqn+NpgUheEroMIq6uXVP3GXhM=";
 
-  subPackages = [ "./cmd/versitygw" ];
+  excludedPackages = [
+    # depends on cgo/cuda
+    "cmd/cuobjtest"
+    "cmd/vgwrdma"
+    "rdma"
 
-  # Require access to online S3 services
-  doCheck = false;
+    "plugins/noop"
+    "tests/checker"
+    "tests/rest_scripts"
+  ];
 
   # Needed for "versitygw --version" to not show placeholders
   ldflags = [
@@ -31,10 +37,46 @@ buildGoModule (finalAttrs: {
     "-X main.Version=v${finalAttrs.version}"
   ];
 
+  env.CGO_ENABLED = "0";
+
+  checkFlags =
+    let
+      skippedTests = [
+        # requires real s3
+        "^TestIntegration$"
+
+        # filesystem dependent
+        "^TestFallocSkipsCachedBucket$"
+
+        # requires extended attributes
+        "^TestObjectPublishLockHonorsContextWhileWaiting$"
+        "^TestFsyncPutObject"
+        "^TestFsyncFailureFailsThePut$"
+        "^TestListObjectsV2ContinuationTokenEcho$"
+        "^TestObjectLockModeNoneRejectsConditionalWrites$"
+        "^TestListObjectsExcludeDirsFileNotSkipped$"
+        "^TestListObjectsNestedMetaTmpDir$"
+        "^TestExcludeDirsCaseAgrees$"
+        "^TestExcludedDirKeysReserved$"
+        "^TestExcludeDirsEmptyKeysAllowed$"
+        "^TestGetObjectRemovedBeforeOpen$"
+        "^TestGetObjectPreReadOrder$"
+        "^TestGetObjectPreReadVersion$"
+        "^TestGetObjectPreReadDirObject$"
+        "^TestListBucketsVisibilityBackendCalls$"
+        "^TestListObjectsSkipsEntryWhoseDirIsGone$"
+        "^TestFileToObjSkipsEntryWhoseInfoIsGone$"
+        "^TestLiveObjVersionIdObjectRemoved$"
+        "^TestHeadObjectDeleteMarker$"
+
+        # any skips after this will be ignored
+        "/xattr$"
+      ];
+    in
+    [ "-skip=${builtins.concatStringsSep "|" skippedTests}" ];
+
   doInstallCheck = true;
-
   nativeInstallCheckInputs = [ versionCheckHook ];
-
   versionCheckProgramArg = "--version";
 
   passthru = {
@@ -46,7 +88,10 @@ buildGoModule (finalAttrs: {
     homepage = "https://github.com/versity/versitygw";
     changelog = "https://github.com/versity/versitygw/releases/tag/v${finalAttrs.version}";
     license = lib.licenses.asl20;
-    maintainers = with lib.maintainers; [ genga898 ];
+    maintainers = with lib.maintainers; [
+      adamcstephens
+      genga898
+    ];
     mainProgram = "versitygw";
   };
 })

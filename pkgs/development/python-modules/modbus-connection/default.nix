@@ -1,6 +1,7 @@
 {
   buildPythonPackage,
   fetchFromGitHub,
+  gitMinimal,
   hatchling,
   lib,
   pymodbus,
@@ -12,15 +13,14 @@
 
 buildPythonPackage (finalAttrs: {
   pname = "modbus-connection";
-  version = "3.4.1";
+  version = "4.12.8";
   pyproject = true;
-  __structuredAttrs = true;
 
   src = fetchFromGitHub {
     owner = "home-assistant-libs";
     repo = "modbus-connection";
     tag = finalAttrs.version;
-    hash = "sha256-jWS6quM+hZTMGNyxopC4RS3mUaYAqD/MOsmTU7sD+pg=";
+    hash = "sha256-LgIYFsMgfUDTYY+YMo4LgpdQ/de/K+nmuGBRHJjbgYk=";
   };
 
   nativeBuildInputs = [
@@ -39,15 +39,20 @@ buildPythonPackage (finalAttrs: {
     tmodbus = [
       tmodbus
     ]
-    ++ tmodbus.optional-dependencies.async-serial
-    ++ tmodbus.optional-dependencies.smart;
+    ++ tmodbus.optional-dependencies.async-serial;
   };
 
   nativeCheckInputs = [
+    gitMinimal
     pytest-asyncio
     pytestCheckHook
   ]
   ++ lib.concatAttrValues finalAttrs.passthru.optional-dependencies;
+
+  disabledTests = [
+    # tries to git clone https://github.com/sunspec/models
+    "test_official_model_catalogue_generates_and_imports"
+  ];
 
   pythonImportsCheck = [
     "modbus_connection"

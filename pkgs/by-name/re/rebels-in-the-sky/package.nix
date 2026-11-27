@@ -7,6 +7,7 @@
   cmake,
   pkg-config,
   alsa-lib,
+  aws-lc,
   nix-update-script,
   writableTmpDirAsHomeHook,
   versionCheckHook,
@@ -15,16 +16,16 @@
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "rebels-in-the-sky";
-  version = "1.7.1";
+  version = "1.8.1";
 
   src = fetchFromGitHub {
     owner = "ricott1";
     repo = "rebels-in-the-sky";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-bLyAki9XJuQRwKhO8jiR1wcssfvXTXGftOS4WRyvVe0=";
+    hash = "sha256-HMwB2KeE9TF03ABzkz/BJ6XwF+yUNj0voZmq3H1GT8M=";
   };
 
-  cargoHash = "sha256-PUo9avg1wWgS7D6u3zIBbgv1/eM6N9PbA+EwzdNHC0w=";
+  cargoHash = "sha256-ySeIHwY7bjpVZIqlK5Na5/ICRW1x5+EtbnL29J7a+JY=";
 
   patches = lib.optionals (!withRadio) [
     ./disable-radio.patch
@@ -37,7 +38,10 @@ rustPlatform.buildRustPackage (finalAttrs: {
   ++ lib.optionals stdenv.hostPlatform.isDarwin [
     rustPlatform.bindgenHook
   ];
-  buildInputs = lib.optionals stdenv.hostPlatform.isLinux [ alsa-lib ];
+  buildInputs = [
+    aws-lc
+  ]
+  ++ lib.optionals stdenv.hostPlatform.isLinux [ alsa-lib ];
 
   nativeCheckInputs = [
     # Save system tests write to home dir

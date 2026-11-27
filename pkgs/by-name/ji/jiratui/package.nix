@@ -3,23 +3,24 @@
   python3Packages,
   fetchFromGitHub,
   versionCheckHook,
+  writableTmpDirAsHomeHook,
 }:
 
 python3Packages.buildPythonApplication (finalAttrs: {
   pname = "jiratui";
-  version = "1.3.0";
+  version = "1.19.0";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "whyisdifficult";
     repo = "jiratui";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-b5bSMPnqHqpeFDl501gSun7G38OlhV/IMNMYXQT+j/4=";
+    hash = "sha256-NVgvCgcEfxS1kQug2dTvkpOdZFxITBKnE9v6Ga6q3s0=";
   };
 
   postPatch = ''
     substituteInPlace pyproject.toml \
-      --replace-fail "uv_build>=0.9.2,<0.10.0" "uv_build>=0.9.2"
+      --replace-fail "uv_build>=0.12.5,<0.13.0" "uv_build>=0.12.5"
   '';
 
   build-system = with python3Packages; [
@@ -32,19 +33,27 @@ python3Packages.buildPythonApplication (finalAttrs: {
       click
       gitpython
       httpx
-      pyaml
+      marklas
+      puremagic
       pydantic-settings
       python-dateutil
       python-json-logger
-      python-magic
+      pyyaml
+      questionary
       textual
+      textual-autocomplete
       textual-image
+      urllib3
       xdg-base-dirs
     ]
     ++ textual.optional-dependencies.syntax;
 
   pythonRelaxDeps = [
     "click"
+    "python-json-logger"
+    "textual-image"
+    # Unused dependency: https://github.com/whyisdifficult/jiratui/pull/402
+    "urllib3"
   ];
 
   pythonImportsCheck = [
@@ -52,8 +61,13 @@ python3Packages.buildPythonApplication (finalAttrs: {
   ];
 
   doInstallCheck = true;
-  nativeInstallCheckInputs = [ versionCheckHook ];
+  nativeInstallCheckInputs = [
+    versionCheckHook
+    writableTmpDirAsHomeHook
+  ];
   versionCheckProgramArg = "version";
+  # --version creates config dir, but versionCheckHook swallows env by default.
+  versionCheckKeepEnvironment = [ "HOME" ];
 
   meta = {
     description = "A Textual User Interface for interacting with Atlassian Jira from your shell";

@@ -18,13 +18,15 @@
 
 buildGoModule (finalAttrs: {
   pname = "buildah";
-  version = "1.44.0";
+  version = "1.46.1";
+
+  __structuredAttrs = true;
 
   src = fetchFromGitHub {
     owner = "podman-container-tools";
     repo = "buildah";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-/Rv5la54ikmP4qVT19tg0sv0kM+xpQO6w9XU1PpGFk4=";
+    hash = "sha256-66awp37Fd+lhiCrOojIosAKFiulv857d8/8zNEa9ytg=";
   };
 
   outputs = [

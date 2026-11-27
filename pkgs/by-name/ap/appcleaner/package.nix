@@ -3,14 +3,15 @@
   stdenvNoCC,
   fetchurl,
   unzip,
+  directoryListingUpdater,
 }:
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "appcleaner";
-  version = "3.6.8";
+  version = "3.7";
 
   src = fetchurl {
     url = "https://freemacsoft.net/downloads/AppCleaner_${finalAttrs.version}.zip";
-    hash = "sha256-4BL3KUQkc8IOfM4zSwAYJSHktmcupoGzSTGxgP6z1r4=";
+    hash = "sha256-PX+mFG+1falV3KQIWH/GWKwUrrhu2nkHdjrmY5fJ5l4=";
   };
   dontUnpack = true;
 
@@ -20,10 +21,16 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     runHook preInstall
 
     mkdir -p $out/Applications
-    unzip -d $out/Applications $src
+    unzip -d $out/Applications $src -x '__MACOSX/*'
 
     runHook postInstall
   '';
+
+  passthru.updateScript = directoryListingUpdater {
+    # must match the zip filename prefix (case-sensitive)
+    pname = "AppCleaner";
+    url = "https://freemacsoft.net/appcleaner/";
+  };
 
   meta = {
     description = "Uninstall unwanted apps";

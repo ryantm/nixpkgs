@@ -31,7 +31,7 @@
 
 buildPythonPackage (finalAttrs: {
   pname = "hass-nabucasa";
-  version = "2.2.0";
+  version = "2.8.1";
   pyproject = true;
 
   disabled = pythonOlder "3.14";
@@ -40,12 +40,13 @@ buildPythonPackage (finalAttrs: {
     owner = "nabucasa";
     repo = "hass-nabucasa";
     tag = finalAttrs.version;
-    hash = "sha256-+HRyXdl/gw/dhZ+T3peinD5FMm0O/M87Uu/wyLU1eJs=";
+    hash = "sha256-awOFbUu2Rh/Fy6BPvUGAt2/+7UodPp0mPwNozWjw9cA=";
   };
 
   postPatch = ''
     substituteInPlace pyproject.toml \
-      --replace-fail "0.0.0" "${finalAttrs.version}"
+      --replace-fail "0.0.0" "${finalAttrs.version}" \
+      --replace-fail "timeout = 5" "timeout = 30"
   '';
 
   build-system = [ setuptools ];

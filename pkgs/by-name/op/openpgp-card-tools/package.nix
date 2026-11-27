@@ -8,21 +8,22 @@
   pcsclite,
   dbus,
   testers,
+  nix-update-script,
   openpgp-card-tools,
 }:
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "openpgp-card-tools";
-  version = "0.11.12";
+  version = "0.11.16";
 
   src = fetchFromCodeberg {
     owner = "openpgp-card";
     repo = "openpgp-card-tools";
     rev = "v${finalAttrs.version}";
-    hash = "sha256-vnyDgFs195QMZtcjBu/fOj5YnqpF1jyCS0KzR1k2HWM=";
+    hash = "sha256-JxWCLJcxYVJ85OqJQUjCqmaUuTzcuVVVLBURC16X/Yw=";
   };
 
-  cargoHash = "sha256-T0ehazHODSMpQqVx/6rQS+1cWNaYaojLyiHOYwchuwY=";
+  cargoHash = "sha256-VbFPduOLLrAvmsBWGU1SfTYsGLwTero7hNavU32S5kU=";
 
   nativeBuildInputs = [
     installShellFiles
@@ -39,6 +40,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
     tests.version = testers.testVersion {
       package = openpgp-card-tools;
     };
+    updateScript = nix-update-script { };
   };
 
   postInstall = lib.optionalString (stdenv.buildPlatform.canExecute stdenv.hostPlatform) ''

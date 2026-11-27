@@ -13,24 +13,29 @@
   nix-update-script,
 }:
 buildGoModule (finalAttrs: {
+  __structuredAttrs = true;
+
   pname = "avalanche-cli";
-  version = "1.9.6";
+  version = "1.9.7";
 
   src = fetchFromGitHub {
     owner = "ava-labs";
     repo = "avalanche-cli";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-bAZJRFlry7vYTTf95kTOJwcjYelN40n264oeykx7nxc=";
+    hash = "sha256-7ZNYO3SU+s6+VAq0h3EJHgUxAZ4BScbSlQwswKYQzqQ=";
   };
 
   proxyVendor = true;
-  vendorHash = "sha256-0+YwlCHjiU46y333RSuaha4pLKFTYlj+M9+TFAALamY=";
+  vendorHash = "sha256-BNb3zifYaCkxiEoGnG8p0Z5gYtsdYIm22quvweFo0Jk=";
 
   env = {
     # Fix error: 'Caught SIGILL in blst_cgo_init'
     # https://github.com/bnb-chain/bsc/issues/1521
     CGO_CFLAGS = "-O -D__BLST_PORTABLE__";
     CGO_CFLAGS_ALLOW = "-O -D__BLST_PORTABLE__";
+
+    # The bundled avalanchego version panics decoding genesis checkpoints with Go 1.27's JSON implementation.
+    GOEXPERIMENT = "nojsonv2";
   };
 
   ldflags = [

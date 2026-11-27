@@ -4,6 +4,7 @@
   cffi,
   fetchFromGitHub,
   pytestCheckHook,
+  pkg-resources-backport,
   setuptools,
   six,
   ssdeep,
@@ -13,8 +14,6 @@ buildPythonPackage (finalAttrs: {
   pname = "ssdeep";
   version = "3.4.1";
   pyproject = true;
-
-  __structuredAttrs = true;
 
   src = fetchFromGitHub {
     owner = "DinoTools";
@@ -29,6 +28,7 @@ buildPythonPackage (finalAttrs: {
 
   dependencies = [
     cffi
+    pkg-resources-backport
     six
   ];
 

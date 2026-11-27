@@ -5,7 +5,7 @@
   fetchFromGitHub,
 
   # build-system
-  cython_3_1,
+  cython,
   meson-python,
   meson,
   pkg-config,
@@ -93,7 +93,7 @@ let
     '';
 
     build-system = [
-      cython_3_1
+      cython
       meson-python
       meson
       numpy
@@ -218,13 +218,13 @@ let
       # AssertionError: Did not see expected warning of class 'FutureWarning'
       "test_parsing_tzlocal_deprecated"
     ]
-    ++ lib.optionals (stdenv.hostPlatform.isDarwin && stdenv.hostPlatform.isAarch64) [
+    ++ lib.optionals stdenv.hostPlatform.isDarwin [
       # tests/generic/test_finalize.py::test_binops[and_-args4-right] - AssertionError: assert {} == {'a': 1}
       "test_binops"
       # These tests are unreliable on aarch64-darwin. See https://github.com/pandas-dev/pandas/issues/38921.
       "test_rolling"
     ]
-    ++ lib.optional stdenv.hostPlatform.is32bit [
+    ++ lib.optionals stdenv.hostPlatform.is32bit [
       # https://github.com/pandas-dev/pandas/issues/37398
       "test_rolling_var_numerical_issues"
     ];

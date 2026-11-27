@@ -7,23 +7,23 @@
   pyyaml,
 }:
 
-buildPythonPackage rec {
+buildPythonPackage (finalAttrs: {
   pname = "cucumber-expressions";
-  version = "19.0.1";
+  version = "20.1.0";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "cucumber";
     repo = "cucumber-expressions";
-    tag = "v${version}";
-    hash = "sha256-RosIA8LaXdpnqJYfowB4d1gWZTd8OfuetiBLNYX5dRc=";
+    tag = "v${finalAttrs.version}";
+    hash = "sha256-g/u0+6rNl9uax5f2VwC2UaAjHh1jJQ95tA7mCN8cM9Y=";
   };
 
-  sourceRoot = "${src.name}/python";
+  sourceRoot = "${finalAttrs.src.name}/python";
 
   postPatch = ''
     substituteInPlace pyproject.toml \
-      --replace-fail "uv_build>=0.11.0,<0.12.0" uv_build
+      --replace-fail "uv_build>=0.12.0,<0.13.0" uv_build
   '';
 
   build-system = [ uv-build ];
@@ -36,10 +36,10 @@ buildPythonPackage rec {
   ];
 
   meta = {
-    changelog = "https://github.com/cucumber/cucumber-expressions/blob/${src.tag}/CHANGELOG.md";
+    changelog = "https://github.com/cucumber/cucumber-expressions/blob/${finalAttrs.src.tag}/CHANGELOG.md";
     description = "Human friendly alternative to Regular Expressions";
     homepage = "https://github.com/cucumber/cucumber-expressions/tree/main/python";
     license = lib.licenses.mit;
     maintainers = [ lib.maintainers.dotlambda ];
   };
-}
+})

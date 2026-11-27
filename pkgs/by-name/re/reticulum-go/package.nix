@@ -3,26 +3,20 @@
   buildGoModule,
   fetchFromGitHub,
   nix-update-script,
+  versionCheckHook,
 }:
 
 buildGoModule (finalAttrs: {
   pname = "reticulum-go";
-  version = "0.9.6";
-  strictDeps = true;
+  version = "1.6.1";
   __structuredAttrs = true;
 
   src = fetchFromGitHub {
     owner = "Quad4-Software";
     repo = "Reticulum-Go";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-Rji6MJQAN48zKsLHQS8ukbi9pWjHPEbezXJu/700HZs=";
+    hash = "sha256-IeRjm9Vv/jHzruPghC602C0ez9SNvDl0rPqmrxvQH+E=";
   };
-
-  # TODO: Remove this when https://github.com/NixOS/nixpkgs/pull/527289 has landed in `master`
-  postPatch = ''
-    substituteInPlace go.mod \
-      --replace-fail "1.26.4" "1.26.3"
-  '';
 
   vendorHash = null;
 
@@ -31,10 +25,14 @@ buildGoModule (finalAttrs: {
   ldflags = [
     "-s"
     "-w"
+    "-X main.defaultVersion=${finalAttrs.version}"
   ];
 
   # Required for some tests on darwin.
   __darwinAllowLocalNetworking = true;
+
+  nativeInstallCheckInputs = [ versionCheckHook ];
+  doInstallCheck = true;
 
   passthru.updateScript = nix-update-script { };
 
@@ -42,7 +40,7 @@ buildGoModule (finalAttrs: {
     changelog = "https://github.com/Quad4-Software/Reticulum-Go/releases/tag/${finalAttrs.src.tag}";
     description = "High-performance Go implementation of the Reticulum Network Stack";
     homepage = "https://github.com/Quad4-Software/Reticulum-Go";
-    license = lib.licenses.asl20;
+    license = lib.licenses.reticulum;
     mainProgram = "reticulum-go";
     maintainers = with lib.maintainers; [ drupol ];
   };

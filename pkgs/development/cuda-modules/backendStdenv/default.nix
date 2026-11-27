@@ -20,7 +20,14 @@ let
     toJSON
     toString
     ;
-  inherit (_cuda.db) allSortedCudaCapabilities cudaCapabilityToInfo nvccCompatibilities;
+  inherit (_cuda.db)
+    allSortedCudaCapabilities
+    architectureSpecificCudaCapabilities
+    cudaCapabilityToInfo
+    familySpecificCudaCapabilities
+    jetsonCudaCapabilities
+    nvccCompatibilities
+    ;
   inherit (_cuda.lib)
     _cudaCapabilityIsDefault
     _cudaCapabilityIsSupported
@@ -31,6 +38,7 @@ let
     ;
   inherit (lib)
     assertMsg
+    elem
     filter
     findFirst
     flip
@@ -44,20 +52,6 @@ let
     versionOlder
     ;
   inherit (lib.versions) major;
-
-  # NOTE: By virtue of processing a sorted list (allSortedCudaCapabilities), our groups will be sorted.
-
-  architectureSpecificCudaCapabilities = filter (
-    cudaCapability: cudaCapabilityToInfo.${cudaCapability}.isArchitectureSpecific
-  ) allSortedCudaCapabilities;
-
-  familySpecificCudaCapabilities = filter (
-    cudaCapability: cudaCapabilityToInfo.${cudaCapability}.isFamilySpecific
-  ) allSortedCudaCapabilities;
-
-  jetsonCudaCapabilities = filter (
-    cudaCapability: cudaCapabilityToInfo.${cudaCapability}.isJetson
-  ) allSortedCudaCapabilities;
 
   passthruExtra = {
     nvccHostCCMatchesStdenvCC = backendStdenv.cc == stdenv.cc;
@@ -122,7 +116,7 @@ let
 
   assertions =
     let
-      # Jetson devices (pre-Orin) cannot be targeted by the same binaries which target non-Jetson devices. While
+      # Pre-SBSA Jetson devices cannot be targeted by the same binaries which target non-Jetson devices. While
       # NVIDIA provides both `linux-aarch64` and `linux-sbsa` packages, which both target `aarch64`,
       # they are built with different settings and cannot be mixed.
       sbsaJetsonCapability = _getJetsonMinSbsaCapability cudaMajorMinorVersion;
@@ -171,7 +165,7 @@ let
           "Requested pre-SBSA (${sbsaJetsonCapability}) Jetson CUDA capabilities (${toJSON preSbsaJetsonCudaCapabilities}) cannot be "
           + "specified with other capabilities (${toJSON (subtractLists preSbsaJetsonCudaCapabilities passthruExtra.cudaCapabilities)})";
         assertion =
-          # If there are preThorJetsonCudaCapabilities, they must be the only requested capabilities.
+          # If there are preSbsaJetsonCudaCapabilities, they must be the only requested capabilities.
           preSbsaJetsonCudaCapabilities != [ ]
           -> preSbsaJetsonCudaCapabilities == passthruExtra.cudaCapabilities;
       }
@@ -187,6 +181,18 @@ let
           "Requested post-SBSA (${sbsaJetsonCapability}) Jetson CUDA capabilities (${toJSON postSbsaJetsonCudaCapabilities}) require "
           + "computed NVIDIA hostRedistSystem (${passthruExtra.hostRedistSystem}) to be linux-sbsa";
         assertion = postSbsaJetsonCudaCapabilities != [ ] -> passthruExtra.hostRedistSystem == "linux-sbsa";
+      }
+      # NOTE: The CUDA 13 redistributable manifests contain no linux-aarch64 entries. JetPack 7.0 and 7.1 support only
+      # Jetson Thor; JetPack 7.2 (CUDA 13.2) adds Jetson Orin, which uses linux-sbsa from CUDA 13.2.
+      # https://developer.nvidia.com/embedded/jetpack-archive
+      # https://docs.nvidia.com/cuda/nvjpeg2000/index.html
+      {
+        message =
+          "Requested Jetson Orin (8.7) CUDA capabilities (${toJSON preSbsaJetsonCudaCapabilities}) are not supported "
+          + "by CUDA ${cudaMajorMinorVersion}; use CUDA 12 or CUDA 13.2 and later";
+        assertion =
+          versionAtLeast cudaMajorMinorVersion "13.0" && versionOlder cudaMajorMinorVersion "13.2"
+          -> !(elem "8.7" preSbsaJetsonCudaCapabilities);
       }
     ];
 

@@ -26,15 +26,14 @@
 
 buildPythonPackage (finalAttrs: {
   pname = "distributed";
-  version = "2026.7.0";
+  version = "2026.8.0";
   pyproject = true;
-  __structuredAttrs = true;
 
   src = fetchFromGitHub {
     owner = "dask";
     repo = "distributed";
     tag = finalAttrs.version;
-    hash = "sha256-JwN+Ey+Ii8mELa6oVS+SDiOPYyMcKdaiSjjMqDze+kc=";
+    hash = "sha256-Z7T/ik8GDnFESDl2OuvSGFo+SBcEY7gpVx31CoTTvao=";
   };
 
   build-system = [

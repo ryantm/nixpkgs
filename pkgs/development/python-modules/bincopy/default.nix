@@ -6,14 +6,13 @@
   argparse-addons,
   humanfriendly,
   pyelftools,
+  pytestCheckHook,
 }:
 
 buildPythonPackage (finalAttrs: {
   pname = "bincopy";
   version = "20.1.1";
   pyproject = true;
-
-  __structuredAttrs = true;
 
   src = fetchPypi {
     inherit (finalAttrs) pname version;
@@ -29,6 +28,8 @@ buildPythonPackage (finalAttrs: {
   ];
 
   pythonImportsCheck = [ "bincopy" ];
+
+  nativeCheckInputs = [ pytestCheckHook ];
 
   meta = {
     description = "Mangling of various file formats that conveys binary information (Motorola S-Record, Intel HEX, TI-TXT, ELF and binary files)";

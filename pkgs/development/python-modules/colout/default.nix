@@ -3,25 +3,29 @@
   babel,
   buildPythonPackage,
   fetchFromGitHub,
+  setuptools,
   pygments,
   setuptools-scm,
 }:
 
-buildPythonPackage rec {
+buildPythonPackage (finalAttrs: {
   pname = "colout";
   version = "1.1";
-  format = "setuptools";
+  pyproject = true;
 
   src = fetchFromGitHub {
     owner = "nojhan";
     repo = "colout";
-    tag = "v${version}";
+    tag = "v${finalAttrs.version}";
     hash = "sha256-7Dtf87erBElqVgqRx8BYHYOWv1uI84JJ0LHrcneczCI=";
   };
 
-  nativeBuildInputs = [ setuptools-scm ];
+  build-system = [
+    setuptools
+    setuptools-scm
+  ];
 
-  propagatedBuildInputs = [
+  dependencies = [
     babel
     pygments
   ];
@@ -38,4 +42,4 @@ buildPythonPackage rec {
     license = lib.licenses.gpl3Only;
     maintainers = with lib.maintainers; [ badele ];
   };
-}
+})

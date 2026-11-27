@@ -9,14 +9,12 @@
 
 buildPythonPackage (finalAttrs: {
   pname = "idapro";
-  version = "0.0.9";
+  version = "0.0.12";
   pyproject = true;
-
-  __structuredAttrs = true;
 
   src = fetchPypi {
     inherit (finalAttrs) pname version;
-    hash = "sha256-igQ6ic5QdTPlAuj2WBpPtYut4l6PpgSVRbeexjZ5LjU=";
+    hash = "sha256-1vEdUSamuat/AWVzxnSjtapFzzhYn4s9GyhMHI/M1p8=";
   };
 
   build-system = [ setuptools ];

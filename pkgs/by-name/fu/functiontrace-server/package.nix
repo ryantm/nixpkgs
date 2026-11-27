@@ -7,21 +7,21 @@
 
 rustPlatform.buildRustPackage rec {
   pname = "functiontrace-server";
-  version = "0.8.6";
+  version = "0.8.7";
 
   src = fetchCrate {
     inherit pname version;
-    hash = "sha256-f/DpT5IYhUA/+w+QK3Itk4bBaYRFhGOWQbN51YYrmxA=";
+    hash = "sha256-ejwYax2L4737JjLrnPLIw7OhTft0lhJ9egRBYDhM53E=";
   };
 
-  cargoHash = "sha256-rDCIzJUFA+2iEpITg3MuKFfgiyQ6GtMvIigiHkX70M8=";
+  cargoHash = "sha256-YSZ2jRKsdi5DVnVQs7/XAp1BJpLEQ7o/2q9iH1ErT3s=";
 
   passthru.updateScript = nix-update-script { };
 
   meta = {
     description = "Server for FunctionTrace, a graphical Python profiler";
     homepage = "https://functiontrace.com";
-    license = with lib.licenses; [ prosperity30 ];
+    license = lib.licenses.prosperity30;
     maintainers = with lib.maintainers; [ tehmatt ];
   };
 }

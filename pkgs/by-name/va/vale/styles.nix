@@ -62,12 +62,12 @@ in
 
   google = buildStyle rec {
     name = "Google";
-    version = "0.6.3";
+    version = "0.7.2";
     src = fetchFromGitHub {
       owner = "errata-ai";
       repo = "Google";
       rev = "v${version}";
-      hash = "sha256-1aN7wCdShhMsBN83u7l+5Ffm2WKC8ltZyT3hPZCNWYo=";
+      hash = "sha256-KYnVm9LthNrcPBRUYzIAptyBPP4FXbeAIYiajdBUB6Y=";
     };
     meta = {
       description = "Vale-compatible implementation of the Google Developer Documentation Style Guide";
@@ -94,12 +94,12 @@ in
 
   microsoft = buildStyle rec {
     name = "Microsoft";
-    version = "0.14.2";
+    version = "0.15.2";
     src = fetchFromGitHub {
       owner = "errata-ai";
       repo = "Microsoft";
       rev = "v${version}";
-      hash = "sha256-Sie4bBeKPOFOJhgd+mLbiz4vG+xpKL0LnwnRQHzOw+Q=";
+      hash = "sha256-BrdGsj+8oh/3tuJeH2ZSyG+Xe05rorq/YxwgQCRttDE=";
     };
     meta = {
       description = "Vale-compatible implementation of the Microsoft Writing Style Guide";
@@ -110,12 +110,12 @@ in
 
   proselint = buildStyle rec {
     name = "proselint";
-    version = "0.3.4";
+    version = "0.4.0";
     src = fetchFromGitHub {
       owner = "errata-ai";
       repo = "proselint";
       rev = "v${version}";
-      hash = "sha256-ryKJDX1JrvDWVKLC5qQGctweDf74yuwEXxl/IqumM4s=";
+      hash = "sha256-3wndoHh7FqOjbLpji80lf91y8Na6ZKNf1JidxFMrJ+I=";
     };
     meta = {
       description = "Vale-compatible implementation of Python's proselint linter";
@@ -126,16 +126,33 @@ in
 
   readability = buildStyle rec {
     name = "Readability";
-    version = "0.1.1";
+    version = "0.2.0";
     src = fetchFromGitHub {
       owner = "errata-ai";
       repo = "readability";
       rev = "v${version}";
-      hash = "sha256-5Y9v8QsZjC2w3/pGIcL5nBdhpogyJznO5IFa0s8VOOI=";
+      hash = "sha256-3IGEt42ifvv3kSunDsHu7dJov7Y2AWUDIob2luIu2ak=";
     };
     meta = {
       description = "Vale-compatible implementations of many popular \"readability\" metrics";
       homepage = "https://github.com/errata-ai/readability";
+      license = lib.licenses.mit;
+    };
+  };
+
+  redhat = buildStyle rec {
+    name = "RedHat";
+    version = "683";
+    src = fetchFromGitHub {
+      owner = "redhat-documentation";
+      repo = "vale-at-red-hat";
+      rev = "v${version}";
+      hash = "sha256-eIcqytLoU9iCsn7PAtf/Y44Ut2gdQVgDcMePThYPLDE=";
+    };
+    stylePath = ".vale/styles/RedHat";
+    meta = {
+      description = "Vale-compatible implementation of the Red Hat documentation style guide";
+      homepage = "https://github.com/redhat-documentation/vale-at-red-hat";
       license = lib.licenses.mit;
     };
   };

@@ -20,14 +20,15 @@
 
 buildPythonPackage (finalAttrs: {
   pname = "adbc-driver-sqlite";
-  version = "1.11.0";
+  version = "1.13.0";
   pyproject = true;
-  __structuredAttrs = true;
 
+  # Updates should be correlated with arrow-adbc top-level attribute, so:
+  # nixpkgs-update: no auto update
   src = fetchPypi {
     pname = "adbc_driver_sqlite";
     inherit (finalAttrs) version;
-    hash = "sha256-pMa0liYQ981nzXVMQt104YosEfq+7JSIxVAdc65i3GI=";
+    hash = "sha256-bBhqoESe7ZXDYal0EKAseMEGGcTSCdxAcOd+dp+Od5w=";
   };
 
   build-system = [

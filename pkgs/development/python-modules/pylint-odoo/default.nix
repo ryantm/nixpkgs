@@ -2,20 +2,21 @@
   buildPythonPackage,
   fetchFromGitHub,
   lib,
+  pylint,
   pylint-plugin-utils,
   pytestCheckHook,
   setuptools,
 }:
-buildPythonPackage rec {
+buildPythonPackage (finalAttrs: {
   pname = "pylint-odoo";
-  version = "10.0.4";
+  version = "10.0.8";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "OCA";
     repo = "pylint-odoo";
-    tag = "v${version}";
-    hash = "sha256-OVltvmSEsL7F46LlTqJ8PH9BO4iYlFWKFTLv5AcmaVU=";
+    tag = "v${finalAttrs.version}";
+    hash = "sha256-dCc3jwZOWlwMG0jn1d2rAK4oFQlqTMmvYu9ucR/ORfU=";
   };
 
   pythonRelaxDeps = [
@@ -26,6 +27,7 @@ buildPythonPackage rec {
   build-system = [ setuptools ];
 
   dependencies = [
+    pylint
     pylint-plugin-utils
   ];
 
@@ -41,4 +43,4 @@ buildPythonPackage rec {
     license = lib.licenses.agpl3Only;
     maintainers = with lib.maintainers; [ yajo ];
   };
-}
+})

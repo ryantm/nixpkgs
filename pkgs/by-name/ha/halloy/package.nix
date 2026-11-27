@@ -5,9 +5,10 @@
   copyDesktopItems,
   makeDesktopItem,
   libxkbcommon,
-  makeWrapper,
+  makeBinaryWrapper,
   nix-update-script,
   openssl,
+  sqlite,
   pkg-config,
   rustPlatform,
   vulkan-loader,
@@ -17,29 +18,37 @@
   libx11,
   libxcb,
   alsa-lib,
+  zstd,
+
+  # Halloy comes with native support for a Tor proxy using Arti
+  # https://halloy.chat/configuration/proxy#tor
+  withTor ? true,
 }:
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "halloy";
-  version = "2026.7.2";
+  version = "2026.10";
 
   src = fetchFromGitHub {
     owner = "squidowl";
     repo = "halloy";
     tag = finalAttrs.version;
-    hash = "sha256-+qFHwlwRxVN4W9DG+gY5N6um+JARD+3EiLlsD7R9Tpc=";
+    hash = "sha256-DgyS7uoLxXoH7NkcEohW9xbuWnm6VBbjIODBW3IGSUA=";
   };
 
-  cargoHash = "sha256-/nFtOJXpusIlc7orGv013qzad8fdfQr32c8DAlccHIA=";
+  cargoHash = "sha256-S/6JHaAbT6aylj9qx40YEiMpN7Am8RFy2EpoYkbaWl4=";
+
+  buildFeatures = lib.optional withTor "tor";
 
   nativeBuildInputs = [
     copyDesktopItems
-    makeWrapper
+    makeBinaryWrapper
     pkg-config
   ];
 
   buildInputs = [
     openssl
+    sqlite
   ]
   ++ lib.optionals stdenv.hostPlatform.isLinux [
     alsa-lib
@@ -50,6 +59,9 @@ rustPlatform.buildRustPackage (finalAttrs: {
     libxcursor
     libxi
     libxcb
+  ]
+  ++ lib.optionals withTor [
+    zstd
   ];
 
   desktopItems = [
@@ -101,11 +113,13 @@ rustPlatform.buildRustPackage (finalAttrs: {
     mkdir -p "$APP_DIR/MacOS"
     cp -r ${finalAttrs.src}/assets/macos/Halloy.app/Contents/* "$APP_DIR"
 
-    substituteInPlace "$APP_DIR/Info.plist" \
+    substitute \
+      "${finalAttrs.src}/assets/macos/Info.plist.in" \
+      "$APP_DIR/Info.plist" \
       --replace-fail "{{ VERSION }}" "${finalAttrs.version}" \
       --replace-fail "{{ BUILD }}" "${finalAttrs.version}-nixpkgs"
 
-    makeWrapper "$out/bin/halloy" "$APP_DIR/MacOS/halloy"
+    makeBinaryWrapper "$out/bin/halloy" "$APP_DIR/MacOS/halloy"
   '';
 
   passthru.updateScript = nix-update-script { };

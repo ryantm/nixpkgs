@@ -119,7 +119,12 @@ buildDotnetModule rec {
     pcre2
     xz
   ];
-  makeWrapperArgs = [ "--prefix LD_LIBRARY_PATH : ${libPath}" ];
+  makeWrapperArgs = [
+    "--prefix"
+    "LD_LIBRARY_PATH"
+    ":"
+    libPath
+  ];
 
   postInstall =
     lib.optionalString stdenv.hostPlatform.isLinux ''
@@ -134,7 +139,7 @@ buildDotnetModule rec {
   meta = {
     description = "Open-source, cross-platform, stand-alone, Network Renderer for Blender";
     homepage = "https://github.com/LogicReinc/LogicReinc.BlendFarm";
-    license = with lib.licenses; [ gpl3Plus ];
+    license = lib.licenses.gpl3Plus;
     maintainers = with lib.maintainers; [ gador ];
     mainProgram = "blendfarm-nix";
     platforms = lib.platforms.unix;

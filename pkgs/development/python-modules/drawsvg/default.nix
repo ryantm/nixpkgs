@@ -12,14 +12,14 @@
 
 buildPythonPackage (finalAttrs: {
   pname = "drawsvg";
-  version = "2.4.0";
+  version = "2.5.1";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "cduck";
     repo = "drawsvg";
     tag = finalAttrs.version;
-    hash = "sha256-JC7u6bEB7RCJVLeYnNqACmddLI5F5PyaaBxaAZ+N/5s=";
+    hash = "sha256-nkhZHFXpU2D6dIKsQ0VlhfnvMMcaHuViGouEO4bEae0=";
   };
 
   build-system = [ setuptools ];

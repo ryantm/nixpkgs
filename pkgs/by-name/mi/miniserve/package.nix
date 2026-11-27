@@ -5,6 +5,7 @@
   pkg-config,
   installShellFiles,
   openssl,
+  zstd,
   cacert,
   stdenv,
   curl,
@@ -25,12 +26,19 @@ rustPlatform.buildRustPackage (finalAttrs: {
 
   cargoHash = "sha256-KwkmkbQ1E2LJeif7iQmb7pFjZtXhu7BU+YutGb5UmY4=";
 
+  # Fix archive downloads following symlinks outside the served tree.
+  # https://github.com/svenstaro/miniserve/pull/1573
+  patches = [ ./0001-fix-archive-symlink-escape.patch ];
+
   nativeBuildInputs = [
     pkg-config
     installShellFiles
   ];
 
-  buildInputs = [ openssl ];
+  buildInputs = [
+    openssl
+    zstd
+  ];
 
   nativeCheckInputs = [
     curl
@@ -66,7 +74,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
     description = "CLI tool to serve files and directories over HTTP";
     homepage = "https://github.com/svenstaro/miniserve";
     changelog = "https://github.com/svenstaro/miniserve/blob/v${finalAttrs.version}/CHANGELOG.md";
-    license = with lib.licenses; [ mit ];
+    license = lib.licenses.mit;
     maintainers = with lib.maintainers; [
       defelo
     ];

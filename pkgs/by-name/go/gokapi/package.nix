@@ -22,26 +22,12 @@ buildGoModule (finalAttrs: {
 
   proxyVendor = true;
 
-  patches = [ ];
-
-  # This is the go generate is ran in the upstream builder, but we have to run the components separately for things to work.
   preBuild = ''
-    # Some steps expect GOROOT to be set.
-    export GOROOT="$(go env GOROOT)"
-    # Go generate runs from this working dir upstream
-    cd ./cmd/gokapi/
-    go run ../../build/go-generate/updateVersionNumbers.go
-    # Tries to download "golang.org/x/exp/slices", and fails
-    # go run ../../build/go-generate/updateProtectedUrls.go
-    go run ../../build/go-generate/buildWasm.go
-    go run ../../build/go-generate/copyStaticFiles.go
-    # Attempts to download program to minify content, and fails
-    # go run ../../build/go-generate/minifyStaticContent.go
-    go run ../../build/go-generate/updateApiRouting.go
-    cd ../..
+    go generate ./...
   '';
 
   subPackages = [
+    "cmd/cli-uploader"
     "cmd/gokapi"
   ];
 
@@ -49,6 +35,10 @@ buildGoModule (finalAttrs: {
     "-s"
     "-w"
   ];
+
+  postInstall = ''
+    mv $out/bin/cli-uploader $out/bin/gokapi-cli
+  '';
 
   nativeInstallCheckInputs = [ versionCheckHook ];
   doInstallCheck = true;

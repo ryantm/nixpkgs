@@ -4,24 +4,33 @@
   fetchFromGitHub,
   installShellFiles,
   stdenv,
+  aws-lc,
   buildPackages,
   nix-update-script,
+  oniguruma,
+  pkg-config,
 }:
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "mcat-unwrapped";
-  version = "0.6.2";
+  version = "0.6.8";
 
   src = fetchFromGitHub {
     owner = "Skardyy";
     repo = "mcat";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-7QjnbdxUFeRDkIGnAcY2Wf8fLKuj1RuVbu0SUebOc5A=";
+    hash = "sha256-l7b5b/ChXsj1pgEMNjGeqlmSF1NVo14uSDyogf+vO+A=";
   };
 
-  cargoHash = "sha256-JnSycAz/jFs9JgA3tqYZn64yNK0bv5SXEYyUOXjC4ug=";
+  cargoHash = "sha256-2iGUe3Wm8wa/8uj1U3U0U4p6jGKUJ4V0M9JMFMvU1j4=";
 
   nativeBuildInputs = [
     installShellFiles
+    pkg-config
+  ];
+
+  buildInputs = [
+    aws-lc
+    oniguruma
   ];
 
   checkFlags = [

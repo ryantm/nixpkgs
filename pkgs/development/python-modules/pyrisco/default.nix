@@ -9,14 +9,14 @@
 
 buildPythonPackage (finalAttrs: {
   pname = "pyrisco";
-  version = "0.8.0";
+  version = "0.8.1";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "OnFreund";
     repo = "pyrisco";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-tzCwimkSLazD6LtimFUcRjOvnvSlYY1MpJLZ2u4WgUg=";
+    hash = "sha256-kk72tWbRESl3BgEHBA6eyvsaapl41TxNCCSCUjJa+V0=";
   };
 
   build-system = [
@@ -35,7 +35,7 @@ buildPythonPackage (finalAttrs: {
     description = "Python interface to Risco alarm systems through Risco Cloud";
     homepage = "https://github.com/OnFreund/pyrisco";
     changelog = "https://github.com/OnFreund/pyrisco/releases/tag/${finalAttrs.src.tag}";
-    license = with lib.licenses; [ mit ];
+    license = lib.licenses.mit;
     maintainers = with lib.maintainers; [ fab ];
   };
 })

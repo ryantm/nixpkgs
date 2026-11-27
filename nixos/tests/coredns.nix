@@ -28,7 +28,7 @@
               position = "start-of-file";
             }
           ];
-          vendorHash = "sha256-66WNU+t/frHfbxexYdiXzgXKLxPyLnN6JuKnlG/kSQY=";
+          vendorHash = "sha256-sLSe18aRvtQcKgC12jRXFQERDcJYnIXIXoQgmai2K1E=";
         };
       };
     };

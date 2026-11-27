@@ -7,21 +7,25 @@
   pytest-asyncio,
   pytestCheckHook,
   setuptools,
+  setuptools-scm,
 }:
 
 buildPythonPackage rec {
   pname = "watergate-local-api";
-  version = "2025.1.0";
+  version = "2026.3.1";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "watergate-ai";
     repo = "watergate-local-api-python";
     tag = version;
-    hash = "sha256-px1vtWGW9JlU9ZXvmTq9YXZDmWIU0xYy3KOyamGyY74=";
+    hash = "sha256-niK9lJQ7YX/HJsyurbQra3H7O8mrnjfPH7uuet/MqF8=";
   };
 
-  build-system = [ setuptools ];
+  build-system = [
+    setuptools
+    setuptools-scm
+  ];
 
   dependencies = [
     aiohttp

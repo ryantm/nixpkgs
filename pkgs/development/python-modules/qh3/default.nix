@@ -1,10 +1,12 @@
 {
+  aws-lc,
   buildPythonPackage,
   cmake,
   cryptography,
   dnspython,
   fetchFromGitHub,
   lib,
+  pkg-config,
   pytest-asyncio,
   pytest-mock,
   pytestCheckHook,
@@ -14,29 +16,34 @@
 
 buildPythonPackage (finalAttrs: {
   pname = "qh3";
-  version = "1.9.3";
+  version = "2.1.0";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "jawah";
     repo = "qh3";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-m77m+uw6tntW+YEo0+hKZx8EePNcoivBZC84X7RDu5o=";
+    hash = "sha256-AG5DlbkwqgSlVFGC2DXFNnCSZiinzjWepeA3ZGRYmq4=";
   };
 
   cargoDeps = rustPlatform.fetchCargoVendor {
     inherit (finalAttrs) pname version src;
-    hash = "sha256-mQ7kRXi5dqSJ1D58rZivKVO6j3SC+9GkDZkErU21cQc=";
+    hash = "sha256-yAcT5ZuAi9JeSImVZXDOgSptHQ5KXYMRC26mYOT7edk=";
   };
 
   nativeBuildInputs = [
     cmake
+    pkg-config
     rustPlatform.bindgenHook
     rustPlatform.cargoSetupHook
     rustPlatform.maturinBuildHook
   ];
 
   dontUseCmakeConfigure = true;
+
+  buildInputs = [
+    aws-lc
+  ];
 
   env.NIX_CFLAGS_COMPILE = toString (
     lib.optionals stdenv.cc.isGNU [

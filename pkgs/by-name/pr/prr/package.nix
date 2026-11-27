@@ -2,6 +2,7 @@
   lib,
   rustPlatform,
   fetchFromGitHub,
+  libgit2,
   openssl,
   pkg-config,
   cacert,
@@ -19,7 +20,10 @@ rustPlatform.buildRustPackage (finalAttrs: {
 
   cargoHash = "sha256-R3gycEs9k0VSNd0tD8Fzgbu2ibhGvXgw8H1mnSlQMug=";
 
-  buildInputs = [ openssl ];
+  buildInputs = [
+    libgit2
+    openssl
+  ];
 
   nativeBuildInputs = [ pkg-config ];
 
@@ -28,7 +32,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
   checkInputs = [ cacert ];
 
   meta = {
-    description = "Tool that brings mailing list style code reviews to Github PRs";
+    description = "Tool that brings mailing list style code reviews to GitHub PRs";
     homepage = "https://github.com/danobi/prr";
     license = lib.licenses.gpl2Only;
     mainProgram = "prr";

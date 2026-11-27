@@ -2,12 +2,13 @@
   lib,
   buildPythonPackage,
   fetchFromGitHub,
-  poetry-core,
+  hatchling,
+  pyprojectVersionPatchHook,
   aiohttp,
+  aiointercept,
   mashumaro,
   orjson,
   yarl,
-  aioresponses,
   pytest-asyncio,
   pytest-cov-stub,
   pytestCheckHook,
@@ -16,17 +17,21 @@
 
 buildPythonPackage (finalAttrs: {
   pname = "trmnl";
-  version = "0.1.1";
+  version = "0.2.0";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "joostlek";
     repo = "python-trmnl";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-Gpyhp+d27/IxDOTFxcN9ltYbOJOg9scf17qVb/ArBw0=";
+    hash = "sha256-jWGEloiWnDIr5SJ7cAoux+fOdptTVXuH4/WeypBaYcg=";
   };
 
-  build-system = [ poetry-core ];
+  nativeBuildInputs = [
+    pyprojectVersionPatchHook
+  ];
+
+  build-system = [ hatchling ];
 
   dependencies = [
     aiohttp
@@ -36,7 +41,7 @@ buildPythonPackage (finalAttrs: {
   ];
 
   nativeCheckInputs = [
-    aioresponses
+    aiointercept
     pytest-asyncio
     pytest-cov-stub
     pytestCheckHook

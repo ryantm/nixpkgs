@@ -1,12 +1,17 @@
 {
   fetchFromGitHub,
   lib,
+  libgit2,
+  stdenv,
   rustPlatform,
   gtk4,
   pkg-config,
   pango,
   wrapGAppsHook4,
   versionCheckHook,
+  copyDesktopItems,
+  makeDesktopItem,
+  desktopToDarwinBundle,
 }:
 
 rustPlatform.buildRustPackage (finalAttrs: {
@@ -25,10 +30,13 @@ rustPlatform.buildRustPackage (finalAttrs: {
   nativeBuildInputs = [
     pkg-config
     wrapGAppsHook4
-  ];
+    copyDesktopItems
+  ]
+  ++ lib.optional stdenv.hostPlatform.isDarwin desktopToDarwinBundle;
 
   buildInputs = [
     gtk4
+    libgit2
     pango
   ];
 
@@ -41,17 +49,32 @@ rustPlatform.buildRustPackage (finalAttrs: {
   nativeInstallCheckInputs = [ versionCheckHook ];
   doInstallCheck = true;
 
+  desktopItems = [
+    (makeDesktopItem {
+      name = "packetry";
+      desktopName = "Packetry";
+      comment = finalAttrs.meta.description;
+      exec = "packetry";
+      icon = "packetry";
+      categories = [ "Utility" ];
+    })
+  ];
+
   # packetry-cli is only necessary on windows https://github.com/greatscottgadgets/packetry/pull/154
   postInstall = ''
     rm $out/bin/packetry-cli
+
+    install -Dm644 appimage/dist/icon.png \
+      $out/share/icons/hicolor/512x512/apps/packetry.png
   '';
 
   meta = {
     description = "USB 2.0 protocol analysis application for use with Cynthion";
     homepage = "https://github.com/greatscottgadgets/packetry";
     license = lib.licenses.bsd3;
-    maintainers = with lib.maintainers; [ carlossless ];
+    maintainers = with lib.maintainers; [ karstx ];
     mainProgram = "packetry";
+    mainDarwinApp = "Packetry.app";
     platforms = lib.platforms.linux ++ lib.platforms.darwin;
   };
 })

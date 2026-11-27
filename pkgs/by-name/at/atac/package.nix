@@ -3,27 +3,32 @@
   rustPlatform,
   fetchFromGitHub,
   pkg-config,
+  cacert,
   oniguruma,
   installShellFiles,
   writableTmpDirAsHomeHook,
 }:
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "atac";
-  version = "0.23.0";
+  version = "0.24.0";
 
   src = fetchFromGitHub {
     owner = "Julien-cpsn";
     repo = "ATAC";
     rev = "v${finalAttrs.version}";
-    hash = "sha256-2z0+6CyVJR6sTFHotegCU8+isDy4Pw+gkJ1eUBs+AYM=";
+    hash = "sha256-8UasKiDLUoUJm+BCSntoLOkAZi7Z5OTN7DA4wPQOVUg=";
   };
 
-  cargoHash = "sha256-lJO9riP/3FRrQ/gkKQCghfkNn1ePS+p6FtMcJTIJxZY=";
+  cargoHash = "sha256-CYsyvHRgoUqymPALDeTj0YDyPY2d58xuh33Br92f7Ec=";
 
   nativeBuildInputs = [
     installShellFiles
     writableTmpDirAsHomeHook
     pkg-config
+  ];
+
+  nativeCheckInputs = [
+    cacert
   ];
 
   buildInputs = [ oniguruma ];

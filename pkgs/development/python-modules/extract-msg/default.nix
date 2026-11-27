@@ -1,34 +1,29 @@
 {
   lib,
-  buildPythonPackage,
-  fetchFromGitHub,
-
-  # build-system
-  setuptools,
-
-  # dependencies
   beautifulsoup4,
+  buildPythonPackage,
   compressed-rtf,
   ebcdic,
+  fetchFromGitHub,
   olefile,
+  pypdf,
+  pytestCheckHook,
   red-black-tree-mod,
   rtfde,
+  setuptools,
   tzlocal,
-
-  # tests
-  pytestCheckHook,
 }:
 
 buildPythonPackage (finalAttrs: {
   pname = "extract-msg";
-  version = "0.55.0";
+  version = "0.58.3";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "TeamMsgExtractor";
     repo = "msg-extractor";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-n/v3ubgzWlWqLXZfy1O7+FvTJoLMtgL7DFPL39SZnfM=";
+    hash = "sha256-fXQ0PRk7Fndbxfl/swoNsKZH5uiJWLikdHD70M9c2u0=";
   };
 
   pythonRelaxDeps = [
@@ -48,7 +43,10 @@ buildPythonPackage (finalAttrs: {
     tzlocal
   ];
 
-  nativeCheckInputs = [ pytestCheckHook ];
+  nativeCheckInputs = [
+    pypdf
+    pytestCheckHook
+  ];
 
   pythonImportsCheck = [ "extract_msg" ];
 

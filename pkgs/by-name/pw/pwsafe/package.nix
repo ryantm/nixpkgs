@@ -7,6 +7,7 @@
   zip,
   gettext,
   perl,
+  wrapGAppsHook3,
   wxwidgets_3_2,
   libxext,
   libxi,
@@ -25,13 +26,13 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "pwsafe";
-  version = "1.23.0"; # do NOT update to 3.x Windows releases
+  version = "1.25.0"; # do NOT update to 3.x Windows releases
 
   src = fetchFromGitHub {
     owner = "pwsafe";
     repo = "pwsafe";
     rev = finalAttrs.version;
-    hash = "sha256-54cwQZi93p32JxxLc2Mql2XbJPvwqA2Rfne5G+5i6eU=";
+    hash = "sha256-ebwrGgZIzWux5lvYeRiBRutZtMqXwDpolsNNoE4jHrk=";
   };
 
   strictDeps = true;
@@ -41,6 +42,7 @@ stdenv.mkDerivation (finalAttrs: {
     gettext
     perl
     pkg-config
+    wrapGAppsHook3
     wxwidgets_3_2
     zip
   ];

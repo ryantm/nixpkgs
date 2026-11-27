@@ -21,7 +21,7 @@
   gnutls,
   pcre2,
   libdbusmenu-gtk3,
-  libappindicator-gtk3,
+  libappindicator,
   libvncserver,
   libpthread-stubs,
   libxdmcp,
@@ -49,13 +49,13 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "remmina";
-  version = "1.4.43";
+  version = "1.4.44";
 
   src = fetchFromGitLab {
     owner = "Remmina";
     repo = "Remmina";
     rev = "v${finalAttrs.version}";
-    hash = "sha256-7nY2NhlWp+4FTTmeam1B+sotqis0lSwhozSC8I14aMI=";
+    hash = "sha256-3YSgr2yXKK2USsMXFshKmeVPdJLW9xXlaXPajZltM8Q=";
   };
 
   nativeBuildInputs = [
@@ -97,7 +97,7 @@ stdenv.mkDerivation (finalAttrs: {
   ]
   ++ lib.optionals stdenv.hostPlatform.isLinux [
     fuse3
-    libappindicator-gtk3
+    libappindicator
     libdbusmenu-gtk3
     wayland
   ]

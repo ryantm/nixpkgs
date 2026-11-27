@@ -12,6 +12,7 @@
   pnpm_10,
   pnpmConfigHook,
   python3,
+  zstd,
 }:
 
 let
@@ -19,27 +20,30 @@ let
 in
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "weaver";
-  version = "0.23.0";
+  version = "0.28.0";
 
   src = fetchFromGitHub {
     owner = "open-telemetry";
     repo = "weaver";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-tq88qWrm243Go64LpH7kU89ryq2xm9nkIJI+ZeQU7IU=";
+    hash = "sha256-hMG8GTUFLu0nFxwPAQ2HgbDXlhYIdZA5yq6W4jPQ7G4=";
   };
 
-  cargoHash = "sha256-Qxx+BrioVBX5Yy6YVJAnYdNEZVqiZUJTnWNgc74sI44=";
+  cargoHash = "sha256-hoRc8tOU4o8koJ53e3oSPpN9Z3Wpn6MARrhJneis/tk=";
 
   pnpmDeps = fetchPnpmDeps {
     inherit (finalAttrs) pname version src;
     sourceRoot = "${finalAttrs.src.name}/ui";
     inherit pnpm;
     fetcherVersion = 3;
-    hash = "sha256-9ifyIKFQiWKM0hzToibU4zuA64PmznqtpFWILFsFvGQ=";
+    hash = "sha256-1HhpuY3KyFDhNY9ZNR4sr1cpa5s2JDvmXxN5TER8IXw=";
   };
   pnpmRoot = "ui";
 
-  buildInputs = [ openssl ];
+  buildInputs = [
+    openssl
+    zstd
+  ];
 
   nativeBuildInputs = [
     installShellFiles
@@ -64,6 +68,27 @@ rustPlatform.buildRustPackage (finalAttrs: {
   checkFlags = [
     # Skip tests requiring network
     "--skip=test_cli_interface"
+    "--skip=fail_on_default_is_violation"
+    "--skip=fail_on_improvement_exits_one_for_violation_input"
+    "--skip=fail_on_information_exits_one_for_violation_input"
+    "--skip=fail_on_invalid_value_is_rejected"
+    "--skip=fail_on_none_exits_zero"
+    "--skip=fail_on_violation_exits_one"
+    "--skip=no_stats_with_none_threshold_is_silent_and_exits_zero"
+    "--skip=no_stats_with_violation_threshold_warns_and_exits_zero"
+    "--skip=a_matcher_naming_an_unknown_signal_fails_startup"
+    "--skip=a_matcher_that_applies_to_nothing_warns"
+    "--skip=a_matcher_that_both_matches_and_errors_reports_only_the_error_count"
+    "--skip=a_matcher_that_does_not_compile_fails_startup"
+    "--skip=a_matcher_that_would_fail_on_a_sample_does_not_fail_startup"
+    "--skip=a_span_that_matches_no_matcher_says_nothing_applied"
+    "--skip=a_valid_matcher_does_not_change_the_run"
+    "--skip=a_when_that_errors_at_runtime_warns_once_with_a_count"
+    "--skip=emitting_findings_to_the_admin_port_fails_startup"
+    "--skip=emitting_findings_to_the_own_listener_fails_startup"
+    "--skip=the_logs_endpoint_variable_is_used_and_logged"
+    "--skip=the_loop_check_sees_the_endpoint_variable"
+    "--skip=the_statistics_count_what_each_matcher_matched"
   ];
 
   postInstall = lib.optionalString (stdenv.buildPlatform.canExecute stdenv.hostPlatform) ''

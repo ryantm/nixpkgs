@@ -2,6 +2,7 @@
   lib,
   stdenv,
   fetchFromGitHub,
+  aws-lc,
   cargo-tauri,
   jq,
   libsoup_3,
@@ -13,26 +14,27 @@
   fetchPnpmDeps,
   pnpmConfigHook,
   rustPlatform,
+  sqlcipher,
   webkitgtk_4_1,
   wrapGAppsHook3,
   nix-update-script,
 }:
 stdenv.mkDerivation (finalAttrs: {
   pname = "wealthfolio";
-  version = "3.6.1";
+  version = "3.13.1";
 
   src = fetchFromGitHub {
-    owner = "afadil";
+    owner = "wealthfolio";
     repo = "wealthfolio";
     rev = "v${finalAttrs.version}";
-    hash = "sha256-7RX5u4Qr5OSBCQvsf9F0LlIVd9VycpvoVvIKj08xA3A=";
+    hash = "sha256-GqtobbhoBJjvD4UNiY75QlkaLf3HNZzGQqtqsbacOuo=";
   };
 
   pnpmDeps = fetchPnpmDeps {
     inherit (finalAttrs) src pname version;
     pnpm = pnpm_10;
     fetcherVersion = 4;
-    hash = "sha256-dpxUdXqRbYPwq/wKu8XFdcjhDSGYo5ory9rIovHGJwk=";
+    hash = "sha256-2jkFdZ8p5qmDSRB6DWvmuUKV5A4YsH/B/XmFOy289Lk=";
   };
 
   cargoRoot = ".";
@@ -45,7 +47,7 @@ stdenv.mkDerivation (finalAttrs: {
       src
       cargoRoot
       ;
-    hash = "sha256-vNFYouLMP462N6G8cJppnKMBp9Wphh4mrMVO4WWaPJ4=";
+    hash = "sha256-7dX4ObWiFACy22+4N8kz6vgo/XyM3fyiV3trYLThv9E=";
   };
 
   nativeBuildInputs = [
@@ -61,12 +63,22 @@ stdenv.mkDerivation (finalAttrs: {
   ];
 
   buildInputs = [
+    aws-lc
     libsoup_3
     openssl
+    sqlcipher
     webkitgtk_4_1
   ];
 
+  env.OPENSSL_NO_VENDOR = "1";
+
   postPatch = ''
+    # Use the system CA certificates instead of the bundled Mozilla roots.
+    substituteInPlace crates/http/src/lib.rs \
+      --replace-fail \
+        'reqwest::Client::builder().tls_certs_only(ROOTS.iter().cloned())' \
+        'reqwest::Client::builder()'
+
     jq \
       '.plugins.updater.endpoints = [ ]
       | .bundle.createUpdaterArtifacts = false' \
@@ -80,7 +92,7 @@ stdenv.mkDerivation (finalAttrs: {
     description = "Beautiful Private and Secure Desktop Investment Tracking Application";
     homepage = "https://wealthfolio.app/";
     license = lib.licenses.agpl3Only;
-    mainProgram = "wealthfolio";
+    mainProgram = "Wealthfolio";
     maintainers = with lib.maintainers; [ kilianar ];
     platforms = lib.platforms.linux;
   };

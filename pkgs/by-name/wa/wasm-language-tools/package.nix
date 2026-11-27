@@ -2,6 +2,7 @@
   lib,
   rustPlatform,
   fetchFromGitHub,
+  fetchpatch,
   versionCheckHook,
   _experimental-update-script-combinators,
   nix-update-script,
@@ -10,16 +11,16 @@
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "wasm-language-tools";
-  version = "0.11.0";
+  version = "0.12.0";
 
   src = fetchFromGitHub {
     owner = "g-plane";
     repo = "wasm-language-tools";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-XyVWNhVDo190/hnKj6A5dDYnlO9/WI0GYJIrkyfUkTw=";
+    hash = "sha256-emiSs0I5g47WIs/3HKd/R+RGwC3Ej6kIGEnUqkFWibk=";
   };
 
-  cargoHash = "sha256-VoApXHdD8SF8ZqnDVynxunjVoZ5WKai2Xzw0UYy7hSg=";
+  cargoHash = "sha256-SDeKzo/w0VNi9Nzm9DzrhsUsUo0rlGn/4y6aKCgVQmg=";
 
   nativeInstallCheckInputs = [ versionCheckHook ];
   versionCheckProgram = "${placeholder "out"}/bin/wat_server";

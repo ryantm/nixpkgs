@@ -7,7 +7,7 @@
   nix-update-script,
 }:
 let
-  version = "26.1";
+  version = "26.2.2";
 in
 python3.pkgs.buildPythonApplication {
   pname = "novelwriter";
@@ -15,10 +15,10 @@ python3.pkgs.buildPythonApplication {
   pyproject = true;
 
   src = fetchFromGitHub {
-    owner = "vkbo";
+    owner = "saga-soft";
     repo = "novelWriter";
     tag = "v${version}";
-    hash = "sha256-vvJTEfqkxnh7TWnqBtT39nVyVTVQyAKVI6fDjOiiuPk=";
+    hash = "sha256-WkV1Un3ktrVDANpwmW7PCwOHmVb5aePb7k4QkKAKRRg=";
   };
 
   nativeBuildInputs = [ qt6.wrapQtAppsHook ];
@@ -57,8 +57,8 @@ python3.pkgs.buildPythonApplication {
   meta = {
     description = "Open source plain text editor designed for writing novels";
     homepage = "https://novelwriter.io";
-    changelog = "https://github.com/vkbo/novelWriter/blob/main/CHANGELOG.md";
-    license = with lib.licenses; [ gpl3Only ];
+    changelog = "https://github.com/saga-soft/novelWriter/blob/main/CHANGELOG.md";
+    license = lib.licenses.gpl3Only;
     maintainers = with lib.maintainers; [ pluiedev ];
     mainProgram = "novelwriter";
 

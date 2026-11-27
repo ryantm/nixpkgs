@@ -1,17 +1,18 @@
 {
   buildGoModule,
   fetchFromGitHub,
+  fetchpatch,
   lib,
   nixosTests,
   symlinkJoin,
 }:
 
 let
-  version = "3.5.32";
-  etcdSrcHash = "sha256-pqCMgY5veIF5kQDjqTg9B7aSL+V6bdMZpc464wjTLMo=";
-  etcdServerVendorHash = "sha256-FDzAF2J9wbRmQETvrdJK3gL4cfAhiiihb5EOrimE11M=";
-  etcdUtlVendorHash = "sha256-0xfq7f7Xr3SWxiU8C1bWQPxdFvEaoIrlK+gX3hkd4ho=";
-  etcdCtlVendorHash = "sha256-59e/TORi/XX+GXRjMO/45SMumYgrFbOHEXqV7sM72H8=";
+  version = "3.5.35";
+  etcdSrcHash = "sha256-WdRm0djQFxrv83BwtoT53PSniLUqT58HzqJLoPEy5ko=";
+  etcdServerVendorHash = "sha256-+yQ9ylwh15mGHnPomMOUwFAfPO9EKrFBrCp6f95d3u0=";
+  etcdUtlVendorHash = "sha256-6PN9PrmMEN1xltZEVJcajkRCweKPoxMRUodCgwiN5hU=";
+  etcdCtlVendorHash = "sha256-DNvFzc0YRQyu4yZVEQRQq6rINGWlRwhp880K289+0bY=";
 
   src = fetchFromGitHub {
     owner = "etcd-io";
@@ -47,6 +48,17 @@ let
     vendorHash = etcdServerVendorHash;
 
     modRoot = "./server";
+
+    patches = [
+      (fetchpatch {
+        name = "go_1_27.patch";
+        url = "https://github.com/etcd-io/etcd/commit/b5b40fba5e69f6662fff673d1ffe5c2ce2e3b863.patch";
+        includes = [
+          "server/embed/config_test.go"
+        ];
+        hash = "sha256-mNboTMWuK9Y6/7bBXflOcxGIPnBjTqIctBKNXgKzSCU=";
+      })
+    ];
 
     preInstall = ''
       mv $GOPATH/bin/{server,etcd}

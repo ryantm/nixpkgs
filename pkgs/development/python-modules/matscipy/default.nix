@@ -48,7 +48,6 @@ buildPythonPackage (finalAttrs: {
   pname = "matscipy";
   version = "1.2.0";
   pyproject = true;
-  __structuredAttrs = true;
 
   src = fetchFromGitHub {
     owner = "libAtoms";
@@ -84,6 +83,14 @@ buildPythonPackage (finalAttrs: {
         --replace-fail \
           "[pytest]" \
           "[tool:pytest]"
+    ''
+    # `disp` argument was removed from `scipy.linalg.sqrtm` in scipy 1.16.
+    # `disp=True` was the default behaviour (return only the matrix), so it can be dropped.
+    + ''
+      substituteInPlace matscipy/cauchy_born.py \
+        --replace-fail \
+          "sqrtm(Usqr, disp=True)" \
+          "sqrtm(Usqr)"
     '';
 
   build-system = [

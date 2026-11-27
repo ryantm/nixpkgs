@@ -6,25 +6,38 @@
   steampipe,
 }:
 
-buildGoModule rec {
+buildGoModule (finalAttrs: {
   pname = "steampipe-plugin-aws";
-  version = "1.31.0";
+  version = "1.35.0";
+
+  __structuredAttrs = true;
 
   src = fetchFromGitHub {
     owner = "turbot";
     repo = "steampipe-plugin-aws";
-    tag = "v${version}";
-    hash = "sha256-Mt9KUyV9BrCdwDwF9NzOdOTF90W4vpT3N2n/QaVo6qo=";
+    tag = "v${finalAttrs.version}";
+    hash = "sha256-L0VzkFSCj4zpMRxII6v8sQWFPT8PjTPMLtlI5mBL16M=";
   };
 
-  vendorHash = "sha256-8ZVl70Lwz3j3PM3XljZGFaoGt+JP6TP+o5gOGoBlUY8=";
+  vendorHash = "sha256-UcaGfgrEl6TQph5VEK1dq4vl/jftgPK4KpDXP83b0ck=";
 
   ldflags = [
     "-s"
     "-w"
   ];
 
-  doCheck = true;
+  checkFlags =
+    let
+      # Requires network access
+      skippedTests = [
+        "TestEndpointUrlSignsWithConnectionKeys"
+        "TestEndpointUrlUsesConnectionProfile"
+        "TestEndpointUrlAssumesRoleAtConnectionEndpoint"
+        "TestEndpointUrlBeatsServiceEndpointEnv"
+        "TestEndpointUrlFromEnvWhenNotConfigured"
+      ];
+    in
+    [ "-skip=^${lib.concatStringsSep "$|^" skippedTests}$" ];
 
   installPhase = ''
     runHook preInstall
@@ -40,7 +53,7 @@ buildGoModule rec {
   passthru.updateScript = nix-update-script { };
 
   meta = {
-    changelog = "https://github.com/turbot/steampipe-plugin-aws/blob/v${version}/CHANGELOG.md";
+    changelog = "https://github.com/turbot/steampipe-plugin-aws/blob/${finalAttrs.src.tag}/CHANGELOG.md";
     description = "AWS Plugin for Steampipe";
     homepage = "https://github.com/turbot/steampipe-plugin-aws";
     license = lib.licenses.asl20;
@@ -48,4 +61,4 @@ buildGoModule rec {
     maintainers = with lib.maintainers; [ anthonyroussel ];
     platforms = steampipe.meta.platforms;
   };
-}
+})

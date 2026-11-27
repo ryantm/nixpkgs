@@ -1,19 +1,22 @@
 {
   lib,
-  buildGoModule,
+  buildGo127Module,
   fetchFromGitHub,
   installShellFiles,
+  versionCheckHook,
 }:
 
-buildGoModule (finalAttrs: {
+buildGo127Module (finalAttrs: {
   pname = "reproxy";
-  version = "1.6.0";
+  version = "1.7.5";
+
+  __structuredAttrs = true;
 
   src = fetchFromGitHub {
     owner = "umputun";
     repo = "reproxy";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-eAxksLPCQrmKRKNlFhDb5dfXSaa9o/rexM1n+CiPZvw=";
+    hash = "sha256-g8oV8taxmnL9Pkx9Pq6+aJA2z22CDNa7rRdpbWOvU1c=";
   };
 
   vendorHash = null;
@@ -22,7 +25,6 @@ buildGoModule (finalAttrs: {
 
   ldflags = [
     "-s"
-    "-w"
     "-X main.revision=${finalAttrs.version}"
   ];
 
@@ -36,12 +38,15 @@ buildGoModule (finalAttrs: {
     installShellCompletion completions/*
   '';
 
+  nativeInstallCheckInputs = [ versionCheckHook ];
+  doInstallCheck = true;
+
   __darwinAllowLocalNetworking = true;
 
   meta = {
     description = "Simple edge server / reverse proxy";
     homepage = "https://reproxy.io/";
-    changelog = "https://github.com/umputun/reproxy/releases/tag/${finalAttrs.src.rev}";
+    changelog = "https://github.com/umputun/reproxy/releases/tag/${finalAttrs.src.tag}";
     license = lib.licenses.mit;
     maintainers = with lib.maintainers; [ sikmir ];
     mainProgram = "reproxy";

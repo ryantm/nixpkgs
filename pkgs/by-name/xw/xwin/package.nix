@@ -5,21 +5,21 @@
   openssl,
   pkg-config,
   versionCheckHook,
+  nix-update-script,
 }:
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "xwin";
-  version = "0.7.0";
+  version = "0.10.0";
 
   src = fetchFromGitHub {
     owner = "Jake-Shadle";
     repo = "xwin";
     tag = finalAttrs.version;
-    hash = "sha256-p7rrZ2yxSpGKNuddcSO2wlvsIFj8LYG91tCK1mWO+NY=";
+    hash = "sha256-kUbRHrM88x3ezy0+GIpbGQfEROn16dSwPtobjdYauRM=";
   };
 
-  cargoHash = "sha256-e2uYAE2veYDNZpHr40bpIbplg7orW8oIxgZORhPpbFY=";
+  cargoHash = "sha256-34v/YDT0Juwjv8EbwsOsmbp/Q89Z4c+BYxcA60X7Q3A=";
 
-  strictDeps = true;
   nativeBuildInputs = [
     pkg-config
   ];
@@ -28,16 +28,12 @@ rustPlatform.buildRustPackage (finalAttrs: {
     openssl
   ];
 
-  buildNoDefaultFeatures = true;
-  buildFeatures = [
-    "native-tls"
-  ];
-
   doCheck = true;
   # Requires network access
   checkFlags = [
     "--skip=verify_compiles"
     "--skip=verify_deterministic"
+    "--skip=verify_aarch64_compiles"
   ];
 
   doInstallCheck = true;
@@ -45,6 +41,8 @@ rustPlatform.buildRustPackage (finalAttrs: {
     versionCheckHook
   ];
   versionCheckProgram = placeholder "out" + "/bin/xwin";
+
+  passthru.updateScript = nix-update-script { };
 
   meta = {
     description = "Utility for downloading the Microsoft CRT & Windows SDK libraries";
@@ -55,7 +53,10 @@ rustPlatform.buildRustPackage (finalAttrs: {
       lib.licenses.mit
       lib.licenses.asl20
     ];
-    maintainers = [ ];
+    maintainers = with lib.maintainers; [
+      eveeifyeve
+      greaka
+    ];
     platforms = with lib.platforms; linux ++ darwin ++ windows;
   };
 })

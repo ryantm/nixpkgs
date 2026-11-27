@@ -158,7 +158,7 @@ buildPythonPackage (finalAttrs: {
 
   pytestFlags = [
     "-v"
-    "--hypothesis-profile ci"
+    "--hypothesis-profile=ci"
     # Follow upstream with settings
     "--durations=20"
 
@@ -168,6 +168,8 @@ buildPythonPackage (finalAttrs: {
     # `JUPYTER_PLATFORM_DIRS=1` and then run `jupyter --paths`.
     # The use of platformdirs will be the default in `jupyter_core` v6
     "-Wignore::DeprecationWarning"
+    # impending matplotlib deprecation, does not block distribution
+    "-Wignore::PendingDeprecationWarning"
   ];
 
   disabledTestPaths = [

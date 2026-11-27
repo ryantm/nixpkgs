@@ -6,7 +6,7 @@
   dotnetCorePackages,
   sqlite,
   withFFmpeg ? true, # replace bundled ffprobe binary with symlink to ffmpeg package.
-  servarr-ffmpeg,
+  openur-ffmpeg,
   fetchYarnDeps,
   yarn,
   fixup-yarn-lock,
@@ -21,7 +21,7 @@
   applyPatches,
 }:
 let
-  version = "4.0.18.2971";
+  version = "5.0.0.2997";
   # The dotnet8 compatibility patches also change `yarn.lock`, so we must pass
   # the already patched lockfile to `fetchYarnDeps`.
   src = applyPatches {
@@ -29,16 +29,28 @@ let
       owner = "Sonarr";
       repo = "Sonarr";
       tag = "v${version}";
-      hash = "sha256-83qbbBNk42KjKZNvYaAINoWZa3uEgaV0eveGl9dKTd8=";
+      hash = "sha256-eKJcGCTqLNVxW1Ejk0D/4z0/Z6cSO6MRiqO51FA+HvU=";
     };
     postPatch = ''
       mv src/NuGet.Config NuGet.Config
-
-      # error CS0104: 'IPNetwork' is an ambiguous reference between 'Microsoft.AspNetCore.HttpOverrides.IPNetwork' and 'System.Net.IPNetwork'
-      substituteInPlace src/NzbDrone.Host/Startup.cs \
-        --replace-fail 'IPNetwork' 'Microsoft.AspNetCore.HttpOverrides.IPNetwork'
+      substituteInPlace global.json \
+        --replace-fail '10.0.404' '10.0.403'
     '';
     patches = lib.optionals (lib.versionOlder version "5.0") [
+      # Prerequisite for .NET 8 patches, some commits
+      # touching the same files have to be reverted
+      (fetchpatch {
+        name = "revert-ffprobe-bump";
+        url = "https://github.com/Sonarr/Sonarr/commit/34761ca2162eb45d1f207a097f0d546239665bfa.patch";
+        revert = true;
+        hash = "sha256-8DNXrWtaTwNthI4tCXIf9a3xF2dBwo7IPdbtGStFX50=";
+      })
+      (fetchpatch {
+        name = "revert-mailkit-bump";
+        url = "https://github.com/Sonarr/Sonarr/commit/0718ba00041bf2d74749dc246bc02ad0540ec24e.patch";
+        revert = true;
+        hash = "sha256-+S4bt5Ult48nwXXOhZ57UIOYg0sInZDlvBWeySZfGyY=";
+      })
       # See https://github.com/Sonarr/Sonarr/issues/7442 and
       # https://github.com/Sonarr/Sonarr/pull/7443.
       # Unfortunately, the .NET 8 upgrade was only merged into the v5 branch,
@@ -74,10 +86,10 @@ buildDotnetModule {
 
   yarnOfflineCache = fetchYarnDeps {
     yarnLock = "${src}/yarn.lock";
-    hash = "sha256-YkBFvv+g4p22HdM/GQAHVGGW1yLYGWpNtRq7+QJiLIw=";
+    hash = "sha256-nbXSMPS02jGSJpzBpG+yhatIQGB1s8QS3JWARn3RO5U=";
   };
 
-  ffprobe = lib.optionalDrvAttr withFFmpeg (lib.getExe' servarr-ffmpeg "ffprobe");
+  ffprobe = lib.optionalDrvAttr withFFmpeg (lib.getExe' openur-ffmpeg "ffprobe");
 
   postConfigure = ''
     yarn config --offline set yarn-offline-mirror "$yarnOfflineCache"
@@ -86,7 +98,7 @@ buildDotnetModule {
     patchShebangs --build node_modules
   '';
   postBuild = ''
-    yarn --offline run build --env production
+    yarn --offline run build
   '';
   postInstall =
     let
@@ -111,8 +123,8 @@ buildDotnetModule {
 
   runtimeDeps = [ sqlite ];
 
-  dotnet-sdk = dotnetCorePackages.sdk_8_0;
-  dotnet-runtime = dotnetCorePackages.aspnetcore_8_0;
+  dotnet-sdk = dotnetCorePackages.sdk_10_0;
+  dotnet-runtime = dotnetCorePackages.aspnetcore_10_0;
 
   doCheck = true;
 
@@ -137,8 +149,13 @@ buildDotnetModule {
     "src/NzbDrone.Test.Common/Sonarr.Test.Common.csproj"
   ];
 
+  # https://github.com/NixOS/nixpkgs/pull/491217
+  dotnetTestFlags = lib.optionals stdenvNoCC.buildPlatform.isDarwin [
+    "--environment:DOTNET_SYSTEM_NET_DISABLEIPV6=1"
+  ];
+
   dotnetFlags = [
-    "--property:TargetFramework=net8.0"
+    "--property:TargetFramework=net10.0"
     "--property:EnableAnalyzers=false"
     "--property:SentryUploadSymbols=false" # Fix Sentry upload failed warnings
     # Override defaults in src/Directory.Build.props that use current time.

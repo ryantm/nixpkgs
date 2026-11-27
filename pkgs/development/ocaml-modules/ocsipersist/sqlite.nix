@@ -2,8 +2,7 @@
   buildDunePackage,
   ocsipersist,
   logs,
-  ocaml_sqlite3,
-  ocsigen_server,
+  sqlite3,
 }:
 
 buildDunePackage {
@@ -12,7 +11,7 @@ buildDunePackage {
 
   propagatedBuildInputs = [
     logs
-    ocaml_sqlite3
+    sqlite3
     ocsipersist
   ];
 

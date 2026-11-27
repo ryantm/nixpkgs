@@ -48,6 +48,7 @@ lib.makeScope
         };
 
         bash-static = callPackage ./bash/static.nix {
+          gcc-buildbuild = gcc-latest;
           gcc = gcc-latest;
           gnumake = gnumake-musl;
           gnutar = gnutar-latest;
@@ -60,6 +61,7 @@ lib.makeScope
         };
 
         binutils-static = callPackage ./binutils/static.nix {
+          gcc-buildbuild = gcc-latest;
           gcc = gcc-latest;
           gnumake = gnumake-musl;
           gnutar = gnutar-latest;
@@ -148,16 +150,41 @@ lib.makeScope
           gnutar = gnutar-musl;
         };
 
-        gcc10 = callPackage ./gcc/10.nix {
+        gcc10-unwrapped = callPackage ./gcc/10.nix {
           gcc = gcc46-cxx;
           gnumake = gnumake-musl;
           gnutar = gnutar-latest;
         };
+        gcc10 = callPackage ./gcc/wrapper.nix {
+          gcc-unwrapped = gcc10-unwrapped;
+          bash-build = bash;
+          libc = musl;
+          libgcc = gcc10-unwrapped;
+          libstdcxx = gcc10-unwrapped;
+          targetPlatform = hostPlatform;
+          dynamicLinkerGlob = "${musl}/lib/libc.so";
+          staticLibgcc = true;
+        };
 
-        gcc-latest = callPackage ./gcc/latest.nix {
+        gcc-latest-unwrapped = callPackage ./gcc/ng.nix {
+          binutils-buildbuild = binutils;
+          binutils-buildtarget = binutils;
+          binutils-hosttarget = binutils;
           gcc = gcc10;
+          gcc-buildbuild = gcc10;
           gnumake = gnumake-musl;
           gnutar = gnutar-latest;
+          libc-headers = musl;
+          libc = musl;
+          targetPlatform = hostPlatform;
+        };
+        gcc-latest = callPackage ./gcc/wrapper.nix {
+          bash-build = bash;
+          gcc-unwrapped = gcc-latest-unwrapped;
+          targetPlatform = hostPlatform;
+          libc = musl;
+          dynamicLinkerGlob = "${musl}/lib/libc.so";
+          staticLibgcc = true;
         };
 
         gnugrep = callPackage ./gnugrep {
@@ -264,6 +291,57 @@ lib.makeScope
 
         heirloom-devtools = callPackage ./heirloom-devtools { tinycc = tinycc-mes; };
 
+        libbacktrace = callPackage ./gcc/libbacktrace.nix {
+          gcc = gcc10;
+          gnumake = gnumake-musl;
+          gnutar = gnutar-latest;
+        };
+
+        libgmp = callPackage ./gcc/gmp.nix {
+          gcc-buildbuild = gcc10;
+          gcc = gcc10;
+          gnumake = gnumake-musl;
+          gnutar = gnutar-latest;
+        };
+
+        libiberty = callPackage ./gcc/libiberty.nix {
+          gcc = gcc10;
+          gnumake = gnumake-musl;
+          gnutar = gnutar-latest;
+        };
+
+        libmpc = callPackage ./gcc/mpc.nix {
+          gcc = gcc10;
+          gnumake = gnumake-musl;
+          gnutar = gnutar-latest;
+        };
+
+        libmpfr = callPackage ./gcc/mpfr.nix {
+          gcc = gcc10;
+          gnumake = gnumake-musl;
+          gnutar = gnutar-latest;
+        };
+
+        libgcc = callPackage ./gcc/libgcc.nix {
+          binutils-buildbuild = binutils;
+          gcc-buildbuild = gcc10;
+          gcc = gcc-latest-unwrapped;
+          gnumake = gnumake-musl;
+          gnutar = gnutar-latest;
+          enableShared = false;
+          libc = musl;
+          libc-headers = musl;
+        };
+
+        libstdcxx = callPackage ./gcc/libstdcxx.nix {
+          gcc = gcc-latest-unwrapped;
+          gnumake = gnumake-musl;
+          gnutar = gnutar-latest;
+          libc = musl;
+          dynamicLinkerGlob = "${musl}/lib/libc.so";
+          staticLibgcc = true;
+        };
+
         linux-headers = callPackage ./linux-headers {
           gcc = gcc-latest;
           gnumake = gnumake-musl;
@@ -293,7 +371,14 @@ lib.makeScope
           gnumake = gnumake-musl;
         };
 
+        musl-headers = callPackage ./musl/headers.nix {
+          gcc = gcc46;
+          gnumake = gnumake-musl;
+          gnutar = gnutar-latest;
+        };
+
         musl-static = callPackage ./musl/static.nix {
+          libgcc = gcc-latest-unwrapped;
           gcc = gcc-latest;
           gnumake = gnumake-musl;
         };
@@ -430,7 +515,6 @@ lib.makeScope
             ''
             + (lib.strings.optionalString (hostPlatform.libc == "glibc") ''
               echo ${gcc-glibc.tests.hello-world}
-              echo ${glibc.tests.hello-world}
             '')
             + ''
               mkdir ''${out}
@@ -448,17 +532,42 @@ lib.makeScope
         test = tests.full;
       }
       // (lib.optionalAttrs (hostPlatform.libc == "glibc")) {
-        gcc-glibc = callPackage ./gcc/glibc.nix {
+        gcc-glibc-unwrapped = callPackage ./gcc/ng.nix {
+          binutils-buildbuild = binutils;
+          binutils-buildtarget = binutils;
+          binutils-hosttarget = binutils-static;
           gcc = gcc-latest;
+          gcc-buildbuild = gcc-latest;
           gnumake = gnumake-musl;
           gnutar = gnutar-latest;
+          libc = glibc;
+          libc-headers = glibc;
+          targetPlatform = hostPlatform;
+        };
+
+        gcc-glibc = callPackage ./gcc/wrapper.nix {
+          bash-build = bash;
+          bash = bash-static;
+          binutils = binutils-static;
+          gcc-unwrapped = gcc-glibc-unwrapped;
+          libc = glibc;
+          targetPlatform = hostPlatform;
+          dynamicLinkerGlob = "${glibc}/lib/ld-linux*.so.2";
+          staticLibgcc = true;
         };
 
         glibc = callPackage ./glibc {
-          gcc = gcc-latest;
+          gcc = gcc-latest-unwrapped;
           gnumake = gnumake-musl;
           gnutar = gnutar-latest;
           gnugrep = gnugrep-static;
+        };
+
+        glibc-headers = callPackage ./glibc/headers.nix {
+          gcc = gcc-latest;
+          binutils-build = binutils;
+          gnumake = gnumake-musl;
+          gnutar = gnutar-latest;
         };
       }
     )

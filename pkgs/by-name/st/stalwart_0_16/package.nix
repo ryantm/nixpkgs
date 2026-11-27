@@ -2,14 +2,17 @@
   lib,
   rustPlatform,
   fetchFromGitHub,
+  aws-lc,
   pkg-config,
   protobuf,
   bzip2,
   openssl,
   sqlite,
+  rust-jemalloc-sys-unprefixed,
   foundationdb,
   zstd,
   stdenv,
+  _experimental-update-script-combinators,
   nix-update-script,
   rocksdb,
   callPackage,
@@ -29,7 +32,6 @@ let
     python3Packages.buildPythonApplication {
       pname = "migrate_v016";
       inherit src version;
-      __structuredAttrs = true;
       format = "other";
       dontBuild = true;
       dependencies = [
@@ -50,7 +52,7 @@ let
 in
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "stalwart" + (lib.optionalString stalwartEnterprise "-enterprise");
-  version = "0.16.13";
+  version = "0.16.27";
 
   __structuredAttrs = true;
 
@@ -58,16 +60,12 @@ rustPlatform.buildRustPackage (finalAttrs: {
     owner = "stalwartlabs";
     repo = "stalwart";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-Uc1dUuu4TnpTKB17GArlo/hYT2gdUUnl3NxWalSB50k=";
+    hash = "sha256-QaPhmiHFIFTdOai0+dfIZaXCctphYTm2h9lB2gcye5c=";
   };
 
-  cargoHash = "sha256-C+BwUqeYzutGcX13YgR1ngfUtuk+S12/k/xAYz68b3s=";
+  cargoHash = "sha256-imB0ItaQdHCJ5beJ0NOkl/8LdTF1Ocf6YPqSbjsn+Ps=";
 
   env = {
-    # https://docs.rs/openssl/latest/openssl/#manual
-    OPENSSL_NO_VENDOR = true;
-    OPENSSL_DIR = lib.getDev openssl;
-    OPENSSL_LIB_DIR = "${lib.getLib openssl}/lib";
     ZSTD_SYS_USE_PKG_CONFIG = true;
     ROCKSDB_INCLUDE_DIR = "${rocksdb}/include";
     ROCKSDB_LIB_DIR = "${rocksdb}/lib";
@@ -76,6 +74,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
     lib.optionalAttrs
       (stdenv.hostPlatform.isLinux && (stdenv.hostPlatform.isAarch64 || stdenv.hostPlatform.isArmv7))
       {
+        # Required to fix Stalwart on ARM systems with 16 KB page size.
         JEMALLOC_SYS_WITH_LG_PAGE = 16;
       };
 
@@ -85,13 +84,16 @@ rustPlatform.buildRustPackage (finalAttrs: {
   ];
 
   nativeBuildInputs = [
+    pkg-config
     protobuf
     rustPlatform.bindgenHook
   ];
 
   buildInputs = [
+    aws-lc
     bzip2
     openssl
+    rust-jemalloc-sys-unprefixed
     sqlite
     zstd
   ]
@@ -108,6 +110,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
     "redis"
     "azure"
     "nats"
+    "tikv-jemallocator/unprefixed_malloc_on_supported_platforms"
   ]
   ++ lib.optionals withFoundationdb [ "foundationdb" ]
   ++ lib.optionals stalwartEnterprise [ "enterprise" ];
@@ -277,7 +280,12 @@ rustPlatform.buildRustPackage (finalAttrs: {
     inherit rocksdb; # make used rocksdb version available (e.g., for backup scripts)
     webui = callPackage ./webui.nix { };
     spam-filter = callPackage ./spam-filter.nix { };
-    updateScript = nix-update-script { };
+    # subpackages have distinct version numbers, so we can't use nix-update's `--subpackage`
+    updateScript = _experimental-update-script-combinators.sequence [
+      (nix-update-script { })
+      (nix-update-script { attrPath = "stalwart_0_16.webui"; })
+      (nix-update-script { attrPath = "stalwart_0_16.spam-filter"; })
+    ];
   };
 
   meta = {
@@ -291,14 +299,9 @@ rustPlatform.buildRustPackage (finalAttrs: {
       lib.licenses.agpl3Only
     ]
     ++ lib.optionals stalwartEnterprise [
-      {
-        fullName = "Stalwart Enterprise License 2.0 (SELv2) Agreement";
-        url = "https://github.com/stalwartlabs/stalwart/blob/${finalAttrs.src.tag}/LICENSES/LicenseRef-SEL.txt";
-        free = false;
-        redistributable = false;
-      }
+      lib.licenses.stalwart
     ];
-
+    maxSilent = 14400; # 4 hours
     mainProgram = "stalwart";
     maintainers = with lib.maintainers; [
       happysalada

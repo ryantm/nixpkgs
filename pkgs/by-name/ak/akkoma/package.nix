@@ -9,25 +9,25 @@
 }:
 
 let
-  beamPackages = beam_minimal.packages.erlang_27.extend (
-    self: super: {
-      elixir = self.elixir_1_17;
-      rebar3 = self.rebar3WithPlugins {
-        plugins = with self; [ pc ];
+  beamPackages = beam_minimal.packages.erlang_29.overrideScope (
+    final: prev: {
+      elixir = final.elixir_1_20;
+      rebar3 = final.rebar3WithPlugins {
+        plugins = with final; [ pc ];
       };
     }
   );
 in
-beamPackages.mixRelease rec {
+beamPackages.mixRelease (finalAttrs: {
   pname = "akkoma";
-  version = "3.19.0";
+  version = "3.20.1";
 
   src = fetchFromGitea {
     domain = "akkoma.dev";
     owner = "AkkomaGang";
     repo = "akkoma";
-    tag = "v${version}";
-    hash = "sha256-ASLnsmuWpfQKwpNNLUgI32Gdn/j+jUW5IBLlT8RUmcE=";
+    tag = "v${finalAttrs.version}";
+    hash = "sha256-wdmEIhP4CzJQYH4UwUiQTEK4B8gPpkxYNMgCsKRGeZo=";
 
     # upstream repository archive fetching is broken
     forceFetchGit = true;
@@ -38,8 +38,8 @@ beamPackages.mixRelease rec {
 
   mixFodDeps = beamPackages.fetchMixDeps {
     pname = "mix-deps-akkoma";
-    inherit src version;
-    hash = "sha256-O9A7XuQSSczGMcLMc6Fk0eh7PkjQ6sYJKSwdqoEPJJI=";
+    inherit (finalAttrs) src version;
+    hash = "sha256-WokBShyLH09/2Xn4sgIrRrqLMasyUe113WFvCSkEOp0=";
 
     postInstall = ''
       substituteInPlace "$out/http_signatures/mix.exs" \
@@ -78,7 +78,7 @@ beamPackages.mixRelease rec {
       inherit akkoma akkoma-confined;
     };
 
-    inherit mixFodDeps;
+    inherit (finalAttrs) mixFodDeps;
 
     # Used to make sure the service uses the same version of elixir as
     # the package
@@ -90,9 +90,9 @@ beamPackages.mixRelease rec {
   meta = {
     description = "ActivityPub microblogging server";
     homepage = "https://akkoma.social";
-    changelog = "https://akkoma.dev/AkkomaGang/akkoma/releases/tag/v${version}";
+    changelog = "https://akkoma.dev/AkkomaGang/akkoma/releases/tag/v${finalAttrs.version}";
     license = lib.licenses.agpl3Only;
-    maintainers = with lib.maintainers; [ mvs ];
+    maintainers = with lib.maintainers; [ yuka ];
     platforms = lib.platforms.unix;
   };
-}
+})

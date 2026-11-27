@@ -2,15 +2,16 @@
   lib,
   stdenv,
   fetchFromGitHub,
+  versionCheckHook,
 }:
-stdenv.mkDerivation {
+stdenv.mkDerivation (finalAttrs: {
   pname = "asmc-linux";
-  version = "2.36.25";
+  version = "2.41";
   src = fetchFromGitHub {
     owner = "nidud";
     repo = "asmc_linux";
-    rev = "4ee70bde4439bdd9c772d08527dba6d50f2e5a88";
-    hash = "sha256-/yJC1OQGRgy9T/U2VB0MohSsD1ImLnHYM/8Y8fIWhVE=";
+    tag = "v${finalAttrs.version}";
+    hash = "sha256-2Otg/l0xwNfp0x9wStCTh06Y+/b0vKHELvRsJfkeRK0=";
   };
 
   enableParallelBuilding = true;
@@ -23,12 +24,16 @@ stdenv.mkDerivation {
     runHook postInstall
   '';
 
+  nativeInstallCheckInputs = [ versionCheckHook ];
+  doInstallCheck = true;
+
   meta = {
     description = "MASM-compatible assembler";
     homepage = "https://github.com/nidud/asmc_linux";
+    changelog = "https://github.com/nidud/asmc/blob/v${lib.versions.majorMinor finalAttrs.version}/source/asmc/history.txt";
     license = lib.licenses.gpl2Plus;
     maintainers = with lib.maintainers; [ ccicnce113424 ];
     platforms = with lib.systems.inspect; patternLogicalAnd patterns.isx86_64 patterns.isLinux;
     mainProgram = "asmc";
   };
-}
+})

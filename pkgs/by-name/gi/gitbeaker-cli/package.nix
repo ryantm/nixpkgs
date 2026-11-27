@@ -4,46 +4,52 @@
   fetchFromGitHub,
   nodejs,
   gnutar,
-  makeBinaryWrapper,
-  yarn-berry_4,
+  gnused,
+  pnpm,
+  pnpmConfigHook,
+  fetchPnpmDeps,
+  versionCheckHook,
+  nix-update-script,
 }:
-
 stdenv.mkDerivation (finalAttrs: {
   pname = "gitbeaker-cli";
-  version = "43.8.0";
+  version = "44.1.10";
 
   src = fetchFromGitHub {
     owner = "jdalrymple";
     repo = "gitbeaker";
-    tag = finalAttrs.version;
-    hash = "sha256-EVxDUEuxCnMiqqsKFs9JpRVJ86d9hW22K4a4we8eoJA=";
+    tag = "v${finalAttrs.version}";
+    hash = "sha256-V4jXhJlkyAHNqWWZHU/SuTRTuQyil52u/QTF7Pz9CGQ=";
   };
 
-  patches = [
-    # Remove this when updating since upstream migrated to pnpm
-    # https://github.com/jdalrymple/gitbeaker/blob/main/package.json#L59
-    ./yarn-4.14-support.patch
-  ];
+  pnpmDeps = fetchPnpmDeps {
+    inherit (finalAttrs) pname version src;
+    inherit pnpm;
+    fetcherVersion = 5;
+    hash = "sha256-UuZ38Bw7wjbEwDrPCnoVBvI6sidJePJmKG80PVMmBCo=";
+  };
 
   nativeBuildInputs = [
     nodejs
-    yarn-berry_4.yarnBerryConfigHook
-    yarn-berry_4
-    makeBinaryWrapper
+    pnpm
+    pnpmConfigHook
     gnutar
+    gnused
   ];
-
-  missingHashes = ./missing-hashes.json;
-
-  offlineCache = yarn-berry_4.fetchYarnBerryDeps {
-    inherit (finalAttrs) src missingHashes patches;
-    hash = "sha256-RTgdHicbfbJbToif51TchLCfdIPZynvT0n/KwrydLYU=";
-  };
 
   buildPhase = ''
     runHook preBuild
 
-    yarn workspaces foreach -Rpt --from '@gitbeaker/*' run build
+    # Needed in macOS sandbox (See https://github.com/pnpm/pnpm/pull/17757)
+    # Remove after pnpm is updated to 12.19 or later
+    find . -path "*/node_modules/.bin/*" -type f | while IFS= read -r file; do
+      substituteInPlace "$file" \
+        --replace-quiet \
+          'if command -p -v "$1" >/dev/null 2>&1 || ! command -v "$1" >/dev/null 2>&1; then command -p "$@"; else command "$@"; fi' \
+          'if [ -x "/usr/bin/$1" ] || [ -x "/bin/$1" ] || ! command -v "$1" >/dev/null 2>&1; then command -p "$@"; else command "$@"; fi'
+    done
+
+    pnpm --filter "@gitbeaker/*..." build
 
     runHook postBuild
   '';
@@ -51,33 +57,46 @@ stdenv.mkDerivation (finalAttrs: {
   installPhase = ''
     runHook preInstall
 
+    # `pnpm prune` doesn't support monorepos, and with pnpm 12 it also tries
+    # to verify the lockfile against supply-chain policies over the network.
+    # Reinstall production dependencies only instead, as `pnpm prune --help`
+    # recommends for monorepos.
+    find . -name "node_modules" -type d -prune -exec rm -rf '{}' +
+    pnpm install \
+      --offline \
+      --ignore-scripts \
+      --frozen-lockfile \
+      --prod
+
+    # Remove non-deterministic files
+    rm node_modules/{.modules.yaml,.pnpm-workspace-state-v1.json}
+
     mkdir -p $out/bin
     mkdir -p $out/lib
-    cp -r packages $out/lib/packages
-    cp -r node_modules/ $out/lib/node_modules
-    # Remove dev dependencies
-    rm -rf $out/lib/node_modules/{.bin,tsup,typescript,@auto-it,@codecov,@swc,#types,@typescript-eslint,jest*,nx,prettier*,eslint*}
+    mv packages $out/lib/packages
+    mv node_modules/ $out/lib/node_modules
+
+    DIST="$out/lib/packages/cli/dist/index.mjs"
+    patchShebangs $DIST
+    ln -s $DIST $out/bin/gb
+    ln -s $DIST $out/bin/gitbeaker
 
     runHook postInstall
   '';
 
-  postFixup = ''
-    chmod +x $out/lib/node_modules/@gitbeaker/cli/dist/index.mjs
-    patchShebangs $out/lib/node_modules/@gitbeaker/cli/dist/index.mjs
+  nativeInstallCheckInputs = [
+    versionCheckHook
+  ];
+  doInstallCheck = true;
 
-    makeWrapper $out/lib/node_modules/@gitbeaker/cli/dist/index.mjs $out/bin/gb \
-      --prefix PATH : ${lib.makeBinPath [ nodejs ]}
-
-    ln -s $out/bin/gb $out/bin/gitbeaker
-  '';
-
-  passthru.updateScript = ./update.sh;
+  passthru.updateScript = nix-update-script { };
 
   meta = {
     changelog = "https://github.com/jdalrymple/gitbeaker/releases/tag/${finalAttrs.version}";
     description = "CLI Wrapper for the @gitbeaker/rest SDK";
     homepage = "https://github.com/jdalrymple/gitbeaker";
-    maintainers = [ ];
+    maintainers = with lib.maintainers; [ DimitarNestorov ];
     mainProgram = "gitbeaker";
+    license = lib.licenses.mit;
   };
 })

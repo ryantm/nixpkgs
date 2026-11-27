@@ -7,18 +7,18 @@
 
 buildGoModule (finalAttrs: {
   pname = "kubectl-rabbitmq";
-  version = "2.22.1";
+  version = "2.23.2";
 
   src = fetchFromGitHub {
     owner = "rabbitmq";
     repo = "cluster-operator";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-Vofl4YXJUyjWBwxLhbQ09427hBz70Un2P0YLNYn7v28=";
+    hash = "sha256-f3Y2SWvKG6AKILG7IJfpDfzW2ZEWme/mhjUdcg5pCak=";
   };
 
   modRoot = "kubectl-rabbitmq";
 
-  vendorHash = "sha256-Jud0VpVcBPBtc3hgb997SzefZx7kM9hbPgdOqBRDezY=";
+  vendorHash = "sha256-uXMv37rVP0NZZx1fVCtmupd0FG3Ojshh2fAQ9T+VWmU=";
 
   ldflags = [
     "-s"

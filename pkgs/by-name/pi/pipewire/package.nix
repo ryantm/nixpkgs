@@ -12,8 +12,8 @@
   elogind,
   libinotify-kqueue,
   epoll-shim,
-  systemd,
-  enableSystemd ? lib.meta.availableOn stdenv.hostPlatform systemd, # enableSystemd=false maintained by maintainers.qyliss.
+  systemdLibs,
+  enableSystemd ? lib.meta.availableOn stdenv.hostPlatform systemdLibs, # enableSystemd=false maintained by maintainers.highghlow.
   pkg-config,
   docutils,
   doxygen,
@@ -88,7 +88,7 @@ in
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "pipewire";
-  version = "1.6.7";
+  version = "1.6.11";
 
   outputs = [
     "out"
@@ -104,7 +104,7 @@ stdenv.mkDerivation (finalAttrs: {
     owner = "pipewire";
     repo = "pipewire";
     tag = finalAttrs.version;
-    hash = "sha256-DSW9ho+NLikW/stlxvHLhRguMZy/4b7VEcC938ObJmQ=";
+    hash = "sha256-QNEU3nPvn//TOoN984TlH6zT59HYTS4UDyzZW9/SgCQ=";
   };
 
   patches = [
@@ -118,6 +118,9 @@ stdenv.mkDerivation (finalAttrs: {
       url = "https://gitlab.freedesktop.org/pipewire/pipewire/-/commit/49ce385c44f4c2882ef0aeac0312e6ae9bc85f8a.patch";
       hash = "sha256-u8DLe6smodalVn3GwhI9RaDZTw4qZs8+Ylg9lxunMF0=";
     })
+
+    # fix references to symbols renamed in libcamera 0.8
+    ./libcamera-0.8-compat.patch
   ];
 
   strictDeps = true;
@@ -157,7 +160,7 @@ stdenv.mkDerivation (finalAttrs: {
   ]
   ++ (
     if enableSystemd then
-      [ systemd ]
+      [ systemdLibs ]
     else if stdenv.hostPlatform.isLinux then
       [
         elogind
@@ -229,6 +232,7 @@ stdenv.mkDerivation (finalAttrs: {
     (lib.mesonEnable "pipewire-v4l2" stdenv.hostPlatform.isLinux)
     (lib.mesonEnable "libsystemd" enableSystemd)
     (lib.mesonEnable "systemd-system-service" enableSystemd)
+    (lib.mesonEnable "systemd-user-service" enableSystemd)
     (lib.mesonEnable "udev" stdenv.hostPlatform.isLinux)
     (lib.mesonEnable "ffmpeg" true)
     (lib.mesonEnable "pw-cat-ffmpeg" true)

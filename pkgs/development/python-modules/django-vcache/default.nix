@@ -1,10 +1,12 @@
 {
   lib,
+  aws-lc,
   buildPythonPackage,
   django,
   fetchFromGitLab,
   hatchling,
   ormsgpack,
+  pkg-config,
   pythonOlder,
   pyzstd,
   rustPlatform,
@@ -12,19 +14,19 @@
 
 buildPythonPackage (finalAttrs: {
   pname = "django-vcache";
-  version = "2.3.0";
+  version = "3.2.0";
   pyproject = true;
 
   src = fetchFromGitLab {
     owner = "glitchtip";
     repo = "django-vcache";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-/LyNJlz3Tx6tgQAwY4vIIsDlL2nCvKM6bna2bXyP5So=";
+    hash = "sha256-KLA6Jel/+XTAECd22+TComo51RFZLvPqbOeVn/1VTO4=";
   };
 
   cargoDeps = rustPlatform.fetchCargoVendor {
-    inherit (finalAttrs) src;
-    hash = "sha256-a9+3k6YTotmj+LBO6OyVd2NUh3hpLwpKXJsX7pBxXNE=";
+    inherit (finalAttrs) pname version src;
+    hash = "sha256-YgOLIwqdjERf7krNx49gP5L8M07+oqtor2yT/AQ0y34=";
   };
 
   build-system = [ hatchling ];
@@ -36,9 +38,12 @@ buildPythonPackage (finalAttrs: {
   ++ lib.optional (pythonOlder "3.14") pyzstd;
 
   nativeBuildInputs = [
+    pkg-config
     rustPlatform.cargoSetupHook
     rustPlatform.maturinBuildHook
   ];
+
+  buildInputs = [ aws-lc ];
 
   pythonImportsCheck = [ "django_vcache" ];
 
@@ -53,7 +58,6 @@ buildPythonPackage (finalAttrs: {
     }";
     license = lib.licenses.mit;
     maintainers = with lib.maintainers; [
-      defelo
       felbinger
     ];
   };

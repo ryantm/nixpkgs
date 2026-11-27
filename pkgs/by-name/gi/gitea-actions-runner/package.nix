@@ -4,21 +4,23 @@
   buildGoModule,
   testers,
   gitea-actions-runner,
+  nixosTests,
+  nix-update-script,
 }:
 
 buildGoModule (finalAttrs: {
   pname = "gitea-actions-runner";
-  version = "1.0.3";
+  version = "6.0.0";
 
   src = fetchFromGitea {
     domain = "gitea.com";
     owner = "gitea";
     repo = "runner";
     rev = "v${finalAttrs.version}";
-    hash = "sha256-p6NdkQiZiEeuQjJp3CKTayStZlyk3d1XGigSI5uuLp0=";
+    hash = "sha256-UOOvw1R9CtHlDlo8n8Racw4qEAv/KU8tToW4Cc1M0zg=";
   };
 
-  vendorHash = "sha256-T1T5ZpGqGmipIkTWlYxlsLdAthW8bhcAvr0xyZ74+wQ=";
+  vendorHash = "sha256-v8ihlWuqI4A/FoexyZkzElgLJS8OEHwtWz2vytf3nqk=";
 
   # Tests require network access (artifactcache tests try to determine outbound IP)
   doCheck = false;
@@ -33,9 +35,15 @@ buildGoModule (finalAttrs: {
     mv "$out/bin/runner" "$out/bin/gitea-runner"
   '';
 
-  passthru.tests.version = testers.testVersion {
-    package = gitea-actions-runner;
-    version = "v${finalAttrs.version}";
+  passthru = {
+    tests = {
+      version = testers.testVersion {
+        package = gitea-actions-runner;
+        version = "v${finalAttrs.version}";
+      };
+      nixos = nixosTests.gitea-actions-runner;
+    };
+    updateScript = nix-update-script { };
   };
 
   meta = {

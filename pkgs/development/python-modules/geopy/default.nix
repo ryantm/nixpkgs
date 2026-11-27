@@ -12,16 +12,14 @@
 
 buildPythonPackage (finalAttrs: {
   pname = "geopy";
-  version = "2.4.1";
+  version = "2.5.0";
   pyproject = true;
-
-  __structuredAttrs = true;
 
   src = fetchFromGitHub {
     owner = "geopy";
     repo = "geopy";
     tag = finalAttrs.version;
-    hash = "sha256-mlOXDEtYry1IUAZWrP2FuY/CGliUnCPYLULnLNN0n4Y=";
+    hash = "sha256-I+t8RnpC1hurL+fcwRssREzsSx9yGHEqVjzxqKX0efc=";
   };
 
   build-system = [ setuptools ];
@@ -51,7 +49,7 @@ buildPythonPackage (finalAttrs: {
     homepage = "https://github.com/geopy/geopy";
     description = "Python Geocoding Toolbox";
     changelog = "https://github.com/geopy/geopy/releases/tag/${finalAttrs.version}";
-    license = with lib.licenses; [ mit ];
+    license = lib.licenses.mit;
     maintainers = [ ];
   };
 })

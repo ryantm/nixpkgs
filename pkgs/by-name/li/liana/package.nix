@@ -12,6 +12,7 @@
   fontconfig,
   freetype,
   libGL,
+  sqlite,
   udev,
   libxkbcommon,
   wayland,
@@ -42,16 +43,16 @@ let
 in
 rustPlatform.buildRustPackage rec {
   pname = "liana";
-  version = "14.0"; # keep in sync with lianad
+  version = "16.0"; # keep in sync with lianad
 
   src = fetchFromGitHub {
     owner = "wizardsardine";
     repo = "liana";
     tag = "v${version}";
-    hash = "sha256-1d+icjk1NamlvEx4Xb1Ao4d1hb/t5aBwho+yCtHF9y4=";
+    hash = "sha256-ksY9wzjOrGaxfPqC3JDWS/VRA6PveysAVgKpA1YGNLw=";
   };
 
-  cargoHash = "sha256-9CWJIRby6QWJmkYSHj2lFfEj0plX5iWxsdQs5sYww7Q=";
+  cargoHash = "sha256-zz0hqOrk74FD2ct4LIDJJJRNxwR/6OXk3PUJFBYX0AA=";
 
   nativeBuildInputs = [
     pkg-config
@@ -62,6 +63,7 @@ rustPlatform.buildRustPackage rec {
 
   buildInputs = [
     fontconfig
+    sqlite
     udev
   ];
 

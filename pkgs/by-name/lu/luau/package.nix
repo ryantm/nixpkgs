@@ -3,22 +3,26 @@
   stdenv,
   fetchFromGitHub,
   cmake,
+  python3,
   llvmPackages,
   nix-update-script,
 }:
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "luau";
-  version = "0.726";
+  version = "0.748";
 
   src = fetchFromGitHub {
     owner = "luau-lang";
     repo = "luau";
     tag = finalAttrs.version;
-    hash = "sha256-DAKyA8/ERX2AJ/XQDABOoI+cQCSW3PKnBpJkwS8IBdI=";
+    hash = "sha256-5pG5zyl42TJAW9+dyCb9h3VrOnDFQ114ZAUZ3wU+vdQ=";
   };
 
-  nativeBuildInputs = [ cmake ];
+  nativeBuildInputs = [
+    cmake
+    python3
+  ];
 
   buildInputs = lib.optionals stdenv.cc.isClang [ llvmPackages.libunwind ];
 

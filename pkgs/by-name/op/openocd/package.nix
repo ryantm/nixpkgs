@@ -17,9 +17,19 @@
   extraHardwareSupport ? [ ],
 }:
 let
-
   isWindows = stdenv.hostPlatform.isWindows;
   notWindows = !isWindows;
+
+  # OpenOCD needs JimTcl 0.82 and fails to build with the latest version (0.84).
+  # When updating OpenOCD, check which JimTcl version its jimtcl submodule uses.
+  # OpenOCD does not use Jim's SDL extension, so leave SDL out of the closure.
+  jimtcl_0_82 = (jimtcl.override { SDLSupport = false; }).overrideAttrs (oldAttrs: rec {
+    version = "0.82";
+    src = oldAttrs.src.override {
+      rev = version;
+      sha256 = "sha256-CDjjrxpoTbLESAbCiCjQ8+E/oJP87gDv9SedQOzH3QY=";
+    };
+  });
 
 in
 stdenv.mkDerivation (finalAttrs: {
@@ -40,7 +50,7 @@ stdenv.mkDerivation (finalAttrs: {
   ]
   ++ lib.optionals notWindows [
     hidapi
-    jimtcl
+    jimtcl_0_82
     libftdi1
     libjaylink
   ]

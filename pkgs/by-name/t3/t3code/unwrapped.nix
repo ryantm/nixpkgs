@@ -1,22 +1,26 @@
 {
   cctools,
   copyDesktopItems,
-  electron_41,
+  electron_44,
   fetchFromGitHub,
   installShellFiles,
+  jq,
   lib,
   libicns,
+  libsecret,
   makeBinaryWrapper,
   makeDesktopItem,
   nix-update-script,
   node-gyp,
-  nodejs,
+  nodejs_26,
+  pkg-config,
   python3,
+  spdx-license-list-data,
   stdenv,
   writeDarwinBundle,
   xcbuild,
   fetchPnpmDeps,
-  pnpm_10,
+  pnpm_12,
   pnpmConfigHook,
   pnpmBuildHook,
   cacert,
@@ -25,9 +29,11 @@
 stdenv.mkDerivation (
   finalAttrs:
   let
-    appName = "T3 Code (Alpha)";
-    electron = electron_41;
-    pnpm = pnpm_10;
+    appName = "T3 Code (Beta)";
+    electron = electron_44;
+    # Upstream package.json requires Node.js 26; the nixpkgs default is still 24.
+    nodejs = nodejs_26;
+    pnpm = pnpm_12;
     desktopIcon =
       if stdenv.hostPlatform.isDarwin then
         "assets/prod/black-macos-1024.png"
@@ -37,7 +43,7 @@ stdenv.mkDerivation (
   in
   {
     pname = "t3code-unwrapped";
-    version = "0.0.28";
+    version = "0.1.8";
     strictDeps = true;
     __structuredAttrs = true;
 
@@ -45,17 +51,22 @@ stdenv.mkDerivation (
       owner = "pingdotgg";
       repo = "t3code";
       tag = "v${finalAttrs.version}";
-      hash = "sha256-InVrw9L281QSSPrHSiZuivmb+FkYEd6FkHwHIAAxmGk=";
+      hash = "sha256-QPZpT/1zm5sLIDw3AOzUCIrmOFPwUU8jP/q1A8GzLow=";
     };
 
     postPatch = ''
       substituteInPlace apps/web/vite.config.ts \
-        --replace-fail 'const host = process.env.HOST?.trim() || "localhost";' \
-                       'const host = process.env.HOST?.trim() || "127.0.0.1";'
+        --replace-fail 'const host = explicitHost || "localhost";' \
+                       'const host = explicitHost || "127.0.0.1";'
+
+      mkdir -p .generated/third-party-licenses/spdx/v3.28.0
+      cp ${spdx-license-list-data.json}/json/details/*.json \
+        .generated/third-party-licenses/spdx/v3.28.0
     '';
 
     nativeBuildInputs = [
       installShellFiles
+      jq
       makeBinaryWrapper
       node-gyp
       nodejs
@@ -65,13 +76,18 @@ stdenv.mkDerivation (
       pnpm
       cacert
     ]
-    ++ lib.optionals stdenv.hostPlatform.isLinux [ copyDesktopItems ]
+    ++ lib.optionals stdenv.hostPlatform.isLinux [
+      copyDesktopItems
+      pkg-config
+    ]
     ++ lib.optionals stdenv.hostPlatform.isDarwin [
       cctools.libtool
       libicns
       writeDarwinBundle
       xcbuild
     ];
+
+    buildInputs = lib.optionals stdenv.hostPlatform.isLinux [ libsecret ];
 
     pnpmWorkspaces = [
       # `...` suffix is used to also include other workspace packages that are
@@ -92,11 +108,15 @@ stdenv.mkDerivation (
         pnpmWorkspaces
         ;
 
-      fetcherVersion = 4;
-      hash = "sha256-+JqW/iI0wdRPxyL7y6ggD/+AvwwZXs9+fSUtG/SgW9s=";
+      fetcherVersion = 5;
+      hash = "sha256-ir2iMNpT5nA4ieTZT/7v5tawKH137DcfGFuzgxHfJjY=";
     };
 
     preBuild = ''
+      # pnpm otherwise detects the package version updates below as
+      # dependency drift and runs another install, including lifecycle scripts.
+      export pnpm_config_verify_deps_before_run=false
+
       node scripts/update-release-package-versions.ts ${finalAttrs.version}
 
       export npm_config_nodedir=${nodejs}
@@ -129,12 +149,25 @@ stdenv.mkDerivation (
       cp --recursive --no-preserve=mode node_modules "$out"/libexec/t3code
       cp --recursive --no-preserve=mode apps/server/{node_modules,dist} "$out"/libexec/t3code/apps/server
       cp --recursive --no-preserve=mode \
-        apps/desktop/{package.json,node_modules,dist-electron} \
+        apps/desktop/{node_modules,dist-electron} \
         "$out"/libexec/t3code/apps/desktop
+
+      # Electron derives the app name, and with it the safeStorage keyring /
+      # Keychain identity, from `productName` or `name`. Use `t3code` like the
+      # official builds so encrypted data stays readable across rebrands.
+      jq '.name = "t3code" | del(.productName)' apps/desktop/package.json \
+        > "$out"/libexec/t3code/apps/desktop/package.json
 
       mkdir --parents "$out"/libexec/t3code/apps/desktop/prod-resources
       install --mode=444 ${desktopIcon} \
         "$out"/libexec/t3code/apps/desktop/prod-resources/icon.png
+    ''
+    + lib.optionalString stdenv.hostPlatform.isLinux ''
+      install -Dm755 \
+        native/browser-secret/build/${stdenv.hostPlatform.node.arch}/t3-browser-secret \
+        "$out"/libexec/t3code/apps/desktop/prod-resources/browser-secret/t3-browser-secret
+    ''
+    + ''
 
       find "$out"/libexec/t3code -xtype l -delete
 
@@ -164,9 +197,9 @@ stdenv.mkDerivation (
     ''
     + ''
       mkdir --parents \
-        "$out"/share/icons/hicolor/scalable/apps
+        "$out"/share/icons/hicolor/{1024x1024,scalable}/apps
       install --mode=444 ${desktopIcon} \
-        "$out"/share/icons/t3code.png
+        "$out"/share/icons/hicolor/1024x1024/apps/t3code.png
       install --mode=444 assets/prod/logo.svg \
         "$out"/share/icons/hicolor/scalable/apps/t3code.svg
 
@@ -176,6 +209,13 @@ stdenv.mkDerivation (
     postInstall = lib.optionalString (stdenv.buildPlatform.canExecute stdenv.hostPlatform) ''
       for shell in bash fish zsh; do
         installShellCompletion --cmd t3 --"$shell" <("$out/bin/t3" --completions "$shell")
+      done
+    '';
+
+    postFixup = lib.optionalString stdenv.hostPlatform.isLinux ''
+      # Electron's Node runtime does not provide libstdc++ for the bundled node-pty prebuild
+      for module in "$out"/libexec/t3code/node_modules/.pnpm/node-pty@*/node_modules/node-pty/prebuilds/linux-${stdenv.hostPlatform.node.arch}/pty.node; do
+        patchelf --add-rpath ${lib.makeLibraryPath [ stdenv.cc.cc.lib ]} "$module"
       done
     '';
 
@@ -206,6 +246,7 @@ stdenv.mkDerivation (
       changelog = "https://github.com/pingdotgg/t3code/releases/tag/${finalAttrs.src.tag}";
       license = lib.licenses.mit;
       maintainers = with lib.maintainers; [
+        _0x4bs3nt
         iamanaws
         qweered
       ];

@@ -1,6 +1,6 @@
 {
   lib,
-  gcc15Stdenv,
+  gcc16Stdenv,
   fetchFromGitHub,
   cmake,
   pkg-config,
@@ -12,15 +12,15 @@
   tomlplusplus,
   nix-update-script,
 }:
-gcc15Stdenv.mkDerivation (finalAttrs: {
+gcc16Stdenv.mkDerivation (finalAttrs: {
   pname = "hyprcursor";
-  version = "0.1.13";
+  version = "0.1.14";
 
   src = fetchFromGitHub {
     owner = "hyprwm";
     repo = "hyprcursor";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-lIqabfBY7z/OANxHoPeIrDJrFyYy9jAM4GQLzZ2feCM=";
+    hash = "sha256-mxA2mDNFoQ11qoId6LHXPbSufY1g1vdpX7RIXt2rBrQ=";
   };
 
   nativeBuildInputs = [

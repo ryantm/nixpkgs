@@ -3,15 +3,18 @@
   stdenv,
   rustPlatform,
   pkg-config,
+  aws-lc,
   cmake,
   git,
   openssl,
+  cacert,
   tailwindcss_4,
   dioxus-cli,
   yt-dlp,
   fetchFromGitHub,
   fetchurl,
   libopus,
+  sqlite,
   # Linux only
   wrapGAppsHook3,
   webkitgtk_4_1,
@@ -44,18 +47,29 @@ rustPlatform.buildRustPackage (finalAttrs: {
   __structuredAttrs = true;
 
   pname = "kopuz";
-  version = "0.9.0";
+  version = "0.14.0";
 
   src = fetchFromGitHub {
     owner = "Kopuz-org";
     repo = "kopuz";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-e3cPRxaUIbxXRQqGXRf9rVLP97eVGnz/D24O8WGDJcA=";
+    hash = "sha256-sqfI4v3J6GAMTQaB+UhnLlwpfBKFJq2JUl7fZMt1yxE=";
   };
 
-  cargoHash = "sha256-69FjH+cXaqsviDUlAGnkPrvxKVq0w3LXDwgEraoaEGA=";
+  cargoHash = "sha256-lu1PaWf02D0dK+IV+fIzIKNr8ORfkSHFnRhnPdXaueI=";
 
-  env.RUSTY_V8_ARCHIVE = librustyV8;
+  # sqlx < 0.8.4 opens "sqlite::memory:" without SQLITE_OPEN_URI, so with the
+  # system SQLite every pooled connection gets its own empty database.
+  # https://github.com/launchbadge/sqlx/pull/3289
+  postPatch = ''
+    substituteInPlace $cargoDepsCopy/*/sqlx-sqlite-*/src/connection/establish.rs \
+      --replace-fail 'flags |= SQLITE_OPEN_MEMORY;' 'flags |= SQLITE_OPEN_MEMORY | libsqlite3_sys::SQLITE_OPEN_URI;'
+  '';
+
+  env = {
+    RUSTY_V8_ARCHIVE = librustyV8;
+    SSL_CERT_FILE = "${cacert}/etc/ssl/certs/ca-bundle.crt";
+  };
 
   nativeBuildInputs = [
     pkg-config
@@ -69,7 +83,9 @@ rustPlatform.buildRustPackage (finalAttrs: {
   ];
 
   buildInputs = [
+    aws-lc
     libopus
+    sqlite
   ]
   ++ lib.optionals stdenv.hostPlatform.isLinux [
     webkitgtk_4_1

@@ -4,7 +4,8 @@
   fetchFromGitHub,
   pytestCheckHook,
   rustPlatform,
-  nix-update-script,
+  pkg-config,
+  zstd,
 }:
 
 buildPythonPackage rec {
@@ -27,6 +28,11 @@ buildPythonPackage rec {
   nativeBuildInputs = [
     rustPlatform.cargoSetupHook
     rustPlatform.maturinBuildHook
+    pkg-config
+  ];
+
+  buildInputs = [
+    zstd
   ];
 
   nativeCheckInputs = [
@@ -39,7 +45,7 @@ buildPythonPackage rec {
     description = "Python wrapper for askalono";
     homepage = "https://github.com/kumekay/pyaskalono/";
     changelog = "https://github.com/kumekay/pyaskalono/releases/tag/v${version}";
-    license = [ lib.licenses.asl20 ];
+    license = lib.licenses.asl20;
     maintainers = with lib.maintainers; [ erictapen ];
   };
 }

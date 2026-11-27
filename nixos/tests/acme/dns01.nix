@@ -62,7 +62,7 @@ in
           description = "Pebble ACME challenge test server";
           wantedBy = [ "network.target" ];
           serviceConfig = {
-            ExecStart = "${pkgs.pebble}/bin/pebble-challtestsrv -dns01 ':53' -defaultIPv6 '' -defaultIPv4 '${nodes.client.networking.primaryIPAddress}'";
+            ExecStart = "${pkgs.pebble}/bin/pebble-challtestsrv -dnsserver ':53' -defaultIPv6 '' -defaultIPv4 '${nodes.client.networking.primaryIPAddress}'";
             # Required to bind on privileged ports.
             AmbientCapabilities = [ "CAP_NET_BIND_SERVICE" ];
           };
@@ -82,7 +82,7 @@ in
         security.acme.certs."${domain}" = {
           domain = "*.${domain}";
           dnsProvider = "exec";
-          dnsPropagationCheck = false;
+          dnsAuthoritativePropagationCheck = false;
           environmentFile = pkgs.writeText "wildcard.env" ''
             EXEC_PATH=${dnsScript}
             EXEC_POLLING_INTERVAL=1
@@ -93,26 +93,47 @@ in
       };
   };
 
-  testScript = ''
-    ${(import ./utils.nix).pythonUtils}
+  testScript =
+    { nodes, ... }:
+    let
+      orderRenewScript = nodes.client.systemd.services."acme-order-renew-${domain}".script;
+    in
+    ''
+      ${(import ./utils.nix).pythonUtils}
 
-    cert = "${domain}"
+      import shlex
 
-    dnsserver.start()
-    acme.start()
+      cert = "${domain}"
 
-    wait_for_running(dnsserver)
-    dnsserver.wait_for_open_port(53)
-    wait_for_running(acme)
-    acme.wait_for_open_port(443)
+      with subtest("Disable DNS propagation checks"):
+          order_renew_script = ${builtins.toJSON orderRenewScript}
+          lego_run_commands = [
+              line
+              for line in order_renew_script.splitlines()
+              if "lego run " in line
+          ]
+          assert len(lego_run_commands) == 2, lego_run_commands
+          for command in lego_run_commands:
+              args = shlex.split(command)
+              assert "--dns.propagation.disable-ans" in args, args
+              assert "--dns.propagation.disable-rns" in args, args
+              assert "--dns.propagation.wait" not in args, args
 
-    with subtest("Boot and acquire a new cert"):
-        client.start()
-        wait_for_running(client)
+      dnsserver.start()
+      acme.start()
 
-        check_issuer(client, cert, "pebble")
-        check_domain(client, cert, cert, fail=True)
-        check_domain(client, cert, f"toodeep.nesting.{cert}", fail=True)
-        check_domain(client, cert, f"whatever.{cert}")
-  '';
+      wait_for_running(dnsserver)
+      dnsserver.wait_for_open_port(53)
+      wait_for_running(acme)
+      acme.wait_for_open_port(443)
+
+      with subtest("Boot and acquire a new cert"):
+          client.start()
+          wait_for_running(client)
+
+          check_issuer(client, cert, "pebble")
+          check_domain(client, cert, cert, fail=True)
+          check_domain(client, cert, f"toodeep.nesting.{cert}", fail=True)
+          check_domain(client, cert, f"whatever.{cert}")
+    '';
 }

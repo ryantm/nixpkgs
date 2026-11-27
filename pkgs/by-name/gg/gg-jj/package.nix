@@ -4,13 +4,20 @@
   rustPlatform,
   fetchFromGitHub,
   fetchNpmDeps,
+
+  # native build inputs
   cargo-tauri,
   nodejs,
   npmHooks,
   pkg-config,
   wrapGAppsHook3,
+
+  # build-inputs
   openssl,
   webkitgtk_4_1,
+  zstd,
+
+  # check-inputs, passthru
   versionCheckHook,
   nix-update-script,
   gitMinimal,
@@ -18,16 +25,16 @@
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "gg";
-  version = "0.39.1";
+  version = "0.46.0";
 
   src = fetchFromGitHub {
     owner = "gulbanana";
     repo = "gg";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-0f1MM9iXjYuj7Anu6TMVtAjo3fg0IeOyrKfpeODrvA8=";
+    hash = "sha256-Y03LJeC9SpNmu4FUX2el5C4irjXjoJ3h6cwY7y3mQWg=";
   };
 
-  cargoHash = "sha256-oDAA4lFfp/zMQ2gm595OgnNyP3tiPSC1M0hiozOH/ss=";
+  cargoHash = "sha256-DzMvX8Lc/a11yFbLeX3gcxPzCERwqOOu1AIskrTNOcs=";
 
   npmDeps = fetchNpmDeps {
     inherit (finalAttrs)
@@ -36,7 +43,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
       src
       patches
       ;
-    hash = "sha256-aZSBKEVftMfPuIOnwc/ykbjdmb3Np+gJl1Jq9yv4pck=";
+    hash = "sha256-GSt8wQUFy7z/1jg8qxErJXWB27MVfR4oKMPtYc/lqVk=";
   };
 
   nativeBuildInputs = [
@@ -51,6 +58,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
 
   buildInputs = [
     openssl
+    zstd
   ]
   ++ lib.optionals stdenv.hostPlatform.isLinux [
     webkitgtk_4_1
@@ -67,7 +75,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
 
   env.OPENSSL_NO_VENDOR = true;
 
-  postInstall = lib.optionals stdenv.hostPlatform.isDarwin ''
+  postInstall = lib.optionalString stdenv.hostPlatform.isDarwin ''
     mkdir -p $out/bin
     ln -s $out/Applications/gg.app/Contents/MacOS/gg $out/bin/gg
   '';
@@ -82,7 +90,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
     description = "GUI for the version control system Jujutsu";
     homepage = "https://github.com/gulbanana/gg";
     changelog = "https://github.com/gulbanana/gg/blob/v${finalAttrs.version}/CHANGELOG.md";
-    license = with lib.licenses; [ asl20 ];
+    license = lib.licenses.asl20;
     inherit (cargo-tauri.hook.meta) platforms;
     maintainers = with lib.maintainers; [ pluiedev ];
     mainProgram = "gg";

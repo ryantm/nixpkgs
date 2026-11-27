@@ -46,6 +46,11 @@ stdenv.mkDerivation (finalAttrs: {
     "-DSDL2_INCLUDE_DIRS=${lib.getInclude SDL2}/include/SDL2"
   ];
 
+  # The game data has nothing to strip, and strip segfaults on some of its textures
+  ${if stdenv.hostPlatform.isDarwin then "stripExclude" else null} = [
+    "Applications/Bugdom.app/Contents/Resources/*"
+  ];
+
   installPhase = ''
     runHook preInstall
 
@@ -75,7 +80,7 @@ stdenv.mkDerivation (finalAttrs: {
   meta = {
     description = "Port of Bugdom, a 1999 Macintosh game by Pangea Software, for modern operating systems";
     homepage = "https://github.com/jorio/Bugdom";
-    license = with lib.licenses; [ cc-by-sa-40 ];
+    license = lib.licenses.cc-by-sa-40;
     maintainers = with lib.maintainers; [ lux ];
     mainProgram = "Bugdom";
     platforms = lib.platforms.unix;

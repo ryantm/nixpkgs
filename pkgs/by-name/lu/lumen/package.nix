@@ -4,14 +4,16 @@
   fetchFromGitHub,
   makeWrapper,
   pkg-config,
+  libgit2,
   openssl,
   fzf,
   mdcat,
+  nix-update-script,
 }:
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "lumen";
-  version = "2.30.0";
+  version = "2.32.0";
 
   __structuredAttrs = true;
 
@@ -19,22 +21,20 @@ rustPlatform.buildRustPackage (finalAttrs: {
     owner = "jnsahaj";
     repo = "lumen";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-EoxMYlWHmuprjjhvj3GyCxGDIcT/d+JMda9j75pqs+k=";
+    hash = "sha256-wTkg7NGCCON1P422q5/76rodIBqDeWIY07J4pRo8Q8k=";
   };
 
-  cargoHash = "sha256-qTFRfy+Wutee5SbaMaqcYjXgr6xZKYYBIuyVA7jAGiY=";
-
-  strictDeps = true;
-
-  # use the non-vendored openssl
-  env.OPENSSL_NO_VENDOR = 1;
+  cargoHash = "sha256-ZXw7KEvf1sUHWIM5R4Th2SmekTX6rGXznAq3mtcf3Zo=";
 
   nativeBuildInputs = [
     makeWrapper
     pkg-config
   ];
 
-  buildInputs = [ openssl ];
+  buildInputs = [
+    libgit2
+    openssl
+  ];
 
   postFixup = ''
     wrapProgram $out/bin/lumen --prefix PATH : ${
@@ -50,6 +50,8 @@ rustPlatform.buildRustPackage (finalAttrs: {
     "--skip=vcs::git::tests::test_get_merge_base_returns_ancestor"
     "--skip=vcs::git::tests::test_working_copy_parent_ref_returns_head"
   ];
+
+  passthru.updateScript = nix-update-script { };
 
   meta = {
     description = "Fast terminal diff viewer and code review TUI";

@@ -6,7 +6,7 @@
   ninja,
   pkg-config,
   libpng,
-  openmpCheckPhaseHook,
+  checkPhaseThreadLimitHook,
   glib, # just passthru
 
   # for passthru.tests
@@ -47,11 +47,13 @@ stdenv.mkDerivation (finalAttrs: {
     meson
     ninja
     pkg-config
-    openmpCheckPhaseHook
+    checkPhaseThreadLimitHook
     __flattenIncludeHackHook
   ];
 
   buildInputs = [ libpng ];
+
+  strictDeps = true;
 
   # Default "enabled" value attempts to enable CPU features on all
   # architectures and requires used to disable them:
@@ -86,6 +88,8 @@ stdenv.mkDerivation (finalAttrs: {
       rev-prefix = "pixman-";
     };
   };
+
+  __structuredAttrs = true;
 
   meta = {
     homepage = "https://pixman.org";

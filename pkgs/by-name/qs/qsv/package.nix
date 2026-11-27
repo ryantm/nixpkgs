@@ -5,6 +5,8 @@
   lib,
   pkg-config,
   rustPlatform,
+  aws-lc,
+  rust-jemalloc-sys,
   sqlite,
   zstd,
   cmake,
@@ -33,7 +35,7 @@
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "qsv";
-  version = "20.1.0";
+  version = "28.0.0";
 
   inherit buildFeatures;
 
@@ -41,12 +43,14 @@ rustPlatform.buildRustPackage (finalAttrs: {
     owner = "dathere";
     repo = "qsv";
     rev = finalAttrs.version;
-    hash = "sha256-dYUZ2IwvXTFwpv1cDQjmq+iq2g/vQQovpR0++/ZtSy8=";
+    hash = "sha256-cEahgrsV04ZK17j8fIU3NgKcC2VFTG4xnVvFXseVIs4=";
   };
 
-  cargoHash = "sha256-7jZR5u32Hy0XQEeX+tWDbpkj7jM804LBUL93wgnA5bM=";
+  cargoHash = "sha256-Pm4VilMxVcm/BiZ3dZw3YJnhSsdrcmu4oSz7y1WiijM=";
 
   buildInputs = [
+    aws-lc
+    rust-jemalloc-sys
     file
     sqlite
     zstd
@@ -70,11 +74,12 @@ rustPlatform.buildRustPackage (finalAttrs: {
     description = "CSVs sliced, diced & analyzed";
     homepage = "https://github.com/dathere/qsv";
     changelog = "https://github.com/dathere/qsv/blob/${finalAttrs.version}/CHANGELOG.md";
-    license = with lib.licenses; [
-      mit
-      # or
-      unlicense
-    ];
+    license =
+      with lib.licenses;
+      OR [
+        mit
+        unlicense
+      ];
     inherit mainProgram;
     maintainers = with lib.maintainers; [
       detroyejr

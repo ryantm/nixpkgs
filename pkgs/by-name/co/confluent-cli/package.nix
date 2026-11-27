@@ -1,13 +1,17 @@
 {
   lib,
-  stdenv,
+  stdenvNoCC,
   fetchurl,
   autoPatchelfHook,
+  versionCheckHook,
+  writableTmpDirAsHomeHook,
 }:
 
-stdenv.mkDerivation (finalAttrs: {
+stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "confluent-cli";
-  version = "4.70.0";
+  version = "4.82.0";
+  strictDeps = true;
+  __structuredAttrs = true;
 
   # To get the latest version:
   # curl -L https://cnfl.io/cli | sh -s -- -l | grep -v latest | sort -V | tail -n1
@@ -15,27 +19,26 @@ stdenv.mkDerivation (finalAttrs: {
     let
       selectSystem =
         attrs:
-        attrs.${stdenv.hostPlatform.system} or (throw "Unsupported system: ${stdenv.hostPlatform.system}");
+        attrs.${stdenvNoCC.hostPlatform.system}
+          or (throw "Unsupported system: ${stdenvNoCC.hostPlatform.system}");
       system = selectSystem {
         x86_64-linux = "linux_amd64";
         aarch64-linux = "linux_arm64";
-        x86_64-darwin = "darwin_amd64";
         aarch64-darwin = "darwin_arm64";
       };
     in
     fetchurl {
       url = "https://s3-us-west-2.amazonaws.com/confluent.cloud/confluent-cli/archives/${finalAttrs.version}/confluent_${finalAttrs.version}_${system}.tar.gz";
       hash = selectSystem {
-        x86_64-linux = "sha256-52zPTIuJOS+MMG1+pA+f0HI7VvBHLsRnSq5zWorHsiQ=";
-        aarch64-linux = "sha256-hdhMSZR593rcjch4EVdRshC72aTp1c3dTQBlLCDMsVg=";
-        x86_64-darwin = "sha256-ybzj3fv+7Wdix9ez7cARazhpkxMGi/EO8NbpneWGN4I=";
-        aarch64-darwin = "sha256-YOVGl47XOvvHDtm2/VzzLOeFCA6sw8BuDHQWZgzNNtE=";
+        x86_64-linux = "sha256-Lc1aRoTgqiyLlvaIbPRUt5ANJubfnZ9dv81VJCjUGOI=";
+        aarch64-linux = "sha256-Z7AHZLAc6UlRT6+v5R4MvfOKEulZKxHLwtMBPA0fm1U=";
+        aarch64-darwin = "sha256-CSzVA0qPFiYnMsUEp1d8WuxDlq1Sey5yMvcgSbHEGeQ=";
       };
     };
 
-  nativeBuildInputs = lib.optionals stdenv.hostPlatform.isLinux [ autoPatchelfHook ];
+  nativeBuildInputs = lib.optionals stdenvNoCC.hostPlatform.isLinux [ autoPatchelfHook ];
 
-  dontStrip = stdenv.hostPlatform.isDarwin;
+  dontStrip = stdenvNoCC.hostPlatform.isDarwin;
 
   installPhase = ''
     runHook preInstall
@@ -48,11 +51,21 @@ stdenv.mkDerivation (finalAttrs: {
     runHook postInstall
   '';
 
+  nativeInstallCheckInputs = [
+    versionCheckHook
+    writableTmpDirAsHomeHook
+  ];
+  versionCheckProgramArg = "version";
+  versionCheckKeepEnvironment = "HOME";
+  doInstallCheck = true;
+
   passthru.updateScript = ./update.sh;
 
   meta = {
     description = "Confluent CLI";
     homepage = "https://docs.confluent.io/confluent-cli/current/overview.html";
+    changelog = "https://docs.confluent.io/confluent-cli/${lib.versions.majorMinor finalAttrs.version}/release-notes.html";
+    mainProgram = "confluent";
     sourceProvenance = with lib.sourceTypes; [ binaryNativeCode ];
     license = lib.licenses.unfreeRedistributable;
     maintainers = with lib.maintainers; [

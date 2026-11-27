@@ -27,6 +27,8 @@ rustPlatform.buildRustPackage (finalAttrs: {
   version = "0.16.2";
   passthru.modelVersion = "0.16.4";
 
+  __structuredAttrs = true;
+
   src = fetchFromGitHub {
     owner = "VOICEVOX";
     repo = "voicevox_core";
@@ -43,7 +45,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
     patch -d $cargoDepsCopy/*/open_jtalk-sys-* -p1 < ./openjtalk.patch
   '';
 
-  cargoBuildFlags = [ "-p voicevox_core_c_api" ];
+  cargoBuildFlags = [ "--package=voicevox_core_c_api" ];
 
   # don't link onnxruntime directly
   buildFeatures = [ "load-onnxruntime" ];
@@ -109,7 +111,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
     changelog = "https://github.com/VOICEVOX/voicevox_core/releases/tag/${finalAttrs.version}";
     description = "Core library for the VOICEVOX speech synthesis software";
     homepage = "https://github.com/VOICEVOX/voicevox_core";
-    license = with lib.licenses; [ mit ];
+    license = lib.licenses.mit;
     maintainers = with lib.maintainers; [
       tomasajt
       eljamm

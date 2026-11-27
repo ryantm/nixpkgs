@@ -11,14 +11,14 @@
 
 buildPythonPackage (finalAttrs: {
   pname = "pycfmodel";
-  version = "2.1.1";
+  version = "2.1.5";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "Skyscanner";
     repo = "pycfmodel";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-fI6CeBJc1ry0vbXCxq7sfGiNDIrb3TiyimNacoOg8Lw=";
+    hash = "sha256-82FDg2qLmgrMlS3P+OcAPL0ULEajv463DLgVaToQ4gs=";
   };
 
   pythonRelaxDeps = [ "pydantic" ];

@@ -39,8 +39,12 @@ buildPythonPackage (finalAttrs: {
   # Requires pytest, causing infinite recursion.
   doCheck = false;
 
-  passthru.tests = {
-    inherit distutils_80;
+  passthru = {
+    # bulk updater uses wrong tag
+    skipBulkUpdate = true;
+    tests = {
+      inherit distutils_80;
+    };
   };
 
   meta = {
@@ -49,7 +53,7 @@ buildPythonPackage (finalAttrs: {
     changelog = "https://setuptools.pypa.io/en/stable/history.html#v${
       lib.replaceString "." "-" finalAttrs.version
     }";
-    license = with lib.licenses; [ mit ];
+    license = lib.licenses.mit;
     platforms = python.meta.platforms;
     teams = [ lib.teams.python ];
   };

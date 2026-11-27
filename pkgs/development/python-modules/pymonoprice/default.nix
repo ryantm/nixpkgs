@@ -2,34 +2,31 @@
   lib,
   buildPythonPackage,
   fetchFromGitHub,
-  pyserial,
-  pyserial-asyncio-fast,
   pytestCheckHook,
+  serialx,
   setuptools,
+  setuptools-scm,
 }:
 
 buildPythonPackage rec {
   pname = "pymonoprice";
-  version = "0.5";
+  version = "0.6.1";
   pyproject = true;
 
   src = fetchFromGitHub {
-    owner = "etsinko";
+    owner = "OnFreund";
     repo = "pymonoprice";
-    tag = version;
-    hash = "sha256-kyFOWG/Jvn+h9ludzd2Zul9/lkwPxReH76nnDIGD+fM=";
+    tag = "v${version}";
+    hash = "sha256-UwP2R3gpu2gNgIEzyA9QSvPx40HfPALXFwHy4aJS6XA=";
   };
 
-  patches = [
-    # https://github.com/etsinko/pymonoprice/pull/14
-    ./python-3.14-compat.patch
+  build-system = [
+    setuptools
+    setuptools-scm
   ];
 
-  build-system = [ setuptools ];
-
   dependencies = [
-    pyserial
-    pyserial-asyncio-fast
+    serialx
   ];
 
   nativeCheckInputs = [ pytestCheckHook ];
@@ -38,8 +35,8 @@ buildPythonPackage rec {
 
   meta = {
     description = "Python 3 interface implementation for Monoprice 6 zone amplifier";
-    homepage = "https://github.com/etsinko/pymonoprice";
-    changelog = "https://github.com/etsinko/pymonoprice/releases/tag/${version}";
+    homepage = "https://github.com/OnFreund/pymonoprice";
+    changelog = "https://github.com/OnFreund/pymonoprice/releases/tag/${version}";
     license = lib.licenses.mit;
     maintainers = [ lib.maintainers.jamiemagee ];
   };

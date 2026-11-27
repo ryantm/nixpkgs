@@ -6,6 +6,7 @@
   katex,
   perlPackages,
   python3Packages,
+  rPackages,
   runCommand,
   testers,
   writers,
@@ -23,6 +24,8 @@ let
     writeBashBin
     writeBabashka
     writeBabashkaBin
+    writeCosh
+    writeCoshBin
     writeDash
     writeDashBin
     writeFish
@@ -44,6 +47,8 @@ let
     writePyPy3
     writePython3
     writePython3Bin
+    writeRscript
+    writeRscriptBin
     writeRuby
     writeRust
     writeRustBin
@@ -96,6 +101,12 @@ recurseIntoAttrs {
     dash = expectSuccessBin (
       writeDashBin "test-writers-dash-bin" ''
         test '~' = '~' && echo 'success'
+      ''
+    );
+
+    cosh = expectSuccessBin (
+      writeCoshBin "test-writers-cosh-bin" ''
+        5 range; sum; str; 10 =; if; "success" println; then
       ''
     );
 
@@ -178,6 +189,12 @@ recurseIntoAttrs {
       ''
     );
 
+    rscript = expectSuccessBin (
+      writeRscriptBin "test-writers-rscript-bin" { } /* R */ ''
+        cat("success")
+      ''
+    );
+
     # Commented out because of this issue: https://github.com/NixOS/nixpkgs/issues/39356
 
     #pypy2 = expectSuccessBin (writePyPy2Bin "test-writers-pypy2-bin" { libraries = [ pypy2Packages.enum ]; } ''
@@ -234,6 +251,12 @@ recurseIntoAttrs {
       ''
     );
 
+    cosh = expectSuccess (
+      writeCosh "test-writers-cosh" ''
+        5 range; sum; str; 10 =; if; "success" println; then;
+      ''
+    );
+
     fish = expectSuccess (
       writeFish "test-writers-fish" ''
         if test "test" = "test"
@@ -253,6 +276,23 @@ recurseIntoAttrs {
         echo "success"
       ''
     );
+
+    nuDocComment =
+      let
+        script = writeNu "test-writers-nushell-doc-comment" ''
+          # Doc comment example
+          def main [] {}
+        '';
+      in
+      runCommand "test-writers-nushell-doc-comment" { } ''
+        ${script} --help > help
+        grep -F "Doc comment example" help
+        if grep -F "#!" help; then
+          echo "shebang included in Nushell doc comment" >&2
+          exit 1
+        fi
+        touch $out
+      '';
 
     babashka = expectSuccess (
       writeBabashka "test-writers-babashka" { } ''
@@ -348,6 +388,17 @@ recurseIntoAttrs {
         """)
         print(y[0]['test'])
       ''
+    );
+
+    rscript = expectSuccess (
+      writeRscript "test-writers-rscript"
+        {
+          libraries = [ rPackages.jsonlite ];
+        }
+        /* R */ ''
+          result <- jsonlite::fromJSON('{"message":"success"}')
+          cat(result$message)
+        ''
     );
 
     # Commented out because of this issue: https://github.com/NixOS/nixpkgs/issues/39356
@@ -456,6 +507,25 @@ recurseIntoAttrs {
         ''
       )
     );
+
+    nuDocComment =
+      let
+        script = writeNu "test-writers-nushell-path-doc-comment" (
+          writeText "test" ''
+            # Doc comment example
+            def main [] {}
+          ''
+        );
+      in
+      runCommand "test-writers-nushell-path-doc-comment" { } ''
+        ${script} --help > help
+        grep -F "Doc comment example" help
+        if grep -F "#!" help; then
+          echo "shebang included in Nushell doc comment" >&2
+          exit 1
+        fi
+        touch $out
+      '';
   };
 
   data = recurseIntoAttrs {
@@ -477,7 +547,11 @@ recurseIntoAttrs {
 
     yaml = expectDataEqual {
       file = writeYAML "data.yaml" { hello = "world"; };
-      expected = "hello: world\n";
+      expected = ''
+        %YAML 1.1
+        ---
+        hello: world
+      '';
     };
   };
 

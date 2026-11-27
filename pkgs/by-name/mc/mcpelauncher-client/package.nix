@@ -25,10 +25,14 @@
   sdl3,
 }:
 
+let
+  # Xbox Live multiplayer requires libcurl WebSocket support.
+  curlWithWebsockets = curl.override { websocketSupport = true; };
+in
 # Bionic libc part doesn't compile with GCC
 clangStdenv.mkDerivation (finalAttrs: {
   pname = "mcpelauncher-client";
-  version = "1.6.4-qt6";
+  version = "1.8.4-qt6";
 
   # NOTE: check mcpelauncher-ui-qt when updating
   src = fetchFromGitHub {
@@ -36,7 +40,7 @@ clangStdenv.mkDerivation (finalAttrs: {
     repo = "mcpelauncher-manifest";
     tag = "v${finalAttrs.version}";
     fetchSubmodules = true;
-    hash = "sha256-L9QWA50T4bhpFmKodGpu2Y5Vea5HckeKs0OkH3O7lTY=";
+    hash = "sha256-F54XFbXB0dkssva95pmKwPjmmnjupBHCxShySClFUgY=";
   };
 
   patches = [
@@ -52,6 +56,11 @@ clangStdenv.mkDerivation (finalAttrs: {
 
     substituteInPlace file-picker/src/file_picker_zenity.cpp \
       --replace-fail 'EXECUTABLE_NAME = "zenity"' 'EXECUTABLE_NAME = "${lib.getExe zenity}"'
+
+    # The bundled linux/types.h stub shadows the kernel's and lacks __u128,
+    # which asm/sigcontext.h uses on aarch64 since Linux 7 headers
+    echo 'typedef unsigned __int128 __u128 __attribute__((aligned(16)));' \
+      >> mcpelauncher-linker/include/linux/types.h
   '';
 
   # FORTIFY_SOURCE breaks libc_shim and the project will fail to compile
@@ -74,7 +83,7 @@ clangStdenv.mkDerivation (finalAttrs: {
     libxi
     libxtst
     libevdev
-    curl
+    curlWithWebsockets
     pulseaudio
     glfw
     sdl3

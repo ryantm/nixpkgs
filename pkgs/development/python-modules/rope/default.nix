@@ -11,14 +11,14 @@
 
 buildPythonPackage rec {
   pname = "rope";
-  version = "1.14.0";
+  version = "1.15.2";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "python-rope";
     repo = "rope";
     tag = version;
-    hash = "sha256-LcxpJhMtyk0kT759ape9zQzdwmL1321Spdbg9zuuXtI=";
+    hash = "sha256-v6RnuzyQMlSeeLjnrV5aGX05Mg/Grhu0l7GzmLSwFhM=";
   };
 
   build-system = [ setuptools ];

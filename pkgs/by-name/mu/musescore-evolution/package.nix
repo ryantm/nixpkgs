@@ -28,13 +28,13 @@ stdenv.mkDerivation (finalAttrs: {
   __structuredAttrs = true;
 
   pname = "musescore-evolution";
-  version = "3.7.0-unstable-2026-06-30";
+  version = "3.7.0-unstable-2026-11-20";
 
   src = fetchFromGitHub {
     owner = "Jojo-Schmitz";
     repo = "MuseScore";
-    rev = "8b07f250f0a657582609a870f27ea4794ec81ff2";
-    hash = "sha256-XclDbyopuP4+3tfgsCThxr7QYdKmoaBSfWd+3h8A+6w=";
+    rev = "d7bc379832dd084a2d496e3f23238263eb830464";
+    hash = "sha256-JotwwgGdawapnitoNDL+bMM2cpXyjOpoWs4CdPbRSHo=";
   };
 
   patches = [
@@ -46,21 +46,29 @@ stdenv.mkDerivation (finalAttrs: {
   # Download manually at Help > Manage Resources
   cmakeFlags = [
     (lib.cmakeBool "DOWNLOAD_SOUNDFONT" false)
+  ]
+  ++ lib.optionals stdenv.hostPlatform.isDarwin [
+    (lib.cmakeFeature "CMAKE_CXX_STANDARD" "17")
   ];
 
   qtWrapperArgs = [
     # MuseScore JACK backend loads libjack at runtime.
-    "--prefix ${lib.optionalString stdenv.hostPlatform.isDarwin "DY"}LD_LIBRARY_PATH : ${
-      lib.makeLibraryPath [ libjack2 ]
-    }"
+    "--prefix"
+    "${lib.optionalString stdenv.hostPlatform.isDarwin "DY"}LD_LIBRARY_PATH"
+    ":"
+    (lib.makeLibraryPath [ libjack2 ])
   ]
   ++ lib.optionals stdenv.hostPlatform.isLinux [
-    "--set ALSA_PLUGIN_DIR ${alsa-plugins}/lib/alsa-lib"
+    "--set"
+    "ALSA_PLUGIN_DIR"
+    "${alsa-plugins}/lib/alsa-lib"
   ]
   ++ lib.optionals (!stdenv.hostPlatform.isDarwin) [
     # There are some issues with using the wayland backend, see:
     # https://musescore.org/en/node/321936
-    "--set-default QT_QPA_PLATFORM xcb"
+    "--set-default"
+    "QT_QPA_PLATFORM"
+    "xcb"
   ];
 
   preFixup = ''

@@ -10,14 +10,14 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "hm";
-  version = "18.0";
+  version = "20.0";
 
   src = fetchFromGitLab {
     domain = "vcgit.hhi.fraunhofer.de";
     owner = "jvet";
     repo = "HM";
     tag = "HM-${finalAttrs.version}";
-    hash = "sha256-zWBwrnCNKi2sIopdu2XQj/7IoTsJQzlcIFNNKM0glDQ=";
+    hash = "sha256-BMpXrQJnt6ISHvtkPlF3bQMLpNEUZi5h9+V3wg/GXFo=";
   };
 
   postPatch = ''

@@ -15,20 +15,22 @@
 }:
 
 stdenv.mkDerivation (finalAttrs: {
-  version = "1.1.1";
+  version = "1.1.3";
   pname = "libde265";
 
   src = fetchFromGitHub {
     owner = "strukturag";
     repo = "libde265";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-ZHfPC86oylqt2bwWMJRWVjdMEEmX6UOKR7XkR0HPyok=";
+    hash = "sha256-3bU0xevUSCkyzQUed9PS9p5hXb689Hr9acCAdeWfk0g=";
   };
 
   nativeBuildInputs = [
     cmake
     pkg-config
   ];
+
+  strictDeps = true;
 
   enableParallelBuilding = true;
 
@@ -40,6 +42,8 @@ stdenv.mkDerivation (finalAttrs: {
       libde265 = finalAttrs.finalPackage;
     };
   };
+
+  __structuredAttrs = true;
 
   meta = {
     homepage = "https://github.com/strukturag/libde265";

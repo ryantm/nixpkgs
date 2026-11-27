@@ -11,18 +11,21 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "osmo-hlr";
-  version = "1.9.2";
+  version = "1.9.5";
 
   src = fetchFromGitHub {
     owner = "osmocom";
     repo = "osmo-hlr";
     rev = finalAttrs.version;
-    hash = "sha256-SYyL7evxxmXGwv2TLr8ZuIrbu+GliAyuz/sKTIveQvc=";
+    hash = "sha256-rpQE/UqUvZU2HztGxTEYSKSGq8jyYyQz1kHK0Yj0EzA=";
   };
 
   postPatch = ''
     echo "${finalAttrs.version}" > .tarball-version
   '';
+
+  strictDeps = true;
+  __structuredAttrs = true;
 
   nativeBuildInputs = [
     autoreconfHook
@@ -38,7 +41,7 @@ stdenv.mkDerivation (finalAttrs: {
   enableParallelBuilding = true;
 
   meta = {
-    description = "Osmocom implementation of 3GPP Home Location Registr (HLR)";
+    description = "Osmocom implementation of 3GPP Home Location Register (HLR)";
     homepage = "https://osmocom.org/projects/osmo-hlr";
     license = lib.licenses.agpl3Plus;
     maintainers = [ lib.maintainers.markuskowa ];

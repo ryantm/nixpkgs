@@ -11,7 +11,7 @@
   unibilium,
   utf8proc,
   tree-sitter,
-  wasmtime_36,
+  wasmtime_48,
   fetchurl,
   buildPackages,
   treesitter-parsers ? import ./treesitter-parsers.nix { inherit fetchurl; },
@@ -20,7 +20,6 @@
   procps ? null,
   versionCheckHook,
   nix-update-script,
-  writableTmpDirAsHomeHook,
   wasmSupport ? false,
 }:
 
@@ -104,7 +103,7 @@ stdenv.mkDerivation (
   in
   {
     pname = "neovim-unwrapped";
-    version = "0.12.4";
+    version = "0.12.6";
 
     __structuredAttrs = true;
 
@@ -112,7 +111,7 @@ stdenv.mkDerivation (
       owner = "neovim";
       repo = "neovim";
       tag = "v${finalAttrs.version}";
-      hash = "sha256-KSLFsrnoEOV712cnUtA8s4EoISp+ON36jslKxSvDthQ=";
+      hash = "sha256-lK1gbJyESMN3C/i8cyPFzzlJDYZHzEXugGhCwPVEbNk=";
     };
 
     strictDeps = true;
@@ -165,7 +164,7 @@ stdenv.mkDerivation (
       utf8proc
     ]
     ++ lib.optionals wasmSupport [
-      wasmtime_36
+      wasmtime_48
     ]
     ++ lib.optionals (stdenv.hostPlatform.libc != "glibc") [
       # Provide libintl for non-glibc platforms
@@ -178,7 +177,14 @@ stdenv.mkDerivation (
     # make oldtests too
     checkPhase = ''
       runHook preCheck
+
+      # tests listen socket gets created here. not using writableTmpDirAsHomeHook
+      # as this path can be too long for the listen socket creation
+      export XDG_RUNTIME_DIR="$NIX_BUILD_TOP/tests"
+      mkdir -p "$XDG_RUNTIME_DIR"
+
       make functionaltest__treesitter
+
       runHook postCheck
     '';
 
@@ -192,7 +198,7 @@ stdenv.mkDerivation (
       lib.optionalString wasmSupport ''
         substituteInPlace src/nvim/CMakeLists.txt \
           --replace-fail \
-            'find_package(Wasmtime 36.0.6 EXACT REQUIRED)' \
+            'find_package(Wasmtime 36.0 EXACT REQUIRED)' \
             'find_package(Wasmtime REQUIRED)'
       ''
       # nvim --version output retains compilation flags and references to build tools
@@ -225,8 +231,8 @@ stdenv.mkDerivation (
     ++ lib.optionals wasmSupport [
       # FindWasmtime has no pkg-config fallback.
       (lib.cmakeBool "ENABLE_WASMTIME" true)
-      (lib.cmakeFeature "WASMTIME_INCLUDE_DIR" "${lib.getDev wasmtime_36}/include")
-      (lib.cmakeFeature "WASMTIME_LIBRARY" "${lib.getLib wasmtime_36}/lib/libwasmtime${stdenv.hostPlatform.extensions.sharedLibrary}")
+      (lib.cmakeFeature "WASMTIME_INCLUDE_DIR" "${lib.getDev wasmtime_48}/include")
+      (lib.cmakeFeature "WASMTIME_LIBRARY" "${lib.getLib wasmtime_48}/lib/libwasmtime${stdenv.hostPlatform.extensions.sharedLibrary}")
     ]
     ++ (
       if lua.pkgs.isLuaJIT then
@@ -261,7 +267,6 @@ stdenv.mkDerivation (
     nativeInstallCheckInputs = [
       versionCheckHook
       lua.pkgs.busted
-      writableTmpDirAsHomeHook
       glibcLocales
 
       # needs git for vim.pack tests as well

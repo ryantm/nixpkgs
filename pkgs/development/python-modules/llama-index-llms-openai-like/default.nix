@@ -9,16 +9,20 @@
 
 buildPythonPackage (finalAttrs: {
   pname = "llama-index-llms-openai-like";
-  version = "0.7.2";
+  version = "0.9.0";
   pyproject = true;
 
   src = fetchPypi {
     pname = "llama_index_llms_openai_like";
     inherit (finalAttrs) version;
-    hash = "sha256-7Z/3P5ddzkcPmKxhyYIVG6eO7fo/ubA4lLwdExKyE/8=";
+    hash = "sha256-6gQ3+B2p8kLgVKouNSn1hdwGtERGE51vT3kPbB16LUc=";
   };
 
   build-system = [ hatchling ];
+
+  pythonRelaxDeps = [
+    "openai"
+  ];
 
   dependencies = [
     llama-index-core

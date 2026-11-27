@@ -2,33 +2,48 @@
   lib,
   rustPlatform,
   fetchFromGitHub,
+  pkg-config,
+  aws-lc,
+  sqlite,
+  zstd,
   versionCheckHook,
+  writableTmpDirAsHomeHook,
   nix-update-script,
 }:
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "monocle";
-  version = "1.3.0";
+  version = "1.6.1";
 
   src = fetchFromGitHub {
     owner = "bgpkit";
     repo = "monocle";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-S1oFajXaym787JFwKpZwajRaVyj3cxWT3DZE/fIZCSY=";
+    hash = "sha256-HJb6Lae42XOMm6AEZrDRB7JT3Qr0128MibBfMpUEiAc=";
   };
 
-  cargoHash = "sha256-60cFl2+ZdYJ/iAC5IjP/5T9f8a/qxsK/szo7qT+/aU8=";
+  cargoHash = "sha256-ph4z6XLFp8cO8FANFeDmoqaPfPQr5N4g3/Lwr3UrWL4=";
+
+  env = {
+    AWS_LC_SYS_USE_SYSTEM = true;
+    LIBSQLITE3_SYS_USE_PKG_CONFIG = true;
+    ZSTD_SYS_USE_PKG_CONFIG = true;
+  };
+
+  nativeBuildInputs = [
+    pkg-config
+  ];
+
+  buildInputs = [
+    aws-lc
+    sqlite
+    zstd
+  ];
+
+  nativeCheckInputs = [ writableTmpDirAsHomeHook ];
 
   # require internet access
   checkFlags = map (t: "--skip=${t}") [
-    "datasets::as2org::tests::test_crawling"
-    "datasets::ip::tests::test_fetch_ip_info"
-    "datasets::rpki::validator::tests::test_bgp"
-    "datasets::rpki::validator::tests::test_list_asn"
-    "datasets::rpki::validator::tests::test_list_prefix"
-    "datasets::rpki::validator::tests::test_validation"
-    "filters::search::tests::test_build_broker_with_filters"
-    "filters::search::tests::test_pagination_logic"
     "lens::country::tests::test_all"
     "lens::country::tests::test_lookup_by_code"
     "lens::country::tests::test_lookup_by_name"
@@ -37,8 +52,9 @@ rustPlatform.buildRustPackage (finalAttrs: {
     "lens::ip::tests::test_fetch_ip_info"
     "lens::search::tests::test_build_broker_with_filters"
     "lens::search::tests::test_pagination_logic"
-    "server::handlers::country::tests::test_country_lens_lookup"
   ];
+
+  __darwinAllowLocalNetworking = true;
 
   doInstallCheck = true;
   nativeInstallCheckInputs = [ versionCheckHook ];

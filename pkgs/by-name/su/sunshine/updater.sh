@@ -50,7 +50,7 @@ log "src hash: $src_hash"
 log "Patching src hash in $package_nix"
 # The src fetchFromGitHub is the only one with fetchSubmodules; anchor on it so
 # we don't touch the ffmpeg or npmDepsHash entries. sed -z spans newlines.
-sed -i -zE "s#hash = \"sha256-[A-Za-z0-9+/=]+\"(\\s*fetchSubmodules = true;)#hash = \"$src_hash\"\\1#" "$package_nix"
+sed -i -zE "s#hash = \"sha256-[A-Za-z0-9+/=]+\";(\\s*fetchSubmodules = true;)#hash = \"$src_hash\";\\1#" "$package_nix"
 
 if ! grep -q "$src_hash" "$package_nix"; then
     echo "ERROR: failed to write src hash into $package_nix" >&2
@@ -84,7 +84,7 @@ log "build-deps tag: $build_deps_tag"
 prefetch_unpacked_sri() {
     local raw
     raw=$(nix-prefetch-url --unpack --type sha256 "$1")
-    nix --extra-experimental-features nix-command hash convert --hash-algo sha256 --to sri "$raw"
+    nix-hash --type sha256 --to-sri "$raw"
 }
 
 ffmpeg_url() {
@@ -96,7 +96,6 @@ ffmpeg_url() {
 declare -A ffmpeg_arch=(
     [x86_64-linux]=Linux-x86_64
     [aarch64-linux]=Linux-aarch64
-    [x86_64-darwin]=Darwin-x86_64
     [aarch64-darwin]=Darwin-arm64
 )
 

@@ -33,10 +33,9 @@
   doxygen ? null,
   graphviz ? null,
   imagemagick ? null,
-  # for manual, tetex is used to get the eps2pdf binary
-  # texlive to get latexmk. building manual still fails though
+  # for manual, texlive is used to get latexmk and the
+  # epstopdf binary. building manual still fails though
   dia,
-  tetex ? null,
   ghostscript ? null,
   texliveMedium ? null,
 
@@ -93,7 +92,6 @@ stdenv.mkDerivation (finalAttrs: {
     ]
     ++ lib.optionals withManual [
       dia
-      tetex
       ghostscript
       imagemagick
       texliveMedium
@@ -144,6 +142,7 @@ stdenv.mkDerivation (finalAttrs: {
     "-DPython3_LIBRARY_DIRS=${pythonEnv}/lib"
     "-DPython3_INCLUDE_DIRS=${pythonEnv}/include"
     "-DPython3_EXECUTABLE=${pythonEnv}/bin/python"
+    "-DNS3_WARNINGS_AS_ERRORS=OFF"
     "-DNS3_PYTHON_BINDINGS=ON"
     "-DNS3_DES_METRICS=ON"
     "-DNS3_BINDINGS_INSTALL_DIR=${pythonEnv.sitePackages}"
@@ -152,7 +151,7 @@ stdenv.mkDerivation (finalAttrs: {
     "-DNS3_GTK3=ON"
     "-DGTK3_GLIBCONFIG_INCLUDE_DIR=${glib.out}/lib/glib-2.0/include"
   ]
-  ++ lib.optional finalAttrs.doCheck "-DNS3_TESTS=ON";
+  ++ lib.optional finalAttrs.finalPackage.doCheck "-DNS3_TESTS=ON";
 
   # strictoverflow prevents clang from discovering pyembed when bindings
   hardeningDisable = [
@@ -171,7 +170,6 @@ stdenv.mkDerivation (finalAttrs: {
     ];
     # never built on aarch64-darwin since first introduction in nixpkgs
     broken =
-      (stdenv.hostPlatform.isDarwin && stdenv.hostPlatform.isAarch64)
-      || (stdenv.hostPlatform.isLinux && stdenv.hostPlatform.isAarch64);
+      stdenv.hostPlatform.isDarwin || (stdenv.hostPlatform.isLinux && stdenv.hostPlatform.isAarch64);
   };
 })

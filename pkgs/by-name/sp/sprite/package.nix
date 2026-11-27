@@ -9,29 +9,28 @@
 }:
 stdenv.mkDerivation (finalAttrs: {
   pname = "sprite";
-  version = "0.0.1-rc45";
+  version = "2026-11-03";
 
   src = fetchurl {
-    url = "https://sprites-binaries.t3.storage.dev/client/v${finalAttrs.version}/sprite-${
-      if stdenv.hostPlatform.isLinux then "linux" else "darwin"
-    }-${if stdenv.hostPlatform.isx86_64 then "amd64" else "arm64"}.tar.gz";
+    url = "https://sprites.dev/dl/client/${finalAttrs.version}/sprite-${
+      if stdenv.hostPlatform.isLinux then "linux" else "macos"
+    }-${if stdenv.hostPlatform.isx86_64 then "x86_64" else "aarch64"}";
     hash =
       {
-        aarch64-darwin = "sha256-0EbsXuNdSC9lfTR9lQFgGk9nYg200f+tZY8xcXmqTzc=";
-        x86_64-darwin = "sha256-IA3C42wheIATCBlAFVJbq0omjPZv+rQstthCwXDUm5w=";
-        aarch64-linux = "sha256-4a7LrFWgxe5wUcPLMDvo2/HmpCnELkJSyr2nAA9RBwk=";
-        x86_64-linux = "sha256-FfWZ9PFhorfbf8/YsdcFAnpA2QtA1LqAfQiGrc8sesQ=";
+        aarch64-darwin = "sha256-cR1q85SAd6HD5HZYp0wdjn59MfvGKDRekMoyq06auWA=";
+        aarch64-linux = "sha256-yCyDv+0o5LZ8LGv2Owrsua3cTFaOzLau85nyG/zG1IY=";
+        x86_64-linux = "sha256-cxr0d+z3Mo/RiMZ7NkmHTJEHtvAJfCWIjQ3Req2CNSc=";
       }
       .${stdenv.hostPlatform.system} or (throw "Unsupported system: ${stdenv.hostPlatform.system}");
   };
 
-  sourceRoot = ".";
+  dontUnpack = true;
 
   nativeBuildInputs = [ makeWrapper ] ++ lib.optional stdenv.hostPlatform.isLinux autoPatchelfHook;
 
   installPhase = ''
     mkdir -p $out/bin
-    install -m 755 sprite $out/bin/
+    install -m 755 $src $out/bin/sprite
     wrapProgram $out/bin/sprite --set UPGRADE_CHECK false
   '';
 
@@ -49,6 +48,7 @@ stdenv.mkDerivation (finalAttrs: {
     description = "Command Line Interactive for sprites, stateful sandbox environments with checkpoint & restore";
     homepage = "https://sprites.dev";
     license = lib.licenses.unfree;
+    sourceProvenance = [ lib.sourceTypes.binaryNativeCode ];
     mainProgram = "sprite";
     platforms = lib.platforms.linux ++ lib.platforms.darwin;
     maintainers = with lib.maintainers; [ drawbu ];

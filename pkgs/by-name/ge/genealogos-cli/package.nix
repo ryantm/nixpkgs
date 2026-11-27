@@ -4,19 +4,20 @@
   fetchFromGitHub,
 
   pkg-config,
+  aws-lc,
   openssl,
   crate ? "cli",
 }:
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "genealogos-${crate}";
-  version = "1.1.0";
+  version = "1.1.1";
 
   src = fetchFromGitHub {
     owner = "tweag";
     repo = "genealogos";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-7DD3anpFpQD4RMOUyuJZtbSi/U4Kb78v0FnfwUEFTOU=";
+    hash = "sha256-IUlWflWZ3GDN3um0eUhuM6pSqFrMl5Dvr5C0XSFyUVI=";
     # Genealogos' fixture tests contain valid nix store paths, and are thus incompatible with a fixed-output-derivation.
     # To avoid this, we just remove the tests
     postFetch = ''
@@ -24,7 +25,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
     '';
   };
 
-  cargoHash = "sha256-VPtj26ShMERqCMCKT6dTNp4rwQDqFVP8zO0rUSeqgrQ=";
+  cargoHash = "sha256-THoFqfni+R8kenKRkQnCXJIrVoQpZlzGJQjcxDjnCYY=";
 
   cargoBuildFlags = [
     "-p"
@@ -32,7 +33,10 @@ rustPlatform.buildRustPackage (finalAttrs: {
   ];
 
   nativeBuildInputs = [ pkg-config ];
-  buildInputs = [ openssl ];
+  buildInputs = [
+    aws-lc
+    openssl
+  ];
 
   # Since most tests were removed, just skip testing
   doCheck = false;

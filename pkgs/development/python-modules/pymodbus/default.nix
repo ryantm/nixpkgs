@@ -17,14 +17,14 @@
 
 buildPythonPackage (finalAttrs: {
   pname = "pymodbus";
-  version = "3.13.1";
+  version = "3.16.2";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "pymodbus-dev";
     repo = "pymodbus";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-gaCD3bhwBXF08vn3v9OU2mT1WJycrqgtxUC8sRLmZ8Y=";
+    hash = "sha256-m8d4/zlexTPAHpjXmXi5FN5buWMzm+sHoLC4tZ5ro/U=";
   };
 
   __darwinAllowLocalNetworking = true;

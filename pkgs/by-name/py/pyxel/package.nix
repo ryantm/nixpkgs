@@ -11,36 +11,26 @@
 
 python3Packages.buildPythonApplication (finalAttrs: {
   pname = "pyxel";
-  version = "2.8.10";
+  version = "3.0.1";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "kitao";
     repo = "pyxel";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-+SitYe2HFA6rwqk5lipcKFdBy69zdAhw3Q+Nb0iBx6s=";
+    hash = "sha256-jMpCfam23zK7qdj8sdYH5V82GY7A8l6DSVJmJRkuhlM=";
   };
-
-  patches = [
-    (fetchpatch {
-      name = "add-Cargo.lock.patch";
-      url = "https://github.com/kitao/pyxel/commit/821286112ea0c26141aa64b25aaa076611a2a91d.patch";
-      excludes = [ "CHANGELOG.md" ];
-      hash = "sha256-XtFdtmprPKrdjFOzEsNMJjc4PpNv6KDtWX2Hes2IKe0=";
-    })
-  ];
 
   cargoRoot = "crates";
 
   cargoDeps = rustPlatform.fetchCargoVendor {
     inherit (finalAttrs)
       src
-      patches
       pname
       version
       cargoRoot
       ;
-    hash = "sha256-SGrQmGZeM2NcooDqCTO2HOXgLg7h+VvDIierDacqSFs=";
+    hash = "sha256-T+AtF9HHJGiA01eVWVlkiTwuipSJV6nTaNkmQvPNfMg=";
   };
 
   buildAndTestSubdir = "python";
@@ -61,6 +51,11 @@ python3Packages.buildPythonApplication (finalAttrs: {
   buildInputs = [ SDL2 ];
 
   env.NIX_CFLAGS_COMPILE = "-I${lib.getDev SDL2}/include/SDL2";
+
+  preBuild = ''
+    # logic taken from Makefile
+    cp LICENSE README.md python/pyxel/
+  '';
 
   # Tests want to use the display
   doCheck = false;

@@ -1,23 +1,37 @@
 {
   lib,
-  buildGo125Module,
+  stdenv,
+  buildGoModule,
   fetchFromCodeberg,
   fetchYarnDeps,
   nodejs,
   yarn,
   yarnConfigHook,
+  makeBinaryWrapper,
+  ffmpeg,
   nixosTests,
   nix-update-script,
+  # Wazero (the WASM runtime GoToSocial uses to bundle ffmpeg/ffprobe/sqlite3)
+  # only has a fast "compiler" backend for amd64 and arm64. On every other
+  # architecture (riscv64, 32-bit ARM, ppc64le, ...) it falls back to a WASM
+  # interpreter that is far too slow for real-world media processing.
+  # Upstream exposes the explicitly unsupported/experimental "nowasm" build
+  # tag for this situation: it drops the embedded WASM ffmpeg/ffprobe/sqlite3
+  # and instead shells out to ffmpeg/ffprobe binaries found on $PATH.
+  # See: https://docs.gotosocial.org/en/latest/advanced/builds/nowasm/
+  withWasm ? stdenv.hostPlatform.isx86_64 || stdenv.hostPlatform.isAarch64,
 }:
-buildGo125Module (finalAttrs: {
+buildGoModule (finalAttrs: {
   pname = "gotosocial";
-  version = "0.22.0";
+  version = "0.22.3";
+
+  __structuredAttrs = true;
 
   src = fetchFromCodeberg {
     owner = "superseriousbusiness";
     repo = "gotosocial";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-rslzi9WqPqN/wm9PN6SWdXtLdMRJJV6Hhb3whJ0RicU=";
+    hash = "sha256-kDFfM47FQzZzkMUEPnYFi0Frm2DNL240O3T4qggYn8I=";
   };
 
   vendorHash = null;
@@ -30,13 +44,15 @@ buildGo125Module (finalAttrs: {
 
   tags = [
     "kvformat"
-  ];
+  ]
+  ++ lib.optionals (!withWasm) [ "nowasm" ];
 
   nativeBuildInputs = [
     nodejs
     yarn
     yarnConfigHook
-  ];
+  ]
+  ++ lib.optionals (!withWasm) [ makeBinaryWrapper ];
 
   yarnOfflineCache = fetchYarnDeps {
     yarnLock = "${finalAttrs.src}/web/source/yarn.lock";
@@ -68,6 +84,12 @@ buildGo125Module (finalAttrs: {
 
     mkdir -p $out/share/gotosocial/web
     mv web/{assets,template} $out/share/gotosocial/web
+  ''
+  + lib.optionalString (!withWasm) ''
+    # nowasm builds need ffmpeg/ffprobe available on $PATH at runtime,
+    # since the embedded WASM copies have been compiled out.
+    wrapProgram $out/bin/gotosocial \
+      --prefix PATH : ${lib.makeBinPath [ ffmpeg ]}
   '';
 
   # tests are working only on x86_64-linux
@@ -103,6 +125,7 @@ buildGo125Module (finalAttrs: {
       blakesmith
       cherrykitten
     ];
+    teams = with lib.teams; [ ngi ];
     license = lib.licenses.agpl3Only;
   };
 })

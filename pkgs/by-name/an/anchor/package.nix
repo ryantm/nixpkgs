@@ -1,23 +1,34 @@
 {
   lib,
-  stdenv,
   rustPlatform,
   fetchFromGitHub,
+  oniguruma,
+  pkg-config,
+  zstd,
 }:
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "anchor";
-  version = "1.1.2";
+  version = "1.2.2";
 
   src = fetchFromGitHub {
     owner = "otter-sec";
     repo = "anchor";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-/aDNw+Up48NZZIjEKXj4M2UIbcCt766Tv0eOlFau2gQ=";
+    hash = "sha256-YcQWgNeT/2dvU1dnieo42z5VXnZRoZK9PMGmV/rFxFk=";
     fetchSubmodules = true;
   };
 
-  cargoHash = "sha256-oEgWfklxjP8+TxrhDKJgcTsanpqJpEiHXJyir8neYj8=";
+  nativeBuildInputs = [ pkg-config ];
+
+  buildInputs = [
+    oniguruma
+    zstd
+  ];
+
+  env.RUSTONIG_SYSTEM_LIBONIG = true;
+
+  cargoHash = "sha256-obD/QyRliNheBvcj2islxaZ6RgM60l8O69jLUmxlLyc=";
 
   # Only build the anchor-cli package
   cargoBuildFlags = [
@@ -30,16 +41,6 @@ rustPlatform.buildRustPackage (finalAttrs: {
     "-p"
     "anchor-cli"
   ];
-
-  # These tests use tempdir + cargo metadata subprocess which fails on Darwin
-  # sandboxes due to getcwd() differences (XNU vs Linux). Tracked upstream at
-  # https://github.com/otter-sec/anchor/issues/4751
-  checkFlags = map (t: "--skip=${t}") (
-    lib.optionals stdenv.hostPlatform.isDarwin [
-      "program::tests::discover_solana_programs_finds_sibling_programs_from_nested_member"
-      "program::tests::discover_solana_programs_lists_all_members_from_nested_member"
-    ]
-  );
 
   meta = {
     description = "Solana Sealevel Framework";

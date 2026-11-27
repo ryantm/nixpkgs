@@ -3,7 +3,7 @@
   mm64baserom ? null,
   requireFile,
   fetchFromGitHub,
-  llvmPackages_19,
+  llvmPackages,
   cmake,
   copyDesktopItems,
   installShellFiles,
@@ -18,7 +18,9 @@
   z64decompress,
   n64recomp,
   directx-shader-compiler,
+  fmt_11,
   forceX11 ? false,
+  fetchpatch,
 }:
 
 let
@@ -41,7 +43,7 @@ let
 
 in
 
-llvmPackages_19.stdenv.mkDerivation (finalAttrs: {
+llvmPackages.stdenv.mkDerivation (finalAttrs: {
   pname = "zelda64recomp";
   version = "1.2.2";
 
@@ -55,11 +57,30 @@ llvmPackages_19.stdenv.mkDerivation (finalAttrs: {
 
   strictDeps = true;
 
+  patches = [
+    # Fix building with gcc16
+    (fetchpatch {
+      name = "rmlui-cstdint.patch";
+      url = "https://github.com/mikke89/RmlUi/commit/8c27b0a5cb601a3c57ecddc6ce8769ca93a97cb8.patch";
+      stripLen = 1;
+      extraPrefix = "lib/RmlUi/";
+      hash = "sha256-oIyPlnBsLcrGIbylT16i5SLttyXmzF5ZP1js/JDRG3o=";
+    })
+    # Required for N64Recomp commit 598ce20: Live recompiler support for PIC jump tables
+    (fetchpatch {
+      name = "n64modernruntime-pic.patch";
+      url = "https://github.com/N64Recomp/N64ModernRuntime/commit/e4342ae030a9d94aa97a81aafd3368ed7daa74df.patch";
+      relative = "librecomp";
+      extraPrefix = "lib/N64ModernRuntime/librecomp/";
+      hash = "sha256-pheuE+ABN9DZDeWDv5NFCoP+0dT8DGps6YKdsdTf0Os=";
+    })
+  ];
+
   nativeBuildInputs = [
     cmake
     copyDesktopItems
     installShellFiles
-    llvmPackages_19.lld
+    llvmPackages.lld
     makeWrapper
     ninja
     pkg-config
@@ -101,6 +122,15 @@ llvmPackages_19.stdenv.mkDerivation (finalAttrs: {
     substituteInPlace CMakeLists.txt \
       --replace-fail "\''${PROJECT_SOURCE_DIR}/lib/rt64/src/contrib/dxc/lib/x64" "${directx-shader-compiler}/lib/" \
       --replace-fail "\''${PROJECT_SOURCE_DIR}/lib/rt64/src/contrib/dxc/bin/x64/dxc-linux" "${directx-shader-compiler}/bin/dxc"
+
+    # Fix building with llvm 20
+    rm -r lib/N64ModernRuntime/N64Recomp/lib/fmt/*
+    ln -s ${fmt_11.src}/* lib/N64ModernRuntime/N64Recomp/lib/fmt/
+
+    # Fix llvm 21 rt64 error:
+    # error: variable 'empty_string' is uninitialized when passed as a const pointer argument here
+    substituteInPlace lib/rt64/src/contrib/imgui/imgui_widgets.cpp \
+      --replace-fail "IMSTB_TEXTEDIT_CHARTYPE empty_string;" "IMSTB_TEXTEDIT_CHARTYPE empty_string = 0;"
   '';
 
   # This is required or else nothing will build
@@ -115,11 +145,9 @@ llvmPackages_19.stdenv.mkDerivation (finalAttrs: {
     runHook preInstall
 
     installBin Zelda64Recompiled
-    install -Dm644 -t $out/share ../recompcontrollerdb.txt
+    install -Dm644 -t $out/share/zelda64recomp ../recompcontrollerdb.txt
     install -Dm644 ../icons/512.png $out/share/icons/hicolor/scalable/apps/zelda64recomp.png
-    cp -r ../assets $out/share/
-    ln -s $out/share/recompcontrollerdb.txt $out/bin/recompcontrollerdb.txt
-    ln -s $out/share/assets $out/bin/assets
+    cp -r ../assets $out/share/zelda64recomp/
 
     install -Dm644 -t $out/share/licenses/zelda64recomp ../COPYING
     install -Dm644 -t $out/share/licenses/zelda64recomp/N64ModernRuntime ../lib/N64ModernRuntime/COPYING
@@ -136,12 +164,11 @@ llvmPackages_19.stdenv.mkDerivation (finalAttrs: {
      )
   '';
 
-  # This is needed as Zelda64Recompiled will segfault when not run from the same
-  # directory as the binary. It also used to exit when run without X11. Recent rt64
-  # updates enabled wayland support, but leave the option to disable this on the
-  # application level if desired.
+  # This is needed as Zelda64Recompiled used to exit when run without X11.
+  # Recent rt64 updates enabled wayland support, but leave the option to disable
+  # this on the application level if desired.
   postFixup = ''
-    wrapProgram $out/bin/Zelda64Recompiled --chdir "$out/bin/" \
+    wrapProgram $out/bin/Zelda64Recompiled --chdir "$out/share/zelda64recomp" \
         ${lib.optionalString forceX11 "--set SDL_VIDEODRIVER x11"}
   '';
 

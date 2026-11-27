@@ -14,11 +14,12 @@ let
 
     file=/var/lib/hddtemp/hddtemp.db
 
-    raw_drives=""
-    ${lib.concatStringsSep "\n" (map (drives: "raw_drives+=\"${drives} \"") cfg.drives)}
-    drives=""
-    for i in $raw_drives; do
-      drives+=" $(realpath $i)"
+    # Intentionally unquoted to allow shell expansion and evaluation.
+    # shellcheck disable=SC2207
+    raw_drives=( ${lib.concatStringsSep " " cfg.drives} )
+    declare -a drives
+    for i in "''${raw_drives[@]}"; do
+      drives+=( "$(realpath "$i")" )
     done
 
     cp ${pkgs.hddtemp}/share/hddtemp/hddtemp.db $file
@@ -28,12 +29,15 @@ let
       --daemon \
       --unit=${cfg.unit} \
       --file=$file \
-      $drives
+      "''${drives[@]}"
   '';
 
 in
 {
-  meta.maintainers = with lib.maintainers; [ peterhoeg ];
+  meta.maintainers = with lib.maintainers; [
+    peterhoeg
+    usovalx
+  ];
 
   ###### interface
 
@@ -48,7 +52,11 @@ in
       };
 
       drives = mkOption {
-        description = "List of drives to monitor. If you pass /dev/disk/by-path/* entries the symlinks will be resolved as hddtemp doesn't like names with colons.";
+        description = ''
+          List of drives or shell expressions that expand to drives to monitor.
+          Expressions are evaluated when the service starts, so shell wildcards
+          and command substitutions can be used.
+        '';
         type = types.listOf types.str;
       };
 
@@ -82,6 +90,7 @@ in
       description = "HDD/SSD temperature";
       documentation = [ "man:hddtemp(8)" ];
       wantedBy = [ "multi-user.target" ];
+      enableStrictShellChecks = true;
       inherit script;
       serviceConfig = {
         Type = "forking";

@@ -13,11 +13,14 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "acl";
-  version = "2.3.2";
+
+  # Note: while not part of passthru.tests because doing so resulted in errors,
+  # consider building nixosTests.acl when updating to run the tests
+  version = "2.4.0";
 
   src = fetchurl {
     url = "mirror://savannah/acl/acl-${finalAttrs.version}.tar.gz";
-    hash = "sha256-XyvbrWKXB6p9hcYj+ZSqih0t7FWnPeUgW6wL9gWKL3w=";
+    hash = "sha256-c8hTw9ROH2k+WpaphvG9GdPQ2sLH1FPnlhd3dLxOX2o=";
   };
 
   outputs = [

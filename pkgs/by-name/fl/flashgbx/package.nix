@@ -9,13 +9,13 @@
 
 python3Packages.buildPythonApplication (finalAttrs: {
   pname = "flashgbx";
-  version = "4.4";
+  version = "5.2.1";
 
   src = fetchFromGitHub {
     repo = "FlashGBX";
     owner = "lesserkuma";
     tag = finalAttrs.version;
-    hash = "sha256-C5RljQB6km5yYvFRj/s5AZfMIuMmaqsHnn9BhYWAP4o=";
+    hash = "sha256-ludpgyRje7hrMurYM8Yvm3VFnncFU/IR5nNyhWCLRwo=";
   };
 
   desktopItems = [
@@ -44,10 +44,12 @@ python3Packages.buildPythonApplication (finalAttrs: {
   propagatedBuildInputs =
     with python3Packages;
     [
+      packaging
       pillow
       pyserial
       pyside6
       python-dateutil
+      reedsolo
       requests
       setuptools
       qt6.qtbase

@@ -34,7 +34,7 @@ buildPythonPackage rec {
   pyproject = true;
 
   src = fetchFromGitHub {
-    owner = "p1c2u";
+    owner = "python-openapi";
     repo = "openapi-core";
     tag = version;
     hash = "sha256-wGaRx+IEqsvs7ygCDgh1H4di662SQhjmpB9LMP/YGKM=";
@@ -84,6 +84,12 @@ buildPythonPackage rec {
     webob
   ]
   ++ lib.concatAttrValues optional-dependencies;
+
+  pytestFlags = [
+    "-Wignore::pytest.PytestRemovedIn10Warning"
+    # Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    "-Wignore::starlette.exceptions.StarletteDeprecationWarning"
+  ];
 
   disabledTestPaths = [
     # Requires secrets and additional configuration

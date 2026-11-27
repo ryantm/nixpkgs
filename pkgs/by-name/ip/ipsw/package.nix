@@ -2,27 +2,31 @@
   lib,
   stdenv,
   fetchFromGitHub,
-  buildGo126Module,
+  buildGoModule,
 }:
 
-buildGo126Module (finalAttrs: {
-  version = "3.1.672";
+buildGoModule (finalAttrs: {
+  version = "3.1.745";
   pname = "ipsw";
 
   src = fetchFromGitHub {
     owner = "blacktop";
     repo = "ipsw";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-wzxhTWd3aVB3RQLWajhKXlwgVvn/PgoL1+ovYO/IleA=";
+    hash = "sha256-YnljQqH2qhHCT4ucVkBK/JhnAhu9jK177AC+1vlCggg=";
   };
 
-  vendorHash = "sha256-cyHfH/Ljz4wuMdKkSfySSK5kPRwq9M1+C/5CG5VwHoE=";
+  # Files behind the `sandbox` build tag import the closed-source pkg/sandbox,
+  # which is not in the repository. `go mod vendor` resolves the imports of
+  # every build tag and fails; `go mod download` does not.
+  proxyVendor = true;
+  vendorHash = "sha256-iCf0QFon23Hb7aB6flOj/XQ0u/a0sWXZvzRFArf1wi8=";
 
   ldflags = [
     "-s"
     "-w"
-    "-X github.com/blacktop/ipsw/cmd/ipsw/cmd.AppVersion==${finalAttrs.version}"
-    "-X github.com/blacktop/ipsw/cmd/ipsw/cmd.AppBuildCommit==${finalAttrs.src.tag}"
+    "-X github.com/blacktop/ipsw/cmd/ipsw/cmd.AppVersion=${finalAttrs.version}"
+    "-X github.com/blacktop/ipsw/cmd/ipsw/cmd.AppBuildCommit=${finalAttrs.src.tag}"
   ];
 
   subPackages = [

@@ -23,7 +23,8 @@
   atk,
   dbus,
   glib-networking,
-  libappindicator-gtk3,
+  gst_all_1,
+  libappindicator,
   llvmPackages,
   pulseaudio,
   gtk3,
@@ -32,13 +33,13 @@
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "music-assistant-desktop";
-  version = "0.5.7";
+  version = "0.7.4";
 
   src = fetchFromGitHub {
     owner = "music-assistant";
     repo = "desktop-app";
     tag = finalAttrs.version;
-    hash = "sha256-KKyIYSSIC134t46H7YOFNCdj4M/VoBrX9jN5aX/kSlc=";
+    hash = "sha256-u5drVmNaTbLq5pTyWfZ6ZsgH72GlDTpngaIRN1k3UcA=";
   };
 
   patches = [
@@ -58,11 +59,11 @@ rustPlatform.buildRustPackage (finalAttrs: {
   cargoRoot = "src-tauri";
   buildAndTestSubdir = finalAttrs.cargoRoot;
 
-  cargoHash = "sha256-AFn2m8eO+U86s6g2LlzBuAsJBesrm3Gncihf+zbPDeE=";
+  cargoHash = "sha256-6VUVcGJruHO8tZYwksYBtRAR+6zXb0FrxI7q2b9k6W4=";
 
   yarnOfflineCache = fetchYarnDeps {
     yarnLock = finalAttrs.src + "/yarn.lock";
-    hash = "sha256-dOJ5ETRodpnuaI+L2wckNU0XANUcjqzvdqw/cd5sJC4=";
+    hash = "sha256-s5lBvlDLtBSu0Cpn0YImVRLGvHiIjfkibomzvglQEDU=";
   };
 
   nativeBuildInputs = [
@@ -85,7 +86,10 @@ rustPlatform.buildRustPackage (finalAttrs: {
     atk
     dbus
     glib-networking
-    libappindicator-gtk3
+    gst_all_1.gstreamer
+    gst_all_1.gst-plugins-base
+    gst_all_1.gst-plugins-good
+    libappindicator
     pulseaudio
     gtk3
     webkitgtk_4_1
@@ -93,7 +97,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
 
   preFixup = lib.optionalString stdenv.hostPlatform.isLinux ''
     gappsWrapperArgs+=(
-      --prefix LD_LIBRARY_PATH : "${lib.makeLibraryPath [ libappindicator-gtk3 ]}"
+      --prefix LD_LIBRARY_PATH : "${lib.makeLibraryPath [ libappindicator ]}"
     )
   '';
 
@@ -103,7 +107,6 @@ rustPlatform.buildRustPackage (finalAttrs: {
   };
 
   __structuredAttrs = true;
-  strictDeps = true;
 
   meta = {
     description = "Official companion desktop app for Music Assistant";

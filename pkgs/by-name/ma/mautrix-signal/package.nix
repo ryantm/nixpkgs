@@ -18,16 +18,16 @@
 let
   cppStdLib = if stdenv.hostPlatform.isDarwin then "-lc++" else "-lstdc++";
 in
-buildGoModule rec {
+buildGoModule (finalAttrs: {
   pname = "mautrix-signal";
-  version = "26.06";
-  tag = "v0.2606.0";
+  version = "26.11";
+  tag = "v0.2611.0";
 
   src = fetchFromGitHub {
     owner = "mautrix";
     repo = "signal";
-    inherit tag;
-    hash = "sha256-DSOf6kyNcsknwKM77vUQs6pWX8hMo4mU9dOGai62QR0=";
+    inherit (finalAttrs) tag;
+    hash = "sha256-/Jr2cRjccNPmIXQQdI2Mt1izeSxTLkSTldSW/5W/9yo=";
   };
 
   buildInputs =
@@ -46,11 +46,11 @@ buildGoModule rec {
     CGO_LDFLAGS = toString [ cppStdLib ];
   };
 
-  vendorHash = "sha256-e9Et97QEn12kkiqrQTaDtwECLhwvxwDUF6IcWoL/+Mg=";
+  vendorHash = "sha256-16OVFkboYzZM3RORAuskvCBRAA3lx1MFXNIddSqsuVY=";
 
   ldflags = [
     "-X"
-    "main.Tag=${tag}"
+    "main.Tag=${finalAttrs.tag}"
   ];
 
   doCheck = true;
@@ -78,7 +78,8 @@ buildGoModule rec {
       pentane
       ma27
       SchweGELBin
+      logn
     ];
     mainProgram = "mautrix-signal";
   };
-}
+})

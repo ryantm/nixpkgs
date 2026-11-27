@@ -2,22 +2,26 @@
   lib,
   fetchFromGitHub,
   kingfisher,
+  nix-update-script,
   python3Packages,
 }:
 
 python3Packages.buildPythonApplication (finalAttrs: {
   pname = "prowler";
-  version = "5.33.1";
+  version = "5.52.0";
   pyproject = true;
-
-  __structuredAttrs = true;
 
   src = fetchFromGitHub {
     owner = "prowler-cloud";
     repo = "prowler";
     tag = finalAttrs.version;
-    hash = "sha256-uecwowuP/h+o739EV7REIGLoiejJ9Jcu6bk08DMWno0=";
+    hash = "sha256-nL4qnSgrlf238F4ZwycGkVMvH79TKX3MfJ3Sh3W6wuI=";
   };
+
+  postPatch = ''
+    substituteInPlace pyproject.toml \
+      --replace-fail "hatchling==1.32.0" "hatchling"
+  '';
 
   pythonRelaxDeps = true;
 
@@ -45,6 +49,7 @@ python3Packages.buildPythonApplication (finalAttrs: {
     azure-mgmt-apimanagement
     azure-mgmt-applicationinsights
     azure-mgmt-authorization
+    azure-mgmt-cognitiveservices
     azure-mgmt-compute
     azure-mgmt-containerregistry
     azure-mgmt-containerservice
@@ -80,6 +85,18 @@ python3Packages.buildPythonApplication (finalAttrs: {
     google-api-python-client
     google-auth-httplib2
     h2
+    huaweicloudsdkcore
+    huaweicloudsdkcts
+    huaweicloudsdkecs
+    huaweicloudsdkelb
+    huaweicloudsdkevs
+    huaweicloudsdkiam
+    huaweicloudsdkkms
+    huaweicloudsdkobs
+    huaweicloudsdkrds
+    huaweicloudsdksmn
+    huaweicloudsdkvpc
+    huaweicloudsdkwaf
     jsonschema
     kubernetes
     linode-api4
@@ -97,6 +114,7 @@ python3Packages.buildPythonApplication (finalAttrs: {
     pygithub
     python-dateutil
     pytz
+    regex
     scaleway
     schema
     shodan
@@ -105,9 +123,12 @@ python3Packages.buildPythonApplication (finalAttrs: {
     stackit-iaas
     stackit-objectstorage
     stackit-resourcemanager
+    stackit-ske
     tabulate
+    truststore
     tzlocal
     uuid6
+    zstandard
   ];
 
   postFixup = ''
@@ -115,6 +136,8 @@ python3Packages.buildPythonApplication (finalAttrs: {
   '';
 
   pythonImportsCheck = [ "prowler" ];
+
+  passthru.updateScript = nix-update-script { };
 
   meta = {
     description = "Security tool to perform Cloud Security best practices assessments";

@@ -6,7 +6,7 @@
 
 stdenv.mkDerivation {
   pname = "libndtypes";
-  version = "unstable-2019-08-01";
+  version = "0.2.0dev3-unstable-2019-07-30";
 
   outputs = [
     "out"
@@ -29,7 +29,7 @@ stdenv.mkDerivation {
   meta = {
     description = "Dynamic types for data description and in-memory computations";
     homepage = "https://xnd.io/";
-    license = lib.licenses.bsdOriginal;
+    license = lib.licenses.bsd3;
     maintainers = [ lib.maintainers.costrouc ];
   };
 }
