@@ -15,9 +15,10 @@ jobs:
       - run: |
           nix build .#nixpkgs-manual-mmdoc
       - if: success()
-        uses: crazy-max/ghaction-github-pages@v2
+        uses: crazy-max/ghaction-github-pages@v5
         with:
           target_branch: gh-pages
           build_dir: result/multi
+          jekyll: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
