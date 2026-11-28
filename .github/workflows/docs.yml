@@ -1,0 +1,30 @@
+name: docs
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@main
+        with:
+          ref: "minman"
+      - uses: cachix/install-nix-action@master
+      - run: |
+          nix build .#nixpkgs-manual-mmdoc -o result-nixpkgs
+          nix build .#nixos-manual-mmdoc -o result-nixos
+          mkdir -p site/single site/nixos/single
+          cp -r result-nixpkgs/multi/. site/
+          cp -r result-nixpkgs/single/. site/single/
+          cp -r result-nixos/multi/. site/nixos/
+          cp -r result-nixos/single/. site/nixos/single/
+      - if: success()
+        uses: crazy-max/ghaction-github-pages@v5
+        with:
+          target_branch: gh-pages
+          build_dir: site
+          jekyll: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
