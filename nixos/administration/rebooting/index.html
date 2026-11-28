@@ -1,0 +1,463 @@
+<!doctype html>
+<html lang='en'>
+  <head>
+    <base href='../../'>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, viewport-fit=cover'>
+    <script>
+      (() => {
+        let theme = null
+        try { theme = localStorage.getItem('theme') } catch (error) {}
+        if (theme !== 'light' && theme !== 'dark')
+          theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+        document.documentElement.classList.add(theme + '-theme')
+        const ua = navigator.userAgent || ''
+        const isWebView = /;\s*wv\)|Twitter|FBAN|FBAV|Instagram|LinkedInApp|BytedanceWebview|musical_ly|Line\/|MicroMessenger/i.test(ua) || (/(iPhone|iPad|iPod)/i.test(ua) && /AppleWebKit/i.test(ua) && !/Safari\//i.test(ua))
+        const fromX = /^https?:\/\/([a-z0-9-]+\.)?(t\.co|x\.com|twitter\.com)(\/|$)/i.test(document.referrer || '')
+        let topNav = isWebView || fromX
+        try {
+          if (topNav) sessionStorage.setItem('mmdoc-top-nav', '1')
+          else if (sessionStorage.getItem('mmdoc-top-nav') === '1') topNav = true
+        } catch (error) {}
+        if (topNav) document.documentElement.classList.add('mobile-top-nav')
+      })()
+    </script>
+    <meta name='description' content='Rebooting and Shutting Down'>
+    <link rel='icon' href='favicon.svg'>
+    <link rel='stylesheet' href='a11y-dark.773c5c24f666bae4.css'>
+    <link rel='stylesheet' href='a11y-light.519a1765fd6efc61.css'>
+    <link rel='stylesheet' href='mmdoc.1fa5ef6417bedb91.css'>
+    <title>Rebooting and Shutting Down | nixos</title>
+  </head>
+  <body>
+  <a class='skip-link' href='administration/rebooting/#main-content'>Skip to main content</a>
+  <input type='checkbox' id='sidebar-checkbox' aria-hidden='true' tabindex='-1' style='display: none;'>
+  <div class='body'>
+    <header class='nav-top-container'>
+    <nav class='nav-top' aria-label='Documentation controls'>
+      <button type='button' class='sidebar-toggle' title='Toggle table of contents' aria-label='Toggle table of contents' aria-controls='sidebar' aria-expanded='true'></button>    <button type='button' class='search-toggle' title='Open search (/)' aria-label='Open search' aria-controls='search-panel' aria-expanded='false'></button>    <button type='button' class='theme-toggle' title='Switch to dark theme' aria-label='Switch to dark theme' aria-pressed='false'></button>    <a id='chapter-previous-button' class='chapter-previous' href='administration/service-mgmt/#sec-systemctl' title='Service Management' aria-label='Previous: Service Management'>&lt;</a>
+    <a id='chapter-next-button' class='chapter-next' href='administration/user-sessions/#sec-user-sessions' title='User Sessions' aria-label='Next: User Sessions'>&gt;</a>
+    </nav>
+    </header>
+    <nav id='sidebar' class='sidebar' aria-label='Table of contents'>
+<h1>NixOS Manual</h1>
+<p>Version 27.05.20261128.4b21f50</p>
+<ul>
+<li><a href="./#preface">Preface</a></li>
+</ul>
+<h2>Getting started</h2>
+<ul>
+<li><a href="installation/installation/#ch-installation">Getting started</a></li>
+<li><a href="installation/obtaining/#sec-obtaining">Obtaining NixOS</a></li>
+</ul>
+<h2>Installing NixOS</h2>
+<ul>
+<li><a href="installation/installing/#sec-installation">Installing NixOS</a></li>
+<li><a href="installation/installing-usb/#sec-booting-from-usb">Booting from a USB flash drive</a></li>
+<li><a href="installation/installing-pxe/#sec-booting-from-pxe">Booting from the &quot;netboot&quot; media (PXE)</a></li>
+<li><a href="installation/installing-kexec/#sec-booting-via-kexec">&quot;Booting&quot; into NixOS via kexec</a></li>
+<li><a href="installation/installing-virtualbox-guest/#sec-installing-virtualbox-guest">Installing in a VirtualBox guest</a></li>
+<li><a href="installation/installing-from-other-distro/#sec-installing-from-other-distro">Installing from another Linux distribution</a></li>
+<li><a href="installation/installing-behind-a-proxy/#sec-installing-behind-proxy">Installing behind a proxy</a></li>
+<li><a href="installation/changing-config/#sec-changing-config">Changing the Configuration</a></li>
+<li><a href="installation/upgrading/#sec-upgrading">Upgrading NixOS</a></li>
+</ul>
+<h2>Guides</h2>
+<ul>
+<li><a href="configuration/configuration/#ch-configuration">Guides</a></li>
+</ul>
+<h2>Configuration Syntax</h2>
+<ul>
+<li><a href="configuration/config-syntax/#sec-configuration-syntax">Configuration Syntax</a></li>
+<li><a href="configuration/config-file/#sec-configuration-file">NixOS Configuration File</a></li>
+<li><a href="configuration/abstractions/#sec-module-abstractions">Abstractions</a></li>
+<li><a href="configuration/modularity/#sec-modularity">Modularity</a></li>
+</ul>
+<h2>Package Management</h2>
+<ul>
+<li><a href="configuration/package-mgmt/#sec-package-management">Package Management</a></li>
+<li><a href="configuration/declarative-packages/#sec-declarative-package-mgmt">Declarative Package Management</a></li>
+<li><a href="configuration/customizing-packages/#sec-customising-packages">Customising Packages</a></li>
+<li><a href="configuration/adding-custom-packages/#sec-custom-packages">Adding Custom Packages</a></li>
+<li><a href="configuration/ad-hoc-packages/#sec-ad-hoc-packages">Ad-Hoc Package Management</a></li>
+<li><a href="configuration/user-mgmt/#sec-user-management">User Management</a></li>
+</ul>
+<h2>File Systems</h2>
+<ul>
+<li><a href="configuration/file-systems/#ch-file-systems">File Systems</a></li>
+<li><a href="configuration/luks-file-systems/#sec-luks-file-systems">LUKS-Encrypted File Systems</a></li>
+<li><a href="configuration/sshfs-file-systems/#sec-sshfs-file-systems">SSHFS File Systems</a></li>
+<li><a href="configuration/nfs-file-systems/#sec-nfs-file-systems">NFS File Systems</a></li>
+<li><a href="configuration/overlayfs/#sec-overlayfs">Overlayfs</a></li>
+</ul>
+<h2>Networking</h2>
+<ul>
+<li><a href="configuration/networking/#sec-networking">Networking</a></li>
+<li><a href="configuration/network-manager/#sec-networkmanager">NetworkManager</a></li>
+<li><a href="configuration/ssh/#sec-ssh">Secure Shell Access</a></li>
+<li><a href="configuration/ipv4-config/#sec-ipv4">IPv4 Configuration</a></li>
+<li><a href="configuration/ipv6-config/#sec-ipv6">IPv6 Configuration</a></li>
+<li><a href="configuration/firewall/#sec-firewall">Firewall</a></li>
+<li><a href="configuration/wireless/#sec-wireless">Wireless Networks</a></li>
+<li><a href="configuration/ad-hoc-network-config/#ad-hoc-network-config">Ad-Hoc Configuration</a></li>
+<li><a href="configuration/renaming-interfaces/#sec-rename-ifs">Renaming network interfaces</a></li>
+</ul>
+<h2>Graphical Desktops</h2>
+<ul>
+<li><a href="configuration/x-windows/#sec-x11">X Window System</a></li>
+<li><a href="configuration/wayland/#sec-wayland">Wayland</a></li>
+<li><a href="configuration/gpu-accel/#sec-gpu-accel">GPU acceleration</a></li>
+<li><a href="configuration/xfce/#sec-xfce">Xfce Desktop Environment</a></li>
+</ul>
+<h2>Building Images</h2>
+<ul>
+<li><a href="installation/building-nixos/#sec-building-image">Building a NixOS (Live) ISO</a></li>
+<li><a href="installation/building-images-via-nixos-rebuild-build-image/#sec-image-nixos-rebuild-build-image">Building Images with nixos-rebuild build-image</a></li>
+<li><a href="installation/building-images-via-systemd-repart/#sec-image-repart">Building Images via systemd-repart</a></li>
+</ul>
+<h2>Administration</h2>
+<ul>
+<li><a href="administration/running/#ch-running">Administration</a></li>
+<li><a href="administration/service-mgmt/#sec-systemctl">Service Management</a></li>
+<li><a href="administration/rebooting/#sec-rebooting">Rebooting and Shutting Down</a></li>
+<li><a href="administration/user-sessions/#sec-user-sessions">User Sessions</a></li>
+<li><a href="administration/logging/#sec-logging">Logging</a></li>
+<li><a href="administration/cleaning-store/#sec-nix-gc">Cleaning the Nix Store</a></li>
+</ul>
+<h2>Container Management</h2>
+<ul>
+<li><a href="administration/containers/#ch-containers">Container Management</a></li>
+<li><a href="administration/imperative-containers/#sec-imperative-containers">Imperative Container Management</a></li>
+<li><a href="administration/declarative-containers/#sec-declarative-containers">Declarative Container Specification</a></li>
+<li><a href="administration/container-networking/#sec-container-networking">Container Networking</a></li>
+</ul>
+<h2>Troubleshooting</h2>
+<ul>
+<li><a href="administration/troubleshooting/#ch-troubleshooting">Troubleshooting</a></li>
+<li><a href="administration/boot-problems/#sec-boot-problems">Boot Problems</a></li>
+<li><a href="administration/maintenance-mode/#sec-maintenance-mode">Maintenance Mode</a></li>
+<li><a href="administration/rollback/#sec-rollback">Rolling Back Configuration Changes</a></li>
+<li><a href="administration/store-corruption/#sec-nix-store-corruption">Nix Store Corruption</a></li>
+<li><a href="administration/network-problems/#sec-nix-network-issues">Network Problems</a></li>
+</ul>
+<h2>Services and Programs</h2>
+<ul>
+<li><a href="services/#ch-services">Services and Programs</a></li>
+<li><a href="modules/facter/#module-hardware-facter">NixOS Facter</a></li>
+<li><a href="modules/input-method/#module-services-input-methods">Input Methods</a></li>
+<li><a href="modules/digitalbitbox/#module-programs-digitalbitbox">Digital Bitbox</a></li>
+<li><a href="modules/plotinus/#module-program-plotinus">Plotinus</a></li>
+<li><a href="modules/oh-my-zsh/#module-programs-zsh-ohmyzsh">Oh my ZSH</a></li>
+<li><a href="modules/acme/#module-security-acme">SSL/TLS Certificates with ACME</a></li>
+<li><a href="modules/tpm2/#module-security-tpm2">TPM2</a></li>
+<li><a href="modules/navidrome/#module-services-navidrome">Navidrome</a></li>
+<li><a href="modules/borgbackup/#module-borgbase">BorgBackup</a></li>
+<li><a href="modules/garm/#module-garm">GARM</a></li>
+<li><a href="modules/cassandra/#module-services-cassandra">Apache Cassandra</a></li>
+<li><a href="modules/foundationdb/#module-services-foundationdb">FoundationDB</a></li>
+<li><a href="modules/postgresql/#module-postgresql">PostgreSQL</a></li>
+<li><a href="modules/tigerbeetle/#module-services-tigerbeetle">TigerBeetle</a></li>
+<li><a href="modules/gnome/#chap-gnome">GNOME Desktop</a></li>
+<li><a href="modules/pantheon/#chap-pantheon">Pantheon Desktop</a></li>
+<li><a href="modules/flatpak/#module-services-flatpak">Flatpak</a></li>
+<li><a href="modules/athens/#module-athens">Athens</a></li>
+<li><a href="modules/blackfire/#module-services-blackfire">Blackfire profiler</a></li>
+<li><a href="modules/livebook/#module-services-livebook">Livebook</a></li>
+<li><a href="modules/emacs/#module-services-emacs">Emacs</a></li>
+<li><a href="modules/display/#module-hardware-display">Customizing display configuration</a></li>
+<li><a href="modules/trezord/#trezor">Trezor</a></li>
+<li><a href="modules/mailman/#module-services-mailman">Mailman</a></li>
+<li><a href="modules/draupnir/#module-services-draupnir">Draupnir (Matrix Moderation Bot)</a></li>
+<li><a href="modules/maubot/#module-services-maubot">Maubot</a></li>
+<li><a href="modules/mautrix-discord/#module-services-mautrix-discord">Mautrix-Discord</a></li>
+<li><a href="modules/mautrix-signal/#module-services-mautrix-signal">Mautrix-Signal</a></li>
+<li><a href="modules/mautrix-whatsapp/#module-services-mautrix-whatsapp">Mautrix-Whatsapp</a></li>
+<li><a href="modules/mjolnir/#module-services-mjolnir">Mjolnir (Matrix Moderation Tool)</a></li>
+<li><a href="modules/synapse/#module-services-matrix">Matrix</a></li>
+<li><a href="modules/anki-sync-server/#module-services-anki-sync-server">Anki Sync Server</a></li>
+<li><a href="modules/apache-kafka/#module-services-apache-kafka">Apache Kafka</a></li>
+<li><a href="modules/cliproxyapi/#module-services-cliproxyapi">CLIProxyAPI</a></li>
+<li><a href="modules/dump1090-fa/#module-services-dump1090-fa">Dump1090-fa</a></li>
+<li><a href="modules/forgejo/#module-forgejo">Forgejo</a></li>
+<li><a href="modules/gitlab/#module-services-gitlab">GitLab</a></li>
+<li><a href="modules/jellystat/#module-services-jellystat">Jellystat</a></li>
+<li><a href="modules/mesh-llm/#module-services-mesh-llm">MeshLLM</a></li>
+<li><a href="modules/paisa/#module-services-paisa">Paisa</a></li>
+<li><a href="modules/pelican-panel/#module-pelican-panel">Pelican Panel</a></li>
+<li><a href="modules/pelican-wings/#module-pelican-wings">Pelican Wings</a></li>
+<li><a href="modules/tandoor-recipes/#module-services-tandoor-recipes">Tandoor Recipes</a></li>
+<li><a href="modules/taskserver/#module-services-taskserver">Taskserver</a></li>
+<li><a href="modules/tdarr/#module-services-tdarr">Tdarr</a></li>
+<li><a href="modules/weechat/#module-services-weechat">WeeChat</a></li>
+<li><a href="modules/certspotter/#module-services-certspotter">Cert Spotter</a></li>
+<li><a href="modules/goss/#module-services-goss">Goss</a></li>
+<li><a href="modules/ocsinventory-agent/#module-services-ocsinventory-agent">OCS Inventory Agent</a></li>
+<li><a href="modules/parsedmarc/#module-services-parsedmarc">parsedmarc</a></li>
+<li><a href="modules/exporters/#module-services-prometheus-exporters">Prometheus exporters</a></li>
+<li><a href="modules/litestream/#module-services-litestream">Litestream</a></li>
+<li><a href="modules/samba/#module-services-samba">Samba</a></li>
+<li><a href="modules/amuled/#module-services-amule">aMule</a></li>
+<li><a href="modules/anubis/#module-services-anubis">Anubis</a></li>
+<li><a href="modules/atalkd/#module-services-atalkd">atalkd</a></li>
+<li><a href="modules/crab-hole/#module-services-crab-hole">🦀 crab-hole</a></li>
+<li><a href="modules/dnsmasq/#module-services-networking-dnsmasq">Dnsmasq</a></li>
+<li><a href="modules/doh-server/#module-service-doh-server">DNS-over-HTTPS Server</a></li>
+<li><a href="modules/firefox-syncserver/#module-services-firefox-syncserver">Firefox Sync server</a></li>
+<li><a href="modules/gns3-server/#module-services-gns3-server">GNS3 Server</a></li>
+<li><a href="modules/jotta-cli/#module-services-jotta-cli">Jottacloud Command-line Tool</a></li>
+<li><a href="modules/lxmd/#module-services-lxmd">LXMD</a></li>
+<li><a href="modules/mosquitto/#module-services-mosquitto">Mosquitto</a></li>
+<li><a href="modules/netbird/#module-services-netbird">Netbird Client</a></li>
+<li><a href="modules/netbird-relay/#module-services-netbird-relay">Netbird Relay</a></li>
+<li><a href="modules/server/#module-services-netbird-server">Netbird server</a></li>
+<li><a href="modules/nextcloud-spreed-signaling/#module-services-nextcloud-spreed-signaling">Spreed standalone signaling server</a></li>
+<li><a href="modules/nordvpn/#module-services-nordvpn">NordVPN</a></li>
+<li><a href="modules/onedrive/#module-services-onedrive">Microsoft OneDrive</a></li>
+<li><a href="modules/pihole-ftl/#module-services-networking-pihole-ftl">pihole-FTL</a></li>
+<li><a href="modules/pleroma/#module-services-pleroma">Pleroma</a></li>
+<li><a href="modules/portmaster/#module-services-portmaster">Portmaster</a></li>
+<li><a href="modules/prosody/#module-services-prosody">Prosody</a></li>
+<li><a href="modules/rnsd/#module-services-rnsd">RNSD</a></li>
+<li><a href="modules/umurmur/#module-service-umurmur">uMurmur</a></li>
+<li><a href="modules/yggdrasil/#module-services-networking-yggdrasil">Yggdrasil</a></li>
+<li><a href="modules/zapret2/#module-services-zapret2">Zapret2</a></li>
+<li><a href="modules/meilisearch/#module-services-meilisearch">Meilisearch</a></li>
+<li><a href="modules/crowdsec/#sec-crowdsec-reset">How to reset data and etc directories</a></li>
+<li><a href="modules/falco/#module-services-falco">Falco</a></li>
+<li><a href="modules/kerberos/#module-services-kerberos-server">kerberos_server</a></li>
+<li><a href="modules/systemd-lock-handler/#module-services-systemd-lock-handler">systemd-lock-handler</a></li>
+<li><a href="modules/akkoma/#module-services-akkoma">Akkoma</a></li>
+<li><a href="modules/c2fmzq-server/#module-services-c2fmzq">c2FmZQ</a></li>
+<li><a href="modules/davis/#module-services-davis">Davis</a></li>
+<li><a href="modules/discourse/#module-services-discourse">Discourse</a></li>
+<li><a href="modules/ente/#module-services-ente">Ente.io</a></li>
+<li><a href="modules/filesender/#module-services-filesender">FileSender</a></li>
+<li><a href="modules/glance/#module-services-glance">Glance</a></li>
+<li><a href="modules/gotosocial/#module-services-gotosocial">GoToSocial</a></li>
+<li><a href="modules/grocy/#module-services-grocy">Grocy</a></li>
+<li><a href="modules/hatsu/#module-services-hatsu">Hatsu</a></li>
+<li><a href="modules/jitsi-meet/#module-services-jitsi-meet">Jitsi Meet</a></li>
+<li><a href="modules/keycloak/#module-services-keycloak">Keycloak</a></li>
+<li><a href="modules/lemmy/#module-services-lemmy">Lemmy</a></li>
+<li><a href="modules/matomo/#module-services-matomo">Matomo</a></li>
+<li><a href="modules/nextcloud/#module-services-nextcloud">Nextcloud</a></li>
+<li><a href="modules/opencloud/#module-services-opencloud">OpenCloud</a></li>
+<li><a href="modules/pict-rs/#module-services-pict-rs">Pict-rs</a></li>
+<li><a href="modules/pihole-web/#module-services-web-apps-pihole-web">Pi-hole Web Dashboard</a></li>
+<li><a href="modules/plausible/#module-services-plausible">Plausible</a></li>
+<li><a href="modules/strfry/#module-services-strfry">strfry</a></li>
+<li><a href="modules/suwayomi-server/#module-services-suwayomi-server">Suwayomi-Server</a></li>
+<li><a href="modules/szurubooru/#module-services-szurubooru">Szurubooru</a></li>
+<li><a href="modules/wanderer/#module-services-wanderer">wanderer</a></li>
+<li><a href="modules/youtrack/#module-services-youtrack">YouTrack</a></li>
+<li><a href="modules/garage/#module-services-garage">Garage</a></li>
+<li><a href="modules/clevis/#module-boot-clevis">Clevis</a></li>
+<li><a href="modules/external/#sec-bootloader-external">External Bootloader Backends</a></li>
+<li><a href="modules/plymouth-tpm2-totp/#module-boot-plymouth-tpm2-totp">tpm2-totp with Plymouth</a></li>
+<li><a href="modules/xen-dom0/#module-virtualisation-xen">Xen Project Hypervisor</a></li>
+<li><a href="configuration/subversion/#module-services-subversion">Subversion</a></li>
+<li><a href="configuration/mattermost/#sec-mattermost">Mattermost</a></li>
+<li><a href="configuration/kubernetes/#sec-kubernetes">Kubernetes</a></li>
+</ul>
+<h2>Reference</h2>
+<ul>
+<li><a href="reference/#ch-reference">Reference</a></li>
+</ul>
+<h2>Profiles</h2>
+<ul>
+<li><a href="configuration/profiles/#ch-profiles">Profiles</a></li>
+<li><a href="configuration/profiles/all-hardware/#sec-profile-all-hardware">All Hardware</a></li>
+<li><a href="configuration/profiles/base/#sec-profile-base">Base</a></li>
+<li><a href="configuration/profiles/clone-config/#sec-profile-clone-config">Clone Config</a></li>
+<li><a href="configuration/profiles/demo/#sec-profile-demo">Demo</a></li>
+<li><a href="configuration/profiles/docker-container/#sec-profile-docker-container">Docker Container</a></li>
+<li><a href="configuration/profiles/graphical/#sec-profile-graphical">Graphical</a></li>
+<li><a href="configuration/profiles/headless/#sec-profile-headless">Headless</a></li>
+<li><a href="configuration/profiles/installation-device/#sec-profile-installation-device">Installation Device</a></li>
+<li><a href="configuration/profiles/perlless/#sec-perlless">Perlless</a></li>
+<li><a href="configuration/profiles/minimal/#sec-profile-minimal">Minimal</a></li>
+<li><a href="configuration/profiles/qemu-guest/#sec-profile-qemu-guest">QEMU Guest</a></li>
+<li><a href="configuration/linux-kernel/#sec-kernel-config">Linux Kernel</a></li>
+</ul>
+<h2>Necessary system state</h2>
+<ul>
+<li><a href="administration/system-state/#ch-system-state">Necessary system state</a></li>
+<li><a href="administration/nixos-state/#sec-nixos-state">NixOS</a></li>
+<li><a href="administration/systemd-state/#sec-systemd-state">systemd</a></li>
+<li><a href="administration/zfs-state/#sec-zfs-state">ZFS</a></li>
+</ul>
+<h2>What happens during a system switch?</h2>
+<ul>
+<li><a href="development/what-happens-during-a-system-switch/#sec-switching-systems">What happens during a system switch?</a></li>
+<li><a href="development/unit-handling/#sec-unit-handling">Unit handling</a></li>
+<li><a href="development/activation-script/#sec-activation-script">Activation script</a></li>
+<li><a href="development/non-switchable-systems/#sec-non-switchable-system">Non Switchable Systems</a></li>
+<li><a href="development/etc-overlay/#sec-etc-overlay">/etc via overlay filesystem</a></li>
+<li><a href="administration/control-groups/#sec-cgroups">Control Groups</a></li>
+<li><a href="development/bootspec/#sec-bootspec">Bootspec</a></li>
+<li><a href="development/modular-services/#modular-services">Modular Services</a></li>
+</ul>
+<h2>Contributing</h2>
+<ul>
+<li><a href="development/development/#ch-development">Contributing</a></li>
+<li><a href="development/sources/#sec-getting-sources">Getting the Sources</a></li>
+</ul>
+<h2>Writing NixOS Modules</h2>
+<ul>
+<li><a href="development/writing-modules/#sec-writing-modules">Writing NixOS Modules</a></li>
+<li><a href="development/option-declarations/#sec-option-declarations">Option Declarations</a></li>
+<li><a href="development/option-types/#sec-option-types">Options Types</a></li>
+<li><a href="development/option-def/#sec-option-definitions">Option Definitions</a></li>
+<li><a href="development/assertions/#sec-assertions">Warnings and Assertions</a></li>
+<li><a href="development/meta-attributes/#sec-meta-attributes">Meta Attributes</a></li>
+<li><a href="development/importing-modules/#sec-importing-modules">Importing Modules</a></li>
+<li><a href="development/replace-modules/#sec-replace-modules">Replace Modules</a></li>
+<li><a href="development/freeform-modules/#sec-freeform-modules">Freeform modules</a></li>
+<li><a href="development/settings-options/#sec-settings-options">Options for Program Settings</a></li>
+<li><a href="development/state-revision/#sec-state-revision">State revision</a></li>
+</ul>
+<h2>NixOS Tests</h2>
+<ul>
+<li><a href="development/nixos-tests/#sec-nixos-tests">NixOS Tests</a></li>
+<li><a href="development/writing-nixos-tests/#sec-writing-nixos-tests">Writing Tests</a></li>
+<li><a href="development/running-nixos-tests/#sec-running-nixos-tests">Running Tests</a></li>
+<li><a href="development/running-nixos-tests-interactively/#sec-running-nixos-tests-interactively">Running Tests interactively</a></li>
+<li><a href="development/linking-nixos-tests-to-packages/#sec-linking-nixos-tests-to-packages">Linking NixOS tests to packages</a></li>
+<li><a href="development/testing-hardware-features/#sec-nixos-test-testing-hardware-features">Testing Hardware Features</a></li>
+<li><a href="development/building-parts/#sec-building-parts">Building Specific Parts of NixOS</a></li>
+<li><a href="development/developing-the-test-driver/#chap-developing-the-test-driver">Developing the NixOS Test Driver</a></li>
+<li><a href="development/testing-installer/#ch-testing-installer">Testing the Installer</a></li>
+<li><a href="development/writing-documentation/#sec-writing-documentation">Writing NixOS Documentation</a></li>
+<li><a href="contributing-to-this-manual/#chap-contributing">Contributing to this manual</a></li>
+</ul>
+<h2>Configuration Options</h2>
+<ul>
+<li><a href="nixos-options/#ch-options">Configuration Options</a>
+<ul>
+<li><a href="options/boot/#sec-options-boot">boot</a></li>
+<li><a href="options/containers/#sec-options-containers">containers</a></li>
+<li><a href="options/documentation/#sec-options-documentation">documentation</a></li>
+<li><a href="options/environment/#sec-options-environment">environment</a></li>
+<li><a href="options/fonts/#sec-options-fonts">fonts</a></li>
+<li><a href="options/hardware/#sec-options-hardware">hardware</a></li>
+<li><a href="options/i18n/#sec-options-i18n">i18n</a></li>
+<li><a href="options/image/#sec-options-image">image</a></li>
+<li><a href="options/networking/#sec-options-networking">networking</a></li>
+<li><a href="options/nix/#sec-options-nix">nix</a></li>
+<li><a href="options/power/#sec-options-power">power</a></li>
+<li><a href="options/programs/#sec-options-programs">programs</a></li>
+<li><a href="options/security/#sec-options-security">security</a></li>
+<li><a href="options/system/#sec-options-system">system</a></li>
+<li><a href="options/systemd/#sec-options-systemd">systemd</a></li>
+<li><a href="options/users/#sec-options-users">users</a></li>
+<li><a href="options/virtualisation/#sec-options-virtualisation">virtualisation</a></li>
+<li><a href="options/xdg/#sec-options-xdg">xdg</a></li>
+<li><a href="options/services-a/#sec-options-services-a">services (A)</a></li>
+<li><a href="options/services-b/#sec-options-services-b">services (B)</a></li>
+<li><a href="options/services-c/#sec-options-services-c">services (C)</a></li>
+<li><a href="options/services-d/#sec-options-services-d">services (D)</a></li>
+<li><a href="options/services-e/#sec-options-services-e">services (E)</a></li>
+<li><a href="options/services-f/#sec-options-services-f">services (F)</a></li>
+<li><a href="options/services-g/#sec-options-services-g">services (G)</a></li>
+<li><a href="options/services-h/#sec-options-services-h">services (H)</a></li>
+<li><a href="options/services-i/#sec-options-services-i">services (I)</a></li>
+<li><a href="options/services-j/#sec-options-services-j">services (J)</a></li>
+<li><a href="options/services-k/#sec-options-services-k">services (K)</a></li>
+<li><a href="options/services-l/#sec-options-services-l">services (L)</a></li>
+<li><a href="options/services-m/#sec-options-services-m">services (M)</a></li>
+<li><a href="options/services-n/#sec-options-services-n">services (N)</a></li>
+<li><a href="options/services-o/#sec-options-services-o">services (O)</a></li>
+<li><a href="options/services-other/#sec-options-services-other">services (other)</a></li>
+<li><a href="options/services-p/#sec-options-services-p">services (P)</a></li>
+<li><a href="options/services-q/#sec-options-services-q">services (Q)</a></li>
+<li><a href="options/services-r/#sec-options-services-r">services (R)</a></li>
+<li><a href="options/services-s/#sec-options-services-s">services (S)</a></li>
+<li><a href="options/services-t/#sec-options-services-t">services (T)</a></li>
+<li><a href="options/services-u/#sec-options-services-u">services (U)</a></li>
+<li><a href="options/services-v/#sec-options-services-v">services (V)</a></li>
+<li><a href="options/services-w/#sec-options-services-w">services (W)</a></li>
+<li><a href="options/services-x/#sec-options-services-x">services (X)</a></li>
+<li><a href="options/services-y/#sec-options-services-y">services (Y)</a></li>
+<li><a href="options/services-z/#sec-options-services-z">services (Z)</a></li>
+<li><a href="options/other/#sec-options-other">Other options</a></li>
+</ul>
+</li>
+</ul>
+<h2>Release Notes</h2>
+<ul>
+<li><a href="release-notes/release-notes/#ch-release-notes">Release Notes</a>
+<ul>
+<li><a href="release-notes/rl-2705/#sec-release-27.05">Release 27.05 (&quot;Axolotl&quot;, 2027.05/??)</a></li>
+<li><a href="release-notes/rl-2611/#sec-release-26.11">Release 26.11 (&quot;Zokor&quot;, 2026.11/??)</a></li>
+<li><a href="release-notes/rl-2605/#sec-release-26.05">Release 26.05 (&quot;Yarara&quot;, 2026.05/30)</a></li>
+<li><a href="release-notes/rl-2511/#sec-release-25.11">Release 25.11 (&quot;Xantusia&quot;, 2025.11/30)</a></li>
+<li><a href="release-notes/rl-2505/#sec-release-25.05">Release 25.05 (“Warbler”, 2025.05/23)</a></li>
+<li><a href="release-notes/rl-2411/#sec-release-24.11">Release 24.11 (“Vicuña”, 2024.11/28)</a></li>
+<li><a href="release-notes/rl-2405/#sec-release-24.05">Release 24.05 (“Uakari”, 2024.05/31)</a></li>
+<li><a href="release-notes/rl-2311/#sec-release-23.11">Release 23.11 (“Tapir”, 2023.11/29)</a></li>
+<li><a href="release-notes/rl-2305/#sec-release-23.05">Release 23.05 (“Stoat”, 2023.05/31)</a></li>
+<li><a href="release-notes/rl-2211/#sec-release-22.11">Release 22.11 (“Raccoon”, 2022.11/30)</a></li>
+<li><a href="release-notes/rl-2205/#sec-release-22.05">Release 22.05 (“Quokka”, 2022.05/30)</a></li>
+<li><a href="release-notes/rl-2111/#sec-release-21.11">Release 21.11 (“Porcupine”, 2021/11/30)</a></li>
+<li><a href="release-notes/rl-2105/#sec-release-21.05">Release 21.05 (&quot;Okapi&quot;, 2021.05/31)</a></li>
+<li><a href="release-notes/rl-2009/#sec-release-20.09">Release 20.09 (&quot;Nightingale&quot;, 2020.10/27)</a></li>
+<li><a href="release-notes/rl-2003/#sec-release-20.03">Release 20.03 (&quot;Markhor&quot;, 2020.04/20)</a></li>
+<li><a href="release-notes/rl-1909/#sec-release-19.09">Release 19.09 (&quot;Loris&quot;, 2019/10/09)</a></li>
+<li><a href="release-notes/rl-1903/#sec-release-19.03">Release 19.03 (&quot;Koi&quot;, 2019/04/11)</a></li>
+<li><a href="release-notes/rl-1809/#sec-release-18.09">Release 18.09 (&quot;Jellyfish&quot;, 2018/10/05)</a></li>
+<li><a href="release-notes/rl-1803/#sec-release-18.03">Release 18.03 (&quot;Impala&quot;, 2018/04/04)</a></li>
+<li><a href="release-notes/rl-1709/#sec-release-17.09">Release 17.09 (&quot;Hummingbird&quot;, 2017/09/??)</a></li>
+<li><a href="release-notes/rl-1703/#sec-release-17.03">Release 17.03 (&quot;Gorilla&quot;, 2017/03/31)</a></li>
+<li><a href="release-notes/rl-1609/#sec-release-16.09">Release 16.09 (&quot;Flounder&quot;, 2016/09/30)</a></li>
+<li><a href="release-notes/rl-1603/#sec-release-16.03">Release 16.03 (&quot;Emu&quot;, 2016/03/31)</a></li>
+<li><a href="release-notes/rl-1509/#sec-release-15.09">Release 15.09 (&quot;Dingo&quot;, 2015/09/30)</a></li>
+<li><a href="release-notes/rl-1412/#sec-release-14.12">Release 14.12 (&quot;Caterpillar&quot;, 2014/12/30)</a></li>
+<li><a href="release-notes/rl-1404/#sec-release-14.04">Release 14.04 (&quot;Baboon&quot;, 2014/04/30)</a></li>
+<li><a href="release-notes/rl-1310/#sec-release-13.10">Release 13.10 (&quot;Aardvark&quot;, 2013/10/31)</a></li>
+</ul>
+</li>
+</ul>
+    </nav>
+    <section id='main'>
+      <div id='search-panel' class='nav-search' role='search' hidden>
+        <label class='visually-hidden' for='search'>Search documentation</label>
+        <input type='search' id='search' placeholder='Search documentation (/)' autocomplete='off' aria-controls='search-results'>
+        <p id='search-status' class='visually-hidden' role='status' aria-live='polite'></p>
+        <div id='search-results'></div>
+      </div>
+      <div class='main-scroll'>
+        <main id='main-content' tabindex='-1'>
+<h1 id='sec-rebooting'><a href='administration/rebooting/#sec-rebooting'>
+Rebooting and Shutting Down
+</a></h1>
+<p>The system can be shut down (and automatically powered off) by doing:</p>
+<pre><code class="language-ShellSession"># shutdown
+</code></pre>
+<p>This is equivalent to running <code>systemctl poweroff</code>.</p>
+<p>To reboot the system, run</p>
+<pre><code class="language-ShellSession"># reboot
+</code></pre>
+<p>which is equivalent to <code>systemctl reboot</code>. Alternatively, you can
+quickly reboot the system using <code>kexec</code>, which bypasses the BIOS by
+directly loading the new kernel into memory:</p>
+<pre><code class="language-ShellSession"># systemctl kexec
+</code></pre>
+<p>The machine can be suspended to RAM (if supported) using <code>systemctl suspend</code>,
+and suspended to disk using <code>systemctl hibernate</code>.</p>
+<p>These commands can be run by any user who is logged in locally, i.e. on
+a virtual console or in X11; otherwise, the user is asked for
+authentication.</p>
+
+        <nav class='chapter-pagination' aria-label='Chapter pagination'>
+          <a class='chapter-pagination-link chapter-pagination-previous' href='administration/service-mgmt/#sec-systemctl'><span class='chapter-pagination-label'>Previous</span><span class='chapter-pagination-title'>Service Management</span></a>
+          <a class='chapter-pagination-link chapter-pagination-next' href='administration/user-sessions/#sec-user-sessions'><span class='chapter-pagination-label'>Next</span><span class='chapter-pagination-title'>User Sessions</span></a>
+        </nav>
+        </main>
+      </div>
+    </section>
+<script defer src='highlight.pack.bb58bc6b7daef61c.js'></script>
+<script defer src='mmdoc.0eac5034aeb9595f.js'></script>
+<script defer src='mmdoc_search.1e3e2ead6263c722.js' data-search-index='search_index.fa825f5e481818a3.js' data-fuse='fuse.basic.min.296619aed362de6d.js'></script>
+  </div>
+  </body>
+</html>

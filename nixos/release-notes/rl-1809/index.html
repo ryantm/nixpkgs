@@ -1,0 +1,902 @@
+<!doctype html>
+<html lang='en'>
+  <head>
+    <base href='../../'>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, viewport-fit=cover'>
+    <script>
+      (() => {
+        let theme = null
+        try { theme = localStorage.getItem('theme') } catch (error) {}
+        if (theme !== 'light' && theme !== 'dark')
+          theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+        document.documentElement.classList.add(theme + '-theme')
+        const ua = navigator.userAgent || ''
+        const isWebView = /;\s*wv\)|Twitter|FBAN|FBAV|Instagram|LinkedInApp|BytedanceWebview|musical_ly|Line\/|MicroMessenger/i.test(ua) || (/(iPhone|iPad|iPod)/i.test(ua) && /AppleWebKit/i.test(ua) && !/Safari\//i.test(ua))
+        const fromX = /^https?:\/\/([a-z0-9-]+\.)?(t\.co|x\.com|twitter\.com)(\/|$)/i.test(document.referrer || '')
+        let topNav = isWebView || fromX
+        try {
+          if (topNav) sessionStorage.setItem('mmdoc-top-nav', '1')
+          else if (sessionStorage.getItem('mmdoc-top-nav') === '1') topNav = true
+        } catch (error) {}
+        if (topNav) document.documentElement.classList.add('mobile-top-nav')
+      })()
+    </script>
+    <meta name='description' content='Release 18.09 (&quot;Jellyfish&quot;, 2018/10/05)'>
+    <link rel='icon' href='favicon.svg'>
+    <link rel='stylesheet' href='a11y-dark.773c5c24f666bae4.css'>
+    <link rel='stylesheet' href='a11y-light.519a1765fd6efc61.css'>
+    <link rel='stylesheet' href='mmdoc.1fa5ef6417bedb91.css'>
+    <title>Release 18.09 (&quot;Jellyfish&quot;, 2018/10/05) | nixos</title>
+  </head>
+  <body>
+  <a class='skip-link' href='release-notes/rl-1809/#main-content'>Skip to main content</a>
+  <input type='checkbox' id='sidebar-checkbox' aria-hidden='true' tabindex='-1' style='display: none;'>
+  <div class='body'>
+    <header class='nav-top-container'>
+    <nav class='nav-top' aria-label='Documentation controls'>
+      <button type='button' class='sidebar-toggle' title='Toggle table of contents' aria-label='Toggle table of contents' aria-controls='sidebar' aria-expanded='true'></button>    <button type='button' class='search-toggle' title='Open search (/)' aria-label='Open search' aria-controls='search-panel' aria-expanded='false'></button>    <button type='button' class='theme-toggle' title='Switch to dark theme' aria-label='Switch to dark theme' aria-pressed='false'></button>    <a id='chapter-previous-button' class='chapter-previous' href='release-notes/rl-1903/#sec-release-19.03' title='Release 19.03 (&quot;Koi&quot;, 2019/04/11)' aria-label='Previous: Release 19.03 (&quot;Koi&quot;, 2019/04/11)'>&lt;</a>
+    <a id='chapter-next-button' class='chapter-next' href='release-notes/rl-1803/#sec-release-18.03' title='Release 18.03 (&quot;Impala&quot;, 2018/04/04)' aria-label='Next: Release 18.03 (&quot;Impala&quot;, 2018/04/04)'>&gt;</a>
+    </nav>
+    </header>
+    <nav id='sidebar' class='sidebar' aria-label='Table of contents'>
+<h1>NixOS Manual</h1>
+<p>Version 27.05.20261128.4b21f50</p>
+<ul>
+<li><a href="./#preface">Preface</a></li>
+</ul>
+<h2>Getting started</h2>
+<ul>
+<li><a href="installation/installation/#ch-installation">Getting started</a></li>
+<li><a href="installation/obtaining/#sec-obtaining">Obtaining NixOS</a></li>
+</ul>
+<h2>Installing NixOS</h2>
+<ul>
+<li><a href="installation/installing/#sec-installation">Installing NixOS</a></li>
+<li><a href="installation/installing-usb/#sec-booting-from-usb">Booting from a USB flash drive</a></li>
+<li><a href="installation/installing-pxe/#sec-booting-from-pxe">Booting from the &quot;netboot&quot; media (PXE)</a></li>
+<li><a href="installation/installing-kexec/#sec-booting-via-kexec">&quot;Booting&quot; into NixOS via kexec</a></li>
+<li><a href="installation/installing-virtualbox-guest/#sec-installing-virtualbox-guest">Installing in a VirtualBox guest</a></li>
+<li><a href="installation/installing-from-other-distro/#sec-installing-from-other-distro">Installing from another Linux distribution</a></li>
+<li><a href="installation/installing-behind-a-proxy/#sec-installing-behind-proxy">Installing behind a proxy</a></li>
+<li><a href="installation/changing-config/#sec-changing-config">Changing the Configuration</a></li>
+<li><a href="installation/upgrading/#sec-upgrading">Upgrading NixOS</a></li>
+</ul>
+<h2>Guides</h2>
+<ul>
+<li><a href="configuration/configuration/#ch-configuration">Guides</a></li>
+</ul>
+<h2>Configuration Syntax</h2>
+<ul>
+<li><a href="configuration/config-syntax/#sec-configuration-syntax">Configuration Syntax</a></li>
+<li><a href="configuration/config-file/#sec-configuration-file">NixOS Configuration File</a></li>
+<li><a href="configuration/abstractions/#sec-module-abstractions">Abstractions</a></li>
+<li><a href="configuration/modularity/#sec-modularity">Modularity</a></li>
+</ul>
+<h2>Package Management</h2>
+<ul>
+<li><a href="configuration/package-mgmt/#sec-package-management">Package Management</a></li>
+<li><a href="configuration/declarative-packages/#sec-declarative-package-mgmt">Declarative Package Management</a></li>
+<li><a href="configuration/customizing-packages/#sec-customising-packages">Customising Packages</a></li>
+<li><a href="configuration/adding-custom-packages/#sec-custom-packages">Adding Custom Packages</a></li>
+<li><a href="configuration/ad-hoc-packages/#sec-ad-hoc-packages">Ad-Hoc Package Management</a></li>
+<li><a href="configuration/user-mgmt/#sec-user-management">User Management</a></li>
+</ul>
+<h2>File Systems</h2>
+<ul>
+<li><a href="configuration/file-systems/#ch-file-systems">File Systems</a></li>
+<li><a href="configuration/luks-file-systems/#sec-luks-file-systems">LUKS-Encrypted File Systems</a></li>
+<li><a href="configuration/sshfs-file-systems/#sec-sshfs-file-systems">SSHFS File Systems</a></li>
+<li><a href="configuration/nfs-file-systems/#sec-nfs-file-systems">NFS File Systems</a></li>
+<li><a href="configuration/overlayfs/#sec-overlayfs">Overlayfs</a></li>
+</ul>
+<h2>Networking</h2>
+<ul>
+<li><a href="configuration/networking/#sec-networking">Networking</a></li>
+<li><a href="configuration/network-manager/#sec-networkmanager">NetworkManager</a></li>
+<li><a href="configuration/ssh/#sec-ssh">Secure Shell Access</a></li>
+<li><a href="configuration/ipv4-config/#sec-ipv4">IPv4 Configuration</a></li>
+<li><a href="configuration/ipv6-config/#sec-ipv6">IPv6 Configuration</a></li>
+<li><a href="configuration/firewall/#sec-firewall">Firewall</a></li>
+<li><a href="configuration/wireless/#sec-wireless">Wireless Networks</a></li>
+<li><a href="configuration/ad-hoc-network-config/#ad-hoc-network-config">Ad-Hoc Configuration</a></li>
+<li><a href="configuration/renaming-interfaces/#sec-rename-ifs">Renaming network interfaces</a></li>
+</ul>
+<h2>Graphical Desktops</h2>
+<ul>
+<li><a href="configuration/x-windows/#sec-x11">X Window System</a></li>
+<li><a href="configuration/wayland/#sec-wayland">Wayland</a></li>
+<li><a href="configuration/gpu-accel/#sec-gpu-accel">GPU acceleration</a></li>
+<li><a href="configuration/xfce/#sec-xfce">Xfce Desktop Environment</a></li>
+</ul>
+<h2>Building Images</h2>
+<ul>
+<li><a href="installation/building-nixos/#sec-building-image">Building a NixOS (Live) ISO</a></li>
+<li><a href="installation/building-images-via-nixos-rebuild-build-image/#sec-image-nixos-rebuild-build-image">Building Images with nixos-rebuild build-image</a></li>
+<li><a href="installation/building-images-via-systemd-repart/#sec-image-repart">Building Images via systemd-repart</a></li>
+</ul>
+<h2>Administration</h2>
+<ul>
+<li><a href="administration/running/#ch-running">Administration</a></li>
+<li><a href="administration/service-mgmt/#sec-systemctl">Service Management</a></li>
+<li><a href="administration/rebooting/#sec-rebooting">Rebooting and Shutting Down</a></li>
+<li><a href="administration/user-sessions/#sec-user-sessions">User Sessions</a></li>
+<li><a href="administration/logging/#sec-logging">Logging</a></li>
+<li><a href="administration/cleaning-store/#sec-nix-gc">Cleaning the Nix Store</a></li>
+</ul>
+<h2>Container Management</h2>
+<ul>
+<li><a href="administration/containers/#ch-containers">Container Management</a></li>
+<li><a href="administration/imperative-containers/#sec-imperative-containers">Imperative Container Management</a></li>
+<li><a href="administration/declarative-containers/#sec-declarative-containers">Declarative Container Specification</a></li>
+<li><a href="administration/container-networking/#sec-container-networking">Container Networking</a></li>
+</ul>
+<h2>Troubleshooting</h2>
+<ul>
+<li><a href="administration/troubleshooting/#ch-troubleshooting">Troubleshooting</a></li>
+<li><a href="administration/boot-problems/#sec-boot-problems">Boot Problems</a></li>
+<li><a href="administration/maintenance-mode/#sec-maintenance-mode">Maintenance Mode</a></li>
+<li><a href="administration/rollback/#sec-rollback">Rolling Back Configuration Changes</a></li>
+<li><a href="administration/store-corruption/#sec-nix-store-corruption">Nix Store Corruption</a></li>
+<li><a href="administration/network-problems/#sec-nix-network-issues">Network Problems</a></li>
+</ul>
+<h2>Services and Programs</h2>
+<ul>
+<li><a href="services/#ch-services">Services and Programs</a></li>
+<li><a href="modules/facter/#module-hardware-facter">NixOS Facter</a></li>
+<li><a href="modules/input-method/#module-services-input-methods">Input Methods</a></li>
+<li><a href="modules/digitalbitbox/#module-programs-digitalbitbox">Digital Bitbox</a></li>
+<li><a href="modules/plotinus/#module-program-plotinus">Plotinus</a></li>
+<li><a href="modules/oh-my-zsh/#module-programs-zsh-ohmyzsh">Oh my ZSH</a></li>
+<li><a href="modules/acme/#module-security-acme">SSL/TLS Certificates with ACME</a></li>
+<li><a href="modules/tpm2/#module-security-tpm2">TPM2</a></li>
+<li><a href="modules/navidrome/#module-services-navidrome">Navidrome</a></li>
+<li><a href="modules/borgbackup/#module-borgbase">BorgBackup</a></li>
+<li><a href="modules/garm/#module-garm">GARM</a></li>
+<li><a href="modules/cassandra/#module-services-cassandra">Apache Cassandra</a></li>
+<li><a href="modules/foundationdb/#module-services-foundationdb">FoundationDB</a></li>
+<li><a href="modules/postgresql/#module-postgresql">PostgreSQL</a></li>
+<li><a href="modules/tigerbeetle/#module-services-tigerbeetle">TigerBeetle</a></li>
+<li><a href="modules/gnome/#chap-gnome">GNOME Desktop</a></li>
+<li><a href="modules/pantheon/#chap-pantheon">Pantheon Desktop</a></li>
+<li><a href="modules/flatpak/#module-services-flatpak">Flatpak</a></li>
+<li><a href="modules/athens/#module-athens">Athens</a></li>
+<li><a href="modules/blackfire/#module-services-blackfire">Blackfire profiler</a></li>
+<li><a href="modules/livebook/#module-services-livebook">Livebook</a></li>
+<li><a href="modules/emacs/#module-services-emacs">Emacs</a></li>
+<li><a href="modules/display/#module-hardware-display">Customizing display configuration</a></li>
+<li><a href="modules/trezord/#trezor">Trezor</a></li>
+<li><a href="modules/mailman/#module-services-mailman">Mailman</a></li>
+<li><a href="modules/draupnir/#module-services-draupnir">Draupnir (Matrix Moderation Bot)</a></li>
+<li><a href="modules/maubot/#module-services-maubot">Maubot</a></li>
+<li><a href="modules/mautrix-discord/#module-services-mautrix-discord">Mautrix-Discord</a></li>
+<li><a href="modules/mautrix-signal/#module-services-mautrix-signal">Mautrix-Signal</a></li>
+<li><a href="modules/mautrix-whatsapp/#module-services-mautrix-whatsapp">Mautrix-Whatsapp</a></li>
+<li><a href="modules/mjolnir/#module-services-mjolnir">Mjolnir (Matrix Moderation Tool)</a></li>
+<li><a href="modules/synapse/#module-services-matrix">Matrix</a></li>
+<li><a href="modules/anki-sync-server/#module-services-anki-sync-server">Anki Sync Server</a></li>
+<li><a href="modules/apache-kafka/#module-services-apache-kafka">Apache Kafka</a></li>
+<li><a href="modules/cliproxyapi/#module-services-cliproxyapi">CLIProxyAPI</a></li>
+<li><a href="modules/dump1090-fa/#module-services-dump1090-fa">Dump1090-fa</a></li>
+<li><a href="modules/forgejo/#module-forgejo">Forgejo</a></li>
+<li><a href="modules/gitlab/#module-services-gitlab">GitLab</a></li>
+<li><a href="modules/jellystat/#module-services-jellystat">Jellystat</a></li>
+<li><a href="modules/mesh-llm/#module-services-mesh-llm">MeshLLM</a></li>
+<li><a href="modules/paisa/#module-services-paisa">Paisa</a></li>
+<li><a href="modules/pelican-panel/#module-pelican-panel">Pelican Panel</a></li>
+<li><a href="modules/pelican-wings/#module-pelican-wings">Pelican Wings</a></li>
+<li><a href="modules/tandoor-recipes/#module-services-tandoor-recipes">Tandoor Recipes</a></li>
+<li><a href="modules/taskserver/#module-services-taskserver">Taskserver</a></li>
+<li><a href="modules/tdarr/#module-services-tdarr">Tdarr</a></li>
+<li><a href="modules/weechat/#module-services-weechat">WeeChat</a></li>
+<li><a href="modules/certspotter/#module-services-certspotter">Cert Spotter</a></li>
+<li><a href="modules/goss/#module-services-goss">Goss</a></li>
+<li><a href="modules/ocsinventory-agent/#module-services-ocsinventory-agent">OCS Inventory Agent</a></li>
+<li><a href="modules/parsedmarc/#module-services-parsedmarc">parsedmarc</a></li>
+<li><a href="modules/exporters/#module-services-prometheus-exporters">Prometheus exporters</a></li>
+<li><a href="modules/litestream/#module-services-litestream">Litestream</a></li>
+<li><a href="modules/samba/#module-services-samba">Samba</a></li>
+<li><a href="modules/amuled/#module-services-amule">aMule</a></li>
+<li><a href="modules/anubis/#module-services-anubis">Anubis</a></li>
+<li><a href="modules/atalkd/#module-services-atalkd">atalkd</a></li>
+<li><a href="modules/crab-hole/#module-services-crab-hole">🦀 crab-hole</a></li>
+<li><a href="modules/dnsmasq/#module-services-networking-dnsmasq">Dnsmasq</a></li>
+<li><a href="modules/doh-server/#module-service-doh-server">DNS-over-HTTPS Server</a></li>
+<li><a href="modules/firefox-syncserver/#module-services-firefox-syncserver">Firefox Sync server</a></li>
+<li><a href="modules/gns3-server/#module-services-gns3-server">GNS3 Server</a></li>
+<li><a href="modules/jotta-cli/#module-services-jotta-cli">Jottacloud Command-line Tool</a></li>
+<li><a href="modules/lxmd/#module-services-lxmd">LXMD</a></li>
+<li><a href="modules/mosquitto/#module-services-mosquitto">Mosquitto</a></li>
+<li><a href="modules/netbird/#module-services-netbird">Netbird Client</a></li>
+<li><a href="modules/netbird-relay/#module-services-netbird-relay">Netbird Relay</a></li>
+<li><a href="modules/server/#module-services-netbird-server">Netbird server</a></li>
+<li><a href="modules/nextcloud-spreed-signaling/#module-services-nextcloud-spreed-signaling">Spreed standalone signaling server</a></li>
+<li><a href="modules/nordvpn/#module-services-nordvpn">NordVPN</a></li>
+<li><a href="modules/onedrive/#module-services-onedrive">Microsoft OneDrive</a></li>
+<li><a href="modules/pihole-ftl/#module-services-networking-pihole-ftl">pihole-FTL</a></li>
+<li><a href="modules/pleroma/#module-services-pleroma">Pleroma</a></li>
+<li><a href="modules/portmaster/#module-services-portmaster">Portmaster</a></li>
+<li><a href="modules/prosody/#module-services-prosody">Prosody</a></li>
+<li><a href="modules/rnsd/#module-services-rnsd">RNSD</a></li>
+<li><a href="modules/umurmur/#module-service-umurmur">uMurmur</a></li>
+<li><a href="modules/yggdrasil/#module-services-networking-yggdrasil">Yggdrasil</a></li>
+<li><a href="modules/zapret2/#module-services-zapret2">Zapret2</a></li>
+<li><a href="modules/meilisearch/#module-services-meilisearch">Meilisearch</a></li>
+<li><a href="modules/crowdsec/#sec-crowdsec-reset">How to reset data and etc directories</a></li>
+<li><a href="modules/falco/#module-services-falco">Falco</a></li>
+<li><a href="modules/kerberos/#module-services-kerberos-server">kerberos_server</a></li>
+<li><a href="modules/systemd-lock-handler/#module-services-systemd-lock-handler">systemd-lock-handler</a></li>
+<li><a href="modules/akkoma/#module-services-akkoma">Akkoma</a></li>
+<li><a href="modules/c2fmzq-server/#module-services-c2fmzq">c2FmZQ</a></li>
+<li><a href="modules/davis/#module-services-davis">Davis</a></li>
+<li><a href="modules/discourse/#module-services-discourse">Discourse</a></li>
+<li><a href="modules/ente/#module-services-ente">Ente.io</a></li>
+<li><a href="modules/filesender/#module-services-filesender">FileSender</a></li>
+<li><a href="modules/glance/#module-services-glance">Glance</a></li>
+<li><a href="modules/gotosocial/#module-services-gotosocial">GoToSocial</a></li>
+<li><a href="modules/grocy/#module-services-grocy">Grocy</a></li>
+<li><a href="modules/hatsu/#module-services-hatsu">Hatsu</a></li>
+<li><a href="modules/jitsi-meet/#module-services-jitsi-meet">Jitsi Meet</a></li>
+<li><a href="modules/keycloak/#module-services-keycloak">Keycloak</a></li>
+<li><a href="modules/lemmy/#module-services-lemmy">Lemmy</a></li>
+<li><a href="modules/matomo/#module-services-matomo">Matomo</a></li>
+<li><a href="modules/nextcloud/#module-services-nextcloud">Nextcloud</a></li>
+<li><a href="modules/opencloud/#module-services-opencloud">OpenCloud</a></li>
+<li><a href="modules/pict-rs/#module-services-pict-rs">Pict-rs</a></li>
+<li><a href="modules/pihole-web/#module-services-web-apps-pihole-web">Pi-hole Web Dashboard</a></li>
+<li><a href="modules/plausible/#module-services-plausible">Plausible</a></li>
+<li><a href="modules/strfry/#module-services-strfry">strfry</a></li>
+<li><a href="modules/suwayomi-server/#module-services-suwayomi-server">Suwayomi-Server</a></li>
+<li><a href="modules/szurubooru/#module-services-szurubooru">Szurubooru</a></li>
+<li><a href="modules/wanderer/#module-services-wanderer">wanderer</a></li>
+<li><a href="modules/youtrack/#module-services-youtrack">YouTrack</a></li>
+<li><a href="modules/garage/#module-services-garage">Garage</a></li>
+<li><a href="modules/clevis/#module-boot-clevis">Clevis</a></li>
+<li><a href="modules/external/#sec-bootloader-external">External Bootloader Backends</a></li>
+<li><a href="modules/plymouth-tpm2-totp/#module-boot-plymouth-tpm2-totp">tpm2-totp with Plymouth</a></li>
+<li><a href="modules/xen-dom0/#module-virtualisation-xen">Xen Project Hypervisor</a></li>
+<li><a href="configuration/subversion/#module-services-subversion">Subversion</a></li>
+<li><a href="configuration/mattermost/#sec-mattermost">Mattermost</a></li>
+<li><a href="configuration/kubernetes/#sec-kubernetes">Kubernetes</a></li>
+</ul>
+<h2>Reference</h2>
+<ul>
+<li><a href="reference/#ch-reference">Reference</a></li>
+</ul>
+<h2>Profiles</h2>
+<ul>
+<li><a href="configuration/profiles/#ch-profiles">Profiles</a></li>
+<li><a href="configuration/profiles/all-hardware/#sec-profile-all-hardware">All Hardware</a></li>
+<li><a href="configuration/profiles/base/#sec-profile-base">Base</a></li>
+<li><a href="configuration/profiles/clone-config/#sec-profile-clone-config">Clone Config</a></li>
+<li><a href="configuration/profiles/demo/#sec-profile-demo">Demo</a></li>
+<li><a href="configuration/profiles/docker-container/#sec-profile-docker-container">Docker Container</a></li>
+<li><a href="configuration/profiles/graphical/#sec-profile-graphical">Graphical</a></li>
+<li><a href="configuration/profiles/headless/#sec-profile-headless">Headless</a></li>
+<li><a href="configuration/profiles/installation-device/#sec-profile-installation-device">Installation Device</a></li>
+<li><a href="configuration/profiles/perlless/#sec-perlless">Perlless</a></li>
+<li><a href="configuration/profiles/minimal/#sec-profile-minimal">Minimal</a></li>
+<li><a href="configuration/profiles/qemu-guest/#sec-profile-qemu-guest">QEMU Guest</a></li>
+<li><a href="configuration/linux-kernel/#sec-kernel-config">Linux Kernel</a></li>
+</ul>
+<h2>Necessary system state</h2>
+<ul>
+<li><a href="administration/system-state/#ch-system-state">Necessary system state</a></li>
+<li><a href="administration/nixos-state/#sec-nixos-state">NixOS</a></li>
+<li><a href="administration/systemd-state/#sec-systemd-state">systemd</a></li>
+<li><a href="administration/zfs-state/#sec-zfs-state">ZFS</a></li>
+</ul>
+<h2>What happens during a system switch?</h2>
+<ul>
+<li><a href="development/what-happens-during-a-system-switch/#sec-switching-systems">What happens during a system switch?</a></li>
+<li><a href="development/unit-handling/#sec-unit-handling">Unit handling</a></li>
+<li><a href="development/activation-script/#sec-activation-script">Activation script</a></li>
+<li><a href="development/non-switchable-systems/#sec-non-switchable-system">Non Switchable Systems</a></li>
+<li><a href="development/etc-overlay/#sec-etc-overlay">/etc via overlay filesystem</a></li>
+<li><a href="administration/control-groups/#sec-cgroups">Control Groups</a></li>
+<li><a href="development/bootspec/#sec-bootspec">Bootspec</a></li>
+<li><a href="development/modular-services/#modular-services">Modular Services</a></li>
+</ul>
+<h2>Contributing</h2>
+<ul>
+<li><a href="development/development/#ch-development">Contributing</a></li>
+<li><a href="development/sources/#sec-getting-sources">Getting the Sources</a></li>
+</ul>
+<h2>Writing NixOS Modules</h2>
+<ul>
+<li><a href="development/writing-modules/#sec-writing-modules">Writing NixOS Modules</a></li>
+<li><a href="development/option-declarations/#sec-option-declarations">Option Declarations</a></li>
+<li><a href="development/option-types/#sec-option-types">Options Types</a></li>
+<li><a href="development/option-def/#sec-option-definitions">Option Definitions</a></li>
+<li><a href="development/assertions/#sec-assertions">Warnings and Assertions</a></li>
+<li><a href="development/meta-attributes/#sec-meta-attributes">Meta Attributes</a></li>
+<li><a href="development/importing-modules/#sec-importing-modules">Importing Modules</a></li>
+<li><a href="development/replace-modules/#sec-replace-modules">Replace Modules</a></li>
+<li><a href="development/freeform-modules/#sec-freeform-modules">Freeform modules</a></li>
+<li><a href="development/settings-options/#sec-settings-options">Options for Program Settings</a></li>
+<li><a href="development/state-revision/#sec-state-revision">State revision</a></li>
+</ul>
+<h2>NixOS Tests</h2>
+<ul>
+<li><a href="development/nixos-tests/#sec-nixos-tests">NixOS Tests</a></li>
+<li><a href="development/writing-nixos-tests/#sec-writing-nixos-tests">Writing Tests</a></li>
+<li><a href="development/running-nixos-tests/#sec-running-nixos-tests">Running Tests</a></li>
+<li><a href="development/running-nixos-tests-interactively/#sec-running-nixos-tests-interactively">Running Tests interactively</a></li>
+<li><a href="development/linking-nixos-tests-to-packages/#sec-linking-nixos-tests-to-packages">Linking NixOS tests to packages</a></li>
+<li><a href="development/testing-hardware-features/#sec-nixos-test-testing-hardware-features">Testing Hardware Features</a></li>
+<li><a href="development/building-parts/#sec-building-parts">Building Specific Parts of NixOS</a></li>
+<li><a href="development/developing-the-test-driver/#chap-developing-the-test-driver">Developing the NixOS Test Driver</a></li>
+<li><a href="development/testing-installer/#ch-testing-installer">Testing the Installer</a></li>
+<li><a href="development/writing-documentation/#sec-writing-documentation">Writing NixOS Documentation</a></li>
+<li><a href="contributing-to-this-manual/#chap-contributing">Contributing to this manual</a></li>
+</ul>
+<h2>Configuration Options</h2>
+<ul>
+<li><a href="nixos-options/#ch-options">Configuration Options</a>
+<ul>
+<li><a href="options/boot/#sec-options-boot">boot</a></li>
+<li><a href="options/containers/#sec-options-containers">containers</a></li>
+<li><a href="options/documentation/#sec-options-documentation">documentation</a></li>
+<li><a href="options/environment/#sec-options-environment">environment</a></li>
+<li><a href="options/fonts/#sec-options-fonts">fonts</a></li>
+<li><a href="options/hardware/#sec-options-hardware">hardware</a></li>
+<li><a href="options/i18n/#sec-options-i18n">i18n</a></li>
+<li><a href="options/image/#sec-options-image">image</a></li>
+<li><a href="options/networking/#sec-options-networking">networking</a></li>
+<li><a href="options/nix/#sec-options-nix">nix</a></li>
+<li><a href="options/power/#sec-options-power">power</a></li>
+<li><a href="options/programs/#sec-options-programs">programs</a></li>
+<li><a href="options/security/#sec-options-security">security</a></li>
+<li><a href="options/system/#sec-options-system">system</a></li>
+<li><a href="options/systemd/#sec-options-systemd">systemd</a></li>
+<li><a href="options/users/#sec-options-users">users</a></li>
+<li><a href="options/virtualisation/#sec-options-virtualisation">virtualisation</a></li>
+<li><a href="options/xdg/#sec-options-xdg">xdg</a></li>
+<li><a href="options/services-a/#sec-options-services-a">services (A)</a></li>
+<li><a href="options/services-b/#sec-options-services-b">services (B)</a></li>
+<li><a href="options/services-c/#sec-options-services-c">services (C)</a></li>
+<li><a href="options/services-d/#sec-options-services-d">services (D)</a></li>
+<li><a href="options/services-e/#sec-options-services-e">services (E)</a></li>
+<li><a href="options/services-f/#sec-options-services-f">services (F)</a></li>
+<li><a href="options/services-g/#sec-options-services-g">services (G)</a></li>
+<li><a href="options/services-h/#sec-options-services-h">services (H)</a></li>
+<li><a href="options/services-i/#sec-options-services-i">services (I)</a></li>
+<li><a href="options/services-j/#sec-options-services-j">services (J)</a></li>
+<li><a href="options/services-k/#sec-options-services-k">services (K)</a></li>
+<li><a href="options/services-l/#sec-options-services-l">services (L)</a></li>
+<li><a href="options/services-m/#sec-options-services-m">services (M)</a></li>
+<li><a href="options/services-n/#sec-options-services-n">services (N)</a></li>
+<li><a href="options/services-o/#sec-options-services-o">services (O)</a></li>
+<li><a href="options/services-other/#sec-options-services-other">services (other)</a></li>
+<li><a href="options/services-p/#sec-options-services-p">services (P)</a></li>
+<li><a href="options/services-q/#sec-options-services-q">services (Q)</a></li>
+<li><a href="options/services-r/#sec-options-services-r">services (R)</a></li>
+<li><a href="options/services-s/#sec-options-services-s">services (S)</a></li>
+<li><a href="options/services-t/#sec-options-services-t">services (T)</a></li>
+<li><a href="options/services-u/#sec-options-services-u">services (U)</a></li>
+<li><a href="options/services-v/#sec-options-services-v">services (V)</a></li>
+<li><a href="options/services-w/#sec-options-services-w">services (W)</a></li>
+<li><a href="options/services-x/#sec-options-services-x">services (X)</a></li>
+<li><a href="options/services-y/#sec-options-services-y">services (Y)</a></li>
+<li><a href="options/services-z/#sec-options-services-z">services (Z)</a></li>
+<li><a href="options/other/#sec-options-other">Other options</a></li>
+</ul>
+</li>
+</ul>
+<h2>Release Notes</h2>
+<ul>
+<li><a href="release-notes/release-notes/#ch-release-notes">Release Notes</a>
+<ul>
+<li><a href="release-notes/rl-2705/#sec-release-27.05">Release 27.05 (&quot;Axolotl&quot;, 2027.05/??)</a></li>
+<li><a href="release-notes/rl-2611/#sec-release-26.11">Release 26.11 (&quot;Zokor&quot;, 2026.11/??)</a></li>
+<li><a href="release-notes/rl-2605/#sec-release-26.05">Release 26.05 (&quot;Yarara&quot;, 2026.05/30)</a></li>
+<li><a href="release-notes/rl-2511/#sec-release-25.11">Release 25.11 (&quot;Xantusia&quot;, 2025.11/30)</a></li>
+<li><a href="release-notes/rl-2505/#sec-release-25.05">Release 25.05 (“Warbler”, 2025.05/23)</a></li>
+<li><a href="release-notes/rl-2411/#sec-release-24.11">Release 24.11 (“Vicuña”, 2024.11/28)</a></li>
+<li><a href="release-notes/rl-2405/#sec-release-24.05">Release 24.05 (“Uakari”, 2024.05/31)</a></li>
+<li><a href="release-notes/rl-2311/#sec-release-23.11">Release 23.11 (“Tapir”, 2023.11/29)</a></li>
+<li><a href="release-notes/rl-2305/#sec-release-23.05">Release 23.05 (“Stoat”, 2023.05/31)</a></li>
+<li><a href="release-notes/rl-2211/#sec-release-22.11">Release 22.11 (“Raccoon”, 2022.11/30)</a></li>
+<li><a href="release-notes/rl-2205/#sec-release-22.05">Release 22.05 (“Quokka”, 2022.05/30)</a></li>
+<li><a href="release-notes/rl-2111/#sec-release-21.11">Release 21.11 (“Porcupine”, 2021/11/30)</a></li>
+<li><a href="release-notes/rl-2105/#sec-release-21.05">Release 21.05 (&quot;Okapi&quot;, 2021.05/31)</a></li>
+<li><a href="release-notes/rl-2009/#sec-release-20.09">Release 20.09 (&quot;Nightingale&quot;, 2020.10/27)</a></li>
+<li><a href="release-notes/rl-2003/#sec-release-20.03">Release 20.03 (&quot;Markhor&quot;, 2020.04/20)</a></li>
+<li><a href="release-notes/rl-1909/#sec-release-19.09">Release 19.09 (&quot;Loris&quot;, 2019/10/09)</a></li>
+<li><a href="release-notes/rl-1903/#sec-release-19.03">Release 19.03 (&quot;Koi&quot;, 2019/04/11)</a></li>
+<li><a href="release-notes/rl-1809/#sec-release-18.09">Release 18.09 (&quot;Jellyfish&quot;, 2018/10/05)</a></li>
+<li><a href="release-notes/rl-1803/#sec-release-18.03">Release 18.03 (&quot;Impala&quot;, 2018/04/04)</a></li>
+<li><a href="release-notes/rl-1709/#sec-release-17.09">Release 17.09 (&quot;Hummingbird&quot;, 2017/09/??)</a></li>
+<li><a href="release-notes/rl-1703/#sec-release-17.03">Release 17.03 (&quot;Gorilla&quot;, 2017/03/31)</a></li>
+<li><a href="release-notes/rl-1609/#sec-release-16.09">Release 16.09 (&quot;Flounder&quot;, 2016/09/30)</a></li>
+<li><a href="release-notes/rl-1603/#sec-release-16.03">Release 16.03 (&quot;Emu&quot;, 2016/03/31)</a></li>
+<li><a href="release-notes/rl-1509/#sec-release-15.09">Release 15.09 (&quot;Dingo&quot;, 2015/09/30)</a></li>
+<li><a href="release-notes/rl-1412/#sec-release-14.12">Release 14.12 (&quot;Caterpillar&quot;, 2014/12/30)</a></li>
+<li><a href="release-notes/rl-1404/#sec-release-14.04">Release 14.04 (&quot;Baboon&quot;, 2014/04/30)</a></li>
+<li><a href="release-notes/rl-1310/#sec-release-13.10">Release 13.10 (&quot;Aardvark&quot;, 2013/10/31)</a></li>
+</ul>
+</li>
+</ul>
+    </nav>
+    <section id='main'>
+      <div id='search-panel' class='nav-search' role='search' hidden>
+        <label class='visually-hidden' for='search'>Search documentation</label>
+        <input type='search' id='search' placeholder='Search documentation (/)' autocomplete='off' aria-controls='search-results'>
+        <p id='search-status' class='visually-hidden' role='status' aria-live='polite'></p>
+        <div id='search-results'></div>
+      </div>
+      <div class='main-scroll'>
+        <main id='main-content' tabindex='-1'>
+<h1 id='sec-release-18.09'><a href='release-notes/rl-1809/#sec-release-18.09'>
+Release 18.09 (&quot;Jellyfish&quot;, 2018/10/05)
+</a></h1>
+<h2 id='sec-release-18.09-highlights'><a href='release-notes/rl-1809/#sec-release-18.09-highlights'>
+Highlights
+</a></h2>
+<p>In addition to numerous new and upgraded packages, this release has the following notable updates:</p>
+<ul>
+<li>
+<p>End of support is planned for end of April 2019, handing over to 19.03.</p>
+</li>
+<li>
+<p>Platform support: x86_64-linux and x86_64-darwin as always. Support for aarch64-linux is as with the previous releases, not equivalent to the x86-64-linux release, but with efforts to reach parity.</p>
+</li>
+<li>
+<p>Nix has been updated to 2.1; see its <a href="https://nixos.org/nix/manual/#ssec-relnotes-2.1">release notes</a>.</p>
+</li>
+<li>
+<p>Core versions: linux: 4.14 LTS (unchanged), glibc: 2.26 → 2.27, gcc: 7 (unchanged), systemd: 237 → 239.</p>
+</li>
+<li>
+<p>Desktop version changes: gnome: 3.26 → 3.28, (KDE) plasma-desktop: 5.12 → 5.13.</p>
+</li>
+</ul>
+<p>Notable changes and additions for 18.09 include:</p>
+<ul>
+<li>
+<p>Support for wrapping binaries using <code>firejail</code> has been added through <code>programs.firejail.wrappedBinaries</code>.</p>
+<p>For example</p>
+<pre><code class="language-nix">{
+  programs.firejail = {
+    enable = true;
+    wrappedBinaries = {
+      firefox = &quot;${lib.getBin pkgs.firefox}/bin/firefox&quot;;
+      mpv = &quot;${lib.getBin pkgs.mpv}/bin/mpv&quot;;
+    };
+  };
+}
+</code></pre>
+<p>This will place <code>firefox</code> and <code>mpv</code> binaries in the global path wrapped by firejail.</p>
+</li>
+<li>
+<p>User channels are now in the default <code>NIX_PATH</code>, allowing users to use their personal <code>nix-channel</code> defined channels in <code>nix-build</code> and <code>nix-shell</code> commands, as well as in imports like <code>import &lt;mychannel&gt;</code>.</p>
+<p>For example</p>
+<pre><code class="language-ShellSession">$ nix-channel --add https://channels.nixos.org/nixpkgs-unstable nixpkgsunstable
+$ nix-channel --update
+$ nix-build '&lt;nixpkgsunstable&gt;' -A gitFull
+$ nix run -f '&lt;nixpkgsunstable&gt;' gitFull
+$ nix-instantiate -E '(import &lt;nixpkgsunstable&gt; {}).gitFull'
+</code></pre>
+</li>
+</ul>
+<h2 id='sec-release-18.09-new-services'><a href='release-notes/rl-1809/#sec-release-18.09-new-services'>
+New Services
+</a></h2>
+<p>A curated selection of new services that were added since the last release:</p>
+<ul>
+<li>
+<p>The <code>services.cassandra</code> module has been reworked and was rewritten from scratch. The service has succeeding tests for the versions 2.1, 2.2, 3.0 and 3.11 of <a href="https://cassandra.apache.org/">Apache Cassandra</a>.</p>
+</li>
+<li>
+<p>There is a new <code>services.foundationdb</code> module for deploying <a href="https://www.foundationdb.org">FoundationDB</a> clusters.</p>
+</li>
+<li>
+<p>When enabled the <code>iproute2</code> will copy the files expected by ip route (e.g., <code>rt_tables</code>) in <code>/etc/iproute2</code>. This allows to write aliases for routing tables for instance.</p>
+</li>
+<li>
+<p><code>services.strongswan-swanctl</code> is a modern replacement for <code>services.strongswan</code>. You can use either one of them to setup IPsec VPNs but not both at the same time.</p>
+<p><code>services.strongswan-swanctl</code> uses the <a href="https://wiki.strongswan.org/projects/strongswan/wiki/swanctl">swanctl</a> command which uses the modern <a href="https://github.com/strongswan/strongswan/blob/master/src/libcharon/plugins/vici/README.md">vici</a> <em>Versatile IKE Configuration Interface</em>. The deprecated <code>ipsec</code> command used in <code>services.strongswan</code> is using the legacy <a href="https://github.com/strongswan/strongswan/blob/master/README_LEGACY.md">stroke configuration interface</a>.</p>
+</li>
+<li>
+<p>The new <code>services.elasticsearch-curator</code> service periodically curates or manages, your Elasticsearch indices and snapshots.</p>
+</li>
+</ul>
+<p>Every new services:</p>
+<ul>
+<li>
+<p><code>./config/xdg/autostart.nix</code></p>
+</li>
+<li>
+<p><code>./config/xdg/icons.nix</code></p>
+</li>
+<li>
+<p><code>./config/xdg/menus.nix</code></p>
+</li>
+<li>
+<p><code>./config/xdg/mime.nix</code></p>
+</li>
+<li>
+<p><code>./hardware/brightnessctl.nix</code></p>
+</li>
+<li>
+<p><code>./hardware/onlykey.nix</code></p>
+</li>
+<li>
+<p><code>./hardware/video/uvcvideo/default.nix</code></p>
+</li>
+<li>
+<p><code>./misc/documentation.nix</code></p>
+</li>
+<li>
+<p><code>./programs/firejail.nix</code></p>
+</li>
+<li>
+<p><code>./programs/iftop.nix</code></p>
+</li>
+<li>
+<p><code>./programs/sedutil.nix</code></p>
+</li>
+<li>
+<p><code>./programs/singularity.nix</code></p>
+</li>
+<li>
+<p><code>./programs/xss-lock.nix</code></p>
+</li>
+<li>
+<p><code>./programs/zsh/zsh-autosuggestions.nix</code></p>
+</li>
+<li>
+<p><code>./services/admin/oxidized.nix</code></p>
+</li>
+<li>
+<p><code>./services/backup/duplicati.nix</code></p>
+</li>
+<li>
+<p><code>./services/backup/restic.nix</code></p>
+</li>
+<li>
+<p><code>./services/backup/restic-rest-server.nix</code></p>
+</li>
+<li>
+<p><code>./services/cluster/hadoop/default.nix</code></p>
+</li>
+<li>
+<p><code>./services/databases/aerospike.nix</code></p>
+</li>
+<li>
+<p><code>./services/databases/monetdb.nix</code></p>
+</li>
+<li>
+<p><code>./services/desktops/bamf.nix</code></p>
+</li>
+<li>
+<p><code>./services/desktops/flatpak.nix</code></p>
+</li>
+<li>
+<p><code>./services/desktops/zeitgeist.nix</code></p>
+</li>
+<li>
+<p><code>./services/development/bloop.nix</code></p>
+</li>
+<li>
+<p><code>./services/development/jupyter/default.nix</code></p>
+</li>
+<li>
+<p><code>./services/hardware/lcd.nix</code></p>
+</li>
+<li>
+<p><code>./services/hardware/undervolt.nix</code></p>
+</li>
+<li>
+<p><code>./services/misc/clipmenu.nix</code></p>
+</li>
+<li>
+<p><code>./services/misc/gitweb.nix</code></p>
+</li>
+<li>
+<p><code>./services/misc/serviio.nix</code></p>
+</li>
+<li>
+<p><code>./services/misc/safeeyes.nix</code></p>
+</li>
+<li>
+<p><code>./services/misc/sysprof.nix</code></p>
+</li>
+<li>
+<p><code>./services/misc/weechat.nix</code></p>
+</li>
+<li>
+<p><code>./services/monitoring/datadog-agent.nix</code></p>
+</li>
+<li>
+<p><code>./services/monitoring/incron.nix</code></p>
+</li>
+<li>
+<p><code>./services/networking/dnsdist.nix</code></p>
+</li>
+<li>
+<p><code>./services/networking/freeradius.nix</code></p>
+</li>
+<li>
+<p><code>./services/networking/hans.nix</code></p>
+</li>
+<li>
+<p><code>./services/networking/morty.nix</code></p>
+</li>
+<li>
+<p><code>./services/networking/ndppd.nix</code></p>
+</li>
+<li>
+<p><code>./services/networking/ocserv.nix</code></p>
+</li>
+<li>
+<p><code>./services/networking/owamp.nix</code></p>
+</li>
+<li>
+<p><code>./services/networking/quagga.nix</code></p>
+</li>
+<li>
+<p><code>./services/networking/shadowsocks.nix</code></p>
+</li>
+<li>
+<p><code>./services/networking/stubby.nix</code></p>
+</li>
+<li>
+<p><code>./services/networking/zeronet.nix</code></p>
+</li>
+<li>
+<p><code>./services/security/certmgr.nix</code></p>
+</li>
+<li>
+<p><code>./services/security/cfssl.nix</code></p>
+</li>
+<li>
+<p><code>./services/security/oauth2_proxy_nginx.nix</code></p>
+</li>
+<li>
+<p><code>./services/web-apps/virtlyst.nix</code></p>
+</li>
+<li>
+<p><code>./services/web-apps/youtrack.nix</code></p>
+</li>
+<li>
+<p><code>./services/web-servers/hitch/default.nix</code></p>
+</li>
+<li>
+<p><code>./services/web-servers/hydron.nix</code></p>
+</li>
+<li>
+<p><code>./services/web-servers/meguca.nix</code></p>
+</li>
+<li>
+<p><code>./services/web-servers/nginx/gitweb.nix</code></p>
+</li>
+<li>
+<p><code>./virtualisation/kvmgt.nix</code></p>
+</li>
+<li>
+<p><code>./virtualisation/qemu-guest-agent.nix</code></p>
+</li>
+</ul>
+<h2 id='sec-release-18.09-incompatibilities'><a href='release-notes/rl-1809/#sec-release-18.09-incompatibilities'>
+Backward Incompatibilities
+</a></h2>
+<p>When upgrading from a previous release, please be aware of the following incompatible changes:</p>
+<ul>
+<li>
+<p>Some licenses that were incorrectly not marked as unfree now are. This is the case for:</p>
+<ul>
+<li>
+<p>cc-by-nc-sa-20: Creative Commons Attribution Non Commercial Share Alike 2.0</p>
+</li>
+<li>
+<p>cc-by-nc-sa-25: Creative Commons Attribution Non Commercial Share Alike 2.5</p>
+</li>
+<li>
+<p>cc-by-nc-sa-30: Creative Commons Attribution Non Commercial Share Alike 3.0</p>
+</li>
+<li>
+<p>cc-by-nc-sa-40: Creative Commons Attribution Non Commercial Share Alike 4.0</p>
+</li>
+<li>
+<p>cc-by-nd-30: Creative Commons Attribution-No Derivative Works v3.00</p>
+</li>
+<li>
+<p>msrla: Microsoft Research License Agreement</p>
+</li>
+</ul>
+</li>
+<li>
+<p>The deprecated <code>services.cassandra</code> module has seen a complete rewrite. (See above.)</p>
+</li>
+<li>
+<p><code>lib.strict</code> is removed. Use <code>builtins.seq</code> instead.</p>
+</li>
+<li>
+<p>The <code>clementine</code> package points now to the free derivation. <code>clementineFree</code> is removed now and <code>clementineUnfree</code> points to the package which is bundled with the unfree <code>libspotify</code> package.</p>
+</li>
+<li>
+<p>The <code>netcat</code> package is now taken directly from OpenBSD's <code>libressl</code>, instead of relying on Debian's fork. The new version should be very close to the old version, but there are some minor differences. Importantly, flags like -b, -q, -C, and -Z are no longer accepted by the nc command.</p>
+</li>
+<li>
+<p>The <code>services.docker-registry.extraConfig</code> object doesn't contain environment variables anymore. Instead it needs to provide an object structure that can be mapped onto the YAML configuration defined in <a href="https://github.com/docker/distribution/blob/v2.6.2/docs/configuration.md">the <code>docker/distribution</code> docs</a>.</p>
+</li>
+<li>
+<p><code>gnucash</code> has changed from version 2.4 to 3.x. If you've been using <code>gnucash</code> (version 2.4) instead of <code>gnucash26</code> (version 2.6) you must open your Gnucash data file(s) with <code>gnucash26</code> and then save them to upgrade the file format. Then you may use your data file(s) with Gnucash 3.x. See the upgrade <a href="https://wiki.gnucash.org/wiki/FAQ#Using_Different_Versions.2C_Up_And_Downgrade">documentation</a>. Gnucash 2.4 is still available under the attribute <code>gnucash24</code>.</p>
+</li>
+<li>
+<p><code>services.munge</code> now runs as user (and group) <code>munge</code> instead of root. Make sure the key file is accessible to the daemon.</p>
+</li>
+<li>
+<p><code>dockerTools.buildImage</code> now uses <code>null</code> as default value for <code>tag</code>, which indicates that the nix output hash will be used as tag.</p>
+</li>
+<li>
+<p>The ELK stack: <code>elasticsearch</code>, <code>logstash</code> and <code>kibana</code> has been upgraded from 2.* to 6.3.*. The 2.* versions have been <a href="https://www.elastic.co/support/eol">unsupported since last year</a> so they have been removed. You can still use the 5.* versions under the names <code>elasticsearch5</code>, <code>logstash5</code> and <code>kibana5</code>.</p>
+<p>The elastic beats: <code>filebeat</code>, <code>heartbeat</code>, <code>metricbeat</code> and <code>packetbeat</code> have had the same treatment: they now target 6.3.* as well. The 5.* versions are available under the names: <code>filebeat5</code>, <code>heartbeat5</code>, <code>metricbeat5</code> and <code>packetbeat5</code></p>
+<p>The ELK-6.3 stack now comes with <a href="https://www.elastic.co/products/x-pack/open">X-Pack by default</a>. Since X-Pack is licensed under the <a href="https://github.com/elastic/elasticsearch/blob/master/licenses/ELASTIC-LICENSE.txt">Elastic License</a> the ELK packages now have an unfree license. To use them you need to specify <code>allowUnfree = true;</code> in your nixpkgs configuration.</p>
+<p>Fortunately there is also a free variant of the ELK stack without X-Pack. The packages are available under the names: <code>elasticsearch-oss</code>, <code>logstash-oss</code> and <code>kibana-oss</code>.</p>
+</li>
+<li>
+<p>Options <code>boot.initrd.luks.devices.name.yubikey.ramfsMountPoint</code> <code>boot.initrd.luks.devices.name.yubikey.storage.mountPoint</code> were removed. <code>luksroot.nix</code> module never supported more than one YubiKey at a time anyway, hence those options never had any effect. You should be able to remove them from your config without any issues.</p>
+</li>
+<li>
+<p><code>stdenv.system</code> and <code>system</code> in nixpkgs now refer to the host platform instead of the build platform. For native builds this is not change, let alone a breaking one. For cross builds, it is a breaking change, and <code>stdenv.buildPlatform.system</code> can be used instead for the old behavior. They should be using that anyways for clarity.</p>
+</li>
+<li>
+<p>Groups <code>kvm</code> and <code>render</code> are introduced now, as systemd requires them.</p>
+</li>
+</ul>
+<h2 id='sec-release-18.09-notable-changes'><a href='release-notes/rl-1809/#sec-release-18.09-notable-changes'>
+Other Notable Changes
+</a></h2>
+<ul>
+<li>
+<p><code>dockerTools.pullImage</code> relies on image digest instead of image tag to download the image. The <code>sha256</code> of a pulled image has to be updated.</p>
+</li>
+<li>
+<p><code>lib.attrNamesToStr</code> has been deprecated. Use more specific concatenation (<code>lib.concat(Map)StringsSep</code>) instead.</p>
+</li>
+<li>
+<p><code>lib.addErrorContextToAttrs</code> has been deprecated. Use <code>builtins.addErrorContext</code> directly.</p>
+</li>
+<li>
+<p><code>lib.showVal</code> has been deprecated. Use <code>lib.traceSeqN</code> instead.</p>
+</li>
+<li>
+<p><code>lib.traceXMLVal</code> has been deprecated. Use <code>lib.traceValFn builtins.toXml</code> instead.</p>
+</li>
+<li>
+<p><code>lib.traceXMLValMarked</code> has been deprecated. Use <code>lib.traceValFn (x: str + builtins.toXML x)</code> instead.</p>
+</li>
+<li>
+<p>The <code>pkgs</code> argument to NixOS modules can now be set directly using <code>nixpkgs.pkgs</code>. Previously, only the <code>system</code>, <code>config</code> and <code>overlays</code> arguments could be used to influence <code>pkgs</code>.</p>
+</li>
+<li>
+<p>A NixOS system can now be constructed more easily based on a preexisting invocation of Nixpkgs. For example:</p>
+<pre><code class="language-nix">{
+  inherit
+    (pkgs.nixos {
+      boot.loader.grub.enable = false;
+      fileSystems.&quot;/&quot;.device = &quot;/dev/xvda1&quot;;
+    })
+    toplevel
+    kernel
+    initialRamdisk
+    manual
+    ;
+}
+</code></pre>
+<p>This benefits evaluation performance, lets you write Nixpkgs packages that depend on NixOS images and is consistent with a deployment architecture that would be centered around Nixpkgs overlays.</p>
+</li>
+<li>
+<p><code>lib.traceValIfNot</code> has been deprecated. Use <code>if/then/else</code> and <code>lib.traceValSeq</code> instead.</p>
+</li>
+<li>
+<p><code>lib.traceCallXml</code> has been deprecated. Please complain if you use the function regularly.</p>
+</li>
+<li>
+<p>The attribute <code>lib.nixpkgsVersion</code> has been deprecated in favor of <code>lib.version</code>. Please refer to the discussion in <a href="https://github.com/NixOS/nixpkgs/pull/39416#discussion_r183845745">NixOS/nixpkgs#39416</a> for further reference.</p>
+</li>
+<li>
+<p><code>lib.recursiveUpdateUntil</code> was not acting according to its specification. It has been fixed to act according to the docstring, and a test has been added.</p>
+</li>
+<li>
+<p>The module for <code>security.dhparams</code> has two new options now:</p>
+<dl>
+<dt>
+<p><code>security.dhparams.stateless</code></p>
+</dt>
+<dd>
+<p>Puts the generated Diffie-Hellman parameters into the Nix store instead of managing them in a stateful manner in <code>/var/lib/dhparams</code>.</p>
+</dd>
+<dt>
+<p><code>security.dhparams.defaultBitSize</code></p>
+</dt>
+<dd>
+<p>The default bit size to use for the generated Diffie-Hellman parameters.</p>
+</dd>
+</dl>
+<div class='admonition note'><h3 class='title'>Note</h3>
+<p>
+The path to the actual generated parameter files should now be queried using <code>config.security.dhparams.params.name.path</code> because it might be either in the Nix store or in a directory configured by <code>security.dhparams.path</code>.
+</p>
+</div>
+<div class='admonition note'><h3 class='title'>Note</h3>
+<p>
+<strong>For developers:</strong></p>
+<p>Module implementers should not set a specific bit size in order to let users configure it by themselves if they want to have a different bit size than the default (2048).</p>
+<p>An example usage of this would be:</p>
+<pre><code class="language-nix">{ config, ... }:
+
+{
+  security.dhparams.params.myservice = { };
+  environment.etc.&quot;myservice.conf&quot;.text = ''
+    dhparams = ${config.security.dhparams.params.myservice.path}
+  '';
+}
+</code></pre>
+</div>
+</li>
+<li>
+<p><code>networking.networkmanager.useDnsmasq</code> has been deprecated. Use <code>networking.networkmanager.dns</code> instead.</p>
+</li>
+<li>
+<p>The Kubernetes package has been bumped to major version 1.11. Please consult the <a href="https://github.com/kubernetes/kubernetes/blob/release-1.11/CHANGELOG-1.11.md">release notes</a> for details on new features and api changes.</p>
+</li>
+<li>
+<p>The option <code>services.kubernetes.apiserver.admissionControl</code> was renamed to <code>services.kubernetes.apiserver.enableAdmissionPlugins</code>.</p>
+</li>
+<li>
+<p>Recommended way to access the Kubernetes Dashboard is via HTTPS (TLS) Therefore; public service port for the dashboard has changed to 443 (container port 8443) and scheme to https.</p>
+</li>
+<li>
+<p>The option <code>services.kubernetes.apiserver.address</code> was renamed to <code>services.kubernetes.apiserver.bindAddress</code>. Note that the default value has changed from 127.0.0.1 to 0.0.0.0.</p>
+</li>
+<li>
+<p>The option <code>services.kubernetes.apiserver.publicAddress</code> was not used and thus has been removed.</p>
+</li>
+<li>
+<p>The option <code>services.kubernetes.addons.dashboard.enableRBAC</code> was renamed to <code>services.kubernetes.addons.dashboard.rbac.enable</code>.</p>
+</li>
+<li>
+<p>The Kubernetes Dashboard now has only minimal RBAC permissions by default. If dashboard cluster-admin rights are desired, set <code>services.kubernetes.addons.dashboard.rbac.clusterAdmin</code> to true. On existing clusters, in order for the revocation of privileges to take effect, the current ClusterRoleBinding for kubernetes-dashboard must be manually removed: <code>kubectl delete clusterrolebinding kubernetes-dashboard</code></p>
+</li>
+<li>
+<p>The <code>programs.screen</code> module provides allows to configure <code>/etc/screenrc</code>, however the module behaved fairly counterintuitive as the config exists, but the package wasn't available. Since 18.09 <code>pkgs.screen</code> will be added to <code>environment.systemPackages</code>.</p>
+</li>
+<li>
+<p>The module <code>services.networking.hostapd</code> now uses WPA2 by default.</p>
+</li>
+<li>
+<p><code>s6Dns</code>, <code>s6Networking</code>, <code>s6LinuxUtils</code> and <code>s6PortableUtils</code> renamed to <code>s6-dns</code>, <code>s6-networking</code>, <code>s6-linux-utils</code> and <code>s6-portable-utils</code> respectively.</p>
+</li>
+<li>
+<p>The module option <code>nix.useSandbox</code> is now defaulted to <code>true</code>.</p>
+</li>
+<li>
+<p>The config activation script of <code>nixos-rebuild</code> now <a href="https://www.freedesktop.org/software/systemd/man/systemctl.html#Manager%20Lifecycle%20Commands">reloads</a> all user units for each authenticated user.</p>
+</li>
+<li>
+<p>The default display manager is now LightDM. To use SLiM set <code>services.xserver.displayManager.slim.enable</code> to <code>true</code>.</p>
+</li>
+<li>
+<p>NixOS option descriptions are now automatically broken up into individual paragraphs if the text contains two consecutive newlines, so it's no longer necessary to use <code>&lt;/para&gt;&lt;para&gt;</code> to start a new paragraph.</p>
+</li>
+<li>
+<p>Top-level <code>buildPlatform</code>, <code>hostPlatform</code>, and <code>targetPlatform</code> in Nixpkgs are deprecated. Please use their equivalents in <code>stdenv</code> instead: <code>stdenv.buildPlatform</code>, <code>stdenv.hostPlatform</code>, and <code>stdenv.targetPlatform</code>.</p>
+</li>
+</ul>
+
+        <nav class='chapter-pagination' aria-label='Chapter pagination'>
+          <a class='chapter-pagination-link chapter-pagination-previous' href='release-notes/rl-1903/#sec-release-19.03'><span class='chapter-pagination-label'>Previous</span><span class='chapter-pagination-title'>Release 19.03 (&quot;Koi&quot;, 2019/04/11)</span></a>
+          <a class='chapter-pagination-link chapter-pagination-next' href='release-notes/rl-1803/#sec-release-18.03'><span class='chapter-pagination-label'>Next</span><span class='chapter-pagination-title'>Release 18.03 (&quot;Impala&quot;, 2018/04/04)</span></a>
+        </nav>
+        </main>
+      </div>
+    </section>
+<script defer src='highlight.pack.bb58bc6b7daef61c.js'></script>
+<script defer src='mmdoc.0eac5034aeb9595f.js'></script>
+<script defer src='mmdoc_search.1e3e2ead6263c722.js' data-search-index='search_index.fa825f5e481818a3.js' data-fuse='fuse.basic.min.296619aed362de6d.js'></script>
+  </div>
+  </body>
+</html>

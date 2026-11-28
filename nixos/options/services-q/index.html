@@ -1,0 +1,1363 @@
+<!doctype html>
+<html lang='en'>
+  <head>
+    <base href='../../'>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, viewport-fit=cover'>
+    <script>
+      (() => {
+        let theme = null
+        try { theme = localStorage.getItem('theme') } catch (error) {}
+        if (theme !== 'light' && theme !== 'dark')
+          theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+        document.documentElement.classList.add(theme + '-theme')
+        const ua = navigator.userAgent || ''
+        const isWebView = /;\s*wv\)|Twitter|FBAN|FBAV|Instagram|LinkedInApp|BytedanceWebview|musical_ly|Line\/|MicroMessenger/i.test(ua) || (/(iPhone|iPad|iPod)/i.test(ua) && /AppleWebKit/i.test(ua) && !/Safari\//i.test(ua))
+        const fromX = /^https?:\/\/([a-z0-9-]+\.)?(t\.co|x\.com|twitter\.com)(\/|$)/i.test(document.referrer || '')
+        let topNav = isWebView || fromX
+        try {
+          if (topNav) sessionStorage.setItem('mmdoc-top-nav', '1')
+          else if (sessionStorage.getItem('mmdoc-top-nav') === '1') topNav = true
+        } catch (error) {}
+        if (topNav) document.documentElement.classList.add('mobile-top-nav')
+      })()
+    </script>
+    <meta name='description' content='services (Q)'>
+    <link rel='icon' href='favicon.svg'>
+    <link rel='stylesheet' href='a11y-dark.773c5c24f666bae4.css'>
+    <link rel='stylesheet' href='a11y-light.519a1765fd6efc61.css'>
+    <link rel='stylesheet' href='mmdoc.1fa5ef6417bedb91.css'>
+    <title>services (Q) | nixos</title>
+  </head>
+  <body>
+  <a class='skip-link' href='options/services-q/#main-content'>Skip to main content</a>
+  <input type='checkbox' id='sidebar-checkbox' aria-hidden='true' tabindex='-1' style='display: none;'>
+  <div class='body'>
+    <header class='nav-top-container'>
+    <nav class='nav-top' aria-label='Documentation controls'>
+      <button type='button' class='sidebar-toggle' title='Toggle table of contents' aria-label='Toggle table of contents' aria-controls='sidebar' aria-expanded='true'></button>    <button type='button' class='search-toggle' title='Open search (/)' aria-label='Open search' aria-controls='search-panel' aria-expanded='false'></button>    <button type='button' class='theme-toggle' title='Switch to dark theme' aria-label='Switch to dark theme' aria-pressed='false'></button>    <a id='chapter-previous-button' class='chapter-previous' href='options/services-p/#sec-options-services-p' title='services (P)' aria-label='Previous: services (P)'>&lt;</a>
+    <a id='chapter-next-button' class='chapter-next' href='options/services-r/#sec-options-services-r' title='services (R)' aria-label='Next: services (R)'>&gt;</a>
+    </nav>
+    </header>
+    <nav id='sidebar' class='sidebar' aria-label='Table of contents'>
+<h1>NixOS Manual</h1>
+<p>Version 27.05.20261128.4b21f50</p>
+<ul>
+<li><a href="./#preface">Preface</a></li>
+</ul>
+<h2>Getting started</h2>
+<ul>
+<li><a href="installation/installation/#ch-installation">Getting started</a></li>
+<li><a href="installation/obtaining/#sec-obtaining">Obtaining NixOS</a></li>
+</ul>
+<h2>Installing NixOS</h2>
+<ul>
+<li><a href="installation/installing/#sec-installation">Installing NixOS</a></li>
+<li><a href="installation/installing-usb/#sec-booting-from-usb">Booting from a USB flash drive</a></li>
+<li><a href="installation/installing-pxe/#sec-booting-from-pxe">Booting from the &quot;netboot&quot; media (PXE)</a></li>
+<li><a href="installation/installing-kexec/#sec-booting-via-kexec">&quot;Booting&quot; into NixOS via kexec</a></li>
+<li><a href="installation/installing-virtualbox-guest/#sec-installing-virtualbox-guest">Installing in a VirtualBox guest</a></li>
+<li><a href="installation/installing-from-other-distro/#sec-installing-from-other-distro">Installing from another Linux distribution</a></li>
+<li><a href="installation/installing-behind-a-proxy/#sec-installing-behind-proxy">Installing behind a proxy</a></li>
+<li><a href="installation/changing-config/#sec-changing-config">Changing the Configuration</a></li>
+<li><a href="installation/upgrading/#sec-upgrading">Upgrading NixOS</a></li>
+</ul>
+<h2>Guides</h2>
+<ul>
+<li><a href="configuration/configuration/#ch-configuration">Guides</a></li>
+</ul>
+<h2>Configuration Syntax</h2>
+<ul>
+<li><a href="configuration/config-syntax/#sec-configuration-syntax">Configuration Syntax</a></li>
+<li><a href="configuration/config-file/#sec-configuration-file">NixOS Configuration File</a></li>
+<li><a href="configuration/abstractions/#sec-module-abstractions">Abstractions</a></li>
+<li><a href="configuration/modularity/#sec-modularity">Modularity</a></li>
+</ul>
+<h2>Package Management</h2>
+<ul>
+<li><a href="configuration/package-mgmt/#sec-package-management">Package Management</a></li>
+<li><a href="configuration/declarative-packages/#sec-declarative-package-mgmt">Declarative Package Management</a></li>
+<li><a href="configuration/customizing-packages/#sec-customising-packages">Customising Packages</a></li>
+<li><a href="configuration/adding-custom-packages/#sec-custom-packages">Adding Custom Packages</a></li>
+<li><a href="configuration/ad-hoc-packages/#sec-ad-hoc-packages">Ad-Hoc Package Management</a></li>
+<li><a href="configuration/user-mgmt/#sec-user-management">User Management</a></li>
+</ul>
+<h2>File Systems</h2>
+<ul>
+<li><a href="configuration/file-systems/#ch-file-systems">File Systems</a></li>
+<li><a href="configuration/luks-file-systems/#sec-luks-file-systems">LUKS-Encrypted File Systems</a></li>
+<li><a href="configuration/sshfs-file-systems/#sec-sshfs-file-systems">SSHFS File Systems</a></li>
+<li><a href="configuration/nfs-file-systems/#sec-nfs-file-systems">NFS File Systems</a></li>
+<li><a href="configuration/overlayfs/#sec-overlayfs">Overlayfs</a></li>
+</ul>
+<h2>Networking</h2>
+<ul>
+<li><a href="configuration/networking/#sec-networking">Networking</a></li>
+<li><a href="configuration/network-manager/#sec-networkmanager">NetworkManager</a></li>
+<li><a href="configuration/ssh/#sec-ssh">Secure Shell Access</a></li>
+<li><a href="configuration/ipv4-config/#sec-ipv4">IPv4 Configuration</a></li>
+<li><a href="configuration/ipv6-config/#sec-ipv6">IPv6 Configuration</a></li>
+<li><a href="configuration/firewall/#sec-firewall">Firewall</a></li>
+<li><a href="configuration/wireless/#sec-wireless">Wireless Networks</a></li>
+<li><a href="configuration/ad-hoc-network-config/#ad-hoc-network-config">Ad-Hoc Configuration</a></li>
+<li><a href="configuration/renaming-interfaces/#sec-rename-ifs">Renaming network interfaces</a></li>
+</ul>
+<h2>Graphical Desktops</h2>
+<ul>
+<li><a href="configuration/x-windows/#sec-x11">X Window System</a></li>
+<li><a href="configuration/wayland/#sec-wayland">Wayland</a></li>
+<li><a href="configuration/gpu-accel/#sec-gpu-accel">GPU acceleration</a></li>
+<li><a href="configuration/xfce/#sec-xfce">Xfce Desktop Environment</a></li>
+</ul>
+<h2>Building Images</h2>
+<ul>
+<li><a href="installation/building-nixos/#sec-building-image">Building a NixOS (Live) ISO</a></li>
+<li><a href="installation/building-images-via-nixos-rebuild-build-image/#sec-image-nixos-rebuild-build-image">Building Images with nixos-rebuild build-image</a></li>
+<li><a href="installation/building-images-via-systemd-repart/#sec-image-repart">Building Images via systemd-repart</a></li>
+</ul>
+<h2>Administration</h2>
+<ul>
+<li><a href="administration/running/#ch-running">Administration</a></li>
+<li><a href="administration/service-mgmt/#sec-systemctl">Service Management</a></li>
+<li><a href="administration/rebooting/#sec-rebooting">Rebooting and Shutting Down</a></li>
+<li><a href="administration/user-sessions/#sec-user-sessions">User Sessions</a></li>
+<li><a href="administration/logging/#sec-logging">Logging</a></li>
+<li><a href="administration/cleaning-store/#sec-nix-gc">Cleaning the Nix Store</a></li>
+</ul>
+<h2>Container Management</h2>
+<ul>
+<li><a href="administration/containers/#ch-containers">Container Management</a></li>
+<li><a href="administration/imperative-containers/#sec-imperative-containers">Imperative Container Management</a></li>
+<li><a href="administration/declarative-containers/#sec-declarative-containers">Declarative Container Specification</a></li>
+<li><a href="administration/container-networking/#sec-container-networking">Container Networking</a></li>
+</ul>
+<h2>Troubleshooting</h2>
+<ul>
+<li><a href="administration/troubleshooting/#ch-troubleshooting">Troubleshooting</a></li>
+<li><a href="administration/boot-problems/#sec-boot-problems">Boot Problems</a></li>
+<li><a href="administration/maintenance-mode/#sec-maintenance-mode">Maintenance Mode</a></li>
+<li><a href="administration/rollback/#sec-rollback">Rolling Back Configuration Changes</a></li>
+<li><a href="administration/store-corruption/#sec-nix-store-corruption">Nix Store Corruption</a></li>
+<li><a href="administration/network-problems/#sec-nix-network-issues">Network Problems</a></li>
+</ul>
+<h2>Services and Programs</h2>
+<ul>
+<li><a href="services/#ch-services">Services and Programs</a></li>
+<li><a href="modules/facter/#module-hardware-facter">NixOS Facter</a></li>
+<li><a href="modules/input-method/#module-services-input-methods">Input Methods</a></li>
+<li><a href="modules/digitalbitbox/#module-programs-digitalbitbox">Digital Bitbox</a></li>
+<li><a href="modules/plotinus/#module-program-plotinus">Plotinus</a></li>
+<li><a href="modules/oh-my-zsh/#module-programs-zsh-ohmyzsh">Oh my ZSH</a></li>
+<li><a href="modules/acme/#module-security-acme">SSL/TLS Certificates with ACME</a></li>
+<li><a href="modules/tpm2/#module-security-tpm2">TPM2</a></li>
+<li><a href="modules/navidrome/#module-services-navidrome">Navidrome</a></li>
+<li><a href="modules/borgbackup/#module-borgbase">BorgBackup</a></li>
+<li><a href="modules/garm/#module-garm">GARM</a></li>
+<li><a href="modules/cassandra/#module-services-cassandra">Apache Cassandra</a></li>
+<li><a href="modules/foundationdb/#module-services-foundationdb">FoundationDB</a></li>
+<li><a href="modules/postgresql/#module-postgresql">PostgreSQL</a></li>
+<li><a href="modules/tigerbeetle/#module-services-tigerbeetle">TigerBeetle</a></li>
+<li><a href="modules/gnome/#chap-gnome">GNOME Desktop</a></li>
+<li><a href="modules/pantheon/#chap-pantheon">Pantheon Desktop</a></li>
+<li><a href="modules/flatpak/#module-services-flatpak">Flatpak</a></li>
+<li><a href="modules/athens/#module-athens">Athens</a></li>
+<li><a href="modules/blackfire/#module-services-blackfire">Blackfire profiler</a></li>
+<li><a href="modules/livebook/#module-services-livebook">Livebook</a></li>
+<li><a href="modules/emacs/#module-services-emacs">Emacs</a></li>
+<li><a href="modules/display/#module-hardware-display">Customizing display configuration</a></li>
+<li><a href="modules/trezord/#trezor">Trezor</a></li>
+<li><a href="modules/mailman/#module-services-mailman">Mailman</a></li>
+<li><a href="modules/draupnir/#module-services-draupnir">Draupnir (Matrix Moderation Bot)</a></li>
+<li><a href="modules/maubot/#module-services-maubot">Maubot</a></li>
+<li><a href="modules/mautrix-discord/#module-services-mautrix-discord">Mautrix-Discord</a></li>
+<li><a href="modules/mautrix-signal/#module-services-mautrix-signal">Mautrix-Signal</a></li>
+<li><a href="modules/mautrix-whatsapp/#module-services-mautrix-whatsapp">Mautrix-Whatsapp</a></li>
+<li><a href="modules/mjolnir/#module-services-mjolnir">Mjolnir (Matrix Moderation Tool)</a></li>
+<li><a href="modules/synapse/#module-services-matrix">Matrix</a></li>
+<li><a href="modules/anki-sync-server/#module-services-anki-sync-server">Anki Sync Server</a></li>
+<li><a href="modules/apache-kafka/#module-services-apache-kafka">Apache Kafka</a></li>
+<li><a href="modules/cliproxyapi/#module-services-cliproxyapi">CLIProxyAPI</a></li>
+<li><a href="modules/dump1090-fa/#module-services-dump1090-fa">Dump1090-fa</a></li>
+<li><a href="modules/forgejo/#module-forgejo">Forgejo</a></li>
+<li><a href="modules/gitlab/#module-services-gitlab">GitLab</a></li>
+<li><a href="modules/jellystat/#module-services-jellystat">Jellystat</a></li>
+<li><a href="modules/mesh-llm/#module-services-mesh-llm">MeshLLM</a></li>
+<li><a href="modules/paisa/#module-services-paisa">Paisa</a></li>
+<li><a href="modules/pelican-panel/#module-pelican-panel">Pelican Panel</a></li>
+<li><a href="modules/pelican-wings/#module-pelican-wings">Pelican Wings</a></li>
+<li><a href="modules/tandoor-recipes/#module-services-tandoor-recipes">Tandoor Recipes</a></li>
+<li><a href="modules/taskserver/#module-services-taskserver">Taskserver</a></li>
+<li><a href="modules/tdarr/#module-services-tdarr">Tdarr</a></li>
+<li><a href="modules/weechat/#module-services-weechat">WeeChat</a></li>
+<li><a href="modules/certspotter/#module-services-certspotter">Cert Spotter</a></li>
+<li><a href="modules/goss/#module-services-goss">Goss</a></li>
+<li><a href="modules/ocsinventory-agent/#module-services-ocsinventory-agent">OCS Inventory Agent</a></li>
+<li><a href="modules/parsedmarc/#module-services-parsedmarc">parsedmarc</a></li>
+<li><a href="modules/exporters/#module-services-prometheus-exporters">Prometheus exporters</a></li>
+<li><a href="modules/litestream/#module-services-litestream">Litestream</a></li>
+<li><a href="modules/samba/#module-services-samba">Samba</a></li>
+<li><a href="modules/amuled/#module-services-amule">aMule</a></li>
+<li><a href="modules/anubis/#module-services-anubis">Anubis</a></li>
+<li><a href="modules/atalkd/#module-services-atalkd">atalkd</a></li>
+<li><a href="modules/crab-hole/#module-services-crab-hole">🦀 crab-hole</a></li>
+<li><a href="modules/dnsmasq/#module-services-networking-dnsmasq">Dnsmasq</a></li>
+<li><a href="modules/doh-server/#module-service-doh-server">DNS-over-HTTPS Server</a></li>
+<li><a href="modules/firefox-syncserver/#module-services-firefox-syncserver">Firefox Sync server</a></li>
+<li><a href="modules/gns3-server/#module-services-gns3-server">GNS3 Server</a></li>
+<li><a href="modules/jotta-cli/#module-services-jotta-cli">Jottacloud Command-line Tool</a></li>
+<li><a href="modules/lxmd/#module-services-lxmd">LXMD</a></li>
+<li><a href="modules/mosquitto/#module-services-mosquitto">Mosquitto</a></li>
+<li><a href="modules/netbird/#module-services-netbird">Netbird Client</a></li>
+<li><a href="modules/netbird-relay/#module-services-netbird-relay">Netbird Relay</a></li>
+<li><a href="modules/server/#module-services-netbird-server">Netbird server</a></li>
+<li><a href="modules/nextcloud-spreed-signaling/#module-services-nextcloud-spreed-signaling">Spreed standalone signaling server</a></li>
+<li><a href="modules/nordvpn/#module-services-nordvpn">NordVPN</a></li>
+<li><a href="modules/onedrive/#module-services-onedrive">Microsoft OneDrive</a></li>
+<li><a href="modules/pihole-ftl/#module-services-networking-pihole-ftl">pihole-FTL</a></li>
+<li><a href="modules/pleroma/#module-services-pleroma">Pleroma</a></li>
+<li><a href="modules/portmaster/#module-services-portmaster">Portmaster</a></li>
+<li><a href="modules/prosody/#module-services-prosody">Prosody</a></li>
+<li><a href="modules/rnsd/#module-services-rnsd">RNSD</a></li>
+<li><a href="modules/umurmur/#module-service-umurmur">uMurmur</a></li>
+<li><a href="modules/yggdrasil/#module-services-networking-yggdrasil">Yggdrasil</a></li>
+<li><a href="modules/zapret2/#module-services-zapret2">Zapret2</a></li>
+<li><a href="modules/meilisearch/#module-services-meilisearch">Meilisearch</a></li>
+<li><a href="modules/crowdsec/#sec-crowdsec-reset">How to reset data and etc directories</a></li>
+<li><a href="modules/falco/#module-services-falco">Falco</a></li>
+<li><a href="modules/kerberos/#module-services-kerberos-server">kerberos_server</a></li>
+<li><a href="modules/systemd-lock-handler/#module-services-systemd-lock-handler">systemd-lock-handler</a></li>
+<li><a href="modules/akkoma/#module-services-akkoma">Akkoma</a></li>
+<li><a href="modules/c2fmzq-server/#module-services-c2fmzq">c2FmZQ</a></li>
+<li><a href="modules/davis/#module-services-davis">Davis</a></li>
+<li><a href="modules/discourse/#module-services-discourse">Discourse</a></li>
+<li><a href="modules/ente/#module-services-ente">Ente.io</a></li>
+<li><a href="modules/filesender/#module-services-filesender">FileSender</a></li>
+<li><a href="modules/glance/#module-services-glance">Glance</a></li>
+<li><a href="modules/gotosocial/#module-services-gotosocial">GoToSocial</a></li>
+<li><a href="modules/grocy/#module-services-grocy">Grocy</a></li>
+<li><a href="modules/hatsu/#module-services-hatsu">Hatsu</a></li>
+<li><a href="modules/jitsi-meet/#module-services-jitsi-meet">Jitsi Meet</a></li>
+<li><a href="modules/keycloak/#module-services-keycloak">Keycloak</a></li>
+<li><a href="modules/lemmy/#module-services-lemmy">Lemmy</a></li>
+<li><a href="modules/matomo/#module-services-matomo">Matomo</a></li>
+<li><a href="modules/nextcloud/#module-services-nextcloud">Nextcloud</a></li>
+<li><a href="modules/opencloud/#module-services-opencloud">OpenCloud</a></li>
+<li><a href="modules/pict-rs/#module-services-pict-rs">Pict-rs</a></li>
+<li><a href="modules/pihole-web/#module-services-web-apps-pihole-web">Pi-hole Web Dashboard</a></li>
+<li><a href="modules/plausible/#module-services-plausible">Plausible</a></li>
+<li><a href="modules/strfry/#module-services-strfry">strfry</a></li>
+<li><a href="modules/suwayomi-server/#module-services-suwayomi-server">Suwayomi-Server</a></li>
+<li><a href="modules/szurubooru/#module-services-szurubooru">Szurubooru</a></li>
+<li><a href="modules/wanderer/#module-services-wanderer">wanderer</a></li>
+<li><a href="modules/youtrack/#module-services-youtrack">YouTrack</a></li>
+<li><a href="modules/garage/#module-services-garage">Garage</a></li>
+<li><a href="modules/clevis/#module-boot-clevis">Clevis</a></li>
+<li><a href="modules/external/#sec-bootloader-external">External Bootloader Backends</a></li>
+<li><a href="modules/plymouth-tpm2-totp/#module-boot-plymouth-tpm2-totp">tpm2-totp with Plymouth</a></li>
+<li><a href="modules/xen-dom0/#module-virtualisation-xen">Xen Project Hypervisor</a></li>
+<li><a href="configuration/subversion/#module-services-subversion">Subversion</a></li>
+<li><a href="configuration/mattermost/#sec-mattermost">Mattermost</a></li>
+<li><a href="configuration/kubernetes/#sec-kubernetes">Kubernetes</a></li>
+</ul>
+<h2>Reference</h2>
+<ul>
+<li><a href="reference/#ch-reference">Reference</a></li>
+</ul>
+<h2>Profiles</h2>
+<ul>
+<li><a href="configuration/profiles/#ch-profiles">Profiles</a></li>
+<li><a href="configuration/profiles/all-hardware/#sec-profile-all-hardware">All Hardware</a></li>
+<li><a href="configuration/profiles/base/#sec-profile-base">Base</a></li>
+<li><a href="configuration/profiles/clone-config/#sec-profile-clone-config">Clone Config</a></li>
+<li><a href="configuration/profiles/demo/#sec-profile-demo">Demo</a></li>
+<li><a href="configuration/profiles/docker-container/#sec-profile-docker-container">Docker Container</a></li>
+<li><a href="configuration/profiles/graphical/#sec-profile-graphical">Graphical</a></li>
+<li><a href="configuration/profiles/headless/#sec-profile-headless">Headless</a></li>
+<li><a href="configuration/profiles/installation-device/#sec-profile-installation-device">Installation Device</a></li>
+<li><a href="configuration/profiles/perlless/#sec-perlless">Perlless</a></li>
+<li><a href="configuration/profiles/minimal/#sec-profile-minimal">Minimal</a></li>
+<li><a href="configuration/profiles/qemu-guest/#sec-profile-qemu-guest">QEMU Guest</a></li>
+<li><a href="configuration/linux-kernel/#sec-kernel-config">Linux Kernel</a></li>
+</ul>
+<h2>Necessary system state</h2>
+<ul>
+<li><a href="administration/system-state/#ch-system-state">Necessary system state</a></li>
+<li><a href="administration/nixos-state/#sec-nixos-state">NixOS</a></li>
+<li><a href="administration/systemd-state/#sec-systemd-state">systemd</a></li>
+<li><a href="administration/zfs-state/#sec-zfs-state">ZFS</a></li>
+</ul>
+<h2>What happens during a system switch?</h2>
+<ul>
+<li><a href="development/what-happens-during-a-system-switch/#sec-switching-systems">What happens during a system switch?</a></li>
+<li><a href="development/unit-handling/#sec-unit-handling">Unit handling</a></li>
+<li><a href="development/activation-script/#sec-activation-script">Activation script</a></li>
+<li><a href="development/non-switchable-systems/#sec-non-switchable-system">Non Switchable Systems</a></li>
+<li><a href="development/etc-overlay/#sec-etc-overlay">/etc via overlay filesystem</a></li>
+<li><a href="administration/control-groups/#sec-cgroups">Control Groups</a></li>
+<li><a href="development/bootspec/#sec-bootspec">Bootspec</a></li>
+<li><a href="development/modular-services/#modular-services">Modular Services</a></li>
+</ul>
+<h2>Contributing</h2>
+<ul>
+<li><a href="development/development/#ch-development">Contributing</a></li>
+<li><a href="development/sources/#sec-getting-sources">Getting the Sources</a></li>
+</ul>
+<h2>Writing NixOS Modules</h2>
+<ul>
+<li><a href="development/writing-modules/#sec-writing-modules">Writing NixOS Modules</a></li>
+<li><a href="development/option-declarations/#sec-option-declarations">Option Declarations</a></li>
+<li><a href="development/option-types/#sec-option-types">Options Types</a></li>
+<li><a href="development/option-def/#sec-option-definitions">Option Definitions</a></li>
+<li><a href="development/assertions/#sec-assertions">Warnings and Assertions</a></li>
+<li><a href="development/meta-attributes/#sec-meta-attributes">Meta Attributes</a></li>
+<li><a href="development/importing-modules/#sec-importing-modules">Importing Modules</a></li>
+<li><a href="development/replace-modules/#sec-replace-modules">Replace Modules</a></li>
+<li><a href="development/freeform-modules/#sec-freeform-modules">Freeform modules</a></li>
+<li><a href="development/settings-options/#sec-settings-options">Options for Program Settings</a></li>
+<li><a href="development/state-revision/#sec-state-revision">State revision</a></li>
+</ul>
+<h2>NixOS Tests</h2>
+<ul>
+<li><a href="development/nixos-tests/#sec-nixos-tests">NixOS Tests</a></li>
+<li><a href="development/writing-nixos-tests/#sec-writing-nixos-tests">Writing Tests</a></li>
+<li><a href="development/running-nixos-tests/#sec-running-nixos-tests">Running Tests</a></li>
+<li><a href="development/running-nixos-tests-interactively/#sec-running-nixos-tests-interactively">Running Tests interactively</a></li>
+<li><a href="development/linking-nixos-tests-to-packages/#sec-linking-nixos-tests-to-packages">Linking NixOS tests to packages</a></li>
+<li><a href="development/testing-hardware-features/#sec-nixos-test-testing-hardware-features">Testing Hardware Features</a></li>
+<li><a href="development/building-parts/#sec-building-parts">Building Specific Parts of NixOS</a></li>
+<li><a href="development/developing-the-test-driver/#chap-developing-the-test-driver">Developing the NixOS Test Driver</a></li>
+<li><a href="development/testing-installer/#ch-testing-installer">Testing the Installer</a></li>
+<li><a href="development/writing-documentation/#sec-writing-documentation">Writing NixOS Documentation</a></li>
+<li><a href="contributing-to-this-manual/#chap-contributing">Contributing to this manual</a></li>
+</ul>
+<h2>Configuration Options</h2>
+<ul>
+<li><a href="nixos-options/#ch-options">Configuration Options</a>
+<ul>
+<li><a href="options/boot/#sec-options-boot">boot</a></li>
+<li><a href="options/containers/#sec-options-containers">containers</a></li>
+<li><a href="options/documentation/#sec-options-documentation">documentation</a></li>
+<li><a href="options/environment/#sec-options-environment">environment</a></li>
+<li><a href="options/fonts/#sec-options-fonts">fonts</a></li>
+<li><a href="options/hardware/#sec-options-hardware">hardware</a></li>
+<li><a href="options/i18n/#sec-options-i18n">i18n</a></li>
+<li><a href="options/image/#sec-options-image">image</a></li>
+<li><a href="options/networking/#sec-options-networking">networking</a></li>
+<li><a href="options/nix/#sec-options-nix">nix</a></li>
+<li><a href="options/power/#sec-options-power">power</a></li>
+<li><a href="options/programs/#sec-options-programs">programs</a></li>
+<li><a href="options/security/#sec-options-security">security</a></li>
+<li><a href="options/system/#sec-options-system">system</a></li>
+<li><a href="options/systemd/#sec-options-systemd">systemd</a></li>
+<li><a href="options/users/#sec-options-users">users</a></li>
+<li><a href="options/virtualisation/#sec-options-virtualisation">virtualisation</a></li>
+<li><a href="options/xdg/#sec-options-xdg">xdg</a></li>
+<li><a href="options/services-a/#sec-options-services-a">services (A)</a></li>
+<li><a href="options/services-b/#sec-options-services-b">services (B)</a></li>
+<li><a href="options/services-c/#sec-options-services-c">services (C)</a></li>
+<li><a href="options/services-d/#sec-options-services-d">services (D)</a></li>
+<li><a href="options/services-e/#sec-options-services-e">services (E)</a></li>
+<li><a href="options/services-f/#sec-options-services-f">services (F)</a></li>
+<li><a href="options/services-g/#sec-options-services-g">services (G)</a></li>
+<li><a href="options/services-h/#sec-options-services-h">services (H)</a></li>
+<li><a href="options/services-i/#sec-options-services-i">services (I)</a></li>
+<li><a href="options/services-j/#sec-options-services-j">services (J)</a></li>
+<li><a href="options/services-k/#sec-options-services-k">services (K)</a></li>
+<li><a href="options/services-l/#sec-options-services-l">services (L)</a></li>
+<li><a href="options/services-m/#sec-options-services-m">services (M)</a></li>
+<li><a href="options/services-n/#sec-options-services-n">services (N)</a></li>
+<li><a href="options/services-o/#sec-options-services-o">services (O)</a></li>
+<li><a href="options/services-other/#sec-options-services-other">services (other)</a></li>
+<li><a href="options/services-p/#sec-options-services-p">services (P)</a></li>
+<li><a href="options/services-q/#sec-options-services-q">services (Q)</a></li>
+<li><a href="options/services-r/#sec-options-services-r">services (R)</a></li>
+<li><a href="options/services-s/#sec-options-services-s">services (S)</a></li>
+<li><a href="options/services-t/#sec-options-services-t">services (T)</a></li>
+<li><a href="options/services-u/#sec-options-services-u">services (U)</a></li>
+<li><a href="options/services-v/#sec-options-services-v">services (V)</a></li>
+<li><a href="options/services-w/#sec-options-services-w">services (W)</a></li>
+<li><a href="options/services-x/#sec-options-services-x">services (X)</a></li>
+<li><a href="options/services-y/#sec-options-services-y">services (Y)</a></li>
+<li><a href="options/services-z/#sec-options-services-z">services (Z)</a></li>
+<li><a href="options/other/#sec-options-other">Other options</a></li>
+</ul>
+</li>
+</ul>
+<h2>Release Notes</h2>
+<ul>
+<li><a href="release-notes/release-notes/#ch-release-notes">Release Notes</a>
+<ul>
+<li><a href="release-notes/rl-2705/#sec-release-27.05">Release 27.05 (&quot;Axolotl&quot;, 2027.05/??)</a></li>
+<li><a href="release-notes/rl-2611/#sec-release-26.11">Release 26.11 (&quot;Zokor&quot;, 2026.11/??)</a></li>
+<li><a href="release-notes/rl-2605/#sec-release-26.05">Release 26.05 (&quot;Yarara&quot;, 2026.05/30)</a></li>
+<li><a href="release-notes/rl-2511/#sec-release-25.11">Release 25.11 (&quot;Xantusia&quot;, 2025.11/30)</a></li>
+<li><a href="release-notes/rl-2505/#sec-release-25.05">Release 25.05 (“Warbler”, 2025.05/23)</a></li>
+<li><a href="release-notes/rl-2411/#sec-release-24.11">Release 24.11 (“Vicuña”, 2024.11/28)</a></li>
+<li><a href="release-notes/rl-2405/#sec-release-24.05">Release 24.05 (“Uakari”, 2024.05/31)</a></li>
+<li><a href="release-notes/rl-2311/#sec-release-23.11">Release 23.11 (“Tapir”, 2023.11/29)</a></li>
+<li><a href="release-notes/rl-2305/#sec-release-23.05">Release 23.05 (“Stoat”, 2023.05/31)</a></li>
+<li><a href="release-notes/rl-2211/#sec-release-22.11">Release 22.11 (“Raccoon”, 2022.11/30)</a></li>
+<li><a href="release-notes/rl-2205/#sec-release-22.05">Release 22.05 (“Quokka”, 2022.05/30)</a></li>
+<li><a href="release-notes/rl-2111/#sec-release-21.11">Release 21.11 (“Porcupine”, 2021/11/30)</a></li>
+<li><a href="release-notes/rl-2105/#sec-release-21.05">Release 21.05 (&quot;Okapi&quot;, 2021.05/31)</a></li>
+<li><a href="release-notes/rl-2009/#sec-release-20.09">Release 20.09 (&quot;Nightingale&quot;, 2020.10/27)</a></li>
+<li><a href="release-notes/rl-2003/#sec-release-20.03">Release 20.03 (&quot;Markhor&quot;, 2020.04/20)</a></li>
+<li><a href="release-notes/rl-1909/#sec-release-19.09">Release 19.09 (&quot;Loris&quot;, 2019/10/09)</a></li>
+<li><a href="release-notes/rl-1903/#sec-release-19.03">Release 19.03 (&quot;Koi&quot;, 2019/04/11)</a></li>
+<li><a href="release-notes/rl-1809/#sec-release-18.09">Release 18.09 (&quot;Jellyfish&quot;, 2018/10/05)</a></li>
+<li><a href="release-notes/rl-1803/#sec-release-18.03">Release 18.03 (&quot;Impala&quot;, 2018/04/04)</a></li>
+<li><a href="release-notes/rl-1709/#sec-release-17.09">Release 17.09 (&quot;Hummingbird&quot;, 2017/09/??)</a></li>
+<li><a href="release-notes/rl-1703/#sec-release-17.03">Release 17.03 (&quot;Gorilla&quot;, 2017/03/31)</a></li>
+<li><a href="release-notes/rl-1609/#sec-release-16.09">Release 16.09 (&quot;Flounder&quot;, 2016/09/30)</a></li>
+<li><a href="release-notes/rl-1603/#sec-release-16.03">Release 16.03 (&quot;Emu&quot;, 2016/03/31)</a></li>
+<li><a href="release-notes/rl-1509/#sec-release-15.09">Release 15.09 (&quot;Dingo&quot;, 2015/09/30)</a></li>
+<li><a href="release-notes/rl-1412/#sec-release-14.12">Release 14.12 (&quot;Caterpillar&quot;, 2014/12/30)</a></li>
+<li><a href="release-notes/rl-1404/#sec-release-14.04">Release 14.04 (&quot;Baboon&quot;, 2014/04/30)</a></li>
+<li><a href="release-notes/rl-1310/#sec-release-13.10">Release 13.10 (&quot;Aardvark&quot;, 2013/10/31)</a></li>
+</ul>
+</li>
+</ul>
+    </nav>
+    <section id='main'>
+      <div id='search-panel' class='nav-search' role='search' hidden>
+        <label class='visually-hidden' for='search'>Search documentation</label>
+        <input type='search' id='search' placeholder='Search documentation (/)' autocomplete='off' aria-controls='search-results'>
+        <p id='search-status' class='visually-hidden' role='status' aria-live='polite'></p>
+        <div id='search-results'></div>
+      </div>
+      <div class='main-scroll'>
+        <main id='main-content' tabindex='-1'>
+<h1 id='sec-options-services-q'><a href='options/services-q/#sec-options-services-q'>
+services (Q)
+</a></h1>
+<h2 id='opt-services.qbit-manage.commands'><a href='options/services-q/#opt-services.qbit-manage.commands'>
+<code>services.qbit-manage.commands</code>
+</a></h2>
+<p>The commands that you want qbm to execute.
+See <a href="https://github.com/StuffAnThings/qbit_manage/wiki/Commands">https://github.com/StuffAnThings/qbit_manage/wiki/Commands</a> for more information.</p>
+<p><em>Type:</em> submodule</p>
+<p><em>Default:</em> <code>{ }</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/torrent/qbit-manage.nix"><code>nixos/modules/services/torrent/qbit-manage.nix</code></a></p>
+<h2 id='opt-services.qbit-manage.commands.catUpdate'><a href='options/services-q/#opt-services.qbit-manage.commands.catUpdate'>
+<code>services.qbit-manage.commands.catUpdate</code>
+</a></h2>
+<p>Whether to update your categories.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/torrent/qbit-manage.nix"><code>nixos/modules/services/torrent/qbit-manage.nix</code></a></p>
+<h2 id='opt-services.qbit-manage.commands.recheck'><a href='options/services-q/#opt-services.qbit-manage.commands.recheck'>
+<code>services.qbit-manage.commands.recheck</code>
+</a></h2>
+<p>Whether to recheck paused torrents sorted by lowest size. Resume if Completed.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/torrent/qbit-manage.nix"><code>nixos/modules/services/torrent/qbit-manage.nix</code></a></p>
+<h2 id='opt-services.qbit-manage.commands.remOrphaned'><a href='options/services-q/#opt-services.qbit-manage.commands.remOrphaned'>
+<code>services.qbit-manage.commands.remOrphaned</code>
+</a></h2>
+<p>Whether to remove orphaned files from your 'root_dir' directory that are not referenced by any torrents.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/torrent/qbit-manage.nix"><code>nixos/modules/services/torrent/qbit-manage.nix</code></a></p>
+<h2 id='opt-services.qbit-manage.commands.remUnregistered'><a href='options/services-q/#opt-services.qbit-manage.commands.remUnregistered'>
+<code>services.qbit-manage.commands.remUnregistered</code>
+</a></h2>
+<p>Whether to remove unregistered torrents.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/torrent/qbit-manage.nix"><code>nixos/modules/services/torrent/qbit-manage.nix</code></a></p>
+<h2 id='opt-services.qbit-manage.commands.schedule'><a href='options/services-q/#opt-services.qbit-manage.commands.schedule'>
+<code>services.qbit-manage.commands.schedule</code>
+</a></h2>
+<p>Schedule to run every x minutes. If not set it will only run once then exit.</p>
+<p><em>Type:</em> null or (positive integer, meaning &gt;0)</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/torrent/qbit-manage.nix"><code>nixos/modules/services/torrent/qbit-manage.nix</code></a></p>
+<h2 id='opt-services.qbit-manage.commands.shareLimits'><a href='options/services-q/#opt-services.qbit-manage.commands.shareLimits'>
+<code>services.qbit-manage.commands.shareLimits</code>
+</a></h2>
+<p>Whether to control how torrent share limits are set depending on the priority of your grouping.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/torrent/qbit-manage.nix"><code>nixos/modules/services/torrent/qbit-manage.nix</code></a></p>
+<h2 id='opt-services.qbit-manage.commands.skipCleanup'><a href='options/services-q/#opt-services.qbit-manage.commands.skipCleanup'>
+<code>services.qbit-manage.commands.skipCleanup</code>
+</a></h2>
+<p>Whether to skip emptying the recycle Bin folder and Orphaned directory.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/torrent/qbit-manage.nix"><code>nixos/modules/services/torrent/qbit-manage.nix</code></a></p>
+<h2 id='opt-services.qbit-manage.commands.startupDelay'><a href='options/services-q/#opt-services.qbit-manage.commands.startupDelay'>
+<code>services.qbit-manage.commands.startupDelay</code>
+</a></h2>
+<p>Set delay in seconds on the first run of a schedule</p>
+<p><em>Type:</em> null or (positive integer, meaning &gt;0)</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/torrent/qbit-manage.nix"><code>nixos/modules/services/torrent/qbit-manage.nix</code></a></p>
+<h2 id='opt-services.qbit-manage.commands.tagNoHardLinks'><a href='options/services-q/#opt-services.qbit-manage.commands.tagNoHardLinks'>
+<code>services.qbit-manage.commands.tagNoHardLinks</code>
+</a></h2>
+<p>Whether to tag torrents where the largest file does not have any hardlinks associated with any of the files outside of your qbit-manage root directory.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/torrent/qbit-manage.nix"><code>nixos/modules/services/torrent/qbit-manage.nix</code></a></p>
+<h2 id='opt-services.qbit-manage.commands.tagTrackerError'><a href='options/services-q/#opt-services.qbit-manage.commands.tagTrackerError'>
+<code>services.qbit-manage.commands.tagTrackerError</code>
+</a></h2>
+<p>Whether to tag torrents that do not have a working tracker.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/torrent/qbit-manage.nix"><code>nixos/modules/services/torrent/qbit-manage.nix</code></a></p>
+<h2 id='opt-services.qbit-manage.commands.tagUpdate'><a href='options/services-q/#opt-services.qbit-manage.commands.tagUpdate'>
+<code>services.qbit-manage.commands.tagUpdate</code>
+</a></h2>
+<p>Whether to update your tags and/or set seed goals/limit upload speed by tag.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/torrent/qbit-manage.nix"><code>nixos/modules/services/torrent/qbit-manage.nix</code></a></p>
+<h2 id='opt-services.qbit-manage.enable'><a href='options/services-q/#opt-services.qbit-manage.enable'>
+<code>services.qbit-manage.enable</code>
+</a></h2>
+<p>Whether to enable qbit-manage.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Example:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/torrent/qbit-manage.nix"><code>nixos/modules/services/torrent/qbit-manage.nix</code></a></p>
+<h2 id='opt-services.qbit-manage.environmentFile'><a href='options/services-q/#opt-services.qbit-manage.environmentFile'>
+<code>services.qbit-manage.environmentFile</code>
+</a></h2>
+<p>Path to an environment file to load environment variables from.</p>
+<p><em>Type:</em> null or absolute path</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/torrent/qbit-manage.nix"><code>nixos/modules/services/torrent/qbit-manage.nix</code></a></p>
+<h2 id='opt-services.qbit-manage.extraArgs'><a href='options/services-q/#opt-services.qbit-manage.extraArgs'>
+<code>services.qbit-manage.extraArgs</code>
+</a></h2>
+<p>Extra command line arguments to pass to qbit-manage.</p>
+<p><em>Type:</em> list of string</p>
+<p><em>Default:</em> <code>[ ]</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/torrent/qbit-manage.nix"><code>nixos/modules/services/torrent/qbit-manage.nix</code></a></p>
+<h2 id='opt-services.qbit-manage.group'><a href='options/services-q/#opt-services.qbit-manage.group'>
+<code>services.qbit-manage.group</code>
+</a></h2>
+<p>Group under which qbit-manage runs.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;qbit-manage&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/torrent/qbit-manage.nix"><code>nixos/modules/services/torrent/qbit-manage.nix</code></a></p>
+<h2 id='opt-services.qbit-manage.package'><a href='options/services-q/#opt-services.qbit-manage.package'>
+<code>services.qbit-manage.package</code>
+</a></h2>
+<p>The qbit-manage package to use.</p>
+<p><em>Type:</em> package</p>
+<p><em>Default:</em> <code>pkgs.qbit-manage</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/torrent/qbit-manage.nix"><code>nixos/modules/services/torrent/qbit-manage.nix</code></a></p>
+<h2 id='opt-services.qbit-manage.settings'><a href='options/services-q/#opt-services.qbit-manage.settings'>
+<code>services.qbit-manage.settings</code>
+</a></h2>
+<p>qbit-manage configuration. Will be translated into YAML.
+For environment variable support, use '!ENV VAR_NAME' as the value.
+See <a href="https://github.com/StuffAnThings/qbit_manage/wiki/Config-Setup">https://github.com/StuffAnThings/qbit_manage/wiki/Config-Setup</a> for more information.</p>
+<p>Leave unset to configure without nix.</p>
+<p><em>Type:</em> null or (open submodule of (YAML 1.1 value))</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/torrent/qbit-manage.nix"><code>nixos/modules/services/torrent/qbit-manage.nix</code></a></p>
+<h2 id='opt-services.qbit-manage.settings.cat'><a href='options/services-q/#opt-services.qbit-manage.settings.cat'>
+<code>services.qbit-manage.settings.cat</code>
+</a></h2>
+<p>A mapping of categories and their associated paths.</p>
+<p><em>Type:</em> attribute set of string</p>
+<p><em>Default:</em> <code>{ }</code></p>
+<p><em>Example:</em></p>
+<pre><code class="language-nix">{
+  sonarr = &quot;/downloads/completed/sonarr&quot;;
+  radaarr = &quot;/downloads/completed/radaarr&quot;;
+}
+</code></pre>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/torrent/qbit-manage.nix"><code>nixos/modules/services/torrent/qbit-manage.nix</code></a></p>
+<h2 id='opt-services.qbit-manage.settings.directory'><a href='options/services-q/#opt-services.qbit-manage.settings.directory'>
+<code>services.qbit-manage.settings.directory</code>
+</a></h2>
+<p>This section defines the directories that qbit-manage will be looking into for various parts of the script.</p>
+<p><em>Type:</em> null or (submodule)</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/torrent/qbit-manage.nix"><code>nixos/modules/services/torrent/qbit-manage.nix</code></a></p>
+<h2 id='opt-services.qbit-manage.settings.directory.orphaned_dir'><a href='options/services-q/#opt-services.qbit-manage.settings.directory.orphaned_dir'>
+<code>services.qbit-manage.settings.directory.orphaned_dir</code>
+</a></h2>
+<p>Path of the Orphaned Directory folder.
+All files in this folder will be cleaned up based on your orphaned data settings.</p>
+<p><em>Type:</em> null or string</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/torrent/qbit-manage.nix"><code>nixos/modules/services/torrent/qbit-manage.nix</code></a></p>
+<h2 id='opt-services.qbit-manage.settings.directory.recycle_bin'><a href='options/services-q/#opt-services.qbit-manage.settings.directory.recycle_bin'>
+<code>services.qbit-manage.settings.directory.recycle_bin</code>
+</a></h2>
+<p>Path of the RecycleBin folder.
+All files in this folder will be cleaned up based on your recycle bin settings.</p>
+<p><em>Type:</em> null or string</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/torrent/qbit-manage.nix"><code>nixos/modules/services/torrent/qbit-manage.nix</code></a></p>
+<h2 id='opt-services.qbit-manage.settings.directory.root_dir'><a href='options/services-q/#opt-services.qbit-manage.settings.directory.root_dir'>
+<code>services.qbit-manage.settings.directory.root_dir</code>
+</a></h2>
+<p>Root downloads directory where you place all your downloads.
+Used to check for orphaned files, hard links, and unregistered torrents.</p>
+<p><em>Type:</em> null or string</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/torrent/qbit-manage.nix"><code>nixos/modules/services/torrent/qbit-manage.nix</code></a></p>
+<h2 id='opt-services.qbit-manage.settings.directory.torrents_dir'><a href='options/services-q/#opt-services.qbit-manage.settings.directory.torrents_dir'>
+<code>services.qbit-manage.settings.directory.torrents_dir</code>
+</a></h2>
+<p>Path of the qBittorrent BT_backup directory.</p>
+<p><em>Type:</em> null or string</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/torrent/qbit-manage.nix"><code>nixos/modules/services/torrent/qbit-manage.nix</code></a></p>
+<h2 id='opt-services.qbit-manage.settings.qbt'><a href='options/services-q/#opt-services.qbit-manage.settings.qbt'>
+<code>services.qbit-manage.settings.qbt</code>
+</a></h2>
+<p>This section defines your qBittorrent instance</p>
+<p><em>Type:</em> submodule</p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/torrent/qbit-manage.nix"><code>nixos/modules/services/torrent/qbit-manage.nix</code></a></p>
+<h2 id='opt-services.qbit-manage.settings.qbt.host'><a href='options/services-q/#opt-services.qbit-manage.settings.qbt.host'>
+<code>services.qbit-manage.settings.qbt.host</code>
+</a></h2>
+<p>IP address of your qBittorrent installation.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;localhost:\${config.services.qbittorrent.webuiPort}&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/torrent/qbit-manage.nix"><code>nixos/modules/services/torrent/qbit-manage.nix</code></a></p>
+<h2 id='opt-services.qbit-manage.settings.qbt.pass'><a href='options/services-q/#opt-services.qbit-manage.settings.qbt.pass'>
+<code>services.qbit-manage.settings.qbt.pass</code>
+</a></h2>
+<p>The password of your qBbittorrent webUI.</p>
+<p><em>Type:</em> null or string</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/torrent/qbit-manage.nix"><code>nixos/modules/services/torrent/qbit-manage.nix</code></a></p>
+<h2 id='opt-services.qbit-manage.settings.qbt.user'><a href='options/services-q/#opt-services.qbit-manage.settings.qbt.user'>
+<code>services.qbit-manage.settings.qbt.user</code>
+</a></h2>
+<p>The user name of your qBittorrent webUI.</p>
+<p><em>Type:</em> null or string</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/torrent/qbit-manage.nix"><code>nixos/modules/services/torrent/qbit-manage.nix</code></a></p>
+<h2 id='opt-services.qbit-manage.settings.tracker'><a href='options/services-q/#opt-services.qbit-manage.settings.tracker'>
+<code>services.qbit-manage.settings.tracker</code>
+</a></h2>
+<p>Tags based upon the tracker's URL.</p>
+<p><em>Type:</em> attribute set of (submodule)</p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/torrent/qbit-manage.nix"><code>nixos/modules/services/torrent/qbit-manage.nix</code></a></p>
+<h2 id='opt-services.qbit-manage.settings.tracker._name_.cat'><a href='options/services-q/#opt-services.qbit-manage.settings.tracker._name_.cat'>
+<code>services.qbit-manage.settings.tracker.&lt;name&gt;.cat</code>
+</a></h2>
+<p>Set the category based on tracker URL.
+This category option takes priority over the category defined in cat.</p>
+<p><em>Type:</em> null or string</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/torrent/qbit-manage.nix"><code>nixos/modules/services/torrent/qbit-manage.nix</code></a></p>
+<h2 id='opt-services.qbit-manage.settings.tracker._name_.notifiarr'><a href='options/services-q/#opt-services.qbit-manage.settings.tracker._name_.notifiarr'>
+<code>services.qbit-manage.settings.tracker.&lt;name&gt;.notifiarr</code>
+</a></h2>
+<p>Set this to the notifiarr react name.
+This is used to add indexer reactions to the notifications sent by Notifiarr.</p>
+<p><em>Type:</em> null or string</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/torrent/qbit-manage.nix"><code>nixos/modules/services/torrent/qbit-manage.nix</code></a></p>
+<h2 id='opt-services.qbit-manage.settings.tracker._name_.tag'><a href='options/services-q/#opt-services.qbit-manage.settings.tracker._name_.tag'>
+<code>services.qbit-manage.settings.tracker.&lt;name&gt;.tag</code>
+</a></h2>
+<p>The tracker tag or additional list of tags.</p>
+<p><em>Type:</em> string or list of string</p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/torrent/qbit-manage.nix"><code>nixos/modules/services/torrent/qbit-manage.nix</code></a></p>
+<h2 id='opt-services.qbit-manage.user'><a href='options/services-q/#opt-services.qbit-manage.user'>
+<code>services.qbit-manage.user</code>
+</a></h2>
+<p>User account under which qbit-manage runs.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;qbit-manage&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/torrent/qbit-manage.nix"><code>nixos/modules/services/torrent/qbit-manage.nix</code></a></p>
+<h2 id='opt-services.qbit-manage.webServer'><a href='options/services-q/#opt-services.qbit-manage.webServer'>
+<code>services.qbit-manage.webServer</code>
+</a></h2>
+<p>Web server configuration.</p>
+<p><em>Type:</em> submodule</p>
+<p><em>Default:</em> <code>{ }</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/torrent/qbit-manage.nix"><code>nixos/modules/services/torrent/qbit-manage.nix</code></a></p>
+<h2 id='opt-services.qbit-manage.webServer.baseURL'><a href='options/services-q/#opt-services.qbit-manage.webServer.baseURL'>
+<code>services.qbit-manage.webServer.baseURL</code>
+</a></h2>
+<p>Base URL path for the web UI (e.g., '/qbit-manage').</p>
+<p><em>Type:</em> null or string</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/torrent/qbit-manage.nix"><code>nixos/modules/services/torrent/qbit-manage.nix</code></a></p>
+<h2 id='opt-services.qbit-manage.webServer.enable'><a href='options/services-q/#opt-services.qbit-manage.webServer.enable'>
+<code>services.qbit-manage.webServer.enable</code>
+</a></h2>
+<p>Whether to enable Enable the web server..</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Example:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/torrent/qbit-manage.nix"><code>nixos/modules/services/torrent/qbit-manage.nix</code></a></p>
+<h2 id='opt-services.qbit-manage.webServer.host'><a href='options/services-q/#opt-services.qbit-manage.webServer.host'>
+<code>services.qbit-manage.webServer.host</code>
+</a></h2>
+<p>Hostname for the web server.</p>
+<p><em>Type:</em> null or string</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/torrent/qbit-manage.nix"><code>nixos/modules/services/torrent/qbit-manage.nix</code></a></p>
+<h2 id='opt-services.qbit-manage.webServer.openFirewall'><a href='options/services-q/#opt-services.qbit-manage.webServer.openFirewall'>
+<code>services.qbit-manage.webServer.openFirewall</code>
+</a></h2>
+<p>Whether to enable Open the firewall for webUI..</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Example:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/torrent/qbit-manage.nix"><code>nixos/modules/services/torrent/qbit-manage.nix</code></a></p>
+<h2 id='opt-services.qbit-manage.webServer.port'><a href='options/services-q/#opt-services.qbit-manage.webServer.port'>
+<code>services.qbit-manage.webServer.port</code>
+</a></h2>
+<p>Port number for the web server.</p>
+<p><em>Type:</em> 16 bit unsigned integer; between 0 and 65535 (both inclusive)</p>
+<p><em>Default:</em> <code>8181</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/torrent/qbit-manage.nix"><code>nixos/modules/services/torrent/qbit-manage.nix</code></a></p>
+<h2 id='opt-services.qbittorrent.configFile'><a href='options/services-q/#opt-services.qbittorrent.configFile'>
+<code>services.qbittorrent.configFile</code>
+</a></h2>
+<p>Path to a <code>qBittorrent.conf</code> file to use instead of the one generated from the <a href="options/services-q/#opt-services.qbittorrent.serverConfig"><code>services.qbittorrent.serverConfig</code></a> option.
+Note that this configuration file cannot be strictly enforced, since it needs to be writable by qBittorrent.</p>
+<p><em>Type:</em> null or absolute path</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/torrent/qbittorrent.nix"><code>nixos/modules/services/torrent/qbittorrent.nix</code></a></p>
+<h2 id='opt-services.qbittorrent.enable'><a href='options/services-q/#opt-services.qbittorrent.enable'>
+<code>services.qbittorrent.enable</code>
+</a></h2>
+<p>Whether to enable qbittorrent, BitTorrent client.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Example:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/torrent/qbittorrent.nix"><code>nixos/modules/services/torrent/qbittorrent.nix</code></a></p>
+<h2 id='opt-services.qbittorrent.extraArgs'><a href='options/services-q/#opt-services.qbittorrent.extraArgs'>
+<code>services.qbittorrent.extraArgs</code>
+</a></h2>
+<p>Extra arguments passed to qbittorrent. See <code>qbittorrent -h</code>, or the <a href="https://github.com/qbittorrent/qBittorrent/blob/master/src/app/cmdoptions.cpp">source code</a>, for the available arguments.</p>
+<p><em>Type:</em> list of string</p>
+<p><em>Default:</em> <code>[ ]</code></p>
+<p><em>Example:</em></p>
+<pre><code class="language-nix">[
+  &quot;--confirm-legal-notice&quot;
+]
+</code></pre>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/torrent/qbittorrent.nix"><code>nixos/modules/services/torrent/qbittorrent.nix</code></a></p>
+<h2 id='opt-services.qbittorrent.group'><a href='options/services-q/#opt-services.qbittorrent.group'>
+<code>services.qbittorrent.group</code>
+</a></h2>
+<p>Group under which qbittorrent runs.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;qbittorrent&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/torrent/qbittorrent.nix"><code>nixos/modules/services/torrent/qbittorrent.nix</code></a></p>
+<h2 id='opt-services.qbittorrent.openFirewall'><a href='options/services-q/#opt-services.qbittorrent.openFirewall'>
+<code>services.qbittorrent.openFirewall</code>
+</a></h2>
+<p>Whether to enable opening both the webuiPort and torrentPort over TCP in the firewall.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Example:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/torrent/qbittorrent.nix"><code>nixos/modules/services/torrent/qbittorrent.nix</code></a></p>
+<h2 id='opt-services.qbittorrent.package'><a href='options/services-q/#opt-services.qbittorrent.package'>
+<code>services.qbittorrent.package</code>
+</a></h2>
+<p>The qbittorrent-nox package to use.</p>
+<p><em>Type:</em> package</p>
+<p><em>Default:</em> <code>pkgs.qbittorrent-nox</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/torrent/qbittorrent.nix"><code>nixos/modules/services/torrent/qbittorrent.nix</code></a></p>
+<h2 id='opt-services.qbittorrent.profileDir'><a href='options/services-q/#opt-services.qbittorrent.profileDir'>
+<code>services.qbittorrent.profileDir</code>
+</a></h2>
+<p>The path passed to qbittorrent via --profile.
+Please note that the resulting systemd service will be run with some very strict security controls,
+such as <code>ProtectHome=yes</code>, <code>PrivateUsers=true</code>, and <code>ProtectSystem=full</code> among others, so you cannot specify
+a profileDir in your home directory. See <a href="https://github.com/NixOS/nixpkgs/issues/514206">this bug report</a> for further info.</p>
+<p><em>Type:</em> absolute path</p>
+<p><em>Default:</em> <code>&quot;/var/lib/qBittorrent&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/torrent/qbittorrent.nix"><code>nixos/modules/services/torrent/qbittorrent.nix</code></a></p>
+<h2 id='opt-services.qbittorrent.serverConfig'><a href='options/services-q/#opt-services.qbittorrent.serverConfig'>
+<code>services.qbittorrent.serverConfig</code>
+</a></h2>
+<p>Free-form settings mapped to the <code>qBittorrent.conf</code> file in the profile.
+Refer to <a href="https://github.com/qbittorrent/qBittorrent/wiki/Explanation-of-Options-in-qBittorrent">Explanation-of-Options-in-qBittorrent</a>.
+The Password_PBKDF2 format is oddly unique, you will likely want to use <a href="https://codeberg.org/feathecutie/qbittorrent_password">this tool</a> to generate the format.
+Alternatively you can run qBittorrent independently first and use its webUI to generate the format.</p>
+<p>Optionally an alternative webUI can be easily set. VueTorrent for example:</p>
+<pre><code class="language-nix">{
+  Preferences = {
+    WebUI = {
+      AlternativeUIEnabled = true;
+      RootFolder = &quot;${pkgs.vuetorrent}/share/vuetorrent&quot;;
+    };
+  };
+}
+];
+</code></pre>
+<p><em>Type:</em> open submodule of attribute set of attribute set of anything</p>
+<p><em>Default:</em> <code>{ }</code></p>
+<p><em>Example:</em></p>
+<pre><code class="language-nix">{
+  LegalNotice.Accepted = true;
+  Preferences = {
+    WebUI = {
+      Username = &quot;user&quot;;
+      Password_PBKDF2 = &quot;generated ByteArray.&quot;;
+    };
+    General.Locale = &quot;en&quot;;
+  };
+}
+</code></pre>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/torrent/qbittorrent.nix"><code>nixos/modules/services/torrent/qbittorrent.nix</code></a></p>
+<h2 id='opt-services.qbittorrent.torrentingPort'><a href='options/services-q/#opt-services.qbittorrent.torrentingPort'>
+<code>services.qbittorrent.torrentingPort</code>
+</a></h2>
+<p>the port passed to qbittorrent via <code>--torrenting-port</code></p>
+<p><em>Type:</em> null or 16 bit unsigned integer; between 0 and 65535 (both inclusive)</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/torrent/qbittorrent.nix"><code>nixos/modules/services/torrent/qbittorrent.nix</code></a></p>
+<h2 id='opt-services.qbittorrent.user'><a href='options/services-q/#opt-services.qbittorrent.user'>
+<code>services.qbittorrent.user</code>
+</a></h2>
+<p>User account under which qbittorrent runs.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;qbittorrent&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/torrent/qbittorrent.nix"><code>nixos/modules/services/torrent/qbittorrent.nix</code></a></p>
+<h2 id='opt-services.qbittorrent.webuiPort'><a href='options/services-q/#opt-services.qbittorrent.webuiPort'>
+<code>services.qbittorrent.webuiPort</code>
+</a></h2>
+<p>the port passed to qbittorrent via <code>--webui-port</code></p>
+<p><em>Type:</em> null or 16 bit unsigned integer; between 0 and 65535 (both inclusive)</p>
+<p><em>Default:</em> <code>8080</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/torrent/qbittorrent.nix"><code>nixos/modules/services/torrent/qbittorrent.nix</code></a></p>
+<h2 id='opt-services.qdrant.enable'><a href='options/services-q/#opt-services.qdrant.enable'>
+<code>services.qdrant.enable</code>
+</a></h2>
+<p>Whether to enable Vector Search Engine for the next generation of AI applications.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Example:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/search/qdrant.nix"><code>nixos/modules/services/search/qdrant.nix</code></a></p>
+<h2 id='opt-services.qdrant.package'><a href='options/services-q/#opt-services.qdrant.package'>
+<code>services.qdrant.package</code>
+</a></h2>
+<p>The qdrant package to use.</p>
+<p><em>Type:</em> package</p>
+<p><em>Default:</em> <code>pkgs.qdrant</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/search/qdrant.nix"><code>nixos/modules/services/search/qdrant.nix</code></a></p>
+<h2 id='opt-services.qdrant.settings'><a href='options/services-q/#opt-services.qdrant.settings'>
+<code>services.qdrant.settings</code>
+</a></h2>
+<p>Configuration for Qdrant
+Refer to <a href="https://github.com/qdrant/qdrant/blob/master/config/config.yaml">https://github.com/qdrant/qdrant/blob/master/config/config.yaml</a> for details on supported values.</p>
+<p><em>Type:</em> YAML 1.1 value</p>
+<p><em>Default:</em></p>
+<pre><code class="language-nix">{
+  storage = {
+    storage_path = &quot;/var/lib/qdrant/storage&quot;;
+    snapshots_path = &quot;/var/lib/qdrant/snapshots&quot;;
+  };
+  hsnw_index = {
+    on_disk = true;
+  };
+  service = {
+    host = &quot;127.0.0.1&quot;;
+    http_port = 6333;
+    grpc_port = 6334;
+  };
+  telemetry_disabled = true;
+}
+</code></pre>
+<p><em>Example:</em></p>
+<pre><code class="language-nix">{
+  hsnw_index = {
+    on_disk = true;
+  };
+  service = {
+    grpc_port = 6334;
+    host = &quot;127.0.0.1&quot;;
+    http_port = 6333;
+  };
+  storage = {
+    snapshots_path = &quot;/var/lib/qdrant/snapshots&quot;;
+    storage_path = &quot;/var/lib/qdrant/storage&quot;;
+  };
+  telemetry_disabled = true;
+}
+</code></pre>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/search/qdrant.nix"><code>nixos/modules/services/search/qdrant.nix</code></a></p>
+<h2 id='opt-services.qdrant.webUIPackage'><a href='options/services-q/#opt-services.qdrant.webUIPackage'>
+<code>services.qdrant.webUIPackage</code>
+</a></h2>
+<p>The qdrant-web-ui package to use.</p>
+<p><em>Type:</em> package</p>
+<p><em>Default:</em> <code>pkgs.qdrant-web-ui</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/search/qdrant.nix"><code>nixos/modules/services/search/qdrant.nix</code></a></p>
+<h2 id='opt-services.qemuGuest.enable'><a href='options/services-q/#opt-services.qemuGuest.enable'>
+<code>services.qemuGuest.enable</code>
+</a></h2>
+<p>Whether to enable the qemu guest agent.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/virtualisation/qemu-guest-agent.nix"><code>nixos/modules/virtualisation/qemu-guest-agent.nix</code></a></p>
+<h2 id='opt-services.qemuGuest.package'><a href='options/services-q/#opt-services.qemuGuest.package'>
+<code>services.qemuGuest.package</code>
+</a></h2>
+<p>The ga package to use.</p>
+<p><em>Type:</em> package</p>
+<p><em>Default:</em> <code>pkgs.qemu_kvm.ga</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/virtualisation/qemu-guest-agent.nix"><code>nixos/modules/virtualisation/qemu-guest-agent.nix</code></a></p>
+<h2 id='opt-services.quake3-server.baseq3'><a href='options/services-q/#opt-services.quake3-server.baseq3'>
+<code>services.quake3-server.baseq3</code>
+</a></h2>
+<p>Path to the baseq3 files (pak*.pk3). If this is on the nix store (type = package) all .pk3 files should be saved
+in the top-level directory. If this is on another filesystem (e.g /var/lib/baseq3) the .pk3 files are searched in
+$baseq3/.q3a/baseq3/</p>
+<p><em>Type:</em> package or absolute path</p>
+<p><em>Default:</em> Manually downloaded Quake 3 installation directory.</p>
+<p><em>Example:</em> <code>&quot;/var/lib/q3ds&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/games/quake3-server.nix"><code>nixos/modules/services/games/quake3-server.nix</code></a></p>
+<h2 id='opt-services.quake3-server.enable'><a href='options/services-q/#opt-services.quake3-server.enable'>
+<code>services.quake3-server.enable</code>
+</a></h2>
+<p>Whether to enable Quake 3 dedicated server.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Example:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/games/quake3-server.nix"><code>nixos/modules/services/games/quake3-server.nix</code></a></p>
+<h2 id='opt-services.quake3-server.extraConfig'><a href='options/services-q/#opt-services.quake3-server.extraConfig'>
+<code>services.quake3-server.extraConfig</code>
+</a></h2>
+<p>Extra configuration lines appended after <code>settings</code>, for anything
+that isn't a plain persisted cvar: map-rotation scripts, <code>exec</code>,
+<code>vstr</code>, aliases, or cvars that need <code>set</code>/<code>sets</code>/<code>sett</code>/<code>setu</code>
+instead of <code>seta</code>. Note that options changed via RCON will not be
+persisted. To list all possible options, use &quot;cvarlist 1&quot; via RCON.</p>
+<p><em>Type:</em> strings concatenated with &quot;\n&quot;</p>
+<p><em>Default:</em> <code>&quot;&quot;</code></p>
+<p><em>Example:</em></p>
+<pre><code class="language-nix">''
+  // map rotation and other things that don't map onto plain cvars
+  set d1 &quot;map q3dm1 ; set nextmap vstr d2&quot;
+  set d2 &quot;map q3dm7 ; set nextmap vstr d1&quot;
+  vstr d1
+  
+  // rarely needed: cvars with a non-seta flag
+  sets sv_privatePassword &quot;hidden&quot;
+''
+</code></pre>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/games/quake3-server.nix"><code>nixos/modules/services/games/quake3-server.nix</code></a></p>
+<h2 id='opt-services.quake3-server.openFirewall'><a href='options/services-q/#opt-services.quake3-server.openFirewall'>
+<code>services.quake3-server.openFirewall</code>
+</a></h2>
+<p>Open the firewall.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/games/quake3-server.nix"><code>nixos/modules/services/games/quake3-server.nix</code></a></p>
+<h2 id='opt-services.quake3-server.package'><a href='options/services-q/#opt-services.quake3-server.package'>
+<code>services.quake3-server.package</code>
+</a></h2>
+<p>The ioquake3 package to use.</p>
+<p><em>Type:</em> package</p>
+<p><em>Default:</em> <code>pkgs.ioquake3</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/games/quake3-server.nix"><code>nixos/modules/services/games/quake3-server.nix</code></a></p>
+<h2 id='opt-services.quake3-server.settings'><a href='options/services-q/#opt-services.quake3-server.settings'>
+<code>services.quake3-server.settings</code>
+</a></h2>
+<p>Quake 3 cvars set via <code>seta</code> on server start (i.e. persisted,
+archive-flagged cvars – the vast majority of server settings).
+Note that options changed via RCON will not be persisted. To list
+all possible options, use &quot;cvarlist 1&quot; via RCON.</p>
+<p><em>Type:</em> open submodule of attribute set of (null or string or boolean or signed integer or floating point number or 16 bit unsigned integer; between 0 and 65535 (both inclusive))</p>
+<p><em>Default:</em> <code>{ }</code></p>
+<p><em>Example:</em></p>
+<pre><code class="language-nix">{
+  g_gametype = 0;
+  sv_hostname = &quot;My Quake 3 server&quot;;
+  sv_pure = true;
+}
+</code></pre>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/games/quake3-server.nix"><code>nixos/modules/services/games/quake3-server.nix</code></a></p>
+<h2 id='opt-services.quake3-server.settings.net_port'><a href='options/services-q/#opt-services.quake3-server.settings.net_port'>
+<code>services.quake3-server.settings.net_port</code>
+</a></h2>
+<p>UDP port for the dedicated server to bind to.</p>
+<p><em>Type:</em> 16 bit unsigned integer; between 0 and 65535 (both inclusive)</p>
+<p><em>Default:</em> <code>27960</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/games/quake3-server.nix"><code>nixos/modules/services/games/quake3-server.nix</code></a></p>
+<h2 id='opt-services.quassel.certificateFile'><a href='options/services-q/#opt-services.quassel.certificateFile'>
+<code>services.quassel.certificateFile</code>
+</a></h2>
+<p>Path to the certificate used for SSL connections with clients.</p>
+<p><em>Type:</em> null or string</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/quassel.nix"><code>nixos/modules/services/networking/quassel.nix</code></a></p>
+<h2 id='opt-services.quassel.dataDir'><a href='options/services-q/#opt-services.quassel.dataDir'>
+<code>services.quassel.dataDir</code>
+</a></h2>
+<p>The directory holding configuration files, the SQlite database and the SSL Cert.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em></p>
+<pre><code class="language-nix">&quot;/home/${config.services.quassel.user}/.config/quassel-irc.org&quot;
+</code></pre>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/quassel.nix"><code>nixos/modules/services/networking/quassel.nix</code></a></p>
+<h2 id='opt-services.quassel.enable'><a href='options/services-q/#opt-services.quassel.enable'>
+<code>services.quassel.enable</code>
+</a></h2>
+<p>Whether to enable the Quassel IRC client daemon.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Example:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/quassel.nix"><code>nixos/modules/services/networking/quassel.nix</code></a></p>
+<h2 id='opt-services.quassel.interfaces'><a href='options/services-q/#opt-services.quassel.interfaces'>
+<code>services.quassel.interfaces</code>
+</a></h2>
+<p>The interfaces the Quassel daemon will be listening to.  If <code>[ 127.0.0.1 ]</code>,
+only clients on the local host can connect to it; if <code>[ 0.0.0.0 ]</code>, clients
+can access it from any network interface.</p>
+<p><em>Type:</em> list of string</p>
+<p><em>Default:</em></p>
+<pre><code class="language-nix">[
+  &quot;127.0.0.1&quot;
+]
+</code></pre>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/quassel.nix"><code>nixos/modules/services/networking/quassel.nix</code></a></p>
+<h2 id='opt-services.quassel.package'><a href='options/services-q/#opt-services.quassel.package'>
+<code>services.quassel.package</code>
+</a></h2>
+<p>The quasselDaemon package to use.</p>
+<p><em>Type:</em> package</p>
+<p><em>Default:</em> <code>pkgs.quasselDaemon</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/quassel.nix"><code>nixos/modules/services/networking/quassel.nix</code></a></p>
+<h2 id='opt-services.quassel.portNumber'><a href='options/services-q/#opt-services.quassel.portNumber'>
+<code>services.quassel.portNumber</code>
+</a></h2>
+<p>The port number the Quassel daemon will be listening to.</p>
+<p><em>Type:</em> 16 bit unsigned integer; between 0 and 65535 (both inclusive)</p>
+<p><em>Default:</em> <code>4242</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/quassel.nix"><code>nixos/modules/services/networking/quassel.nix</code></a></p>
+<h2 id='opt-services.quassel.requireSSL'><a href='options/services-q/#opt-services.quassel.requireSSL'>
+<code>services.quassel.requireSSL</code>
+</a></h2>
+<p>Require SSL for connections from clients.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/quassel.nix"><code>nixos/modules/services/networking/quassel.nix</code></a></p>
+<h2 id='opt-services.quassel.user'><a href='options/services-q/#opt-services.quassel.user'>
+<code>services.quassel.user</code>
+</a></h2>
+<p>The existing user the Quassel daemon should run as. If left empty, a default &quot;quassel&quot; user will be created.</p>
+<p><em>Type:</em> null or string</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/quassel.nix"><code>nixos/modules/services/networking/quassel.nix</code></a></p>
+<h2 id='opt-services.qui.enable'><a href='options/services-q/#opt-services.qui.enable'>
+<code>services.qui.enable</code>
+</a></h2>
+<p>Whether to enable qui.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Example:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/torrent/qui.nix"><code>nixos/modules/services/torrent/qui.nix</code></a></p>
+<h2 id='opt-services.qui.group'><a href='options/services-q/#opt-services.qui.group'>
+<code>services.qui.group</code>
+</a></h2>
+<p>Group to run qui as.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;qui&quot;</code></p>
+<p><em>Example:</em> <code>&quot;torrents&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/torrent/qui.nix"><code>nixos/modules/services/torrent/qui.nix</code></a></p>
+<h2 id='opt-services.qui.openFirewall'><a href='options/services-q/#opt-services.qui.openFirewall'>
+<code>services.qui.openFirewall</code>
+</a></h2>
+<p>Whether or not to open ports in the firewall for qui.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/torrent/qui.nix"><code>nixos/modules/services/torrent/qui.nix</code></a></p>
+<h2 id='opt-services.qui.package'><a href='options/services-q/#opt-services.qui.package'>
+<code>services.qui.package</code>
+</a></h2>
+<p>The qui package to use.</p>
+<p><em>Type:</em> package</p>
+<p><em>Default:</em> <code>pkgs.qui</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/torrent/qui.nix"><code>nixos/modules/services/torrent/qui.nix</code></a></p>
+<h2 id='opt-services.qui.secretFile'><a href='options/services-q/#opt-services.qui.secretFile'>
+<code>services.qui.secretFile</code>
+</a></h2>
+<p>Path to a file that contains the session secret. The session secret
+can be generated with <code>openssl rand -hex 32</code>.</p>
+<p><em>Type:</em> absolute path</p>
+<p><em>Example:</em> <code>&quot;/run/secrets/qui-session.txt&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/torrent/qui.nix"><code>nixos/modules/services/torrent/qui.nix</code></a></p>
+<h2 id='opt-services.qui.settings'><a href='options/services-q/#opt-services.qui.settings'>
+<code>services.qui.settings</code>
+</a></h2>
+<p>qui configuration options.</p>
+<p>Refer to the <a href="https://github.com/autobrr/qui/blob/main/internal/config/config.go">template config</a>
+in the source code for the available options.
+The documentation contains the available <a href="https://getqui.com/docs/configuration/environment/">environment variables</a>,
+this can be used to get an overview.</p>
+<p><em>Type:</em> open submodule of (TOML value)</p>
+<p><em>Default:</em> <code>{ }</code></p>
+<p><em>Example:</em></p>
+<pre><code class="language-nix">{
+  logLevel = &quot;DEBUG&quot;;
+  metricsEnabled = true;
+  port = 7777;
+}
+</code></pre>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/torrent/qui.nix"><code>nixos/modules/services/torrent/qui.nix</code></a></p>
+<h2 id='opt-services.qui.settings.host'><a href='options/services-q/#opt-services.qui.settings.host'>
+<code>services.qui.settings.host</code>
+</a></h2>
+<p>The host address qui listens on.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;127.0.0.1&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/torrent/qui.nix"><code>nixos/modules/services/torrent/qui.nix</code></a></p>
+<h2 id='opt-services.qui.settings.port'><a href='options/services-q/#opt-services.qui.settings.port'>
+<code>services.qui.settings.port</code>
+</a></h2>
+<p>The port qui listens on.</p>
+<p><em>Type:</em> 16 bit unsigned integer; between 0 and 65535 (both inclusive)</p>
+<p><em>Default:</em> <code>7476</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/torrent/qui.nix"><code>nixos/modules/services/torrent/qui.nix</code></a></p>
+<h2 id='opt-services.qui.user'><a href='options/services-q/#opt-services.qui.user'>
+<code>services.qui.user</code>
+</a></h2>
+<p>User to run qui as.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;qui&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/torrent/qui.nix"><code>nixos/modules/services/torrent/qui.nix</code></a></p>
+<h2 id='opt-services.quicktun'><a href='options/services-q/#opt-services.quicktun'>
+<code>services.quicktun</code>
+</a></h2>
+<p>QuickTun tunnels.</p>
+<p>See <a href="http://wiki.ucis.nl/QuickTun">http://wiki.ucis.nl/QuickTun</a> for more information about available options.</p>
+<p><em>Type:</em> attribute set of (submodule)</p>
+<p><em>Default:</em> <code>{ }</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/quicktun.nix"><code>nixos/modules/services/networking/quicktun.nix</code></a></p>
+<h2 id='opt-services.quicktun._name_.localAddress'><a href='options/services-q/#opt-services.quicktun._name_.localAddress'>
+<code>services.quicktun.&lt;name&gt;.localAddress</code>
+</a></h2>
+<p>IP address or hostname of the local end.</p>
+<p><em>Type:</em> null or string</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Example:</em> <code>&quot;0.0.0.0&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/quicktun.nix"><code>nixos/modules/services/networking/quicktun.nix</code></a></p>
+<h2 id='opt-services.quicktun._name_.localPort'><a href='options/services-q/#opt-services.quicktun._name_.localPort'>
+<code>services.quicktun.&lt;name&gt;.localPort</code>
+</a></h2>
+<p>Local UDP port.</p>
+<p><em>Type:</em> 16 bit unsigned integer; between 0 and 65535 (both inclusive)</p>
+<p><em>Default:</em> <code>2998</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/quicktun.nix"><code>nixos/modules/services/networking/quicktun.nix</code></a></p>
+<h2 id='opt-services.quicktun._name_.privateKey'><a href='options/services-q/#opt-services.quicktun._name_.privateKey'>
+<code>services.quicktun.&lt;name&gt;.privateKey</code>
+</a></h2>
+<p>Local secret key in hexadecimal form.</p>
+<div class='admonition warning'><h3 class='title'>Warning</h3>
+<p>
+This option is deprecated. Please use <code>services.quicktun.&lt;name&gt;.privateKeyFile</code> instead.
+</p>
+</div>
+<div class='admonition note'><h3 class='title'>Note</h3>
+<p>
+Not needed when <code>services.quicktun.&lt;name&gt;.protocol</code> is set to <code>raw</code>.
+</p>
+</div>
+<p><em>Type:</em> null or string</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/quicktun.nix"><code>nixos/modules/services/networking/quicktun.nix</code></a></p>
+<h2 id='opt-services.quicktun._name_.privateKeyFile'><a href='options/services-q/#opt-services.quicktun._name_.privateKeyFile'>
+<code>services.quicktun.&lt;name&gt;.privateKeyFile</code>
+</a></h2>
+<p>Path to file containing local secret key in binary or hexadecimal form.</p>
+<div class='admonition note'><h3 class='title'>Note</h3>
+<p>
+Not needed when <code>services.quicktun.&lt;name&gt;.protocol</code> is set to <code>raw</code>.
+</p>
+</div>
+<p><em>Type:</em> null or absolute path</p>
+<p><em>Default:</em> <code>&quot;null&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/quicktun.nix"><code>nixos/modules/services/networking/quicktun.nix</code></a></p>
+<h2 id='opt-services.quicktun._name_.protocol'><a href='options/services-q/#opt-services.quicktun._name_.protocol'>
+<code>services.quicktun.&lt;name&gt;.protocol</code>
+</a></h2>
+<p>Which protocol to use.</p>
+<p><em>Type:</em> one of &quot;raw&quot;, &quot;nacl0&quot;, &quot;nacltai&quot;, &quot;salty&quot;</p>
+<p><em>Default:</em> <code>&quot;nacltai&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/quicktun.nix"><code>nixos/modules/services/networking/quicktun.nix</code></a></p>
+<h2 id='opt-services.quicktun._name_.publicKey'><a href='options/services-q/#opt-services.quicktun._name_.publicKey'>
+<code>services.quicktun.&lt;name&gt;.publicKey</code>
+</a></h2>
+<p>Remote public key in hexadecimal form.</p>
+<div class='admonition note'><h3 class='title'>Note</h3>
+<p>
+Not needed when <code>services.quicktun.&lt;name&gt;.protocol</code> is set to <code>raw</code>.
+</p>
+</div>
+<p><em>Type:</em> null or string</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/quicktun.nix"><code>nixos/modules/services/networking/quicktun.nix</code></a></p>
+<h2 id='opt-services.quicktun._name_.remoteAddress'><a href='options/services-q/#opt-services.quicktun._name_.remoteAddress'>
+<code>services.quicktun.&lt;name&gt;.remoteAddress</code>
+</a></h2>
+<p>IP address or hostname of the remote end (use <code>0.0.0.0</code> for a floating/dynamic remote endpoint).</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;0.0.0.0&quot;</code></p>
+<p><em>Example:</em> <code>&quot;tunnel.example.com&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/quicktun.nix"><code>nixos/modules/services/networking/quicktun.nix</code></a></p>
+<h2 id='opt-services.quicktun._name_.remoteFloat'><a href='options/services-q/#opt-services.quicktun._name_.remoteFloat'>
+<code>services.quicktun.&lt;name&gt;.remoteFloat</code>
+</a></h2>
+<p>Whether to allow the remote address and port to change when properly encrypted packets are received.</p>
+<p><em>Type:</em> integer between 0 and 1 (both inclusive) or boolean convertible to it</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Example:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/quicktun.nix"><code>nixos/modules/services/networking/quicktun.nix</code></a></p>
+<h2 id='opt-services.quicktun._name_.remotePort'><a href='options/services-q/#opt-services.quicktun._name_.remotePort'>
+<code>services.quicktun.&lt;name&gt;.remotePort</code>
+</a></h2>
+<p>Remote UDP port</p>
+<p><em>Type:</em> 16 bit unsigned integer; between 0 and 65535 (both inclusive)</p>
+<p><em>Default:</em> <code>config.services.quicktun.&lt;name&gt;.localPort</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/quicktun.nix"><code>nixos/modules/services/networking/quicktun.nix</code></a></p>
+<h2 id='opt-services.quicktun._name_.timeWindow'><a href='options/services-q/#opt-services.quicktun._name_.timeWindow'>
+<code>services.quicktun.&lt;name&gt;.timeWindow</code>
+</a></h2>
+<p>Allowed time window for first received packet in seconds (positive number allows packets from history)</p>
+<p><em>Type:</em> unsigned integer, meaning &gt;=0</p>
+<p><em>Default:</em> <code>5</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/quicktun.nix"><code>nixos/modules/services/networking/quicktun.nix</code></a></p>
+<h2 id='opt-services.quicktun._name_.tunMode'><a href='options/services-q/#opt-services.quicktun._name_.tunMode'>
+<code>services.quicktun.&lt;name&gt;.tunMode</code>
+</a></h2>
+<p>Whether to operate in tun (IP) or tap (Ethernet) mode.</p>
+<p><em>Type:</em> integer between 0 and 1 (both inclusive) or boolean convertible to it</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Example:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/quicktun.nix"><code>nixos/modules/services/networking/quicktun.nix</code></a></p>
+<h2 id='opt-services.quicktun._name_.upScript'><a href='options/services-q/#opt-services.quicktun._name_.upScript'>
+<code>services.quicktun.&lt;name&gt;.upScript</code>
+</a></h2>
+<p>Run specified command or script after the tunnel device has been opened.</p>
+<p><em>Type:</em> null or strings concatenated with &quot;\n&quot;</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/quicktun.nix"><code>nixos/modules/services/networking/quicktun.nix</code></a></p>
+<h2 id='opt-services.quickwit.dataDir'><a href='options/services-q/#opt-services.quickwit.dataDir'>
+<code>services.quickwit.dataDir</code>
+</a></h2>
+<p>Data directory for Quickwit. If you change this, you need to
+manually create the directory. You also need to create the
+<code>quickwit</code> user and group, or change
+<a href="options/services-q/#opt-services.quickwit.user">services (Q)</a> and
+<a href="options/services-q/#opt-services.quickwit.group">services (Q)</a> to existing ones with
+access to the directory.</p>
+<p><em>Type:</em> absolute path</p>
+<p><em>Default:</em> <code>&quot;/var/lib/quickwit&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/search/quickwit.nix"><code>nixos/modules/services/search/quickwit.nix</code></a></p>
+<h2 id='opt-services.quickwit.enable'><a href='options/services-q/#opt-services.quickwit.enable'>
+<code>services.quickwit.enable</code>
+</a></h2>
+<p>Whether to enable Quickwit.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Example:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/search/quickwit.nix"><code>nixos/modules/services/search/quickwit.nix</code></a></p>
+<h2 id='opt-services.quickwit.extraFlags'><a href='options/services-q/#opt-services.quickwit.extraFlags'>
+<code>services.quickwit.extraFlags</code>
+</a></h2>
+<p>Extra command line options to pass to Quickwit.</p>
+<p><em>Type:</em> list of string</p>
+<p><em>Default:</em> <code>[ ]</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/search/quickwit.nix"><code>nixos/modules/services/search/quickwit.nix</code></a></p>
+<h2 id='opt-services.quickwit.group'><a href='options/services-q/#opt-services.quickwit.group'>
+<code>services.quickwit.group</code>
+</a></h2>
+<p>The group quickwit runs as. Should be left at default unless
+you have very specific needs.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;quickwit&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/search/quickwit.nix"><code>nixos/modules/services/search/quickwit.nix</code></a></p>
+<h2 id='opt-services.quickwit.package'><a href='options/services-q/#opt-services.quickwit.package'>
+<code>services.quickwit.package</code>
+</a></h2>
+<p>The Quickwit package to use.</p>
+<p><em>Type:</em> package</p>
+<p><em>Default:</em> <code>pkgs.quickwit</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/search/quickwit.nix"><code>nixos/modules/services/search/quickwit.nix</code></a></p>
+<h2 id='opt-services.quickwit.restartIfChanged'><a href='options/services-q/#opt-services.quickwit.restartIfChanged'>
+<code>services.quickwit.restartIfChanged</code>
+</a></h2>
+<p>Automatically restart the service on config change.
+This can be set to false to defer restarts on a server or cluster.
+Please consider the security implications of inadvertently running an older version,
+and the possibility of unexpected behavior caused by inconsistent versions across a cluster when disabling this option.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/search/quickwit.nix"><code>nixos/modules/services/search/quickwit.nix</code></a></p>
+<h2 id='opt-services.quickwit.settings'><a href='options/services-q/#opt-services.quickwit.settings'>
+<code>services.quickwit.settings</code>
+</a></h2>
+<p>Quickwit configuration.</p>
+<p><em>Type:</em> open submodule of (YAML 1.1 value)</p>
+<p><em>Default:</em> <code>{ }</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/search/quickwit.nix"><code>nixos/modules/services/search/quickwit.nix</code></a></p>
+<h2 id='opt-services.quickwit.settings.grpc_listen_port'><a href='options/services-q/#opt-services.quickwit.settings.grpc_listen_port'>
+<code>services.quickwit.settings.grpc_listen_port</code>
+</a></h2>
+<p>The port to listen on for gRPC traffic.</p>
+<p><em>Type:</em> 16 bit unsigned integer; between 0 and 65535 (both inclusive)</p>
+<p><em>Default:</em> <code>7281</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/search/quickwit.nix"><code>nixos/modules/services/search/quickwit.nix</code></a></p>
+<h2 id='opt-services.quickwit.settings.listen_address'><a href='options/services-q/#opt-services.quickwit.settings.listen_address'>
+<code>services.quickwit.settings.listen_address</code>
+</a></h2>
+<p>Listen address of Quickwit.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;127.0.0.1&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/search/quickwit.nix"><code>nixos/modules/services/search/quickwit.nix</code></a></p>
+<h2 id='opt-services.quickwit.settings.rest'><a href='options/services-q/#opt-services.quickwit.settings.rest'>
+<code>services.quickwit.settings.rest</code>
+</a></h2>
+<p>Rest server configuration for Quickwit</p>
+<p><em>Type:</em> open submodule of (YAML 1.1 value)</p>
+<p><em>Default:</em> <code>{ }</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/search/quickwit.nix"><code>nixos/modules/services/search/quickwit.nix</code></a></p>
+<h2 id='opt-services.quickwit.settings.rest.listen_port'><a href='options/services-q/#opt-services.quickwit.settings.rest.listen_port'>
+<code>services.quickwit.settings.rest.listen_port</code>
+</a></h2>
+<p>The port to listen on for HTTP REST traffic.</p>
+<p><em>Type:</em> 16 bit unsigned integer; between 0 and 65535 (both inclusive)</p>
+<p><em>Default:</em> <code>7280</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/search/quickwit.nix"><code>nixos/modules/services/search/quickwit.nix</code></a></p>
+<h2 id='opt-services.quickwit.settings.version'><a href='options/services-q/#opt-services.quickwit.settings.version'>
+<code>services.quickwit.settings.version</code>
+</a></h2>
+<p>Configuration file version.</p>
+<p><em>Type:</em> floating point number</p>
+<p><em>Default:</em> <code>0.7</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/search/quickwit.nix"><code>nixos/modules/services/search/quickwit.nix</code></a></p>
+<h2 id='opt-services.quickwit.user'><a href='options/services-q/#opt-services.quickwit.user'>
+<code>services.quickwit.user</code>
+</a></h2>
+<p>The user Quickwit runs as. Should be left at default unless
+you have very specific needs.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;quickwit&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/search/quickwit.nix"><code>nixos/modules/services/search/quickwit.nix</code></a></p>
+
+        <nav class='chapter-pagination' aria-label='Chapter pagination'>
+          <a class='chapter-pagination-link chapter-pagination-previous' href='options/services-p/#sec-options-services-p'><span class='chapter-pagination-label'>Previous</span><span class='chapter-pagination-title'>services (P)</span></a>
+          <a class='chapter-pagination-link chapter-pagination-next' href='options/services-r/#sec-options-services-r'><span class='chapter-pagination-label'>Next</span><span class='chapter-pagination-title'>services (R)</span></a>
+        </nav>
+        </main>
+      </div>
+    </section>
+<script defer src='highlight.pack.bb58bc6b7daef61c.js'></script>
+<script defer src='mmdoc.0eac5034aeb9595f.js'></script>
+<script defer src='mmdoc_search.1e3e2ead6263c722.js' data-search-index='search_index.fa825f5e481818a3.js' data-fuse='fuse.basic.min.296619aed362de6d.js'></script>
+  </div>
+  </body>
+</html>

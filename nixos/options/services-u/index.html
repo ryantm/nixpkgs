@@ -1,0 +1,2762 @@
+<!doctype html>
+<html lang='en'>
+  <head>
+    <base href='../../'>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, viewport-fit=cover'>
+    <script>
+      (() => {
+        let theme = null
+        try { theme = localStorage.getItem('theme') } catch (error) {}
+        if (theme !== 'light' && theme !== 'dark')
+          theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+        document.documentElement.classList.add(theme + '-theme')
+        const ua = navigator.userAgent || ''
+        const isWebView = /;\s*wv\)|Twitter|FBAN|FBAV|Instagram|LinkedInApp|BytedanceWebview|musical_ly|Line\/|MicroMessenger/i.test(ua) || (/(iPhone|iPad|iPod)/i.test(ua) && /AppleWebKit/i.test(ua) && !/Safari\//i.test(ua))
+        const fromX = /^https?:\/\/([a-z0-9-]+\.)?(t\.co|x\.com|twitter\.com)(\/|$)/i.test(document.referrer || '')
+        let topNav = isWebView || fromX
+        try {
+          if (topNav) sessionStorage.setItem('mmdoc-top-nav', '1')
+          else if (sessionStorage.getItem('mmdoc-top-nav') === '1') topNav = true
+        } catch (error) {}
+        if (topNav) document.documentElement.classList.add('mobile-top-nav')
+      })()
+    </script>
+    <meta name='description' content='services (U)'>
+    <link rel='icon' href='favicon.svg'>
+    <link rel='stylesheet' href='a11y-dark.773c5c24f666bae4.css'>
+    <link rel='stylesheet' href='a11y-light.519a1765fd6efc61.css'>
+    <link rel='stylesheet' href='mmdoc.1fa5ef6417bedb91.css'>
+    <title>services (U) | nixos</title>
+  </head>
+  <body>
+  <a class='skip-link' href='options/services-u/#main-content'>Skip to main content</a>
+  <input type='checkbox' id='sidebar-checkbox' aria-hidden='true' tabindex='-1' style='display: none;'>
+  <div class='body'>
+    <header class='nav-top-container'>
+    <nav class='nav-top' aria-label='Documentation controls'>
+      <button type='button' class='sidebar-toggle' title='Toggle table of contents' aria-label='Toggle table of contents' aria-controls='sidebar' aria-expanded='true'></button>    <button type='button' class='search-toggle' title='Open search (/)' aria-label='Open search' aria-controls='search-panel' aria-expanded='false'></button>    <button type='button' class='theme-toggle' title='Switch to dark theme' aria-label='Switch to dark theme' aria-pressed='false'></button>    <a id='chapter-previous-button' class='chapter-previous' href='options/services-t/#sec-options-services-t' title='services (T)' aria-label='Previous: services (T)'>&lt;</a>
+    <a id='chapter-next-button' class='chapter-next' href='options/services-v/#sec-options-services-v' title='services (V)' aria-label='Next: services (V)'>&gt;</a>
+    </nav>
+    </header>
+    <nav id='sidebar' class='sidebar' aria-label='Table of contents'>
+<h1>NixOS Manual</h1>
+<p>Version 27.05.20261128.4b21f50</p>
+<ul>
+<li><a href="./#preface">Preface</a></li>
+</ul>
+<h2>Getting started</h2>
+<ul>
+<li><a href="installation/installation/#ch-installation">Getting started</a></li>
+<li><a href="installation/obtaining/#sec-obtaining">Obtaining NixOS</a></li>
+</ul>
+<h2>Installing NixOS</h2>
+<ul>
+<li><a href="installation/installing/#sec-installation">Installing NixOS</a></li>
+<li><a href="installation/installing-usb/#sec-booting-from-usb">Booting from a USB flash drive</a></li>
+<li><a href="installation/installing-pxe/#sec-booting-from-pxe">Booting from the &quot;netboot&quot; media (PXE)</a></li>
+<li><a href="installation/installing-kexec/#sec-booting-via-kexec">&quot;Booting&quot; into NixOS via kexec</a></li>
+<li><a href="installation/installing-virtualbox-guest/#sec-installing-virtualbox-guest">Installing in a VirtualBox guest</a></li>
+<li><a href="installation/installing-from-other-distro/#sec-installing-from-other-distro">Installing from another Linux distribution</a></li>
+<li><a href="installation/installing-behind-a-proxy/#sec-installing-behind-proxy">Installing behind a proxy</a></li>
+<li><a href="installation/changing-config/#sec-changing-config">Changing the Configuration</a></li>
+<li><a href="installation/upgrading/#sec-upgrading">Upgrading NixOS</a></li>
+</ul>
+<h2>Guides</h2>
+<ul>
+<li><a href="configuration/configuration/#ch-configuration">Guides</a></li>
+</ul>
+<h2>Configuration Syntax</h2>
+<ul>
+<li><a href="configuration/config-syntax/#sec-configuration-syntax">Configuration Syntax</a></li>
+<li><a href="configuration/config-file/#sec-configuration-file">NixOS Configuration File</a></li>
+<li><a href="configuration/abstractions/#sec-module-abstractions">Abstractions</a></li>
+<li><a href="configuration/modularity/#sec-modularity">Modularity</a></li>
+</ul>
+<h2>Package Management</h2>
+<ul>
+<li><a href="configuration/package-mgmt/#sec-package-management">Package Management</a></li>
+<li><a href="configuration/declarative-packages/#sec-declarative-package-mgmt">Declarative Package Management</a></li>
+<li><a href="configuration/customizing-packages/#sec-customising-packages">Customising Packages</a></li>
+<li><a href="configuration/adding-custom-packages/#sec-custom-packages">Adding Custom Packages</a></li>
+<li><a href="configuration/ad-hoc-packages/#sec-ad-hoc-packages">Ad-Hoc Package Management</a></li>
+<li><a href="configuration/user-mgmt/#sec-user-management">User Management</a></li>
+</ul>
+<h2>File Systems</h2>
+<ul>
+<li><a href="configuration/file-systems/#ch-file-systems">File Systems</a></li>
+<li><a href="configuration/luks-file-systems/#sec-luks-file-systems">LUKS-Encrypted File Systems</a></li>
+<li><a href="configuration/sshfs-file-systems/#sec-sshfs-file-systems">SSHFS File Systems</a></li>
+<li><a href="configuration/nfs-file-systems/#sec-nfs-file-systems">NFS File Systems</a></li>
+<li><a href="configuration/overlayfs/#sec-overlayfs">Overlayfs</a></li>
+</ul>
+<h2>Networking</h2>
+<ul>
+<li><a href="configuration/networking/#sec-networking">Networking</a></li>
+<li><a href="configuration/network-manager/#sec-networkmanager">NetworkManager</a></li>
+<li><a href="configuration/ssh/#sec-ssh">Secure Shell Access</a></li>
+<li><a href="configuration/ipv4-config/#sec-ipv4">IPv4 Configuration</a></li>
+<li><a href="configuration/ipv6-config/#sec-ipv6">IPv6 Configuration</a></li>
+<li><a href="configuration/firewall/#sec-firewall">Firewall</a></li>
+<li><a href="configuration/wireless/#sec-wireless">Wireless Networks</a></li>
+<li><a href="configuration/ad-hoc-network-config/#ad-hoc-network-config">Ad-Hoc Configuration</a></li>
+<li><a href="configuration/renaming-interfaces/#sec-rename-ifs">Renaming network interfaces</a></li>
+</ul>
+<h2>Graphical Desktops</h2>
+<ul>
+<li><a href="configuration/x-windows/#sec-x11">X Window System</a></li>
+<li><a href="configuration/wayland/#sec-wayland">Wayland</a></li>
+<li><a href="configuration/gpu-accel/#sec-gpu-accel">GPU acceleration</a></li>
+<li><a href="configuration/xfce/#sec-xfce">Xfce Desktop Environment</a></li>
+</ul>
+<h2>Building Images</h2>
+<ul>
+<li><a href="installation/building-nixos/#sec-building-image">Building a NixOS (Live) ISO</a></li>
+<li><a href="installation/building-images-via-nixos-rebuild-build-image/#sec-image-nixos-rebuild-build-image">Building Images with nixos-rebuild build-image</a></li>
+<li><a href="installation/building-images-via-systemd-repart/#sec-image-repart">Building Images via systemd-repart</a></li>
+</ul>
+<h2>Administration</h2>
+<ul>
+<li><a href="administration/running/#ch-running">Administration</a></li>
+<li><a href="administration/service-mgmt/#sec-systemctl">Service Management</a></li>
+<li><a href="administration/rebooting/#sec-rebooting">Rebooting and Shutting Down</a></li>
+<li><a href="administration/user-sessions/#sec-user-sessions">User Sessions</a></li>
+<li><a href="administration/logging/#sec-logging">Logging</a></li>
+<li><a href="administration/cleaning-store/#sec-nix-gc">Cleaning the Nix Store</a></li>
+</ul>
+<h2>Container Management</h2>
+<ul>
+<li><a href="administration/containers/#ch-containers">Container Management</a></li>
+<li><a href="administration/imperative-containers/#sec-imperative-containers">Imperative Container Management</a></li>
+<li><a href="administration/declarative-containers/#sec-declarative-containers">Declarative Container Specification</a></li>
+<li><a href="administration/container-networking/#sec-container-networking">Container Networking</a></li>
+</ul>
+<h2>Troubleshooting</h2>
+<ul>
+<li><a href="administration/troubleshooting/#ch-troubleshooting">Troubleshooting</a></li>
+<li><a href="administration/boot-problems/#sec-boot-problems">Boot Problems</a></li>
+<li><a href="administration/maintenance-mode/#sec-maintenance-mode">Maintenance Mode</a></li>
+<li><a href="administration/rollback/#sec-rollback">Rolling Back Configuration Changes</a></li>
+<li><a href="administration/store-corruption/#sec-nix-store-corruption">Nix Store Corruption</a></li>
+<li><a href="administration/network-problems/#sec-nix-network-issues">Network Problems</a></li>
+</ul>
+<h2>Services and Programs</h2>
+<ul>
+<li><a href="services/#ch-services">Services and Programs</a></li>
+<li><a href="modules/facter/#module-hardware-facter">NixOS Facter</a></li>
+<li><a href="modules/input-method/#module-services-input-methods">Input Methods</a></li>
+<li><a href="modules/digitalbitbox/#module-programs-digitalbitbox">Digital Bitbox</a></li>
+<li><a href="modules/plotinus/#module-program-plotinus">Plotinus</a></li>
+<li><a href="modules/oh-my-zsh/#module-programs-zsh-ohmyzsh">Oh my ZSH</a></li>
+<li><a href="modules/acme/#module-security-acme">SSL/TLS Certificates with ACME</a></li>
+<li><a href="modules/tpm2/#module-security-tpm2">TPM2</a></li>
+<li><a href="modules/navidrome/#module-services-navidrome">Navidrome</a></li>
+<li><a href="modules/borgbackup/#module-borgbase">BorgBackup</a></li>
+<li><a href="modules/garm/#module-garm">GARM</a></li>
+<li><a href="modules/cassandra/#module-services-cassandra">Apache Cassandra</a></li>
+<li><a href="modules/foundationdb/#module-services-foundationdb">FoundationDB</a></li>
+<li><a href="modules/postgresql/#module-postgresql">PostgreSQL</a></li>
+<li><a href="modules/tigerbeetle/#module-services-tigerbeetle">TigerBeetle</a></li>
+<li><a href="modules/gnome/#chap-gnome">GNOME Desktop</a></li>
+<li><a href="modules/pantheon/#chap-pantheon">Pantheon Desktop</a></li>
+<li><a href="modules/flatpak/#module-services-flatpak">Flatpak</a></li>
+<li><a href="modules/athens/#module-athens">Athens</a></li>
+<li><a href="modules/blackfire/#module-services-blackfire">Blackfire profiler</a></li>
+<li><a href="modules/livebook/#module-services-livebook">Livebook</a></li>
+<li><a href="modules/emacs/#module-services-emacs">Emacs</a></li>
+<li><a href="modules/display/#module-hardware-display">Customizing display configuration</a></li>
+<li><a href="modules/trezord/#trezor">Trezor</a></li>
+<li><a href="modules/mailman/#module-services-mailman">Mailman</a></li>
+<li><a href="modules/draupnir/#module-services-draupnir">Draupnir (Matrix Moderation Bot)</a></li>
+<li><a href="modules/maubot/#module-services-maubot">Maubot</a></li>
+<li><a href="modules/mautrix-discord/#module-services-mautrix-discord">Mautrix-Discord</a></li>
+<li><a href="modules/mautrix-signal/#module-services-mautrix-signal">Mautrix-Signal</a></li>
+<li><a href="modules/mautrix-whatsapp/#module-services-mautrix-whatsapp">Mautrix-Whatsapp</a></li>
+<li><a href="modules/mjolnir/#module-services-mjolnir">Mjolnir (Matrix Moderation Tool)</a></li>
+<li><a href="modules/synapse/#module-services-matrix">Matrix</a></li>
+<li><a href="modules/anki-sync-server/#module-services-anki-sync-server">Anki Sync Server</a></li>
+<li><a href="modules/apache-kafka/#module-services-apache-kafka">Apache Kafka</a></li>
+<li><a href="modules/cliproxyapi/#module-services-cliproxyapi">CLIProxyAPI</a></li>
+<li><a href="modules/dump1090-fa/#module-services-dump1090-fa">Dump1090-fa</a></li>
+<li><a href="modules/forgejo/#module-forgejo">Forgejo</a></li>
+<li><a href="modules/gitlab/#module-services-gitlab">GitLab</a></li>
+<li><a href="modules/jellystat/#module-services-jellystat">Jellystat</a></li>
+<li><a href="modules/mesh-llm/#module-services-mesh-llm">MeshLLM</a></li>
+<li><a href="modules/paisa/#module-services-paisa">Paisa</a></li>
+<li><a href="modules/pelican-panel/#module-pelican-panel">Pelican Panel</a></li>
+<li><a href="modules/pelican-wings/#module-pelican-wings">Pelican Wings</a></li>
+<li><a href="modules/tandoor-recipes/#module-services-tandoor-recipes">Tandoor Recipes</a></li>
+<li><a href="modules/taskserver/#module-services-taskserver">Taskserver</a></li>
+<li><a href="modules/tdarr/#module-services-tdarr">Tdarr</a></li>
+<li><a href="modules/weechat/#module-services-weechat">WeeChat</a></li>
+<li><a href="modules/certspotter/#module-services-certspotter">Cert Spotter</a></li>
+<li><a href="modules/goss/#module-services-goss">Goss</a></li>
+<li><a href="modules/ocsinventory-agent/#module-services-ocsinventory-agent">OCS Inventory Agent</a></li>
+<li><a href="modules/parsedmarc/#module-services-parsedmarc">parsedmarc</a></li>
+<li><a href="modules/exporters/#module-services-prometheus-exporters">Prometheus exporters</a></li>
+<li><a href="modules/litestream/#module-services-litestream">Litestream</a></li>
+<li><a href="modules/samba/#module-services-samba">Samba</a></li>
+<li><a href="modules/amuled/#module-services-amule">aMule</a></li>
+<li><a href="modules/anubis/#module-services-anubis">Anubis</a></li>
+<li><a href="modules/atalkd/#module-services-atalkd">atalkd</a></li>
+<li><a href="modules/crab-hole/#module-services-crab-hole">🦀 crab-hole</a></li>
+<li><a href="modules/dnsmasq/#module-services-networking-dnsmasq">Dnsmasq</a></li>
+<li><a href="modules/doh-server/#module-service-doh-server">DNS-over-HTTPS Server</a></li>
+<li><a href="modules/firefox-syncserver/#module-services-firefox-syncserver">Firefox Sync server</a></li>
+<li><a href="modules/gns3-server/#module-services-gns3-server">GNS3 Server</a></li>
+<li><a href="modules/jotta-cli/#module-services-jotta-cli">Jottacloud Command-line Tool</a></li>
+<li><a href="modules/lxmd/#module-services-lxmd">LXMD</a></li>
+<li><a href="modules/mosquitto/#module-services-mosquitto">Mosquitto</a></li>
+<li><a href="modules/netbird/#module-services-netbird">Netbird Client</a></li>
+<li><a href="modules/netbird-relay/#module-services-netbird-relay">Netbird Relay</a></li>
+<li><a href="modules/server/#module-services-netbird-server">Netbird server</a></li>
+<li><a href="modules/nextcloud-spreed-signaling/#module-services-nextcloud-spreed-signaling">Spreed standalone signaling server</a></li>
+<li><a href="modules/nordvpn/#module-services-nordvpn">NordVPN</a></li>
+<li><a href="modules/onedrive/#module-services-onedrive">Microsoft OneDrive</a></li>
+<li><a href="modules/pihole-ftl/#module-services-networking-pihole-ftl">pihole-FTL</a></li>
+<li><a href="modules/pleroma/#module-services-pleroma">Pleroma</a></li>
+<li><a href="modules/portmaster/#module-services-portmaster">Portmaster</a></li>
+<li><a href="modules/prosody/#module-services-prosody">Prosody</a></li>
+<li><a href="modules/rnsd/#module-services-rnsd">RNSD</a></li>
+<li><a href="modules/umurmur/#module-service-umurmur">uMurmur</a></li>
+<li><a href="modules/yggdrasil/#module-services-networking-yggdrasil">Yggdrasil</a></li>
+<li><a href="modules/zapret2/#module-services-zapret2">Zapret2</a></li>
+<li><a href="modules/meilisearch/#module-services-meilisearch">Meilisearch</a></li>
+<li><a href="modules/crowdsec/#sec-crowdsec-reset">How to reset data and etc directories</a></li>
+<li><a href="modules/falco/#module-services-falco">Falco</a></li>
+<li><a href="modules/kerberos/#module-services-kerberos-server">kerberos_server</a></li>
+<li><a href="modules/systemd-lock-handler/#module-services-systemd-lock-handler">systemd-lock-handler</a></li>
+<li><a href="modules/akkoma/#module-services-akkoma">Akkoma</a></li>
+<li><a href="modules/c2fmzq-server/#module-services-c2fmzq">c2FmZQ</a></li>
+<li><a href="modules/davis/#module-services-davis">Davis</a></li>
+<li><a href="modules/discourse/#module-services-discourse">Discourse</a></li>
+<li><a href="modules/ente/#module-services-ente">Ente.io</a></li>
+<li><a href="modules/filesender/#module-services-filesender">FileSender</a></li>
+<li><a href="modules/glance/#module-services-glance">Glance</a></li>
+<li><a href="modules/gotosocial/#module-services-gotosocial">GoToSocial</a></li>
+<li><a href="modules/grocy/#module-services-grocy">Grocy</a></li>
+<li><a href="modules/hatsu/#module-services-hatsu">Hatsu</a></li>
+<li><a href="modules/jitsi-meet/#module-services-jitsi-meet">Jitsi Meet</a></li>
+<li><a href="modules/keycloak/#module-services-keycloak">Keycloak</a></li>
+<li><a href="modules/lemmy/#module-services-lemmy">Lemmy</a></li>
+<li><a href="modules/matomo/#module-services-matomo">Matomo</a></li>
+<li><a href="modules/nextcloud/#module-services-nextcloud">Nextcloud</a></li>
+<li><a href="modules/opencloud/#module-services-opencloud">OpenCloud</a></li>
+<li><a href="modules/pict-rs/#module-services-pict-rs">Pict-rs</a></li>
+<li><a href="modules/pihole-web/#module-services-web-apps-pihole-web">Pi-hole Web Dashboard</a></li>
+<li><a href="modules/plausible/#module-services-plausible">Plausible</a></li>
+<li><a href="modules/strfry/#module-services-strfry">strfry</a></li>
+<li><a href="modules/suwayomi-server/#module-services-suwayomi-server">Suwayomi-Server</a></li>
+<li><a href="modules/szurubooru/#module-services-szurubooru">Szurubooru</a></li>
+<li><a href="modules/wanderer/#module-services-wanderer">wanderer</a></li>
+<li><a href="modules/youtrack/#module-services-youtrack">YouTrack</a></li>
+<li><a href="modules/garage/#module-services-garage">Garage</a></li>
+<li><a href="modules/clevis/#module-boot-clevis">Clevis</a></li>
+<li><a href="modules/external/#sec-bootloader-external">External Bootloader Backends</a></li>
+<li><a href="modules/plymouth-tpm2-totp/#module-boot-plymouth-tpm2-totp">tpm2-totp with Plymouth</a></li>
+<li><a href="modules/xen-dom0/#module-virtualisation-xen">Xen Project Hypervisor</a></li>
+<li><a href="configuration/subversion/#module-services-subversion">Subversion</a></li>
+<li><a href="configuration/mattermost/#sec-mattermost">Mattermost</a></li>
+<li><a href="configuration/kubernetes/#sec-kubernetes">Kubernetes</a></li>
+</ul>
+<h2>Reference</h2>
+<ul>
+<li><a href="reference/#ch-reference">Reference</a></li>
+</ul>
+<h2>Profiles</h2>
+<ul>
+<li><a href="configuration/profiles/#ch-profiles">Profiles</a></li>
+<li><a href="configuration/profiles/all-hardware/#sec-profile-all-hardware">All Hardware</a></li>
+<li><a href="configuration/profiles/base/#sec-profile-base">Base</a></li>
+<li><a href="configuration/profiles/clone-config/#sec-profile-clone-config">Clone Config</a></li>
+<li><a href="configuration/profiles/demo/#sec-profile-demo">Demo</a></li>
+<li><a href="configuration/profiles/docker-container/#sec-profile-docker-container">Docker Container</a></li>
+<li><a href="configuration/profiles/graphical/#sec-profile-graphical">Graphical</a></li>
+<li><a href="configuration/profiles/headless/#sec-profile-headless">Headless</a></li>
+<li><a href="configuration/profiles/installation-device/#sec-profile-installation-device">Installation Device</a></li>
+<li><a href="configuration/profiles/perlless/#sec-perlless">Perlless</a></li>
+<li><a href="configuration/profiles/minimal/#sec-profile-minimal">Minimal</a></li>
+<li><a href="configuration/profiles/qemu-guest/#sec-profile-qemu-guest">QEMU Guest</a></li>
+<li><a href="configuration/linux-kernel/#sec-kernel-config">Linux Kernel</a></li>
+</ul>
+<h2>Necessary system state</h2>
+<ul>
+<li><a href="administration/system-state/#ch-system-state">Necessary system state</a></li>
+<li><a href="administration/nixos-state/#sec-nixos-state">NixOS</a></li>
+<li><a href="administration/systemd-state/#sec-systemd-state">systemd</a></li>
+<li><a href="administration/zfs-state/#sec-zfs-state">ZFS</a></li>
+</ul>
+<h2>What happens during a system switch?</h2>
+<ul>
+<li><a href="development/what-happens-during-a-system-switch/#sec-switching-systems">What happens during a system switch?</a></li>
+<li><a href="development/unit-handling/#sec-unit-handling">Unit handling</a></li>
+<li><a href="development/activation-script/#sec-activation-script">Activation script</a></li>
+<li><a href="development/non-switchable-systems/#sec-non-switchable-system">Non Switchable Systems</a></li>
+<li><a href="development/etc-overlay/#sec-etc-overlay">/etc via overlay filesystem</a></li>
+<li><a href="administration/control-groups/#sec-cgroups">Control Groups</a></li>
+<li><a href="development/bootspec/#sec-bootspec">Bootspec</a></li>
+<li><a href="development/modular-services/#modular-services">Modular Services</a></li>
+</ul>
+<h2>Contributing</h2>
+<ul>
+<li><a href="development/development/#ch-development">Contributing</a></li>
+<li><a href="development/sources/#sec-getting-sources">Getting the Sources</a></li>
+</ul>
+<h2>Writing NixOS Modules</h2>
+<ul>
+<li><a href="development/writing-modules/#sec-writing-modules">Writing NixOS Modules</a></li>
+<li><a href="development/option-declarations/#sec-option-declarations">Option Declarations</a></li>
+<li><a href="development/option-types/#sec-option-types">Options Types</a></li>
+<li><a href="development/option-def/#sec-option-definitions">Option Definitions</a></li>
+<li><a href="development/assertions/#sec-assertions">Warnings and Assertions</a></li>
+<li><a href="development/meta-attributes/#sec-meta-attributes">Meta Attributes</a></li>
+<li><a href="development/importing-modules/#sec-importing-modules">Importing Modules</a></li>
+<li><a href="development/replace-modules/#sec-replace-modules">Replace Modules</a></li>
+<li><a href="development/freeform-modules/#sec-freeform-modules">Freeform modules</a></li>
+<li><a href="development/settings-options/#sec-settings-options">Options for Program Settings</a></li>
+<li><a href="development/state-revision/#sec-state-revision">State revision</a></li>
+</ul>
+<h2>NixOS Tests</h2>
+<ul>
+<li><a href="development/nixos-tests/#sec-nixos-tests">NixOS Tests</a></li>
+<li><a href="development/writing-nixos-tests/#sec-writing-nixos-tests">Writing Tests</a></li>
+<li><a href="development/running-nixos-tests/#sec-running-nixos-tests">Running Tests</a></li>
+<li><a href="development/running-nixos-tests-interactively/#sec-running-nixos-tests-interactively">Running Tests interactively</a></li>
+<li><a href="development/linking-nixos-tests-to-packages/#sec-linking-nixos-tests-to-packages">Linking NixOS tests to packages</a></li>
+<li><a href="development/testing-hardware-features/#sec-nixos-test-testing-hardware-features">Testing Hardware Features</a></li>
+<li><a href="development/building-parts/#sec-building-parts">Building Specific Parts of NixOS</a></li>
+<li><a href="development/developing-the-test-driver/#chap-developing-the-test-driver">Developing the NixOS Test Driver</a></li>
+<li><a href="development/testing-installer/#ch-testing-installer">Testing the Installer</a></li>
+<li><a href="development/writing-documentation/#sec-writing-documentation">Writing NixOS Documentation</a></li>
+<li><a href="contributing-to-this-manual/#chap-contributing">Contributing to this manual</a></li>
+</ul>
+<h2>Configuration Options</h2>
+<ul>
+<li><a href="nixos-options/#ch-options">Configuration Options</a>
+<ul>
+<li><a href="options/boot/#sec-options-boot">boot</a></li>
+<li><a href="options/containers/#sec-options-containers">containers</a></li>
+<li><a href="options/documentation/#sec-options-documentation">documentation</a></li>
+<li><a href="options/environment/#sec-options-environment">environment</a></li>
+<li><a href="options/fonts/#sec-options-fonts">fonts</a></li>
+<li><a href="options/hardware/#sec-options-hardware">hardware</a></li>
+<li><a href="options/i18n/#sec-options-i18n">i18n</a></li>
+<li><a href="options/image/#sec-options-image">image</a></li>
+<li><a href="options/networking/#sec-options-networking">networking</a></li>
+<li><a href="options/nix/#sec-options-nix">nix</a></li>
+<li><a href="options/power/#sec-options-power">power</a></li>
+<li><a href="options/programs/#sec-options-programs">programs</a></li>
+<li><a href="options/security/#sec-options-security">security</a></li>
+<li><a href="options/system/#sec-options-system">system</a></li>
+<li><a href="options/systemd/#sec-options-systemd">systemd</a></li>
+<li><a href="options/users/#sec-options-users">users</a></li>
+<li><a href="options/virtualisation/#sec-options-virtualisation">virtualisation</a></li>
+<li><a href="options/xdg/#sec-options-xdg">xdg</a></li>
+<li><a href="options/services-a/#sec-options-services-a">services (A)</a></li>
+<li><a href="options/services-b/#sec-options-services-b">services (B)</a></li>
+<li><a href="options/services-c/#sec-options-services-c">services (C)</a></li>
+<li><a href="options/services-d/#sec-options-services-d">services (D)</a></li>
+<li><a href="options/services-e/#sec-options-services-e">services (E)</a></li>
+<li><a href="options/services-f/#sec-options-services-f">services (F)</a></li>
+<li><a href="options/services-g/#sec-options-services-g">services (G)</a></li>
+<li><a href="options/services-h/#sec-options-services-h">services (H)</a></li>
+<li><a href="options/services-i/#sec-options-services-i">services (I)</a></li>
+<li><a href="options/services-j/#sec-options-services-j">services (J)</a></li>
+<li><a href="options/services-k/#sec-options-services-k">services (K)</a></li>
+<li><a href="options/services-l/#sec-options-services-l">services (L)</a></li>
+<li><a href="options/services-m/#sec-options-services-m">services (M)</a></li>
+<li><a href="options/services-n/#sec-options-services-n">services (N)</a></li>
+<li><a href="options/services-o/#sec-options-services-o">services (O)</a></li>
+<li><a href="options/services-other/#sec-options-services-other">services (other)</a></li>
+<li><a href="options/services-p/#sec-options-services-p">services (P)</a></li>
+<li><a href="options/services-q/#sec-options-services-q">services (Q)</a></li>
+<li><a href="options/services-r/#sec-options-services-r">services (R)</a></li>
+<li><a href="options/services-s/#sec-options-services-s">services (S)</a></li>
+<li><a href="options/services-t/#sec-options-services-t">services (T)</a></li>
+<li><a href="options/services-u/#sec-options-services-u">services (U)</a></li>
+<li><a href="options/services-v/#sec-options-services-v">services (V)</a></li>
+<li><a href="options/services-w/#sec-options-services-w">services (W)</a></li>
+<li><a href="options/services-x/#sec-options-services-x">services (X)</a></li>
+<li><a href="options/services-y/#sec-options-services-y">services (Y)</a></li>
+<li><a href="options/services-z/#sec-options-services-z">services (Z)</a></li>
+<li><a href="options/other/#sec-options-other">Other options</a></li>
+</ul>
+</li>
+</ul>
+<h2>Release Notes</h2>
+<ul>
+<li><a href="release-notes/release-notes/#ch-release-notes">Release Notes</a>
+<ul>
+<li><a href="release-notes/rl-2705/#sec-release-27.05">Release 27.05 (&quot;Axolotl&quot;, 2027.05/??)</a></li>
+<li><a href="release-notes/rl-2611/#sec-release-26.11">Release 26.11 (&quot;Zokor&quot;, 2026.11/??)</a></li>
+<li><a href="release-notes/rl-2605/#sec-release-26.05">Release 26.05 (&quot;Yarara&quot;, 2026.05/30)</a></li>
+<li><a href="release-notes/rl-2511/#sec-release-25.11">Release 25.11 (&quot;Xantusia&quot;, 2025.11/30)</a></li>
+<li><a href="release-notes/rl-2505/#sec-release-25.05">Release 25.05 (“Warbler”, 2025.05/23)</a></li>
+<li><a href="release-notes/rl-2411/#sec-release-24.11">Release 24.11 (“Vicuña”, 2024.11/28)</a></li>
+<li><a href="release-notes/rl-2405/#sec-release-24.05">Release 24.05 (“Uakari”, 2024.05/31)</a></li>
+<li><a href="release-notes/rl-2311/#sec-release-23.11">Release 23.11 (“Tapir”, 2023.11/29)</a></li>
+<li><a href="release-notes/rl-2305/#sec-release-23.05">Release 23.05 (“Stoat”, 2023.05/31)</a></li>
+<li><a href="release-notes/rl-2211/#sec-release-22.11">Release 22.11 (“Raccoon”, 2022.11/30)</a></li>
+<li><a href="release-notes/rl-2205/#sec-release-22.05">Release 22.05 (“Quokka”, 2022.05/30)</a></li>
+<li><a href="release-notes/rl-2111/#sec-release-21.11">Release 21.11 (“Porcupine”, 2021/11/30)</a></li>
+<li><a href="release-notes/rl-2105/#sec-release-21.05">Release 21.05 (&quot;Okapi&quot;, 2021.05/31)</a></li>
+<li><a href="release-notes/rl-2009/#sec-release-20.09">Release 20.09 (&quot;Nightingale&quot;, 2020.10/27)</a></li>
+<li><a href="release-notes/rl-2003/#sec-release-20.03">Release 20.03 (&quot;Markhor&quot;, 2020.04/20)</a></li>
+<li><a href="release-notes/rl-1909/#sec-release-19.09">Release 19.09 (&quot;Loris&quot;, 2019/10/09)</a></li>
+<li><a href="release-notes/rl-1903/#sec-release-19.03">Release 19.03 (&quot;Koi&quot;, 2019/04/11)</a></li>
+<li><a href="release-notes/rl-1809/#sec-release-18.09">Release 18.09 (&quot;Jellyfish&quot;, 2018/10/05)</a></li>
+<li><a href="release-notes/rl-1803/#sec-release-18.03">Release 18.03 (&quot;Impala&quot;, 2018/04/04)</a></li>
+<li><a href="release-notes/rl-1709/#sec-release-17.09">Release 17.09 (&quot;Hummingbird&quot;, 2017/09/??)</a></li>
+<li><a href="release-notes/rl-1703/#sec-release-17.03">Release 17.03 (&quot;Gorilla&quot;, 2017/03/31)</a></li>
+<li><a href="release-notes/rl-1609/#sec-release-16.09">Release 16.09 (&quot;Flounder&quot;, 2016/09/30)</a></li>
+<li><a href="release-notes/rl-1603/#sec-release-16.03">Release 16.03 (&quot;Emu&quot;, 2016/03/31)</a></li>
+<li><a href="release-notes/rl-1509/#sec-release-15.09">Release 15.09 (&quot;Dingo&quot;, 2015/09/30)</a></li>
+<li><a href="release-notes/rl-1412/#sec-release-14.12">Release 14.12 (&quot;Caterpillar&quot;, 2014/12/30)</a></li>
+<li><a href="release-notes/rl-1404/#sec-release-14.04">Release 14.04 (&quot;Baboon&quot;, 2014/04/30)</a></li>
+<li><a href="release-notes/rl-1310/#sec-release-13.10">Release 13.10 (&quot;Aardvark&quot;, 2013/10/31)</a></li>
+</ul>
+</li>
+</ul>
+    </nav>
+    <section id='main'>
+      <div id='search-panel' class='nav-search' role='search' hidden>
+        <label class='visually-hidden' for='search'>Search documentation</label>
+        <input type='search' id='search' placeholder='Search documentation (/)' autocomplete='off' aria-controls='search-results'>
+        <p id='search-status' class='visually-hidden' role='status' aria-live='polite'></p>
+        <div id='search-results'></div>
+      </div>
+      <div class='main-scroll'>
+        <main id='main-content' tabindex='-1'>
+<h1 id='sec-options-services-u'><a href='options/services-u/#sec-options-services-u'>
+services (U)
+</a></h1>
+<h2 id='opt-services.u9fs.enable'><a href='options/services-u/#opt-services.u9fs.enable'>
+<code>services.u9fs.enable</code>
+</a></h2>
+<p>Whether to run the u9fs 9P server for Unix.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/network-filesystems/u9fs.nix"><code>nixos/modules/services/network-filesystems/u9fs.nix</code></a></p>
+<h2 id='opt-services.u9fs.extraArgs'><a href='options/services-u/#opt-services.u9fs.extraArgs'>
+<code>services.u9fs.extraArgs</code>
+</a></h2>
+<p>Extra arguments to pass on invocation,
+see <code>man 4 u9fs</code></p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;&quot;</code></p>
+<p><em>Example:</em> <code>&quot;-a none&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/network-filesystems/u9fs.nix"><code>nixos/modules/services/network-filesystems/u9fs.nix</code></a></p>
+<h2 id='opt-services.u9fs.listenStreams'><a href='options/services-u/#opt-services.u9fs.listenStreams'>
+<code>services.u9fs.listenStreams</code>
+</a></h2>
+<p>Sockets to listen for clients on.
+See <code>man 5 systemd.socket</code> for socket syntax.</p>
+<p><em>Type:</em> list of string</p>
+<p><em>Default:</em></p>
+<pre><code class="language-nix">[
+  &quot;564&quot;
+]
+</code></pre>
+<p><em>Example:</em></p>
+<pre><code class="language-nix">[
+  &quot;192.168.16.1:564&quot;
+]
+</code></pre>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/network-filesystems/u9fs.nix"><code>nixos/modules/services/network-filesystems/u9fs.nix</code></a></p>
+<h2 id='opt-services.u9fs.user'><a href='options/services-u/#opt-services.u9fs.user'>
+<code>services.u9fs.user</code>
+</a></h2>
+<p>User to run u9fs under.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;nobody&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/network-filesystems/u9fs.nix"><code>nixos/modules/services/network-filesystems/u9fs.nix</code></a></p>
+<h2 id='opt-services.udev.enable'><a href='options/services-u/#opt-services.udev.enable'>
+<code>services.udev.enable</code>
+</a></h2>
+<p>Whether to enable udev, a device manager for the Linux kernel.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>true</code></p>
+<p><em>Example:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/hardware/udev.nix"><code>nixos/modules/services/hardware/udev.nix</code></a></p>
+<h2 id='opt-services.udev.extraHwdb'><a href='options/services-u/#opt-services.udev.extraHwdb'>
+<code>services.udev.extraHwdb</code>
+</a></h2>
+<p>Additional <code>hwdb</code> files. They'll be written
+into file <code>99-local.hwdb</code>. Thus they are
+read after all other files.</p>
+<p><em>Type:</em> strings concatenated with &quot;\n&quot;</p>
+<p><em>Default:</em> <code>&quot;&quot;</code></p>
+<p><em>Example:</em></p>
+<pre><code class="language-nix">''
+  evdev:input:b0003v05AFp8277*
+    KEYBOARD_KEY_70039=leftalt
+    KEYBOARD_KEY_700e2=leftctrl
+''
+</code></pre>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/hardware/udev.nix"><code>nixos/modules/services/hardware/udev.nix</code></a></p>
+<h2 id='opt-services.udev.extraRules'><a href='options/services-u/#opt-services.udev.extraRules'>
+<code>services.udev.extraRules</code>
+</a></h2>
+<p>Additional <code>udev</code> rules. They'll be written
+into file <code>99-local.rules</code>. Thus they are
+read and applied after all other rules.</p>
+<p><em>Type:</em> strings concatenated with &quot;\n&quot;</p>
+<p><em>Default:</em> <code>&quot;&quot;</code></p>
+<p><em>Example:</em></p>
+<pre><code class="language-nix">''
+  ENV{ID_VENDOR_ID}==&quot;046d&quot;, ENV{ID_MODEL_ID}==&quot;0825&quot;, ENV{PULSE_IGNORE}=&quot;1&quot;
+''
+</code></pre>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/hardware/udev.nix"><code>nixos/modules/services/hardware/udev.nix</code></a></p>
+<h2 id='opt-services.udev.packages'><a href='options/services-u/#opt-services.udev.packages'>
+<code>services.udev.packages</code>
+</a></h2>
+<p>List of packages containing <code>udev</code> rules.
+All files found in
+<code>«pkg»/etc/udev/rules.d</code> and
+<code>«pkg»/lib/udev/rules.d</code>
+will be included.</p>
+<p><em>Type:</em> list of absolute path</p>
+<p><em>Default:</em> <code>[ ]</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/hardware/udev.nix"><code>nixos/modules/services/hardware/udev.nix</code></a></p>
+<h2 id='opt-services.udev.path'><a href='options/services-u/#opt-services.udev.path'>
+<code>services.udev.path</code>
+</a></h2>
+<p>Packages added to the <code>PATH</code> environment variable when
+executing programs from Udev rules.</p>
+<p>coreutils, gnu{sed,grep}, util-linux and config.systemd.package are
+automatically included.</p>
+<p><em>Type:</em> list of absolute path</p>
+<p><em>Default:</em> <code>[ ]</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/hardware/udev.nix"><code>nixos/modules/services/hardware/udev.nix</code></a></p>
+<h2 id='opt-services.udisks2.enable'><a href='options/services-u/#opt-services.udisks2.enable'>
+<code>services.udisks2.enable</code>
+</a></h2>
+<p>Whether to enable udisks2, a DBus service that allows applications to query and manipulate storage devices.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Example:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/hardware/udisks2.nix"><code>nixos/modules/services/hardware/udisks2.nix</code></a></p>
+<h2 id='opt-services.udisks2.mountOnMedia'><a href='options/services-u/#opt-services.udisks2.mountOnMedia'>
+<code>services.udisks2.mountOnMedia</code>
+</a></h2>
+<p>When enabled, instructs udisks2 to mount removable drives under <code>/media/</code> directory, instead of the
+default, ACL-controlled <code>/run/media/$USER/</code>. Since <code>/media/</code> is not mounted as tmpfs by default, it
+requires cleanup to get rid of stale mountpoints; enabling this option will take care of this at boot.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/hardware/udisks2.nix"><code>nixos/modules/services/hardware/udisks2.nix</code></a></p>
+<h2 id='opt-services.udisks2.package'><a href='options/services-u/#opt-services.udisks2.package'>
+<code>services.udisks2.package</code>
+</a></h2>
+<p>The udisks package to use.</p>
+<p><em>Type:</em> package</p>
+<p><em>Default:</em> <code>pkgs.udisks</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/hardware/udisks2.nix"><code>nixos/modules/services/hardware/udisks2.nix</code></a></p>
+<h2 id='opt-services.udisks2.settings'><a href='options/services-u/#opt-services.udisks2.settings'>
+<code>services.udisks2.settings</code>
+</a></h2>
+<p>Options passed to udisksd.
+See <a href="http://manpages.ubuntu.com/manpages/latest/en/man5/udisks2.conf.5.html">here</a> and
+drive configuration in <a href="http://manpages.ubuntu.com/manpages/latest/en/man8/udisks.8.html">here</a> for supported options.</p>
+<p><em>Type:</em> attribute set of attribute set of section of an INI file (attrs of INI atom (null, bool, int, float or string) or a non-empty list of them)</p>
+<p><em>Default:</em></p>
+<pre><code class="language-nix">{
+  &quot;udisks2.conf&quot; = {
+    defaults = {
+      encryption = &quot;luks2&quot;;
+    };
+    udisks2 = {
+      modules = [
+        &quot;*&quot;
+      ];
+      modules_load_preference = &quot;ondemand&quot;;
+    };
+  };
+}
+</code></pre>
+<p><em>Example:</em></p>
+<pre><code class="language-nix">{
+  &quot;WDC-WD10EZEX-60M2NA0-WD-WCC3F3SJ0698.conf&quot; = {
+    ATA = {
+      StandbyTimeout = 50;
+    };
+  };
+};
+</code></pre>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/hardware/udisks2.nix"><code>nixos/modules/services/hardware/udisks2.nix</code></a></p>
+<h2 id='opt-services.udp-over-tcp.package'><a href='options/services-u/#opt-services.udp-over-tcp.package'>
+<code>services.udp-over-tcp.package</code>
+</a></h2>
+<p>The udp-over-tcp package to use.</p>
+<p><em>Type:</em> package</p>
+<p><em>Default:</em> <code>pkgs.udp-over-tcp</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/udp-over-tcp.nix"><code>nixos/modules/services/networking/udp-over-tcp.nix</code></a></p>
+<h2 id='opt-services.udp-over-tcp.tcp2udp'><a href='options/services-u/#opt-services.udp-over-tcp.tcp2udp'>
+<code>services.udp-over-tcp.tcp2udp</code>
+</a></h2>
+<p>Mapping of TCP listening ports to UDP forwarding ports or configurations.</p>
+<p><em>Type:</em> attribute set of (submodule)</p>
+<p><em>Default:</em> <code>{ }</code></p>
+<p><em>Example:</em></p>
+<pre><code class="language-nix">{
+  &quot;0.0.0.0:443&quot; = {
+    forward = &quot;127.0.0.1:51820&quot;;
+    openFirewall = true;
+  };
+  &quot;0.0.0.0:444&quot; = {
+    threads = 2;
+    forward = &quot;127.0.0.1:51821&quot;;
+    bind = &quot;127.0.0.1&quot;;
+    recvBufferSize = 16384;
+    sendBufferSize = 16384;
+    recvTimeout = 10;
+    fwmark = 1337;
+    nodelay = true;
+  };
+}
+</code></pre>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/udp-over-tcp.nix"><code>nixos/modules/services/networking/udp-over-tcp.nix</code></a></p>
+<h2 id='opt-services.udp-over-tcp.tcp2udp._name_.bind'><a href='options/services-u/#opt-services.udp-over-tcp.tcp2udp._name_.bind'>
+<code>services.udp-over-tcp.tcp2udp.&lt;name&gt;.bind</code>
+</a></h2>
+<p>Which local IP to bind the UDP socket to.</p>
+<p><em>Type:</em> null or string</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/udp-over-tcp.nix"><code>nixos/modules/services/networking/udp-over-tcp.nix</code></a></p>
+<h2 id='opt-services.udp-over-tcp.tcp2udp._name_.forward'><a href='options/services-u/#opt-services.udp-over-tcp.tcp2udp._name_.forward'>
+<code>services.udp-over-tcp.tcp2udp.&lt;name&gt;.forward</code>
+</a></h2>
+<p>The IP and port to forward all traffic to.</p>
+<p><em>Type:</em> string</p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/udp-over-tcp.nix"><code>nixos/modules/services/networking/udp-over-tcp.nix</code></a></p>
+<h2 id='opt-services.udp-over-tcp.tcp2udp._name_.fwmark'><a href='options/services-u/#opt-services.udp-over-tcp.tcp2udp._name_.fwmark'>
+<code>services.udp-over-tcp.tcp2udp.&lt;name&gt;.fwmark</code>
+</a></h2>
+<p>If given, sets the SO_MARK option on the TCP socket.</p>
+<p><em>Type:</em> null or 32 bit unsigned integer; between 0 and 4294967295 (both inclusive)</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/udp-over-tcp.nix"><code>nixos/modules/services/networking/udp-over-tcp.nix</code></a></p>
+<h2 id='opt-services.udp-over-tcp.tcp2udp._name_.nodelay'><a href='options/services-u/#opt-services.udp-over-tcp.tcp2udp._name_.nodelay'>
+<code>services.udp-over-tcp.tcp2udp.&lt;name&gt;.nodelay</code>
+</a></h2>
+<p>Enables TCP_NODELAY on the TCP socket.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/udp-over-tcp.nix"><code>nixos/modules/services/networking/udp-over-tcp.nix</code></a></p>
+<h2 id='opt-services.udp-over-tcp.tcp2udp._name_.openFirewall'><a href='options/services-u/#opt-services.udp-over-tcp.tcp2udp._name_.openFirewall'>
+<code>services.udp-over-tcp.tcp2udp.&lt;name&gt;.openFirewall</code>
+</a></h2>
+<p>Open the appropriate ports in the firewall.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/udp-over-tcp.nix"><code>nixos/modules/services/networking/udp-over-tcp.nix</code></a></p>
+<h2 id='opt-services.udp-over-tcp.tcp2udp._name_.recvBufferSize'><a href='options/services-u/#opt-services.udp-over-tcp.tcp2udp._name_.recvBufferSize'>
+<code>services.udp-over-tcp.tcp2udp.&lt;name&gt;.recvBufferSize</code>
+</a></h2>
+<p>If given, sets the SO_RCVBUF option on the TCP socket to the given number of bytes.
+Changes the size of the operating system's receive buffer associated with the socket.</p>
+<p><em>Type:</em> null or (positive integer, meaning &gt;0)</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/udp-over-tcp.nix"><code>nixos/modules/services/networking/udp-over-tcp.nix</code></a></p>
+<h2 id='opt-services.udp-over-tcp.tcp2udp._name_.recvTimeout'><a href='options/services-u/#opt-services.udp-over-tcp.tcp2udp._name_.recvTimeout'>
+<code>services.udp-over-tcp.tcp2udp.&lt;name&gt;.recvTimeout</code>
+</a></h2>
+<p>An application timeout on receiving data from the TCP socket.</p>
+<p><em>Type:</em> null or (positive integer, meaning &gt;0)</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/udp-over-tcp.nix"><code>nixos/modules/services/networking/udp-over-tcp.nix</code></a></p>
+<h2 id='opt-services.udp-over-tcp.tcp2udp._name_.sendBufferSize'><a href='options/services-u/#opt-services.udp-over-tcp.tcp2udp._name_.sendBufferSize'>
+<code>services.udp-over-tcp.tcp2udp.&lt;name&gt;.sendBufferSize</code>
+</a></h2>
+<p>If given, sets the SO_SNDBUF option on the TCP socket to the given number of bytes.
+Changes the size of the operating system's send buffer associated with the socket.</p>
+<p><em>Type:</em> null or (positive integer, meaning &gt;0)</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/udp-over-tcp.nix"><code>nixos/modules/services/networking/udp-over-tcp.nix</code></a></p>
+<h2 id='opt-services.udp-over-tcp.tcp2udp._name_.threads'><a href='options/services-u/#opt-services.udp-over-tcp.tcp2udp._name_.threads'>
+<code>services.udp-over-tcp.tcp2udp.&lt;name&gt;.threads</code>
+</a></h2>
+<p>Sets the number of worker threads to use.
+The default value is the number of cores available to the system.</p>
+<p><em>Type:</em> null or (positive integer, meaning &gt;0)</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/udp-over-tcp.nix"><code>nixos/modules/services/networking/udp-over-tcp.nix</code></a></p>
+<h2 id='opt-services.udp-over-tcp.udp2tcp'><a href='options/services-u/#opt-services.udp-over-tcp.udp2tcp'>
+<code>services.udp-over-tcp.udp2tcp</code>
+</a></h2>
+<p>Mapping of UDP listening ports to TCP forwarding ports or configurations.</p>
+<p><em>Type:</em> attribute set of (submodule)</p>
+<p><em>Default:</em> <code>{ }</code></p>
+<p><em>Example:</em></p>
+<pre><code class="language-nix">{
+  &quot;0.0.0.0:51820&quot; = {
+    forward = &quot;10.0.0.1:443&quot;;
+    openFirewall = true;
+  };
+  &quot;0.0.0.0:51821&quot; = {
+    forward = &quot;10.0.0.1:444&quot;;
+    recvBufferSize = 16384;
+    sendBufferSize = 16384;
+    recvTimeout = 10;
+    fwmark = 1337;
+    nodelay = true;
+  };
+}
+</code></pre>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/udp-over-tcp.nix"><code>nixos/modules/services/networking/udp-over-tcp.nix</code></a></p>
+<h2 id='opt-services.udp-over-tcp.udp2tcp._name_.forward'><a href='options/services-u/#opt-services.udp-over-tcp.udp2tcp._name_.forward'>
+<code>services.udp-over-tcp.udp2tcp.&lt;name&gt;.forward</code>
+</a></h2>
+<p>The IP and port to forward all traffic to.</p>
+<p><em>Type:</em> string</p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/udp-over-tcp.nix"><code>nixos/modules/services/networking/udp-over-tcp.nix</code></a></p>
+<h2 id='opt-services.udp-over-tcp.udp2tcp._name_.fwmark'><a href='options/services-u/#opt-services.udp-over-tcp.udp2tcp._name_.fwmark'>
+<code>services.udp-over-tcp.udp2tcp.&lt;name&gt;.fwmark</code>
+</a></h2>
+<p>If given, sets the SO_MARK option on the TCP socket.</p>
+<p><em>Type:</em> null or 32 bit unsigned integer; between 0 and 4294967295 (both inclusive)</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/udp-over-tcp.nix"><code>nixos/modules/services/networking/udp-over-tcp.nix</code></a></p>
+<h2 id='opt-services.udp-over-tcp.udp2tcp._name_.nodelay'><a href='options/services-u/#opt-services.udp-over-tcp.udp2tcp._name_.nodelay'>
+<code>services.udp-over-tcp.udp2tcp.&lt;name&gt;.nodelay</code>
+</a></h2>
+<p>Enables TCP_NODELAY on the TCP socket.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/udp-over-tcp.nix"><code>nixos/modules/services/networking/udp-over-tcp.nix</code></a></p>
+<h2 id='opt-services.udp-over-tcp.udp2tcp._name_.openFirewall'><a href='options/services-u/#opt-services.udp-over-tcp.udp2tcp._name_.openFirewall'>
+<code>services.udp-over-tcp.udp2tcp.&lt;name&gt;.openFirewall</code>
+</a></h2>
+<p>Open the appropriate ports in the firewall.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/udp-over-tcp.nix"><code>nixos/modules/services/networking/udp-over-tcp.nix</code></a></p>
+<h2 id='opt-services.udp-over-tcp.udp2tcp._name_.recvBufferSize'><a href='options/services-u/#opt-services.udp-over-tcp.udp2tcp._name_.recvBufferSize'>
+<code>services.udp-over-tcp.udp2tcp.&lt;name&gt;.recvBufferSize</code>
+</a></h2>
+<p>If given, sets the SO_RCVBUF option on the TCP socket to the given number of bytes.
+Changes the size of the operating system's receive buffer associated with the socket.</p>
+<p><em>Type:</em> null or (positive integer, meaning &gt;0)</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/udp-over-tcp.nix"><code>nixos/modules/services/networking/udp-over-tcp.nix</code></a></p>
+<h2 id='opt-services.udp-over-tcp.udp2tcp._name_.recvTimeout'><a href='options/services-u/#opt-services.udp-over-tcp.udp2tcp._name_.recvTimeout'>
+<code>services.udp-over-tcp.udp2tcp.&lt;name&gt;.recvTimeout</code>
+</a></h2>
+<p>An application timeout on receiving data from the TCP socket.</p>
+<p><em>Type:</em> null or (positive integer, meaning &gt;0)</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/udp-over-tcp.nix"><code>nixos/modules/services/networking/udp-over-tcp.nix</code></a></p>
+<h2 id='opt-services.udp-over-tcp.udp2tcp._name_.sendBufferSize'><a href='options/services-u/#opt-services.udp-over-tcp.udp2tcp._name_.sendBufferSize'>
+<code>services.udp-over-tcp.udp2tcp.&lt;name&gt;.sendBufferSize</code>
+</a></h2>
+<p>If given, sets the SO_SNDBUF option on the TCP socket to the given number of bytes.
+Changes the size of the operating system's send buffer associated with the socket.</p>
+<p><em>Type:</em> null or (positive integer, meaning &gt;0)</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/udp-over-tcp.nix"><code>nixos/modules/services/networking/udp-over-tcp.nix</code></a></p>
+<h2 id='opt-services.udp514-journal.enable'><a href='options/services-u/#opt-services.udp514-journal.enable'>
+<code>services.udp514-journal.enable</code>
+</a></h2>
+<p>Whether to enable the udp514-journal systemd socket/service.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Example:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/logging/udp514-journal.nix"><code>nixos/modules/services/logging/udp514-journal.nix</code></a></p>
+<h2 id='opt-services.udp514-journal.openFirewall'><a href='options/services-u/#opt-services.udp514-journal.openFirewall'>
+<code>services.udp514-journal.openFirewall</code>
+</a></h2>
+<p>Whether to open the port in the firewall.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Example:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/logging/udp514-journal.nix"><code>nixos/modules/services/logging/udp514-journal.nix</code></a></p>
+<h2 id='opt-services.udp514-journal.package'><a href='options/services-u/#opt-services.udp514-journal.package'>
+<code>services.udp514-journal.package</code>
+</a></h2>
+<p>The udp514-journal package to use.</p>
+<p><em>Type:</em> package</p>
+<p><em>Default:</em> <code>pkgs.udp514-journal</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/logging/udp514-journal.nix"><code>nixos/modules/services/logging/udp514-journal.nix</code></a></p>
+<h2 id='opt-services.udp514-journal.port'><a href='options/services-u/#opt-services.udp514-journal.port'>
+<code>services.udp514-journal.port</code>
+</a></h2>
+<p>Port to listen on</p>
+<p><em>Type:</em> 16 bit unsigned integer; between 0 and 65535 (both inclusive)</p>
+<p><em>Default:</em> <code>514</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/logging/udp514-journal.nix"><code>nixos/modules/services/logging/udp514-journal.nix</code></a></p>
+<h2 id='opt-services.uhub'><a href='options/services-u/#opt-services.uhub'>
+<code>services.uhub</code>
+</a></h2>
+<p>Uhub ADC hub instances</p>
+<p><em>Type:</em> attribute set of (submodule)</p>
+<p><em>Default:</em> <code>{ }</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/misc/uhub.nix"><code>nixos/modules/services/misc/uhub.nix</code></a></p>
+<h2 id='opt-services.uhub._name_.enable'><a href='options/services-u/#opt-services.uhub._name_.enable'>
+<code>services.uhub.&lt;name&gt;.enable</code>
+</a></h2>
+<p>Whether to enable hub instance.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>true</code></p>
+<p><em>Example:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/misc/uhub.nix"><code>nixos/modules/services/misc/uhub.nix</code></a></p>
+<h2 id='opt-services.uhub._name_.enableTLS'><a href='options/services-u/#opt-services.uhub._name_.enableTLS'>
+<code>services.uhub.&lt;name&gt;.enableTLS</code>
+</a></h2>
+<p>Whether to enable TLS support.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/misc/uhub.nix"><code>nixos/modules/services/misc/uhub.nix</code></a></p>
+<h2 id='opt-services.uhub._name_.plugins'><a href='options/services-u/#opt-services.uhub._name_.plugins'>
+<code>services.uhub.&lt;name&gt;.plugins</code>
+</a></h2>
+<p>Uhub plugin configuration.</p>
+<p><em>Type:</em> list of (submodule)</p>
+<p><em>Default:</em> <code>[ ]</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/misc/uhub.nix"><code>nixos/modules/services/misc/uhub.nix</code></a></p>
+<h2 id='opt-services.uhub._name_.plugins._.plugin'><a href='options/services-u/#opt-services.uhub._name_.plugins._.plugin'>
+<code>services.uhub.&lt;name&gt;.plugins.*.plugin</code>
+</a></h2>
+<p>Path to plugin file.</p>
+<p><em>Type:</em> absolute path</p>
+<p><em>Example:</em> <code>$${pkgs.uhub}/plugins/mod_auth_sqlite.so</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/misc/uhub.nix"><code>nixos/modules/services/misc/uhub.nix</code></a></p>
+<h2 id='opt-services.uhub._name_.plugins._.settings'><a href='options/services-u/#opt-services.uhub._name_.plugins._.settings'>
+<code>services.uhub.&lt;name&gt;.plugins.*.settings</code>
+</a></h2>
+<p>Settings specific to this plugin.</p>
+<p><em>Type:</em> attribute set of string</p>
+<p><em>Default:</em> <code>{ }</code></p>
+<p><em>Example:</em></p>
+<pre><code class="language-nix">{
+  file = &quot;/etc/uhub/users.db&quot;;
+}
+</code></pre>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/misc/uhub.nix"><code>nixos/modules/services/misc/uhub.nix</code></a></p>
+<h2 id='opt-services.uhub._name_.settings'><a href='options/services-u/#opt-services.uhub._name_.settings'>
+<code>services.uhub.&lt;name&gt;.settings</code>
+</a></h2>
+<p>Configuration of uhub.
+See <a href="https://www.uhub.org/doc/config.php">https://www.uhub.org/doc/config.php</a> for a list of options.</p>
+<p><em>Type:</em> attribute set of (boolean or signed integer or string)</p>
+<p><em>Default:</em> <code>{ }</code></p>
+<p><em>Example:</em></p>
+<pre><code class="language-nix">{
+  hub_description = &quot;Yet another ADC hub&quot;;
+  hub_name = &quot;My Public Hub&quot;;
+  max_users = 150;
+  server_bind_addr = &quot;any&quot;;
+  server_port = 1511;
+}
+</code></pre>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/misc/uhub.nix"><code>nixos/modules/services/misc/uhub.nix</code></a></p>
+<h2 id='opt-services.ulogd.enable'><a href='options/services-u/#opt-services.ulogd.enable'>
+<code>services.ulogd.enable</code>
+</a></h2>
+<p>Whether to enable ulogd, a userspace logging daemon for netfilter/iptables related logging.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Example:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/logging/ulogd.nix"><code>nixos/modules/services/logging/ulogd.nix</code></a></p>
+<h2 id='opt-services.ulogd.logLevel'><a href='options/services-u/#opt-services.ulogd.logLevel'>
+<code>services.ulogd.logLevel</code>
+</a></h2>
+<p>Log level (1 = debug, 3 = info, 5 = notice, 7 = error, 8 = fatal)</p>
+<p><em>Type:</em> one of 1, 3, 5, 7, 8</p>
+<p><em>Default:</em> <code>5</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/logging/ulogd.nix"><code>nixos/modules/services/logging/ulogd.nix</code></a></p>
+<h2 id='opt-services.ulogd.settings'><a href='options/services-u/#opt-services.ulogd.settings'>
+<code>services.ulogd.settings</code>
+</a></h2>
+<p>Configuration for ulogd. See <code>/share/doc/ulogd/</code> in <code>pkgs.ulogd.doc</code>.</p>
+<p><em>Type:</em> attribute set of section of an INI file (attrs of INI atom (null, bool, int, float or string) or a list of them for duplicate keys)</p>
+<p><em>Default:</em> <code>{ }</code></p>
+<p><em>Example:</em></p>
+<pre><code class="language-nix">{
+  emu1 = {
+    file = &quot;/var/log/ulogd_pkts.log&quot;;
+    sync = 1;
+  };
+  global = {
+    stack = [
+      &quot;log1:NFLOG,base1:BASE,ifi1:IFINDEX,ip2str1:IP2STR,print1:PRINTPKT,emu1:LOGEMU&quot;
+      &quot;log1:NFLOG,base1:BASE,pcap1:PCAP&quot;
+    ];
+  };
+  log1 = {
+    group = 2;
+  };
+  pcap1 = {
+    file = &quot;/var/log/ulogd.pcap&quot;;
+    sync = 1;
+  };
+}
+</code></pre>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/logging/ulogd.nix"><code>nixos/modules/services/logging/ulogd.nix</code></a></p>
+<h2 id='opt-services.umami.createPostgresqlDatabase'><a href='options/services-u/#opt-services.umami.createPostgresqlDatabase'>
+<code>services.umami.createPostgresqlDatabase</code>
+</a></h2>
+<p>Whether to automatically create the database for Umami using PostgreSQL.
+Both the database name and username will be <code>umami</code>, and the connection is
+made through unix sockets using peer authentication.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>true</code></p>
+<p><em>Example:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/web-apps/umami.nix"><code>nixos/modules/services/web-apps/umami.nix</code></a></p>
+<h2 id='opt-services.umami.enable'><a href='options/services-u/#opt-services.umami.enable'>
+<code>services.umami.enable</code>
+</a></h2>
+<p>Whether to enable umami.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Example:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/web-apps/umami.nix"><code>nixos/modules/services/web-apps/umami.nix</code></a></p>
+<h2 id='opt-services.umami.package'><a href='options/services-u/#opt-services.umami.package'>
+<code>services.umami.package</code>
+</a></h2>
+<p>The umami package to use.</p>
+<p><em>Type:</em> package</p>
+<p><em>Default:</em> <code>pkgs.umami</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/web-apps/umami.nix"><code>nixos/modules/services/web-apps/umami.nix</code></a></p>
+<h2 id='opt-services.umami.settings'><a href='options/services-u/#opt-services.umami.settings'>
+<code>services.umami.settings</code>
+</a></h2>
+<p>Additional configuration (environment variables) for Umami, see
+<a href="https://umami.is/docs/environment-variables">https://umami.is/docs/environment-variables</a> for supported values.</p>
+<p><em>Type:</em> open submodule of attribute set of (boolean or signed integer or string)</p>
+<p><em>Default:</em> <code>{ }</code></p>
+<p><em>Example:</em></p>
+<pre><code class="language-nix">{
+  APP_SECRET_FILE = &quot;/run/secrets/umamiAppSecret&quot;;
+  DISABLE_TELEMETRY = true;
+}
+</code></pre>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/web-apps/umami.nix"><code>nixos/modules/services/web-apps/umami.nix</code></a></p>
+<h2 id='opt-services.umami.settings.APP_SECRET_FILE'><a href='options/services-u/#opt-services.umami.settings.APP_SECRET_FILE'>
+<code>services.umami.settings.APP_SECRET_FILE</code>
+</a></h2>
+<p>A file containing a secure random string. This is used for signing user sessions.
+The contents of the file are read through systemd credentials, therefore the
+user running umami does not need permissions to read the file.
+If you wish to set this to a string instead (not recommended since it will be
+placed world-readable in the Nix store), you can use the APP_SECRET option.</p>
+<p><em>Type:</em> null or string</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Example:</em> <code>&quot;/run/secrets/umamiAppSecret&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/web-apps/umami.nix"><code>nixos/modules/services/web-apps/umami.nix</code></a></p>
+<h2 id='opt-services.umami.settings.BASE_PATH'><a href='options/services-u/#opt-services.umami.settings.BASE_PATH'>
+<code>services.umami.settings.BASE_PATH</code>
+</a></h2>
+<p>Allows you to host Umami under a subdirectory.
+You may need to update your reverse proxy settings to correctly handle the BASE_PATH prefix.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;&quot;</code></p>
+<p><em>Example:</em> <code>&quot;/analytics&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/web-apps/umami.nix"><code>nixos/modules/services/web-apps/umami.nix</code></a></p>
+<h2 id='opt-services.umami.settings.COLLECT_API_ENDPOINT'><a href='options/services-u/#opt-services.umami.settings.COLLECT_API_ENDPOINT'>
+<code>services.umami.settings.COLLECT_API_ENDPOINT</code>
+</a></h2>
+<p>Allows you to send metrics to a location different than the default <code>/api/send</code>.</p>
+<p><em>Type:</em> null or string</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Example:</em> <code>&quot;/api/alternate-send&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/web-apps/umami.nix"><code>nixos/modules/services/web-apps/umami.nix</code></a></p>
+<h2 id='opt-services.umami.settings.DATABASE_URL'><a href='options/services-u/#opt-services.umami.settings.DATABASE_URL'>
+<code>services.umami.settings.DATABASE_URL</code>
+</a></h2>
+<p>Connection string for the database. Must start with <code>postgresql://</code> or <code>postgres://</code>.</p>
+<p><em>Type:</em> null or string</p>
+<p><em>Default:</em> <code>if config.services.umami.createPostgresqlDatabase then &quot;postgresql://umami@localhost/umami?host=/run/postgresql&quot; else null</code></p>
+<p><em>Example:</em> <code>&quot;postgresql://root:root@localhost/umami&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/web-apps/umami.nix"><code>nixos/modules/services/web-apps/umami.nix</code></a></p>
+<h2 id='opt-services.umami.settings.DATABASE_URL_FILE'><a href='options/services-u/#opt-services.umami.settings.DATABASE_URL_FILE'>
+<code>services.umami.settings.DATABASE_URL_FILE</code>
+</a></h2>
+<p>A file containing a connection string for the database. The connection string
+must start with <code>postgresql://</code> or <code>postgres://</code>.
+The contents of the file are read through systemd credentials, therefore the
+user running umami does not need permissions to read the file.</p>
+<p><em>Type:</em> null or string</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Example:</em> <code>&quot;/run/secrets/umamiDatabaseUrl&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/web-apps/umami.nix"><code>nixos/modules/services/web-apps/umami.nix</code></a></p>
+<h2 id='opt-services.umami.settings.DISABLE_TELEMETRY'><a href='options/services-u/#opt-services.umami.settings.DISABLE_TELEMETRY'>
+<code>services.umami.settings.DISABLE_TELEMETRY</code>
+</a></h2>
+<p>Umami collects completely anonymous telemetry data in order help improve the application.
+You can choose to disable this if you don't want to participate.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Example:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/web-apps/umami.nix"><code>nixos/modules/services/web-apps/umami.nix</code></a></p>
+<h2 id='opt-services.umami.settings.DISABLE_UPDATES'><a href='options/services-u/#opt-services.umami.settings.DISABLE_UPDATES'>
+<code>services.umami.settings.DISABLE_UPDATES</code>
+</a></h2>
+<p>Disables the check for new versions of Umami.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>true</code></p>
+<p><em>Example:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/web-apps/umami.nix"><code>nixos/modules/services/web-apps/umami.nix</code></a></p>
+<h2 id='opt-services.umami.settings.HOSTNAME'><a href='options/services-u/#opt-services.umami.settings.HOSTNAME'>
+<code>services.umami.settings.HOSTNAME</code>
+</a></h2>
+<p>The address to listen on.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;127.0.0.1&quot;</code></p>
+<p><em>Example:</em> <code>&quot;0.0.0.0&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/web-apps/umami.nix"><code>nixos/modules/services/web-apps/umami.nix</code></a></p>
+<h2 id='opt-services.umami.settings.PORT'><a href='options/services-u/#opt-services.umami.settings.PORT'>
+<code>services.umami.settings.PORT</code>
+</a></h2>
+<p>The port to listen on.</p>
+<p><em>Type:</em> 16 bit unsigned integer; between 0 and 65535 (both inclusive)</p>
+<p><em>Default:</em> <code>3000</code></p>
+<p><em>Example:</em> <code>3010</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/web-apps/umami.nix"><code>nixos/modules/services/web-apps/umami.nix</code></a></p>
+<h2 id='opt-services.umami.settings.TRACKER_SCRIPT_NAME'><a href='options/services-u/#opt-services.umami.settings.TRACKER_SCRIPT_NAME'>
+<code>services.umami.settings.TRACKER_SCRIPT_NAME</code>
+</a></h2>
+<p>Allows you to assign a custom name to the tracker script different from the default <code>script.js</code>.</p>
+<p><em>Type:</em> list of string</p>
+<p><em>Default:</em> <code>[ ]</code></p>
+<p><em>Example:</em></p>
+<pre><code class="language-nix">[
+  &quot;tracker.js&quot;
+]
+</code></pre>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/web-apps/umami.nix"><code>nixos/modules/services/web-apps/umami.nix</code></a></p>
+<h2 id='opt-services.umami.settings.TWO_FACTOR_ENCRYPTION_KEY_FILE'><a href='options/services-u/#opt-services.umami.settings.TWO_FACTOR_ENCRYPTION_KEY_FILE'>
+<code>services.umami.settings.TWO_FACTOR_ENCRYPTION_KEY_FILE</code>
+</a></h2>
+<p>A file containing a secure random string (best not the same as the app secret).
+This is used for encrypting two-factor authentication keys.
+The contents of the file are read through systemd credentials, therefore the
+user running umami does not need permissions to read the file.
+If you wish to set this to a string instead (not recommended since it will be
+placed world-readable in the Nix store), you can use the TWO_FACTOR_ENCRYPTION_KEY option.</p>
+<p><em>Type:</em> null or string</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Example:</em> <code>&quot;/run/secrets/umami2faSecret&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/web-apps/umami.nix"><code>nixos/modules/services/web-apps/umami.nix</code></a></p>
+<h2 id='opt-services.umurmur.configFile'><a href='options/services-u/#opt-services.umurmur.configFile'>
+<code>services.umurmur.configFile</code>
+</a></h2>
+<p>Configuration file, default is generated from config.service.umurmur.settings</p>
+<p><em>Type:</em> absolute path</p>
+<p><em>Default:</em> <code>&quot;Configuration file, default is generated from config.service.umurmur.settings&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/umurmur.nix"><code>nixos/modules/services/networking/umurmur.nix</code></a></p>
+<h2 id='opt-services.umurmur.enable'><a href='options/services-u/#opt-services.umurmur.enable'>
+<code>services.umurmur.enable</code>
+</a></h2>
+<p>Whether to enable uMurmur Mumble server.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Example:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/umurmur.nix"><code>nixos/modules/services/networking/umurmur.nix</code></a></p>
+<h2 id='opt-services.umurmur.openFirewall'><a href='options/services-u/#opt-services.umurmur.openFirewall'>
+<code>services.umurmur.openFirewall</code>
+</a></h2>
+<p>Open ports in the firewall for the uMurmur Mumble server.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/umurmur.nix"><code>nixos/modules/services/networking/umurmur.nix</code></a></p>
+<h2 id='opt-services.umurmur.package'><a href='options/services-u/#opt-services.umurmur.package'>
+<code>services.umurmur.package</code>
+</a></h2>
+<p>The umurmur package to use.</p>
+<p><em>Type:</em> package</p>
+<p><em>Default:</em> <code>pkgs.umurmur</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/umurmur.nix"><code>nixos/modules/services/networking/umurmur.nix</code></a></p>
+<h2 id='opt-services.umurmur.settings'><a href='options/services-u/#opt-services.umurmur.settings'>
+<code>services.umurmur.settings</code>
+</a></h2>
+<p>Settings of uMurmur. For reference see <a href="https://github.com/umurmur/umurmur/blob/master/umurmur.conf.example">https://github.com/umurmur/umurmur/blob/master/umurmur.conf.example</a></p>
+<p><em>Type:</em> open submodule of uMurmur config value</p>
+<p><em>Default:</em> <code>{ }</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/umurmur.nix"><code>nixos/modules/services/networking/umurmur.nix</code></a></p>
+<h2 id='opt-services.umurmur.settings.bindaddr'><a href='options/services-u/#opt-services.umurmur.settings.bindaddr'>
+<code>services.umurmur.settings.bindaddr</code>
+</a></h2>
+<p>IPv4 address to bind to. Defaults binding on all addresses.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;0.0.0.0&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/umurmur.nix"><code>nixos/modules/services/networking/umurmur.nix</code></a></p>
+<h2 id='opt-services.umurmur.settings.bindaddr6'><a href='options/services-u/#opt-services.umurmur.settings.bindaddr6'>
+<code>services.umurmur.settings.bindaddr6</code>
+</a></h2>
+<p>IPv6 address to bind to. Defaults binding on all addresses.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;::&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/umurmur.nix"><code>nixos/modules/services/networking/umurmur.nix</code></a></p>
+<h2 id='opt-services.umurmur.settings.bindport'><a href='options/services-u/#opt-services.umurmur.settings.bindport'>
+<code>services.umurmur.settings.bindport</code>
+</a></h2>
+<p>Port to bind to (UDP and TCP).</p>
+<p><em>Type:</em> 16 bit unsigned integer; between 0 and 65535 (both inclusive)</p>
+<p><em>Default:</em> <code>64739</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/umurmur.nix"><code>nixos/modules/services/networking/umurmur.nix</code></a></p>
+<h2 id='opt-services.umurmur.settings.ca_path'><a href='options/services-u/#opt-services.umurmur.settings.ca_path'>
+<code>services.umurmur.settings.ca_path</code>
+</a></h2>
+<p>Path to your SSL CA certificate.</p>
+<p><em>Type:</em> null or string</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/umurmur.nix"><code>nixos/modules/services/networking/umurmur.nix</code></a></p>
+<h2 id='opt-services.umurmur.settings.certificate'><a href='options/services-u/#opt-services.umurmur.settings.certificate'>
+<code>services.umurmur.settings.certificate</code>
+</a></h2>
+<p>Path to your SSL certificate. Generates self-signed automatically if not exists.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;/var/lib/private/umurmur/cert.crt&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/umurmur.nix"><code>nixos/modules/services/networking/umurmur.nix</code></a></p>
+<h2 id='opt-services.umurmur.settings.channel_links'><a href='options/services-u/#opt-services.umurmur.settings.channel_links'>
+<code>services.umurmur.settings.channel_links</code>
+</a></h2>
+<p>Channel tree definitions.</p>
+<p><em>Type:</em> list of (attribute set)</p>
+<p><em>Default:</em> <code>[ ]</code></p>
+<p><em>Example:</em></p>
+<pre><code class="language-nix">[
+  {
+    destination = &quot;Red team&quot;;
+    source = &quot;Lobby&quot;;
+  }
+]
+</code></pre>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/umurmur.nix"><code>nixos/modules/services/networking/umurmur.nix</code></a></p>
+<h2 id='opt-services.umurmur.settings.channels'><a href='options/services-u/#opt-services.umurmur.settings.channels'>
+<code>services.umurmur.settings.channels</code>
+</a></h2>
+<p>Channel tree definitions.</p>
+<p><em>Type:</em> list of (attribute set)</p>
+<p><em>Default:</em></p>
+<pre><code class="language-nix">[
+  {
+    description = &quot;Root channel.&quot;;
+    name = &quot;root&quot;;
+    noenter = false;
+    parent = &quot;&quot;;
+  }
+]
+</code></pre>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/umurmur.nix"><code>nixos/modules/services/networking/umurmur.nix</code></a></p>
+<h2 id='opt-services.umurmur.settings.default_channel'><a href='options/services-u/#opt-services.umurmur.settings.default_channel'>
+<code>services.umurmur.settings.default_channel</code>
+</a></h2>
+<p>The channel in which users will appear in when connecting.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;root&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/umurmur.nix"><code>nixos/modules/services/networking/umurmur.nix</code></a></p>
+<h2 id='opt-services.umurmur.settings.max_bandwidth'><a href='options/services-u/#opt-services.umurmur.settings.max_bandwidth'>
+<code>services.umurmur.settings.max_bandwidth</code>
+</a></h2>
+<p>Maximum bandwidth (in bits per second) that clients may send
+speech at.</p>
+<p><em>Type:</em> signed integer</p>
+<p><em>Default:</em> <code>48000</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/umurmur.nix"><code>nixos/modules/services/networking/umurmur.nix</code></a></p>
+<h2 id='opt-services.umurmur.settings.max_users'><a href='options/services-u/#opt-services.umurmur.settings.max_users'>
+<code>services.umurmur.settings.max_users</code>
+</a></h2>
+<p>Maximum number of concurrent clients allowed.</p>
+<p><em>Type:</em> signed integer</p>
+<p><em>Default:</em> <code>10</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/umurmur.nix"><code>nixos/modules/services/networking/umurmur.nix</code></a></p>
+<h2 id='opt-services.umurmur.settings.password'><a href='options/services-u/#opt-services.umurmur.settings.password'>
+<code>services.umurmur.settings.password</code>
+</a></h2>
+<p>Required password to join server, if specified.</p>
+<p><em>Type:</em> null or string</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/umurmur.nix"><code>nixos/modules/services/networking/umurmur.nix</code></a></p>
+<h2 id='opt-services.umurmur.settings.private_key'><a href='options/services-u/#opt-services.umurmur.settings.private_key'>
+<code>services.umurmur.settings.private_key</code>
+</a></h2>
+<p>Path to your SSL key. Generates self-signed automatically if not exists.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;/var/lib/private/umurmur/key.key&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/umurmur.nix"><code>nixos/modules/services/networking/umurmur.nix</code></a></p>
+<h2 id='opt-services.umurmur.settings.welcometext'><a href='options/services-u/#opt-services.umurmur.settings.welcometext'>
+<code>services.umurmur.settings.welcometext</code>
+</a></h2>
+<p>Welcome message for connected clients.</p>
+<p><em>Type:</em> null or string</p>
+<p><em>Default:</em> <code>&quot;Welcome to uMurmur!&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/umurmur.nix"><code>nixos/modules/services/networking/umurmur.nix</code></a></p>
+<h2 id='opt-services.unbound.checkconf'><a href='options/services-u/#opt-services.unbound.checkconf'>
+<code>services.unbound.checkconf</code>
+</a></h2>
+<p>Whether to check the resulting config file with unbound checkconf for syntax errors.</p>
+<p>If settings.include is used, this options is disabled, as the import can likely not be accessed at build time.
+If settings.remote-control is used, this option is disabled, too as the control-key-file, server-cert-file and server-key-file cannot be accessed at build time.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>&quot;!services.unbound.settings ? include &amp;&amp; !services.unbound.settings ? remote-control&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/unbound.nix"><code>nixos/modules/services/networking/unbound.nix</code></a></p>
+<h2 id='opt-services.unbound.enable'><a href='options/services-u/#opt-services.unbound.enable'>
+<code>services.unbound.enable</code>
+</a></h2>
+<p>Whether to enable Unbound domain name server.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Example:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/unbound.nix"><code>nixos/modules/services/networking/unbound.nix</code></a></p>
+<h2 id='opt-services.unbound.enableRootTrustAnchor'><a href='options/services-u/#opt-services.unbound.enableRootTrustAnchor'>
+<code>services.unbound.enableRootTrustAnchor</code>
+</a></h2>
+<p>Use and update root trust anchor for DNSSEC validation.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/unbound.nix"><code>nixos/modules/services/networking/unbound.nix</code></a></p>
+<h2 id='opt-services.unbound.group'><a href='options/services-u/#opt-services.unbound.group'>
+<code>services.unbound.group</code>
+</a></h2>
+<p>Group under which unbound runs.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;unbound&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/unbound.nix"><code>nixos/modules/services/networking/unbound.nix</code></a></p>
+<h2 id='opt-services.unbound.localControlSocketPath'><a href='options/services-u/#opt-services.unbound.localControlSocketPath'>
+<code>services.unbound.localControlSocketPath</code>
+</a></h2>
+<p>When not set to <code>null</code> this option defines the path
+at which the unbound remote control socket should be created at. The
+socket will be owned by the unbound user (<code>unbound</code>)
+and group will be <code>nogroup</code>.</p>
+<p>Users that should be permitted to access the socket must be in the
+<code>config.services.unbound.group</code> group.</p>
+<p>If this option is <code>null</code> remote control will not be
+enabled. Unbounds default values apply.</p>
+<p><em>Type:</em> null or string</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Example:</em> <code>&quot;/run/unbound/unbound.ctl&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/unbound.nix"><code>nixos/modules/services/networking/unbound.nix</code></a></p>
+<h2 id='opt-services.unbound.package'><a href='options/services-u/#opt-services.unbound.package'>
+<code>services.unbound.package</code>
+</a></h2>
+<p>The unbound-with-systemd package to use.</p>
+<p><em>Type:</em> package</p>
+<p><em>Default:</em> <code>pkgs.unbound-with-systemd</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/unbound.nix"><code>nixos/modules/services/networking/unbound.nix</code></a></p>
+<h2 id='opt-services.unbound.resolveLocalQueries'><a href='options/services-u/#opt-services.unbound.resolveLocalQueries'>
+<code>services.unbound.resolveLocalQueries</code>
+</a></h2>
+<p>Whether unbound should resolve local queries (i.e. add 127.0.0.1 to
+/etc/resolv.conf and set name servers to localhost respectively).</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/unbound.nix"><code>nixos/modules/services/networking/unbound.nix</code></a></p>
+<h2 id='opt-services.unbound.settings'><a href='options/services-u/#opt-services.unbound.settings'>
+<code>services.unbound.settings</code>
+</a></h2>
+<p>Declarative Unbound configuration
+See the <code>unbound.conf(5)</code> manpage for a list of
+available options.</p>
+<p><em>Type:</em> open submodule of unbound.conf configuration type. The format consist of an attribute
+set of settings. Each settings can be either one value, a list of
+values or an attribute set. The allowed values are integers,
+strings, booleans or floats.</p>
+<p><em>Default:</em> <code>{ }</code></p>
+<p><em>Example:</em></p>
+<pre><code class="language-nix">{
+  server = {
+    interface = [ &quot;127.0.0.1&quot; ];
+  };
+  forward-zone = [
+    {
+      name = &quot;.&quot;;
+      forward-addr = &quot;1.1.1.1@853#cloudflare-dns.com&quot;;
+    }
+    {
+      name = &quot;example.org.&quot;;
+      forward-addr = [
+        &quot;1.1.1.1@853#cloudflare-dns.com&quot;
+        &quot;1.0.0.1@853#cloudflare-dns.com&quot;
+      ];
+    }
+  ];
+  remote-control.control-enable = true;
+};
+</code></pre>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/unbound.nix"><code>nixos/modules/services/networking/unbound.nix</code></a></p>
+<h2 id='opt-services.unbound.stateDir'><a href='options/services-u/#opt-services.unbound.stateDir'>
+<code>services.unbound.stateDir</code>
+</a></h2>
+<p>Directory holding all state for unbound to run.</p>
+<p><em>Type:</em> absolute path</p>
+<p><em>Default:</em> <code>&quot;/var/lib/unbound&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/unbound.nix"><code>nixos/modules/services/networking/unbound.nix</code></a></p>
+<h2 id='opt-services.unbound.user'><a href='options/services-u/#opt-services.unbound.user'>
+<code>services.unbound.user</code>
+</a></h2>
+<p>User account under which unbound runs.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;unbound&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/unbound.nix"><code>nixos/modules/services/networking/unbound.nix</code></a></p>
+<h2 id='opt-services.unclutter-xfixes.enable'><a href='options/services-u/#opt-services.unclutter-xfixes.enable'>
+<code>services.unclutter-xfixes.enable</code>
+</a></h2>
+<p>Enable unclutter-xfixes to hide your mouse cursor when inactive.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/x11/unclutter-xfixes.nix"><code>nixos/modules/services/x11/unclutter-xfixes.nix</code></a></p>
+<h2 id='opt-services.unclutter-xfixes.extraOptions'><a href='options/services-u/#opt-services.unclutter-xfixes.extraOptions'>
+<code>services.unclutter-xfixes.extraOptions</code>
+</a></h2>
+<p>More arguments to pass to the unclutter-xfixes command.</p>
+<p><em>Type:</em> list of string</p>
+<p><em>Default:</em> <code>[ ]</code></p>
+<p><em>Example:</em></p>
+<pre><code class="language-nix">[
+  &quot;exclude-root&quot;
+  &quot;ignore-scrolling&quot;
+  &quot;fork&quot;
+]
+</code></pre>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/x11/unclutter-xfixes.nix"><code>nixos/modules/services/x11/unclutter-xfixes.nix</code></a></p>
+<h2 id='opt-services.unclutter-xfixes.package'><a href='options/services-u/#opt-services.unclutter-xfixes.package'>
+<code>services.unclutter-xfixes.package</code>
+</a></h2>
+<p>The unclutter-xfixes package to use.</p>
+<p><em>Type:</em> package</p>
+<p><em>Default:</em> <code>pkgs.unclutter-xfixes</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/x11/unclutter-xfixes.nix"><code>nixos/modules/services/x11/unclutter-xfixes.nix</code></a></p>
+<h2 id='opt-services.unclutter-xfixes.threshold'><a href='options/services-u/#opt-services.unclutter-xfixes.threshold'>
+<code>services.unclutter-xfixes.threshold</code>
+</a></h2>
+<p>Minimum number of pixels considered cursor movement.</p>
+<p><em>Type:</em> signed integer</p>
+<p><em>Default:</em> <code>1</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/x11/unclutter-xfixes.nix"><code>nixos/modules/services/x11/unclutter-xfixes.nix</code></a></p>
+<h2 id='opt-services.unclutter-xfixes.timeout'><a href='options/services-u/#opt-services.unclutter-xfixes.timeout'>
+<code>services.unclutter-xfixes.timeout</code>
+</a></h2>
+<p>Number of seconds before the cursor is marked inactive.</p>
+<p><em>Type:</em> signed integer</p>
+<p><em>Default:</em> <code>1</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/x11/unclutter-xfixes.nix"><code>nixos/modules/services/x11/unclutter-xfixes.nix</code></a></p>
+<h2 id='opt-services.unclutter.enable'><a href='options/services-u/#opt-services.unclutter.enable'>
+<code>services.unclutter.enable</code>
+</a></h2>
+<p>Enable unclutter to hide your mouse cursor when inactive</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/x11/unclutter.nix"><code>nixos/modules/services/x11/unclutter.nix</code></a></p>
+<h2 id='opt-services.unclutter.excluded'><a href='options/services-u/#opt-services.unclutter.excluded'>
+<code>services.unclutter.excluded</code>
+</a></h2>
+<p>Names of windows where unclutter should not apply</p>
+<p><em>Type:</em> list of string</p>
+<p><em>Default:</em> <code>[ ]</code></p>
+<p><em>Example:</em></p>
+<pre><code class="language-nix">[
+  &quot;&quot;
+]
+</code></pre>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/x11/unclutter.nix"><code>nixos/modules/services/x11/unclutter.nix</code></a></p>
+<h2 id='opt-services.unclutter.extraOptions'><a href='options/services-u/#opt-services.unclutter.extraOptions'>
+<code>services.unclutter.extraOptions</code>
+</a></h2>
+<p>More arguments to pass to the unclutter command</p>
+<p><em>Type:</em> list of string</p>
+<p><em>Default:</em> <code>[ ]</code></p>
+<p><em>Example:</em></p>
+<pre><code class="language-nix">[
+  &quot;noevent&quot;
+  &quot;grab&quot;
+]
+</code></pre>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/x11/unclutter.nix"><code>nixos/modules/services/x11/unclutter.nix</code></a></p>
+<h2 id='opt-services.unclutter.keystroke'><a href='options/services-u/#opt-services.unclutter.keystroke'>
+<code>services.unclutter.keystroke</code>
+</a></h2>
+<p>Wait for a keystroke before hiding the cursor</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/x11/unclutter.nix"><code>nixos/modules/services/x11/unclutter.nix</code></a></p>
+<h2 id='opt-services.unclutter.package'><a href='options/services-u/#opt-services.unclutter.package'>
+<code>services.unclutter.package</code>
+</a></h2>
+<p>The unclutter package to use.</p>
+<p><em>Type:</em> package</p>
+<p><em>Default:</em> <code>pkgs.unclutter</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/x11/unclutter.nix"><code>nixos/modules/services/x11/unclutter.nix</code></a></p>
+<h2 id='opt-services.unclutter.threshold'><a href='options/services-u/#opt-services.unclutter.threshold'>
+<code>services.unclutter.threshold</code>
+</a></h2>
+<p>Minimum number of pixels considered cursor movement</p>
+<p><em>Type:</em> signed integer</p>
+<p><em>Default:</em> <code>1</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/x11/unclutter.nix"><code>nixos/modules/services/x11/unclutter.nix</code></a></p>
+<h2 id='opt-services.unclutter.timeout'><a href='options/services-u/#opt-services.unclutter.timeout'>
+<code>services.unclutter.timeout</code>
+</a></h2>
+<p>Number of seconds before the cursor is marked inactive</p>
+<p><em>Type:</em> signed integer</p>
+<p><em>Default:</em> <code>1</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/x11/unclutter.nix"><code>nixos/modules/services/x11/unclutter.nix</code></a></p>
+<h2 id='opt-services.undervolt.analogioOffset'><a href='options/services-u/#opt-services.undervolt.analogioOffset'>
+<code>services.undervolt.analogioOffset</code>
+</a></h2>
+<p>The amount of voltage in mV to offset analogio by.</p>
+<p><em>Type:</em> null or signed integer</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/hardware/undervolt.nix"><code>nixos/modules/services/hardware/undervolt.nix</code></a></p>
+<h2 id='opt-services.undervolt.coreOffset'><a href='options/services-u/#opt-services.undervolt.coreOffset'>
+<code>services.undervolt.coreOffset</code>
+</a></h2>
+<p>The amount of voltage in mV to offset the CPU cores by.</p>
+<p><em>Type:</em> null or signed integer</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/hardware/undervolt.nix"><code>nixos/modules/services/hardware/undervolt.nix</code></a></p>
+<h2 id='opt-services.undervolt.enable'><a href='options/services-u/#opt-services.undervolt.enable'>
+<code>services.undervolt.enable</code>
+</a></h2>
+<p>Whether to enable Undervolting service for Intel CPUs.</p>
+<p>Warning: This service is not endorsed by Intel and may permanently damage your hardware. Use at your own risk
+.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Example:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/hardware/undervolt.nix"><code>nixos/modules/services/hardware/undervolt.nix</code></a></p>
+<h2 id='opt-services.undervolt.gpuOffset'><a href='options/services-u/#opt-services.undervolt.gpuOffset'>
+<code>services.undervolt.gpuOffset</code>
+</a></h2>
+<p>The amount of voltage in mV to offset the GPU by.</p>
+<p><em>Type:</em> null or signed integer</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/hardware/undervolt.nix"><code>nixos/modules/services/hardware/undervolt.nix</code></a></p>
+<h2 id='opt-services.undervolt.p1.limit'><a href='options/services-u/#opt-services.undervolt.p1.limit'>
+<code>services.undervolt.p1.limit</code>
+</a></h2>
+<p>The P1 Power Limit in Watts.
+Both limit and window must be set.</p>
+<p><em>Type:</em> null or signed integer</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/hardware/undervolt.nix"><code>nixos/modules/services/hardware/undervolt.nix</code></a></p>
+<h2 id='opt-services.undervolt.p1.window'><a href='options/services-u/#opt-services.undervolt.p1.window'>
+<code>services.undervolt.p1.window</code>
+</a></h2>
+<p>The P1 Time Window in seconds.
+Both limit and window must be set.</p>
+<p><em>Type:</em> null or floating point number or signed integer</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/hardware/undervolt.nix"><code>nixos/modules/services/hardware/undervolt.nix</code></a></p>
+<h2 id='opt-services.undervolt.p2.limit'><a href='options/services-u/#opt-services.undervolt.p2.limit'>
+<code>services.undervolt.p2.limit</code>
+</a></h2>
+<p>The P2 Power Limit in Watts.
+Both limit and window must be set.</p>
+<p><em>Type:</em> null or signed integer</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/hardware/undervolt.nix"><code>nixos/modules/services/hardware/undervolt.nix</code></a></p>
+<h2 id='opt-services.undervolt.p2.window'><a href='options/services-u/#opt-services.undervolt.p2.window'>
+<code>services.undervolt.p2.window</code>
+</a></h2>
+<p>The P2 Time Window in seconds.
+Both limit and window must be set.</p>
+<p><em>Type:</em> null or floating point number or signed integer</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/hardware/undervolt.nix"><code>nixos/modules/services/hardware/undervolt.nix</code></a></p>
+<h2 id='opt-services.undervolt.package'><a href='options/services-u/#opt-services.undervolt.package'>
+<code>services.undervolt.package</code>
+</a></h2>
+<p>The undervolt package to use.</p>
+<p><em>Type:</em> package</p>
+<p><em>Default:</em> <code>pkgs.undervolt</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/hardware/undervolt.nix"><code>nixos/modules/services/hardware/undervolt.nix</code></a></p>
+<h2 id='opt-services.undervolt.temp'><a href='options/services-u/#opt-services.undervolt.temp'>
+<code>services.undervolt.temp</code>
+</a></h2>
+<p>The temperature target in Celsius degrees.</p>
+<p><em>Type:</em> null or signed integer</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/hardware/undervolt.nix"><code>nixos/modules/services/hardware/undervolt.nix</code></a></p>
+<h2 id='opt-services.undervolt.tempAc'><a href='options/services-u/#opt-services.undervolt.tempAc'>
+<code>services.undervolt.tempAc</code>
+</a></h2>
+<p>The temperature target on AC power in Celsius degrees.</p>
+<p><em>Type:</em> null or signed integer</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/hardware/undervolt.nix"><code>nixos/modules/services/hardware/undervolt.nix</code></a></p>
+<h2 id='opt-services.undervolt.tempBat'><a href='options/services-u/#opt-services.undervolt.tempBat'>
+<code>services.undervolt.tempBat</code>
+</a></h2>
+<p>The temperature target on battery power in Celsius degrees.</p>
+<p><em>Type:</em> null or signed integer</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/hardware/undervolt.nix"><code>nixos/modules/services/hardware/undervolt.nix</code></a></p>
+<h2 id='opt-services.undervolt.turbo'><a href='options/services-u/#opt-services.undervolt.turbo'>
+<code>services.undervolt.turbo</code>
+</a></h2>
+<p>Changes the Intel Turbo feature status (1 is disabled and 0 is enabled).</p>
+<p><em>Type:</em> null or signed integer</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/hardware/undervolt.nix"><code>nixos/modules/services/hardware/undervolt.nix</code></a></p>
+<h2 id='opt-services.undervolt.uncoreOffset'><a href='options/services-u/#opt-services.undervolt.uncoreOffset'>
+<code>services.undervolt.uncoreOffset</code>
+</a></h2>
+<p>The amount of voltage in mV to offset uncore by.</p>
+<p><em>Type:</em> null or signed integer</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/hardware/undervolt.nix"><code>nixos/modules/services/hardware/undervolt.nix</code></a></p>
+<h2 id='opt-services.undervolt.useTimer'><a href='options/services-u/#opt-services.undervolt.useTimer'>
+<code>services.undervolt.useTimer</code>
+</a></h2>
+<p>Whether to set a timer that applies the undervolt settings every 30s.
+This will cause spam in the journal but might be required for some
+hardware under specific conditions.
+Enable this if your undervolt settings don't hold.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/hardware/undervolt.nix"><code>nixos/modules/services/hardware/undervolt.nix</code></a></p>
+<h2 id='opt-services.undervolt.verbose'><a href='options/services-u/#opt-services.undervolt.verbose'>
+<code>services.undervolt.verbose</code>
+</a></h2>
+<p>Whether to enable verbose logging.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/hardware/undervolt.nix"><code>nixos/modules/services/hardware/undervolt.nix</code></a></p>
+<h2 id='opt-services.unifi.enable'><a href='options/services-u/#opt-services.unifi.enable'>
+<code>services.unifi.enable</code>
+</a></h2>
+<p>Whether to enable UniFi controller service.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Example:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/unifi.nix"><code>nixos/modules/services/networking/unifi.nix</code></a></p>
+<h2 id='opt-services.unifi.extraJvmOptions'><a href='options/services-u/#opt-services.unifi.extraJvmOptions'>
+<code>services.unifi.extraJvmOptions</code>
+</a></h2>
+<p>Set extra options to pass to the JVM.</p>
+<p><em>Type:</em> list of string</p>
+<p><em>Default:</em> <code>[ ]</code></p>
+<p><em>Example:</em> <code>[&quot;-Xlog:gc&quot;]</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/unifi.nix"><code>nixos/modules/services/networking/unifi.nix</code></a></p>
+<h2 id='opt-services.unifi.initialJavaHeapSize'><a href='options/services-u/#opt-services.unifi.initialJavaHeapSize'>
+<code>services.unifi.initialJavaHeapSize</code>
+</a></h2>
+<p>Set the initial heap size for the JVM in MB. If this option isn't set, the
+JVM will decide this value at runtime.</p>
+<p><em>Type:</em> null or signed integer</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Example:</em> <code>1024</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/unifi.nix"><code>nixos/modules/services/networking/unifi.nix</code></a></p>
+<h2 id='opt-services.unifi.jrePackage'><a href='options/services-u/#opt-services.unifi.jrePackage'>
+<code>services.unifi.jrePackage</code>
+</a></h2>
+<p>Which Java runtime to use.</p>
+<p><em>Type:</em> package</p>
+<p><em>Default:</em> <code>unifiPackage.passthru.jrePackage</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/unifi.nix"><code>nixos/modules/services/networking/unifi.nix</code></a></p>
+<h2 id='opt-services.unifi.maximumJavaHeapSize'><a href='options/services-u/#opt-services.unifi.maximumJavaHeapSize'>
+<code>services.unifi.maximumJavaHeapSize</code>
+</a></h2>
+<p>Set the maximum heap size for the JVM in MB. If this option isn't set, the
+JVM will decide this value at runtime.</p>
+<p><em>Type:</em> null or signed integer</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Example:</em> <code>4096</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/unifi.nix"><code>nixos/modules/services/networking/unifi.nix</code></a></p>
+<h2 id='opt-services.unifi.mongodbPackage'><a href='options/services-u/#opt-services.unifi.mongodbPackage'>
+<code>services.unifi.mongodbPackage</code>
+</a></h2>
+<p>The mongodb package to use.</p>
+<p><em>Type:</em> package</p>
+<p><em>Default:</em> <code>pkgs.mongodb-7_0</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/unifi.nix"><code>nixos/modules/services/networking/unifi.nix</code></a></p>
+<h2 id='opt-services.unifi.openFirewall'><a href='options/services-u/#opt-services.unifi.openFirewall'>
+<code>services.unifi.openFirewall</code>
+</a></h2>
+<p>Whether or not to open the minimum required ports on the firewall.</p>
+<p>This is necessary to allow firmware upgrades and device discovery to
+work. For remote login, you should additionally open (or forward) port
+8443.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/unifi.nix"><code>nixos/modules/services/networking/unifi.nix</code></a></p>
+<h2 id='opt-services.unifi.unifiPackage'><a href='options/services-u/#opt-services.unifi.unifiPackage'>
+<code>services.unifi.unifiPackage</code>
+</a></h2>
+<p>The unifi package to use.</p>
+<p><em>Type:</em> package</p>
+<p><em>Default:</em> <code>pkgs.unifi</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/unifi.nix"><code>nixos/modules/services/networking/unifi.nix</code></a></p>
+<h2 id='opt-services.unpackerr.enable'><a href='options/services-u/#opt-services.unpackerr.enable'>
+<code>services.unpackerr.enable</code>
+</a></h2>
+<p>Whether to enable Unpackerr.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Example:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/misc/unpackerr.nix"><code>nixos/modules/services/misc/unpackerr.nix</code></a></p>
+<h2 id='opt-services.unpackerr.group'><a href='options/services-u/#opt-services.unpackerr.group'>
+<code>services.unpackerr.group</code>
+</a></h2>
+<p>Group under which Unpackerr runs.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;unpackerr&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/misc/unpackerr.nix"><code>nixos/modules/services/misc/unpackerr.nix</code></a></p>
+<h2 id='opt-services.unpackerr.package'><a href='options/services-u/#opt-services.unpackerr.package'>
+<code>services.unpackerr.package</code>
+</a></h2>
+<p>The unpackerr package to use.</p>
+<p><em>Type:</em> package</p>
+<p><em>Default:</em> <code>pkgs.unpackerr</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/misc/unpackerr.nix"><code>nixos/modules/services/misc/unpackerr.nix</code></a></p>
+<h2 id='opt-services.unpackerr.settings'><a href='options/services-u/#opt-services.unpackerr.settings'>
+<code>services.unpackerr.settings</code>
+</a></h2>
+<p>Unpackerr TOML configuration as a Nix attribute set.
+Refer to <a href="https://unpackerr.zip/docs/install/configuration">Unpackerr docs</a> for details.
+For setting secrets refer to this <a href="https://unpackerr.zip/docs/install/configuration/#secrets-and-passwords">section</a>.</p>
+<p><em>Type:</em> TOML value</p>
+<p><em>Default:</em> <code>{ }</code></p>
+<p><em>Example:</em></p>
+<pre><code class="language-nix">{
+  radarr = [
+    {
+      api_key = &quot;0123456789abcdef0123456789abcdef&quot;;
+      url = &quot;http://127.0.0.1:8989&quot;;
+    }
+  ];
+  sonarr = [
+    {
+      api_key = &quot;0123456789abcdef0123456789abcdef&quot;;
+      url = &quot;http://127.0.0.1:7878&quot;;
+    }
+  ];
+}
+</code></pre>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/misc/unpackerr.nix"><code>nixos/modules/services/misc/unpackerr.nix</code></a></p>
+<h2 id='opt-services.unpackerr.user'><a href='options/services-u/#opt-services.unpackerr.user'>
+<code>services.unpackerr.user</code>
+</a></h2>
+<p>User account under which Unpackerr runs.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;unpackerr&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/misc/unpackerr.nix"><code>nixos/modules/services/misc/unpackerr.nix</code></a></p>
+<h2 id='opt-services.unpoller.enable'><a href='options/services-u/#opt-services.unpoller.enable'>
+<code>services.unpoller.enable</code>
+</a></h2>
+<p>Whether to enable unpoller.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Example:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/unpoller.nix"><code>nixos/modules/services/monitoring/unpoller.nix</code></a></p>
+<h2 id='opt-services.unpoller.influxdb.db'><a href='options/services-u/#opt-services.unpoller.influxdb.db'>
+<code>services.unpoller.influxdb.db</code>
+</a></h2>
+<p>Database name. Database should exist.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;unifi&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/unpoller.nix"><code>nixos/modules/services/monitoring/unpoller.nix</code></a></p>
+<h2 id='opt-services.unpoller.influxdb.disable'><a href='options/services-u/#opt-services.unpoller.influxdb.disable'>
+<code>services.unpoller.influxdb.disable</code>
+</a></h2>
+<p>Whether to disable the influxdb output plugin.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/unpoller.nix"><code>nixos/modules/services/monitoring/unpoller.nix</code></a></p>
+<h2 id='opt-services.unpoller.influxdb.interval'><a href='options/services-u/#opt-services.unpoller.influxdb.interval'>
+<code>services.unpoller.influxdb.interval</code>
+</a></h2>
+<p>Setting this lower than the Unifi controller's refresh
+interval may lead to zeroes in your database.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;30s&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/unpoller.nix"><code>nixos/modules/services/monitoring/unpoller.nix</code></a></p>
+<h2 id='opt-services.unpoller.influxdb.pass'><a href='options/services-u/#opt-services.unpoller.influxdb.pass'>
+<code>services.unpoller.influxdb.pass</code>
+</a></h2>
+<p>Path of a file containing the password for influxdb.
+This file needs to be readable by the unifi-poller user.</p>
+<p><em>Type:</em> absolute path</p>
+<p><em>Default:</em> <code>unpoller-influxdb-default.password</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/unpoller.nix"><code>nixos/modules/services/monitoring/unpoller.nix</code></a></p>
+<h2 id='opt-services.unpoller.influxdb.url'><a href='options/services-u/#opt-services.unpoller.influxdb.url'>
+<code>services.unpoller.influxdb.url</code>
+</a></h2>
+<p>URL of the influxdb host.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;http://127.0.0.1:8086&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/unpoller.nix"><code>nixos/modules/services/monitoring/unpoller.nix</code></a></p>
+<h2 id='opt-services.unpoller.influxdb.user'><a href='options/services-u/#opt-services.unpoller.influxdb.user'>
+<code>services.unpoller.influxdb.user</code>
+</a></h2>
+<p>Username for the influxdb.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;unifipoller&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/unpoller.nix"><code>nixos/modules/services/monitoring/unpoller.nix</code></a></p>
+<h2 id='opt-services.unpoller.influxdb.verify_ssl'><a href='options/services-u/#opt-services.unpoller.influxdb.verify_ssl'>
+<code>services.unpoller.influxdb.verify_ssl</code>
+</a></h2>
+<p>Verify the influxdb's certificate.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/unpoller.nix"><code>nixos/modules/services/monitoring/unpoller.nix</code></a></p>
+<h2 id='opt-services.unpoller.loki.interval'><a href='options/services-u/#opt-services.unpoller.loki.interval'>
+<code>services.unpoller.loki.interval</code>
+</a></h2>
+<p>How often the events are polled and pushed to Loki.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;2m&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/unpoller.nix"><code>nixos/modules/services/monitoring/unpoller.nix</code></a></p>
+<h2 id='opt-services.unpoller.loki.pass'><a href='options/services-u/#opt-services.unpoller.loki.pass'>
+<code>services.unpoller.loki.pass</code>
+</a></h2>
+<p>Path of a file containing the password for Loki.
+This file needs to be readable by the unifi-poller user.</p>
+<p><em>Type:</em> absolute path</p>
+<p><em>Default:</em> <code>&quot;unpoller-influxdb-default.password&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/unpoller.nix"><code>nixos/modules/services/monitoring/unpoller.nix</code></a></p>
+<h2 id='opt-services.unpoller.loki.tenant_id'><a href='options/services-u/#opt-services.unpoller.loki.tenant_id'>
+<code>services.unpoller.loki.tenant_id</code>
+</a></h2>
+<p>Tenant ID to use in Loki.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/unpoller.nix"><code>nixos/modules/services/monitoring/unpoller.nix</code></a></p>
+<h2 id='opt-services.unpoller.loki.timeout'><a href='options/services-u/#opt-services.unpoller.loki.timeout'>
+<code>services.unpoller.loki.timeout</code>
+</a></h2>
+<p>Should be increased in case of timeout errors.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;10s&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/unpoller.nix"><code>nixos/modules/services/monitoring/unpoller.nix</code></a></p>
+<h2 id='opt-services.unpoller.loki.url'><a href='options/services-u/#opt-services.unpoller.loki.url'>
+<code>services.unpoller.loki.url</code>
+</a></h2>
+<p>URL of the Loki host.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/unpoller.nix"><code>nixos/modules/services/monitoring/unpoller.nix</code></a></p>
+<h2 id='opt-services.unpoller.loki.user'><a href='options/services-u/#opt-services.unpoller.loki.user'>
+<code>services.unpoller.loki.user</code>
+</a></h2>
+<p>Username for Loki.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/unpoller.nix"><code>nixos/modules/services/monitoring/unpoller.nix</code></a></p>
+<h2 id='opt-services.unpoller.loki.verify_ssl'><a href='options/services-u/#opt-services.unpoller.loki.verify_ssl'>
+<code>services.unpoller.loki.verify_ssl</code>
+</a></h2>
+<p>Verify Loki's certificate.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/unpoller.nix"><code>nixos/modules/services/monitoring/unpoller.nix</code></a></p>
+<h2 id='opt-services.unpoller.poller.debug'><a href='options/services-u/#opt-services.unpoller.poller.debug'>
+<code>services.unpoller.poller.debug</code>
+</a></h2>
+<p>Turns on line numbers, microsecond logging, and a per-device log.
+This may be noisy if you have a lot of devices. It adds one line per device.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/unpoller.nix"><code>nixos/modules/services/monitoring/unpoller.nix</code></a></p>
+<h2 id='opt-services.unpoller.poller.plugins'><a href='options/services-u/#opt-services.unpoller.poller.plugins'>
+<code>services.unpoller.poller.plugins</code>
+</a></h2>
+<p>Load additional plugins.</p>
+<p><em>Type:</em> list of string</p>
+<p><em>Default:</em> <code>[ ]</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/unpoller.nix"><code>nixos/modules/services/monitoring/unpoller.nix</code></a></p>
+<h2 id='opt-services.unpoller.poller.quiet'><a href='options/services-u/#opt-services.unpoller.poller.quiet'>
+<code>services.unpoller.poller.quiet</code>
+</a></h2>
+<p>Turns off per-interval logs. Only startup and error logs will be emitted.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/unpoller.nix"><code>nixos/modules/services/monitoring/unpoller.nix</code></a></p>
+<h2 id='opt-services.unpoller.prometheus.disable'><a href='options/services-u/#opt-services.unpoller.prometheus.disable'>
+<code>services.unpoller.prometheus.disable</code>
+</a></h2>
+<p>Whether to disable the prometheus output plugin.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/unpoller.nix"><code>nixos/modules/services/monitoring/unpoller.nix</code></a></p>
+<h2 id='opt-services.unpoller.prometheus.http_listen'><a href='options/services-u/#opt-services.unpoller.prometheus.http_listen'>
+<code>services.unpoller.prometheus.http_listen</code>
+</a></h2>
+<p>Bind the prometheus exporter to this IP or hostname.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;[::]:9130&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/unpoller.nix"><code>nixos/modules/services/monitoring/unpoller.nix</code></a></p>
+<h2 id='opt-services.unpoller.prometheus.report_errors'><a href='options/services-u/#opt-services.unpoller.prometheus.report_errors'>
+<code>services.unpoller.prometheus.report_errors</code>
+</a></h2>
+<p>Whether to report errors.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/unpoller.nix"><code>nixos/modules/services/monitoring/unpoller.nix</code></a></p>
+<h2 id='opt-services.unpoller.unifi.controllers'><a href='options/services-u/#opt-services.unpoller.unifi.controllers'>
+<code>services.unpoller.unifi.controllers</code>
+</a></h2>
+<p>List of Unifi controllers to poll. Use defaults if empty.</p>
+<p><em>Type:</em> list of (submodule)</p>
+<p><em>Default:</em> <code>[ ]</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/unpoller.nix"><code>nixos/modules/services/monitoring/unpoller.nix</code></a></p>
+<h2 id='opt-services.unpoller.unifi.controllers._.hash_pii'><a href='options/services-u/#opt-services.unpoller.unifi.controllers._.hash_pii'>
+<code>services.unpoller.unifi.controllers.*.hash_pii</code>
+</a></h2>
+<p>Hash, with md5, client names and MAC addresses. This attempts
+to protect personally identifiable information.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/unpoller.nix"><code>nixos/modules/services/monitoring/unpoller.nix</code></a></p>
+<h2 id='opt-services.unpoller.unifi.controllers._.pass'><a href='options/services-u/#opt-services.unpoller.unifi.controllers._.pass'>
+<code>services.unpoller.unifi.controllers.*.pass</code>
+</a></h2>
+<p>Path of a file containing the password for the unifi service user.
+This file needs to be readable by the unifi-poller user.</p>
+<p><em>Type:</em> absolute path</p>
+<p><em>Default:</em> <code>unpoller-unifi-default.password</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/unpoller.nix"><code>nixos/modules/services/monitoring/unpoller.nix</code></a></p>
+<h2 id='opt-services.unpoller.unifi.controllers._.save_alarms'><a href='options/services-u/#opt-services.unpoller.unifi.controllers._.save_alarms'>
+<code>services.unpoller.unifi.controllers.*.save_alarms</code>
+</a></h2>
+<p>Collect and save data from UniFi alarms to influxdb and Loki.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/unpoller.nix"><code>nixos/modules/services/monitoring/unpoller.nix</code></a></p>
+<h2 id='opt-services.unpoller.unifi.controllers._.save_anomalies'><a href='options/services-u/#opt-services.unpoller.unifi.controllers._.save_anomalies'>
+<code>services.unpoller.unifi.controllers.*.save_anomalies</code>
+</a></h2>
+<p>Collect and save data from UniFi anomalies to influxdb and Loki.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/unpoller.nix"><code>nixos/modules/services/monitoring/unpoller.nix</code></a></p>
+<h2 id='opt-services.unpoller.unifi.controllers._.save_dpi'><a href='options/services-u/#opt-services.unpoller.unifi.controllers._.save_dpi'>
+<code>services.unpoller.unifi.controllers.*.save_dpi</code>
+</a></h2>
+<p>Collect and save data from deep packet inspection.
+Adds around 150 data points and impacts performance.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/unpoller.nix"><code>nixos/modules/services/monitoring/unpoller.nix</code></a></p>
+<h2 id='opt-services.unpoller.unifi.controllers._.save_events'><a href='options/services-u/#opt-services.unpoller.unifi.controllers._.save_events'>
+<code>services.unpoller.unifi.controllers.*.save_events</code>
+</a></h2>
+<p>Collect and save data from UniFi events to influxdb and Loki.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/unpoller.nix"><code>nixos/modules/services/monitoring/unpoller.nix</code></a></p>
+<h2 id='opt-services.unpoller.unifi.controllers._.save_ids'><a href='options/services-u/#opt-services.unpoller.unifi.controllers._.save_ids'>
+<code>services.unpoller.unifi.controllers.*.save_ids</code>
+</a></h2>
+<p>Collect and save data from the intrusion detection system to influxdb and Loki.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/unpoller.nix"><code>nixos/modules/services/monitoring/unpoller.nix</code></a></p>
+<h2 id='opt-services.unpoller.unifi.controllers._.save_sites'><a href='options/services-u/#opt-services.unpoller.unifi.controllers._.save_sites'>
+<code>services.unpoller.unifi.controllers.*.save_sites</code>
+</a></h2>
+<p>Collect and save site data.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/unpoller.nix"><code>nixos/modules/services/monitoring/unpoller.nix</code></a></p>
+<h2 id='opt-services.unpoller.unifi.controllers._.sites'><a href='options/services-u/#opt-services.unpoller.unifi.controllers._.sites'>
+<code>services.unpoller.unifi.controllers.*.sites</code>
+</a></h2>
+<p>List of site names for which statistics should be exported.
+Or the string &quot;default&quot; for the default site or the string &quot;all&quot; for all sites.</p>
+<p><em>Type:</em> one of &quot;default&quot;, &quot;all&quot; or list of string</p>
+<p><em>Default:</em> <code>&quot;all&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/unpoller.nix"><code>nixos/modules/services/monitoring/unpoller.nix</code></a></p>
+<h2 id='opt-services.unpoller.unifi.controllers._.url'><a href='options/services-u/#opt-services.unpoller.unifi.controllers._.url'>
+<code>services.unpoller.unifi.controllers.*.url</code>
+</a></h2>
+<p>URL of the Unifi controller.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;https://unifi:8443&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/unpoller.nix"><code>nixos/modules/services/monitoring/unpoller.nix</code></a></p>
+<h2 id='opt-services.unpoller.unifi.controllers._.user'><a href='options/services-u/#opt-services.unpoller.unifi.controllers._.user'>
+<code>services.unpoller.unifi.controllers.*.user</code>
+</a></h2>
+<p>Unifi service user name.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;unifi&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/unpoller.nix"><code>nixos/modules/services/monitoring/unpoller.nix</code></a></p>
+<h2 id='opt-services.unpoller.unifi.controllers._.verify_ssl'><a href='options/services-u/#opt-services.unpoller.unifi.controllers._.verify_ssl'>
+<code>services.unpoller.unifi.controllers.*.verify_ssl</code>
+</a></h2>
+<p>Verify the Unifi controller's certificate.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/unpoller.nix"><code>nixos/modules/services/monitoring/unpoller.nix</code></a></p>
+<h2 id='opt-services.unpoller.unifi.defaults.hash_pii'><a href='options/services-u/#opt-services.unpoller.unifi.defaults.hash_pii'>
+<code>services.unpoller.unifi.defaults.hash_pii</code>
+</a></h2>
+<p>Hash, with md5, client names and MAC addresses. This attempts
+to protect personally identifiable information.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/unpoller.nix"><code>nixos/modules/services/monitoring/unpoller.nix</code></a></p>
+<h2 id='opt-services.unpoller.unifi.defaults.pass'><a href='options/services-u/#opt-services.unpoller.unifi.defaults.pass'>
+<code>services.unpoller.unifi.defaults.pass</code>
+</a></h2>
+<p>Path of a file containing the password for the unifi service user.
+This file needs to be readable by the unifi-poller user.</p>
+<p><em>Type:</em> absolute path</p>
+<p><em>Default:</em> <code>unpoller-unifi-default.password</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/unpoller.nix"><code>nixos/modules/services/monitoring/unpoller.nix</code></a></p>
+<h2 id='opt-services.unpoller.unifi.defaults.save_alarms'><a href='options/services-u/#opt-services.unpoller.unifi.defaults.save_alarms'>
+<code>services.unpoller.unifi.defaults.save_alarms</code>
+</a></h2>
+<p>Collect and save data from UniFi alarms to influxdb and Loki.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/unpoller.nix"><code>nixos/modules/services/monitoring/unpoller.nix</code></a></p>
+<h2 id='opt-services.unpoller.unifi.defaults.save_anomalies'><a href='options/services-u/#opt-services.unpoller.unifi.defaults.save_anomalies'>
+<code>services.unpoller.unifi.defaults.save_anomalies</code>
+</a></h2>
+<p>Collect and save data from UniFi anomalies to influxdb and Loki.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/unpoller.nix"><code>nixos/modules/services/monitoring/unpoller.nix</code></a></p>
+<h2 id='opt-services.unpoller.unifi.defaults.save_dpi'><a href='options/services-u/#opt-services.unpoller.unifi.defaults.save_dpi'>
+<code>services.unpoller.unifi.defaults.save_dpi</code>
+</a></h2>
+<p>Collect and save data from deep packet inspection.
+Adds around 150 data points and impacts performance.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/unpoller.nix"><code>nixos/modules/services/monitoring/unpoller.nix</code></a></p>
+<h2 id='opt-services.unpoller.unifi.defaults.save_events'><a href='options/services-u/#opt-services.unpoller.unifi.defaults.save_events'>
+<code>services.unpoller.unifi.defaults.save_events</code>
+</a></h2>
+<p>Collect and save data from UniFi events to influxdb and Loki.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/unpoller.nix"><code>nixos/modules/services/monitoring/unpoller.nix</code></a></p>
+<h2 id='opt-services.unpoller.unifi.defaults.save_ids'><a href='options/services-u/#opt-services.unpoller.unifi.defaults.save_ids'>
+<code>services.unpoller.unifi.defaults.save_ids</code>
+</a></h2>
+<p>Collect and save data from the intrusion detection system to influxdb and Loki.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/unpoller.nix"><code>nixos/modules/services/monitoring/unpoller.nix</code></a></p>
+<h2 id='opt-services.unpoller.unifi.defaults.save_sites'><a href='options/services-u/#opt-services.unpoller.unifi.defaults.save_sites'>
+<code>services.unpoller.unifi.defaults.save_sites</code>
+</a></h2>
+<p>Collect and save site data.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/unpoller.nix"><code>nixos/modules/services/monitoring/unpoller.nix</code></a></p>
+<h2 id='opt-services.unpoller.unifi.defaults.sites'><a href='options/services-u/#opt-services.unpoller.unifi.defaults.sites'>
+<code>services.unpoller.unifi.defaults.sites</code>
+</a></h2>
+<p>List of site names for which statistics should be exported.
+Or the string &quot;default&quot; for the default site or the string &quot;all&quot; for all sites.</p>
+<p><em>Type:</em> one of &quot;default&quot;, &quot;all&quot; or list of string</p>
+<p><em>Default:</em> <code>&quot;all&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/unpoller.nix"><code>nixos/modules/services/monitoring/unpoller.nix</code></a></p>
+<h2 id='opt-services.unpoller.unifi.defaults.url'><a href='options/services-u/#opt-services.unpoller.unifi.defaults.url'>
+<code>services.unpoller.unifi.defaults.url</code>
+</a></h2>
+<p>URL of the Unifi controller.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;https://unifi:8443&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/unpoller.nix"><code>nixos/modules/services/monitoring/unpoller.nix</code></a></p>
+<h2 id='opt-services.unpoller.unifi.defaults.user'><a href='options/services-u/#opt-services.unpoller.unifi.defaults.user'>
+<code>services.unpoller.unifi.defaults.user</code>
+</a></h2>
+<p>Unifi service user name.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;unifi&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/unpoller.nix"><code>nixos/modules/services/monitoring/unpoller.nix</code></a></p>
+<h2 id='opt-services.unpoller.unifi.defaults.verify_ssl'><a href='options/services-u/#opt-services.unpoller.unifi.defaults.verify_ssl'>
+<code>services.unpoller.unifi.defaults.verify_ssl</code>
+</a></h2>
+<p>Verify the Unifi controller's certificate.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/unpoller.nix"><code>nixos/modules/services/monitoring/unpoller.nix</code></a></p>
+<h2 id='opt-services.unpoller.unifi.dynamic'><a href='options/services-u/#opt-services.unpoller.unifi.dynamic'>
+<code>services.unpoller.unifi.dynamic</code>
+</a></h2>
+<p>Let prometheus select which controller to poll when scraping.
+Use with default credentials. See unifi-poller wiki for more.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/unpoller.nix"><code>nixos/modules/services/monitoring/unpoller.nix</code></a></p>
+<h2 id='opt-services.upki.enable'><a href='options/services-u/#opt-services.upki.enable'>
+<code>services.upki.enable</code>
+</a></h2>
+<p>Whether to enable upki certificate infrastructure cache updates.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Example:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/programs/upki.nix"><code>nixos/modules/programs/upki.nix</code></a></p>
+<h2 id='opt-services.upki.interval'><a href='options/services-u/#opt-services.upki.interval'>
+<code>services.upki.interval</code>
+</a></h2>
+<p>How often to update the upki cache.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;2h&quot;</code></p>
+<p><em>Example:</em> <code>&quot;1h&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/programs/upki.nix"><code>nixos/modules/programs/upki.nix</code></a></p>
+<h2 id='opt-services.upki.package'><a href='options/services-u/#opt-services.upki.package'>
+<code>services.upki.package</code>
+</a></h2>
+<p>The upki package to use.</p>
+<p><em>Type:</em> package</p>
+<p><em>Default:</em> <code>pkgs.upki</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/programs/upki.nix"><code>nixos/modules/programs/upki.nix</code></a></p>
+<h2 id='opt-services.upki.settings'><a href='options/services-u/#opt-services.upki.settings'>
+<code>services.upki.settings</code>
+</a></h2>
+<p>Settings written to the upki config file.</p>
+<p><em>Type:</em> TOML value</p>
+<p><em>Default:</em> <code>{ }</code></p>
+<p><em>Example:</em></p>
+<pre><code class="language-nix">{
+  cache-dir = &quot;/var/cache/upki&quot;;
+  revocation.fetch-url = &quot;https://upki.rustls.dev/revocation/&quot;;
+}
+</code></pre>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/programs/upki.nix"><code>nixos/modules/programs/upki.nix</code></a></p>
+<h2 id='opt-services.upower.allowRiskyCriticalPowerAction'><a href='options/services-u/#opt-services.upower.allowRiskyCriticalPowerAction'>
+<code>services.upower.allowRiskyCriticalPowerAction</code>
+</a></h2>
+<p>Enable the risky critical power actions &quot;Suspend&quot; and &quot;Ignore&quot;.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/hardware/upower.nix"><code>nixos/modules/services/hardware/upower.nix</code></a></p>
+<h2 id='opt-services.upower.criticalPowerAction'><a href='options/services-u/#opt-services.upower.criticalPowerAction'>
+<code>services.upower.criticalPowerAction</code>
+</a></h2>
+<p>The action to take when <code>timeAction</code> or
+<code>percentageAction</code> has been reached for the batteries
+(UPS or laptop batteries) supplying the computer.</p>
+<p>When set to <code>Suspend</code> or <code>Ignore</code>,
+<a href="options/services-u/#opt-services.upower.allowRiskyCriticalPowerAction"><code>services.upower.allowRiskyCriticalPowerAction</code></a> must be set
+to <code>true</code>.</p>
+<p><em>Type:</em> one of &quot;PowerOff&quot;, &quot;Hibernate&quot;, &quot;HybridSleep&quot;, &quot;Suspend&quot;, &quot;Ignore&quot;</p>
+<p><em>Default:</em> <code>&quot;HybridSleep&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/hardware/upower.nix"><code>nixos/modules/services/hardware/upower.nix</code></a></p>
+<h2 id='opt-services.upower.enable'><a href='options/services-u/#opt-services.upower.enable'>
+<code>services.upower.enable</code>
+</a></h2>
+<p>Whether to enable Upower, a DBus service that provides power
+management support to applications.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/hardware/upower.nix"><code>nixos/modules/services/hardware/upower.nix</code></a></p>
+<h2 id='opt-services.upower.enableWattsUpPro'><a href='options/services-u/#opt-services.upower.enableWattsUpPro'>
+<code>services.upower.enableWattsUpPro</code>
+</a></h2>
+<p>Enable the Watts Up Pro device.</p>
+<p>The Watts Up Pro contains a generic FTDI USB device without a specific
+vendor and product ID. When we probe for WUP devices, we can cause
+the user to get a perplexing &quot;Device or resource busy&quot; error when
+attempting to use their non-WUP device.</p>
+<p>The generic FTDI device is known to also be used on:</p>
+<ul>
+<li>Sparkfun FT232 breakout board</li>
+<li>Parallax Propeller</li>
+</ul>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/hardware/upower.nix"><code>nixos/modules/services/hardware/upower.nix</code></a></p>
+<h2 id='opt-services.upower.ignoreLid'><a href='options/services-u/#opt-services.upower.ignoreLid'>
+<code>services.upower.ignoreLid</code>
+</a></h2>
+<p>Do we ignore the lid state</p>
+<p>Some laptops are broken. The lid state is either inverted, or stuck
+on or off. We can't do much to fix these problems, but this is a way
+for users to make the laptop panel vanish, a state that might be used
+by a couple of user-space daemons. On Linux systems, see also
+<code>logind.conf(5)</code>.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/hardware/upower.nix"><code>nixos/modules/services/hardware/upower.nix</code></a></p>
+<h2 id='opt-services.upower.noPollBatteries'><a href='options/services-u/#opt-services.upower.noPollBatteries'>
+<code>services.upower.noPollBatteries</code>
+</a></h2>
+<p>Don't poll the kernel for battery level changes.</p>
+<p>Some hardware will send us battery level changes through
+events, rather than us having to poll for it. This option
+allows disabling polling for hardware that sends out events.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/hardware/upower.nix"><code>nixos/modules/services/hardware/upower.nix</code></a></p>
+<h2 id='opt-services.upower.package'><a href='options/services-u/#opt-services.upower.package'>
+<code>services.upower.package</code>
+</a></h2>
+<p>The upower package to use.</p>
+<p><em>Type:</em> package</p>
+<p><em>Default:</em> <code>pkgs.upower</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/hardware/upower.nix"><code>nixos/modules/services/hardware/upower.nix</code></a></p>
+<h2 id='opt-services.upower.percentageAction'><a href='options/services-u/#opt-services.upower.percentageAction'>
+<code>services.upower.percentageAction</code>
+</a></h2>
+<p>When <code>usePercentageForPolicy</code> is
+<code>true</code>, the levels at which UPower will take action
+for the critical battery level.</p>
+<p>This will also be used for batteries which don't have time information
+such as that of peripherals.</p>
+<p>If any value (of <code>percentageLow</code>,
+<code>percentageCritical</code> and
+<code>percentageAction</code>) is invalid, or not in descending
+order, the defaults will be used.</p>
+<p><em>Type:</em> unsigned integer, meaning &gt;=0</p>
+<p><em>Default:</em> <code>2</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/hardware/upower.nix"><code>nixos/modules/services/hardware/upower.nix</code></a></p>
+<h2 id='opt-services.upower.percentageCritical'><a href='options/services-u/#opt-services.upower.percentageCritical'>
+<code>services.upower.percentageCritical</code>
+</a></h2>
+<p>When <code>usePercentageForPolicy</code> is
+<code>true</code>, the levels at which UPower will consider the
+battery critical.</p>
+<p>This will also be used for batteries which don't have time information
+such as that of peripherals.</p>
+<p>If any value (of <code>percentageLow</code>,
+<code>percentageCritical</code> and
+<code>percentageAction</code>) is invalid, or not in descending
+order, the defaults will be used.</p>
+<p><em>Type:</em> unsigned integer, meaning &gt;=0</p>
+<p><em>Default:</em> <code>5</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/hardware/upower.nix"><code>nixos/modules/services/hardware/upower.nix</code></a></p>
+<h2 id='opt-services.upower.percentageLow'><a href='options/services-u/#opt-services.upower.percentageLow'>
+<code>services.upower.percentageLow</code>
+</a></h2>
+<p>When <code>usePercentageForPolicy</code> is
+<code>true</code>, the levels at which UPower will consider the
+battery low.</p>
+<p>This will also be used for batteries which don't have time information
+such as that of peripherals.</p>
+<p>If any value (of <code>percentageLow</code>,
+<code>percentageCritical</code> and
+<code>percentageAction</code>) is invalid, or not in descending
+order, the defaults will be used.</p>
+<p><em>Type:</em> unsigned integer, meaning &gt;=0</p>
+<p><em>Default:</em> <code>20</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/hardware/upower.nix"><code>nixos/modules/services/hardware/upower.nix</code></a></p>
+<h2 id='opt-services.upower.timeAction'><a href='options/services-u/#opt-services.upower.timeAction'>
+<code>services.upower.timeAction</code>
+</a></h2>
+<p>When <code>usePercentageForPolicy</code> is
+<code>false</code>, the time remaining in seconds at which
+UPower will take action for the critical battery level.</p>
+<p>If any value (of <code>timeLow</code>,
+<code>timeCritical</code> and <code>timeAction</code>) is
+invalid, or not in descending order, the defaults will be used.</p>
+<p><em>Type:</em> unsigned integer, meaning &gt;=0</p>
+<p><em>Default:</em> <code>120</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/hardware/upower.nix"><code>nixos/modules/services/hardware/upower.nix</code></a></p>
+<h2 id='opt-services.upower.timeCritical'><a href='options/services-u/#opt-services.upower.timeCritical'>
+<code>services.upower.timeCritical</code>
+</a></h2>
+<p>When <code>usePercentageForPolicy</code> is
+<code>false</code>, the time remaining in seconds at which
+UPower will consider the battery critical.</p>
+<p>If any value (of <code>timeLow</code>,
+<code>timeCritical</code> and <code>timeAction</code>) is
+invalid, or not in descending order, the defaults will be used.</p>
+<p><em>Type:</em> unsigned integer, meaning &gt;=0</p>
+<p><em>Default:</em> <code>300</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/hardware/upower.nix"><code>nixos/modules/services/hardware/upower.nix</code></a></p>
+<h2 id='opt-services.upower.timeLow'><a href='options/services-u/#opt-services.upower.timeLow'>
+<code>services.upower.timeLow</code>
+</a></h2>
+<p>When <code>usePercentageForPolicy</code> is
+<code>false</code>, the time remaining in seconds at which
+UPower will consider the battery low.</p>
+<p>If any value (of <code>timeLow</code>,
+<code>timeCritical</code> and <code>timeAction</code>) is
+invalid, or not in descending order, the defaults will be used.</p>
+<p><em>Type:</em> unsigned integer, meaning &gt;=0</p>
+<p><em>Default:</em> <code>1200</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/hardware/upower.nix"><code>nixos/modules/services/hardware/upower.nix</code></a></p>
+<h2 id='opt-services.upower.usePercentageForPolicy'><a href='options/services-u/#opt-services.upower.usePercentageForPolicy'>
+<code>services.upower.usePercentageForPolicy</code>
+</a></h2>
+<p>Policy for warnings and action based on battery levels</p>
+<p>Whether battery percentage based policy should be used. The default
+is to use the percentage, which
+should work around broken firmwares. It is also more reliable than
+the time left (frantically saving all your files is going to use more
+battery than letting it rest for example).</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/hardware/upower.nix"><code>nixos/modules/services/hardware/upower.nix</code></a></p>
+<h2 id='opt-services.uptermd.enable'><a href='options/services-u/#opt-services.uptermd.enable'>
+<code>services.uptermd.enable</code>
+</a></h2>
+<p>Whether to enable uptermd.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Example:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/uptermd.nix"><code>nixos/modules/services/networking/uptermd.nix</code></a></p>
+<h2 id='opt-services.uptermd.extraFlags'><a href='options/services-u/#opt-services.uptermd.extraFlags'>
+<code>services.uptermd.extraFlags</code>
+</a></h2>
+<p>Extra flags passed to the uptermd command.</p>
+<p><em>Type:</em> list of string</p>
+<p><em>Default:</em> <code>[ ]</code></p>
+<p><em>Example:</em></p>
+<pre><code class="language-nix">[
+  &quot;--debug&quot;
+]
+</code></pre>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/uptermd.nix"><code>nixos/modules/services/networking/uptermd.nix</code></a></p>
+<h2 id='opt-services.uptermd.hostKey'><a href='options/services-u/#opt-services.uptermd.hostKey'>
+<code>services.uptermd.hostKey</code>
+</a></h2>
+<p>Path to SSH host key. If not defined, an ed25519 keypair is generated automatically.</p>
+<p><em>Type:</em> null or absolute path</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Example:</em> <code>&quot;/run/keys/upterm_host_ed25519_key&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/uptermd.nix"><code>nixos/modules/services/networking/uptermd.nix</code></a></p>
+<h2 id='opt-services.uptermd.listenAddress'><a href='options/services-u/#opt-services.uptermd.listenAddress'>
+<code>services.uptermd.listenAddress</code>
+</a></h2>
+<p>Address the server will listen on.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;[::]&quot;</code></p>
+<p><em>Example:</em> <code>&quot;127.0.0.1&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/uptermd.nix"><code>nixos/modules/services/networking/uptermd.nix</code></a></p>
+<h2 id='opt-services.uptermd.openFirewall'><a href='options/services-u/#opt-services.uptermd.openFirewall'>
+<code>services.uptermd.openFirewall</code>
+</a></h2>
+<p>Whether to open the firewall for the port in <a href="options/services-u/#opt-services.uptermd.port"><code>services.uptermd.port</code></a>.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/uptermd.nix"><code>nixos/modules/services/networking/uptermd.nix</code></a></p>
+<h2 id='opt-services.uptermd.port'><a href='options/services-u/#opt-services.uptermd.port'>
+<code>services.uptermd.port</code>
+</a></h2>
+<p>Port the server will listen on.</p>
+<p><em>Type:</em> 16 bit unsigned integer; between 0 and 65535 (both inclusive)</p>
+<p><em>Default:</em> <code>2222</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/uptermd.nix"><code>nixos/modules/services/networking/uptermd.nix</code></a></p>
+<h2 id='opt-services.uptime-kuma.appriseSupport'><a href='options/services-u/#opt-services.uptime-kuma.appriseSupport'>
+<code>services.uptime-kuma.appriseSupport</code>
+</a></h2>
+<p>Whether to enable apprise support for notifications.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Example:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/uptime-kuma.nix"><code>nixos/modules/services/monitoring/uptime-kuma.nix</code></a></p>
+<h2 id='opt-services.uptime-kuma.enable'><a href='options/services-u/#opt-services.uptime-kuma.enable'>
+<code>services.uptime-kuma.enable</code>
+</a></h2>
+<p>Whether to enable Uptime Kuma, this assumes a reverse proxy to be set.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Example:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/uptime-kuma.nix"><code>nixos/modules/services/monitoring/uptime-kuma.nix</code></a></p>
+<h2 id='opt-services.uptime-kuma.package'><a href='options/services-u/#opt-services.uptime-kuma.package'>
+<code>services.uptime-kuma.package</code>
+</a></h2>
+<p>The uptime-kuma package to use.</p>
+<p><em>Type:</em> package</p>
+<p><em>Default:</em> <code>pkgs.uptime-kuma</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/uptime-kuma.nix"><code>nixos/modules/services/monitoring/uptime-kuma.nix</code></a></p>
+<h2 id='opt-services.uptime-kuma.settings'><a href='options/services-u/#opt-services.uptime-kuma.settings'>
+<code>services.uptime-kuma.settings</code>
+</a></h2>
+<p>Additional configuration for Uptime Kuma, see
+<a href="https://github.com/louislam/uptime-kuma/wiki/Environment-Variables">https://github.com/louislam/uptime-kuma/wiki/Environment-Variables</a>
+for supported values.</p>
+<p><em>Type:</em> open submodule of attribute set of string</p>
+<p><em>Default:</em> <code>{ }</code></p>
+<p><em>Example:</em></p>
+<pre><code class="language-nix">{
+  NODE_EXTRA_CA_CERTS = {
+    _type = &quot;literalExpression&quot;;
+    text = &quot;config.security.pki.caBundle&quot;;
+  };
+  PORT = &quot;4000&quot;;
+  UPTIME_KUMA_DB_HOSTNAME = &quot;localhost&quot;;
+  UPTIME_KUMA_DB_NAME = &quot;uptime-kuma&quot;;
+  UPTIME_KUMA_DB_PASSWORD = &quot;uptime-kuma&quot;;
+  UPTIME_KUMA_DB_TYPE = &quot;mariadb&quot;;
+  UPTIME_KUMA_DB_USERNAME = &quot;uptime-kuma&quot;;
+}
+</code></pre>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/uptime-kuma.nix"><code>nixos/modules/services/monitoring/uptime-kuma.nix</code></a></p>
+<h2 id='opt-services.uptimed.enable'><a href='options/services-u/#opt-services.uptimed.enable'>
+<code>services.uptimed.enable</code>
+</a></h2>
+<p>Enable <code>uptimed</code>, allowing you to track
+your highest uptimes.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/system/uptimed.nix"><code>nixos/modules/services/system/uptimed.nix</code></a></p>
+<h2 id='opt-services.urserver.enable'><a href='options/services-u/#opt-services.urserver.enable'>
+<code>services.urserver.enable</code>
+</a></h2>
+<p>Whether to enable urserver.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Example:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/x11/urserver.nix"><code>nixos/modules/services/x11/urserver.nix</code></a></p>
+<h2 id='opt-services.urxvtd.enable'><a href='options/services-u/#opt-services.urxvtd.enable'>
+<code>services.urxvtd.enable</code>
+</a></h2>
+<p>Enable urxvtd, the urxvt terminal daemon. To use urxvtd, run
+&quot;urxvtc&quot;.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/x11/urxvtd.nix"><code>nixos/modules/services/x11/urxvtd.nix</code></a></p>
+<h2 id='opt-services.urxvtd.package'><a href='options/services-u/#opt-services.urxvtd.package'>
+<code>services.urxvtd.package</code>
+</a></h2>
+<p>The rxvt-unicode package to use.</p>
+<p><em>Type:</em> package</p>
+<p><em>Default:</em> <code>pkgs.rxvt-unicode</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/x11/urxvtd.nix"><code>nixos/modules/services/x11/urxvtd.nix</code></a></p>
+<h2 id='opt-services.usbguard.IPCAllowedGroups'><a href='options/services-u/#opt-services.usbguard.IPCAllowedGroups'>
+<code>services.usbguard.IPCAllowedGroups</code>
+</a></h2>
+<p>A list of groupnames that the daemon will accept IPC connections
+from.</p>
+<p><em>Type:</em> list of string</p>
+<p><em>Default:</em> <code>[ ]</code></p>
+<p><em>Example:</em></p>
+<pre><code class="language-nix">[
+  &quot;wheel&quot;
+]
+</code></pre>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/security/usbguard.nix"><code>nixos/modules/services/security/usbguard.nix</code></a></p>
+<h2 id='opt-services.usbguard.IPCAllowedUsers'><a href='options/services-u/#opt-services.usbguard.IPCAllowedUsers'>
+<code>services.usbguard.IPCAllowedUsers</code>
+</a></h2>
+<p>A list of usernames that the daemon will accept IPC connections from.</p>
+<p><em>Type:</em> list of string</p>
+<p><em>Default:</em></p>
+<pre><code class="language-nix">[
+  &quot;root&quot;
+]
+</code></pre>
+<p><em>Example:</em></p>
+<pre><code class="language-nix">[
+  &quot;root&quot;
+  &quot;yourusername&quot;
+]
+</code></pre>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/security/usbguard.nix"><code>nixos/modules/services/security/usbguard.nix</code></a></p>
+<h2 id='opt-services.usbguard.dbus.enable'><a href='options/services-u/#opt-services.usbguard.dbus.enable'>
+<code>services.usbguard.dbus.enable</code>
+</a></h2>
+<p>Whether to enable USBGuard dbus daemon.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Example:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/security/usbguard.nix"><code>nixos/modules/services/security/usbguard.nix</code></a></p>
+<h2 id='opt-services.usbguard.deviceRulesWithPort'><a href='options/services-u/#opt-services.usbguard.deviceRulesWithPort'>
+<code>services.usbguard.deviceRulesWithPort</code>
+</a></h2>
+<p>Generate device specific rules including the &quot;via-port&quot; attribute.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/security/usbguard.nix"><code>nixos/modules/services/security/usbguard.nix</code></a></p>
+<h2 id='opt-services.usbguard.enable'><a href='options/services-u/#opt-services.usbguard.enable'>
+<code>services.usbguard.enable</code>
+</a></h2>
+<p>Whether to enable USBGuard daemon.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Example:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/security/usbguard.nix"><code>nixos/modules/services/security/usbguard.nix</code></a></p>
+<h2 id='opt-services.usbguard.implicitPolicyTarget'><a href='options/services-u/#opt-services.usbguard.implicitPolicyTarget'>
+<code>services.usbguard.implicitPolicyTarget</code>
+</a></h2>
+<p>How to treat USB devices that don't match any rule in the policy.
+Target should be one of allow, block or reject (logically remove the
+device node from the system).</p>
+<p><em>Type:</em> one of &quot;allow&quot;, &quot;block&quot;, &quot;reject&quot;</p>
+<p><em>Default:</em> <code>&quot;block&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/security/usbguard.nix"><code>nixos/modules/services/security/usbguard.nix</code></a></p>
+<h2 id='opt-services.usbguard.insertedDevicePolicy'><a href='options/services-u/#opt-services.usbguard.insertedDevicePolicy'>
+<code>services.usbguard.insertedDevicePolicy</code>
+</a></h2>
+<p>How to treat USB devices that are already connected after the daemon
+starts. One of block, reject, apply-policy.</p>
+<p><em>Type:</em> one of &quot;block&quot;, &quot;reject&quot;, &quot;apply-policy&quot;</p>
+<p><em>Default:</em> <code>&quot;apply-policy&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/security/usbguard.nix"><code>nixos/modules/services/security/usbguard.nix</code></a></p>
+<h2 id='opt-services.usbguard.package'><a href='options/services-u/#opt-services.usbguard.package'>
+<code>services.usbguard.package</code>
+</a></h2>
+<p>The usbguard package to use.</p>
+<p><em>Type:</em> package</p>
+<p><em>Default:</em> <code>pkgs.usbguard</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/security/usbguard.nix"><code>nixos/modules/services/security/usbguard.nix</code></a></p>
+<h2 id='opt-services.usbguard.presentControllerPolicy'><a href='options/services-u/#opt-services.usbguard.presentControllerPolicy'>
+<code>services.usbguard.presentControllerPolicy</code>
+</a></h2>
+<p>How to treat USB controller devices that are already connected when
+the daemon starts. One of allow, block, reject, keep or apply-policy.</p>
+<p><em>Type:</em> one of &quot;allow&quot;, &quot;block&quot;, &quot;reject&quot;, &quot;keep&quot;, &quot;apply-policy&quot;</p>
+<p><em>Default:</em> <code>&quot;keep&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/security/usbguard.nix"><code>nixos/modules/services/security/usbguard.nix</code></a></p>
+<h2 id='opt-services.usbguard.presentDevicePolicy'><a href='options/services-u/#opt-services.usbguard.presentDevicePolicy'>
+<code>services.usbguard.presentDevicePolicy</code>
+</a></h2>
+<p>How to treat USB devices that are already connected when the daemon
+starts. Policy should be one of allow, block, reject, keep (keep
+whatever state the device is currently in) or apply-policy (evaluate
+the rule set for every present device).</p>
+<p><em>Type:</em> one of &quot;allow&quot;, &quot;block&quot;, &quot;reject&quot;, &quot;keep&quot;, &quot;apply-policy&quot;</p>
+<p><em>Default:</em> <code>&quot;apply-policy&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/security/usbguard.nix"><code>nixos/modules/services/security/usbguard.nix</code></a></p>
+<h2 id='opt-services.usbguard.restoreControllerDeviceState'><a href='options/services-u/#opt-services.usbguard.restoreControllerDeviceState'>
+<code>services.usbguard.restoreControllerDeviceState</code>
+</a></h2>
+<p>The  USBGuard  daemon  modifies  some attributes of controller
+devices like the default authorization state of new child device
+instances. Using this setting, you can control whether the daemon
+will try to restore the attribute values to the state before
+modification on shutdown.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/security/usbguard.nix"><code>nixos/modules/services/security/usbguard.nix</code></a></p>
+<h2 id='opt-services.usbguard.ruleFile'><a href='options/services-u/#opt-services.usbguard.ruleFile'>
+<code>services.usbguard.ruleFile</code>
+</a></h2>
+<p>This tells the USBGuard daemon which file to load as policy rule set.</p>
+<p>The file can be changed manually or via the IPC interface assuming it has the right file permissions.</p>
+<p>For more details see <code>usbguard-rules.conf(5)</code>.</p>
+<p><em>Type:</em> null or absolute path</p>
+<p><em>Default:</em> <code>&quot;/var/lib/usbguard/rules.conf&quot;</code></p>
+<p><em>Example:</em> <code>&quot;/run/secrets/usbguard-rules&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/security/usbguard.nix"><code>nixos/modules/services/security/usbguard.nix</code></a></p>
+<h2 id='opt-services.usbguard.rules'><a href='options/services-u/#opt-services.usbguard.rules'>
+<code>services.usbguard.rules</code>
+</a></h2>
+<p>The USBGuard daemon will load this as the policy rule set.
+As these rules are NixOS managed they are immutable and can't
+be changed by the IPC interface.</p>
+<p>If you do not set this option, the USBGuard daemon will load
+it's policy rule set from the option configured in <code>services.usbguard.ruleFile</code>.</p>
+<p>Running <code>usbguard generate-policy</code> as root will
+generate a config for your currently plugged in devices.</p>
+<p>For more details see <code>usbguard-rules.conf(5)</code>.</p>
+<p><em>Type:</em> null or strings concatenated with &quot;\n&quot;</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Example:</em></p>
+<pre><code class="language-nix">''
+  allow with-interface equals { 08:*:* }
+''
+</code></pre>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/security/usbguard.nix"><code>nixos/modules/services/security/usbguard.nix</code></a></p>
+<h2 id='opt-services.usbmuxd.enable'><a href='options/services-u/#opt-services.usbmuxd.enable'>
+<code>services.usbmuxd.enable</code>
+</a></h2>
+<p>Enable the usbmuxd (&quot;USB multiplexing daemon&quot;) service. This daemon is
+in charge of multiplexing connections over USB to an iOS device. This is
+needed for transferring data from and to iOS devices (see ifuse). Also
+this may enable plug-n-play tethering for iPhones.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/hardware/usbmuxd.nix"><code>nixos/modules/services/hardware/usbmuxd.nix</code></a></p>
+<h2 id='opt-services.usbmuxd.group'><a href='options/services-u/#opt-services.usbmuxd.group'>
+<code>services.usbmuxd.group</code>
+</a></h2>
+<p>The group usbmuxd should use to run after startup.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;usbmux&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/hardware/usbmuxd.nix"><code>nixos/modules/services/hardware/usbmuxd.nix</code></a></p>
+<h2 id='opt-services.usbmuxd.package'><a href='options/services-u/#opt-services.usbmuxd.package'>
+<code>services.usbmuxd.package</code>
+</a></h2>
+<p>Which package to use for the usbmuxd daemon.</p>
+<p><em>Type:</em> package</p>
+<p><em>Default:</em> <code>pkgs.usbmuxd</code></p>
+<p><em>Related packages:</em></p>
+<ul>
+<li><a href="https://search.nixos.org/packages?show=usbmuxd&amp;sort=relevance&amp;query=usbmuxd"><code>pkgs.usbmuxd</code></a></li>
+<li><a href="https://search.nixos.org/packages?show=usbmuxd2&amp;sort=relevance&amp;query=usbmuxd2"><code>pkgs.usbmuxd2</code></a></li>
+</ul>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/hardware/usbmuxd.nix"><code>nixos/modules/services/hardware/usbmuxd.nix</code></a></p>
+<h2 id='opt-services.usbmuxd.user'><a href='options/services-u/#opt-services.usbmuxd.user'>
+<code>services.usbmuxd.user</code>
+</a></h2>
+<p>The user usbmuxd should use to run after startup.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;usbmux&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/hardware/usbmuxd.nix"><code>nixos/modules/services/hardware/usbmuxd.nix</code></a></p>
+<h2 id='opt-services.usbrelayd.broker'><a href='options/services-u/#opt-services.usbrelayd.broker'>
+<code>services.usbrelayd.broker</code>
+</a></h2>
+<p>Hostname or IP address of your MQTT Broker.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;127.0.0.1&quot;</code></p>
+<p><em>Example:</em></p>
+<pre><code class="language-nix">[
+  &quot;mqtt&quot;
+  &quot;192.168.1.1&quot;
+]
+</code></pre>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/hardware/usbrelayd.nix"><code>nixos/modules/services/hardware/usbrelayd.nix</code></a></p>
+<h2 id='opt-services.usbrelayd.clientName'><a href='options/services-u/#opt-services.usbrelayd.clientName'>
+<code>services.usbrelayd.clientName</code>
+</a></h2>
+<p>Name, your client connects as.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;MyUSBRelay&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/hardware/usbrelayd.nix"><code>nixos/modules/services/hardware/usbrelayd.nix</code></a></p>
+<h2 id='opt-services.usbrelayd.enable'><a href='options/services-u/#opt-services.usbrelayd.enable'>
+<code>services.usbrelayd.enable</code>
+</a></h2>
+<p>Whether to enable USB Relay MQTT daemon.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Example:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/hardware/usbrelayd.nix"><code>nixos/modules/services/hardware/usbrelayd.nix</code></a></p>
+<h2 id='opt-services.userborn.enable'><a href='options/services-u/#opt-services.userborn.enable'>
+<code>services.userborn.enable</code>
+</a></h2>
+<p>Whether to enable userborn.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Example:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/system/userborn.nix"><code>nixos/modules/services/system/userborn.nix</code></a></p>
+<h2 id='opt-services.userborn.importLegacyState'><a href='options/services-u/#opt-services.userborn.importLegacyState'>
+<code>services.userborn.importLegacyState</code>
+</a></h2>
+<p>Whether to include one-shot migration services that import the state
+left behind by the perl activation script (<code>update-users-groups.pl</code>),
+so id and subid allocations survive the switch to userborn.</p>
+<p>Disable this if you want to keep the migration tooling out of your
+system closure.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>!config.services.userborn.static</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/system/userborn.nix"><code>nixos/modules/services/system/userborn.nix</code></a></p>
+<h2 id='opt-services.userborn.package'><a href='options/services-u/#opt-services.userborn.package'>
+<code>services.userborn.package</code>
+</a></h2>
+<p>The userborn package to use.</p>
+<p><em>Type:</em> package</p>
+<p><em>Default:</em> <code>pkgs.userborn</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/system/userborn.nix"><code>nixos/modules/services/system/userborn.nix</code></a></p>
+<h2 id='opt-services.userborn.passwordFilesLocation'><a href='options/services-u/#opt-services.userborn.passwordFilesLocation'>
+<code>services.userborn.passwordFilesLocation</code>
+</a></h2>
+<p>The location of the original password files.</p>
+<p>If this is not <code>/etc</code>, the files are symlinked from this location to <code>/etc</code>.</p>
+<p>The primary motivation for this is an immutable <code>/etc</code>, where we cannot
+write the files directly to <code>/etc</code>.</p>
+<p>However this can also serve other use cases, e.g. when <code>/etc</code> is on a <code>tmpfs</code>.</p>
+<p>The subid files are an exception: <code>newuidmap</code> rejects symlinks, so
+they are bind-mounted into <code>/etc</code> instead of being symlinked.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>if immutableEtc &amp;&amp; !config.services.userborn.static then &quot;/var/lib/nixos&quot; else &quot;/etc&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/system/userborn.nix"><code>nixos/modules/services/system/userborn.nix</code></a></p>
+<h2 id='opt-services.userborn.static'><a href='options/services-u/#opt-services.userborn.static'>
+<code>services.userborn.static</code>
+</a></h2>
+<p>Whether to generate the password files at build time and store them directly
+in the system closure, without requiring any services at boot time.</p>
+<p>This is STRICTLY intended for embedded appliance images that only have system
+users with manually managed static user IDs, and CANNOT be used with generation
+updates.</p>
+<p>WARNING: In this mode, you MUST statically manage user IDs yourself, carefully.
+Beware, UID reuse is a serious security issue and it's your responsibility
+to avoid it over the entire lifetime of the system.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/system/userborn.nix"><code>nixos/modules/services/system/userborn.nix</code></a></p>
+<h2 id='opt-services.userdbd.enable'><a href='options/services-u/#opt-services.userdbd.enable'>
+<code>services.userdbd.enable</code>
+</a></h2>
+<p>Whether to enable the systemd JSON user/group record lookup service
+.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Example:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/system/boot/systemd/userdbd.nix"><code>nixos/modules/system/boot/systemd/userdbd.nix</code></a></p>
+<h2 id='opt-services.userdbd.enableSSHSupport'><a href='options/services-u/#opt-services.userdbd.enableSSHSupport'>
+<code>services.userdbd.enableSSHSupport</code>
+</a></h2>
+<p>Whether to enable exposing OpenSSH public keys defined in userdb. Be aware that this
+enables modifying public keys at runtime, either by users managed by
+<code>services.homed</code>, or globally via drop-in files
+.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Example:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/system/boot/systemd/userdbd.nix"><code>nixos/modules/system/boot/systemd/userdbd.nix</code></a></p>
+<h2 id='opt-services.ustreamer.autoStart'><a href='options/services-u/#opt-services.ustreamer.autoStart'>
+<code>services.ustreamer.autoStart</code>
+</a></h2>
+<p>Wether to start µStreamer on boot. Disabling this will use socket
+activation. The service will stop gracefully after some inactivity.
+Disabling this will set <code>--exit-on-no-clients=300</code></p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>true</code></p>
+<p><em>Example:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/video/ustreamer.nix"><code>nixos/modules/services/video/ustreamer.nix</code></a></p>
+<h2 id='opt-services.ustreamer.device'><a href='options/services-u/#opt-services.ustreamer.device'>
+<code>services.ustreamer.device</code>
+</a></h2>
+<p>The v4l2 device to stream.</p>
+<p><em>Type:</em> absolute path</p>
+<p><em>Default:</em> <code>&quot;/dev/video0&quot;</code></p>
+<p><em>Example:</em> <code>&quot;/dev/v4l/by-id/usb-0000_Dummy_abcdef-video-index0&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/video/ustreamer.nix"><code>nixos/modules/services/video/ustreamer.nix</code></a></p>
+<h2 id='opt-services.ustreamer.enable'><a href='options/services-u/#opt-services.ustreamer.enable'>
+<code>services.ustreamer.enable</code>
+</a></h2>
+<p>Whether to enable µStreamer, a lightweight MJPEG-HTTP streamer.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Example:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/video/ustreamer.nix"><code>nixos/modules/services/video/ustreamer.nix</code></a></p>
+<h2 id='opt-services.ustreamer.extraArgs'><a href='options/services-u/#opt-services.ustreamer.extraArgs'>
+<code>services.ustreamer.extraArgs</code>
+</a></h2>
+<p>Extra arguments to pass to <code>ustreamer</code>. See <code>ustreamer(1)</code></p>
+<p><em>Type:</em> list of string</p>
+<p><em>Default:</em> <code>[ ]</code></p>
+<p><em>Example:</em></p>
+<pre><code class="language-nix">[
+  &quot;--resolution=1920x1080&quot;
+]
+</code></pre>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/video/ustreamer.nix"><code>nixos/modules/services/video/ustreamer.nix</code></a></p>
+<h2 id='opt-services.ustreamer.listenAddress'><a href='options/services-u/#opt-services.ustreamer.listenAddress'>
+<code>services.ustreamer.listenAddress</code>
+</a></h2>
+<p>Address to expose the HTTP server. This accepts values for
+ListenStream= defined in <code>systemd.socket(5)</code></p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;0.0.0.0:8080&quot;</code></p>
+<p><em>Example:</em> <code>&quot;/run/ustreamer.sock&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/video/ustreamer.nix"><code>nixos/modules/services/video/ustreamer.nix</code></a></p>
+<h2 id='opt-services.ustreamer.package'><a href='options/services-u/#opt-services.ustreamer.package'>
+<code>services.ustreamer.package</code>
+</a></h2>
+<p>The ustreamer package to use.</p>
+<p><em>Type:</em> package</p>
+<p><em>Default:</em> <code>pkgs.ustreamer</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/video/ustreamer.nix"><code>nixos/modules/services/video/ustreamer.nix</code></a></p>
+<h2 id='opt-services.uvcvideo.dynctrl.enable'><a href='options/services-u/#opt-services.uvcvideo.dynctrl.enable'>
+<code>services.uvcvideo.dynctrl.enable</code>
+</a></h2>
+<p>Whether to enable <code>uvcvideo</code> dynamic controls.</p>
+<p>Note that enabling this brings the <code>uvcdynctrl</code> tool
+into your environment and register all dynamic controls from
+specified <code>packages</code> to the <code>uvcvideo</code> driver.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/hardware/video/uvcvideo/default.nix"><code>nixos/modules/hardware/video/uvcvideo/default.nix</code></a></p>
+<h2 id='opt-services.uvcvideo.dynctrl.packages'><a href='options/services-u/#opt-services.uvcvideo.dynctrl.packages'>
+<code>services.uvcvideo.dynctrl.packages</code>
+</a></h2>
+<p>List of packages containing <code>uvcvideo</code> dynamic controls
+rules. All files found in
+<code>«pkg»/share/uvcdynctrl/data</code>
+will be included.</p>
+<p>Note that these will serve as input to the <code>libwebcam</code>
+package which through its own <code>udev</code> rule will register
+the dynamic controls from specified packages to the <code>uvcvideo</code>
+driver.</p>
+<p><em>Type:</em> list of absolute path</p>
+<p><em>Default:</em> <code>[ ]</code></p>
+<p><em>Example:</em> <code>[ pkgs.tiscamera ]</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/hardware/video/uvcvideo/default.nix"><code>nixos/modules/hardware/video/uvcvideo/default.nix</code></a></p>
+<h2 id='opt-services.uwsgi.capabilities'><a href='options/services-u/#opt-services.uwsgi.capabilities'>
+<code>services.uwsgi.capabilities</code>
+</a></h2>
+<p>Grant capabilities to the uWSGI instance. See the
+<code>capabilities(7)</code> for available values.</p>
+<div class='admonition note'><h3 class='title'>Note</h3>
+<p>
+uWSGI runs as an unprivileged user (even as Emperor) with the minimal
+capabilities required. This option can be used to add fine-grained
+permissions without running the service as root.</p>
+<p>When in Emperor mode, any capability to be inherited by a vassal must
+be specified again in the vassal configuration using <code>cap</code>.
+See the uWSGI <a href="https://uwsgi-docs.readthedocs.io/en/latest/Capabilities.html">docs</a>
+for more information.
+</p>
+</div>
+<p><em>Type:</em> list of string</p>
+<p><em>Default:</em> <code>[ ]</code></p>
+<p><em>Example:</em></p>
+<pre><code class="language-nix">[
+  &quot;CAP_NET_BIND_SERVICE&quot; # bind on ports &lt;1024
+  &quot;CAP_NET_RAW&quot;          # open raw sockets
+]
+</code></pre>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/web-servers/uwsgi.nix"><code>nixos/modules/services/web-servers/uwsgi.nix</code></a></p>
+<h2 id='opt-services.uwsgi.enable'><a href='options/services-u/#opt-services.uwsgi.enable'>
+<code>services.uwsgi.enable</code>
+</a></h2>
+<p>Enable uWSGI</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/web-servers/uwsgi.nix"><code>nixos/modules/services/web-servers/uwsgi.nix</code></a></p>
+<h2 id='opt-services.uwsgi.group'><a href='options/services-u/#opt-services.uwsgi.group'>
+<code>services.uwsgi.group</code>
+</a></h2>
+<p>Group account under which uWSGI runs.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;uwsgi&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/web-servers/uwsgi.nix"><code>nixos/modules/services/web-servers/uwsgi.nix</code></a></p>
+<h2 id='opt-services.uwsgi.instance'><a href='options/services-u/#opt-services.uwsgi.instance'>
+<code>services.uwsgi.instance</code>
+</a></h2>
+<p>uWSGI configuration. It awaits an attribute <code>type</code> inside which can be either
+<code>normal</code> or <code>emperor</code>.</p>
+<p>For <code>normal</code> mode you can specify <code>pythonPackages</code> as a function
+from libraries set into a list of libraries. <code>pythonpath</code> will be set accordingly.</p>
+<p>For <code>emperor</code> mode, you should use <code>vassals</code> attribute
+which should be either a set of names and configurations or a path to a directory.</p>
+<p>Other attributes will be used in configuration file as-is. Notice that you can redefine
+<code>plugins</code> setting here.</p>
+<p><em>Type:</em> Json value or lambda</p>
+<p><em>Default:</em></p>
+<pre><code class="language-nix">{
+  type = &quot;normal&quot;;
+}
+</code></pre>
+<p><em>Example:</em></p>
+<pre><code class="language-nix">{
+  type = &quot;emperor&quot;;
+  vassals = {
+    moin = {
+      type = &quot;normal&quot;;
+      pythonPackages = self: with self; [ moinmoin ];
+      socket = &quot;${config.services.uwsgi.runDir}/uwsgi.sock&quot;;
+    };
+  };
+}
+</code></pre>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/web-servers/uwsgi.nix"><code>nixos/modules/services/web-servers/uwsgi.nix</code></a></p>
+<h2 id='opt-services.uwsgi.plugins'><a href='options/services-u/#opt-services.uwsgi.plugins'>
+<code>services.uwsgi.plugins</code>
+</a></h2>
+<p>Plugins used with uWSGI</p>
+<p><em>Type:</em> list of string</p>
+<p><em>Default:</em> <code>[ ]</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/web-servers/uwsgi.nix"><code>nixos/modules/services/web-servers/uwsgi.nix</code></a></p>
+<h2 id='opt-services.uwsgi.runDir'><a href='options/services-u/#opt-services.uwsgi.runDir'>
+<code>services.uwsgi.runDir</code>
+</a></h2>
+<p>Where uWSGI communication sockets can live</p>
+<p><em>Type:</em> absolute path</p>
+<p><em>Default:</em> <code>&quot;/run/uwsgi&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/web-servers/uwsgi.nix"><code>nixos/modules/services/web-servers/uwsgi.nix</code></a></p>
+<h2 id='opt-services.uwsgi.user'><a href='options/services-u/#opt-services.uwsgi.user'>
+<code>services.uwsgi.user</code>
+</a></h2>
+<p>User account under which uWSGI runs.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;uwsgi&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/web-servers/uwsgi.nix"><code>nixos/modules/services/web-servers/uwsgi.nix</code></a></p>
+
+        <nav class='chapter-pagination' aria-label='Chapter pagination'>
+          <a class='chapter-pagination-link chapter-pagination-previous' href='options/services-t/#sec-options-services-t'><span class='chapter-pagination-label'>Previous</span><span class='chapter-pagination-title'>services (T)</span></a>
+          <a class='chapter-pagination-link chapter-pagination-next' href='options/services-v/#sec-options-services-v'><span class='chapter-pagination-label'>Next</span><span class='chapter-pagination-title'>services (V)</span></a>
+        </nav>
+        </main>
+      </div>
+    </section>
+<script defer src='highlight.pack.bb58bc6b7daef61c.js'></script>
+<script defer src='mmdoc.0eac5034aeb9595f.js'></script>
+<script defer src='mmdoc_search.1e3e2ead6263c722.js' data-search-index='search_index.fa825f5e481818a3.js' data-fuse='fuse.basic.min.296619aed362de6d.js'></script>
+  </div>
+  </body>
+</html>

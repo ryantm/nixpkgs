@@ -1,0 +1,2166 @@
+<!doctype html>
+<html lang='en'>
+  <head>
+    <base href='../../'>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, viewport-fit=cover'>
+    <script>
+      (() => {
+        let theme = null
+        try { theme = localStorage.getItem('theme') } catch (error) {}
+        if (theme !== 'light' && theme !== 'dark')
+          theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+        document.documentElement.classList.add(theme + '-theme')
+        const ua = navigator.userAgent || ''
+        const isWebView = /;\s*wv\)|Twitter|FBAN|FBAV|Instagram|LinkedInApp|BytedanceWebview|musical_ly|Line\/|MicroMessenger/i.test(ua) || (/(iPhone|iPad|iPod)/i.test(ua) && /AppleWebKit/i.test(ua) && !/Safari\//i.test(ua))
+        const fromX = /^https?:\/\/([a-z0-9-]+\.)?(t\.co|x\.com|twitter\.com)(\/|$)/i.test(document.referrer || '')
+        let topNav = isWebView || fromX
+        try {
+          if (topNav) sessionStorage.setItem('mmdoc-top-nav', '1')
+          else if (sessionStorage.getItem('mmdoc-top-nav') === '1') topNav = true
+        } catch (error) {}
+        if (topNav) document.documentElement.classList.add('mobile-top-nav')
+      })()
+    </script>
+    <meta name='description' content='Release 23.11 (“Tapir”, 2023.11/29)'>
+    <link rel='icon' href='favicon.svg'>
+    <link rel='stylesheet' href='a11y-dark.773c5c24f666bae4.css'>
+    <link rel='stylesheet' href='a11y-light.519a1765fd6efc61.css'>
+    <link rel='stylesheet' href='mmdoc.1fa5ef6417bedb91.css'>
+    <title>Release 23.11 (“Tapir”, 2023.11/29) | nixos</title>
+  </head>
+  <body>
+  <a class='skip-link' href='release-notes/rl-2311/#main-content'>Skip to main content</a>
+  <input type='checkbox' id='sidebar-checkbox' aria-hidden='true' tabindex='-1' style='display: none;'>
+  <div class='body'>
+    <header class='nav-top-container'>
+    <nav class='nav-top' aria-label='Documentation controls'>
+      <button type='button' class='sidebar-toggle' title='Toggle table of contents' aria-label='Toggle table of contents' aria-controls='sidebar' aria-expanded='true'></button>    <button type='button' class='search-toggle' title='Open search (/)' aria-label='Open search' aria-controls='search-panel' aria-expanded='false'></button>    <button type='button' class='theme-toggle' title='Switch to dark theme' aria-label='Switch to dark theme' aria-pressed='false'></button>    <a id='chapter-previous-button' class='chapter-previous' href='release-notes/rl-2405/#sec-release-24.05' title='Release 24.05 (“Uakari”, 2024.05/31)' aria-label='Previous: Release 24.05 (“Uakari”, 2024.05/31)'>&lt;</a>
+    <a id='chapter-next-button' class='chapter-next' href='release-notes/rl-2305/#sec-release-23.05' title='Release 23.05 (“Stoat”, 2023.05/31)' aria-label='Next: Release 23.05 (“Stoat”, 2023.05/31)'>&gt;</a>
+    </nav>
+    </header>
+    <nav id='sidebar' class='sidebar' aria-label='Table of contents'>
+<h1>NixOS Manual</h1>
+<p>Version 27.05.20261128.4b21f50</p>
+<ul>
+<li><a href="./#preface">Preface</a></li>
+</ul>
+<h2>Getting started</h2>
+<ul>
+<li><a href="installation/installation/#ch-installation">Getting started</a></li>
+<li><a href="installation/obtaining/#sec-obtaining">Obtaining NixOS</a></li>
+</ul>
+<h2>Installing NixOS</h2>
+<ul>
+<li><a href="installation/installing/#sec-installation">Installing NixOS</a></li>
+<li><a href="installation/installing-usb/#sec-booting-from-usb">Booting from a USB flash drive</a></li>
+<li><a href="installation/installing-pxe/#sec-booting-from-pxe">Booting from the &quot;netboot&quot; media (PXE)</a></li>
+<li><a href="installation/installing-kexec/#sec-booting-via-kexec">&quot;Booting&quot; into NixOS via kexec</a></li>
+<li><a href="installation/installing-virtualbox-guest/#sec-installing-virtualbox-guest">Installing in a VirtualBox guest</a></li>
+<li><a href="installation/installing-from-other-distro/#sec-installing-from-other-distro">Installing from another Linux distribution</a></li>
+<li><a href="installation/installing-behind-a-proxy/#sec-installing-behind-proxy">Installing behind a proxy</a></li>
+<li><a href="installation/changing-config/#sec-changing-config">Changing the Configuration</a></li>
+<li><a href="installation/upgrading/#sec-upgrading">Upgrading NixOS</a></li>
+</ul>
+<h2>Guides</h2>
+<ul>
+<li><a href="configuration/configuration/#ch-configuration">Guides</a></li>
+</ul>
+<h2>Configuration Syntax</h2>
+<ul>
+<li><a href="configuration/config-syntax/#sec-configuration-syntax">Configuration Syntax</a></li>
+<li><a href="configuration/config-file/#sec-configuration-file">NixOS Configuration File</a></li>
+<li><a href="configuration/abstractions/#sec-module-abstractions">Abstractions</a></li>
+<li><a href="configuration/modularity/#sec-modularity">Modularity</a></li>
+</ul>
+<h2>Package Management</h2>
+<ul>
+<li><a href="configuration/package-mgmt/#sec-package-management">Package Management</a></li>
+<li><a href="configuration/declarative-packages/#sec-declarative-package-mgmt">Declarative Package Management</a></li>
+<li><a href="configuration/customizing-packages/#sec-customising-packages">Customising Packages</a></li>
+<li><a href="configuration/adding-custom-packages/#sec-custom-packages">Adding Custom Packages</a></li>
+<li><a href="configuration/ad-hoc-packages/#sec-ad-hoc-packages">Ad-Hoc Package Management</a></li>
+<li><a href="configuration/user-mgmt/#sec-user-management">User Management</a></li>
+</ul>
+<h2>File Systems</h2>
+<ul>
+<li><a href="configuration/file-systems/#ch-file-systems">File Systems</a></li>
+<li><a href="configuration/luks-file-systems/#sec-luks-file-systems">LUKS-Encrypted File Systems</a></li>
+<li><a href="configuration/sshfs-file-systems/#sec-sshfs-file-systems">SSHFS File Systems</a></li>
+<li><a href="configuration/nfs-file-systems/#sec-nfs-file-systems">NFS File Systems</a></li>
+<li><a href="configuration/overlayfs/#sec-overlayfs">Overlayfs</a></li>
+</ul>
+<h2>Networking</h2>
+<ul>
+<li><a href="configuration/networking/#sec-networking">Networking</a></li>
+<li><a href="configuration/network-manager/#sec-networkmanager">NetworkManager</a></li>
+<li><a href="configuration/ssh/#sec-ssh">Secure Shell Access</a></li>
+<li><a href="configuration/ipv4-config/#sec-ipv4">IPv4 Configuration</a></li>
+<li><a href="configuration/ipv6-config/#sec-ipv6">IPv6 Configuration</a></li>
+<li><a href="configuration/firewall/#sec-firewall">Firewall</a></li>
+<li><a href="configuration/wireless/#sec-wireless">Wireless Networks</a></li>
+<li><a href="configuration/ad-hoc-network-config/#ad-hoc-network-config">Ad-Hoc Configuration</a></li>
+<li><a href="configuration/renaming-interfaces/#sec-rename-ifs">Renaming network interfaces</a></li>
+</ul>
+<h2>Graphical Desktops</h2>
+<ul>
+<li><a href="configuration/x-windows/#sec-x11">X Window System</a></li>
+<li><a href="configuration/wayland/#sec-wayland">Wayland</a></li>
+<li><a href="configuration/gpu-accel/#sec-gpu-accel">GPU acceleration</a></li>
+<li><a href="configuration/xfce/#sec-xfce">Xfce Desktop Environment</a></li>
+</ul>
+<h2>Building Images</h2>
+<ul>
+<li><a href="installation/building-nixos/#sec-building-image">Building a NixOS (Live) ISO</a></li>
+<li><a href="installation/building-images-via-nixos-rebuild-build-image/#sec-image-nixos-rebuild-build-image">Building Images with nixos-rebuild build-image</a></li>
+<li><a href="installation/building-images-via-systemd-repart/#sec-image-repart">Building Images via systemd-repart</a></li>
+</ul>
+<h2>Administration</h2>
+<ul>
+<li><a href="administration/running/#ch-running">Administration</a></li>
+<li><a href="administration/service-mgmt/#sec-systemctl">Service Management</a></li>
+<li><a href="administration/rebooting/#sec-rebooting">Rebooting and Shutting Down</a></li>
+<li><a href="administration/user-sessions/#sec-user-sessions">User Sessions</a></li>
+<li><a href="administration/logging/#sec-logging">Logging</a></li>
+<li><a href="administration/cleaning-store/#sec-nix-gc">Cleaning the Nix Store</a></li>
+</ul>
+<h2>Container Management</h2>
+<ul>
+<li><a href="administration/containers/#ch-containers">Container Management</a></li>
+<li><a href="administration/imperative-containers/#sec-imperative-containers">Imperative Container Management</a></li>
+<li><a href="administration/declarative-containers/#sec-declarative-containers">Declarative Container Specification</a></li>
+<li><a href="administration/container-networking/#sec-container-networking">Container Networking</a></li>
+</ul>
+<h2>Troubleshooting</h2>
+<ul>
+<li><a href="administration/troubleshooting/#ch-troubleshooting">Troubleshooting</a></li>
+<li><a href="administration/boot-problems/#sec-boot-problems">Boot Problems</a></li>
+<li><a href="administration/maintenance-mode/#sec-maintenance-mode">Maintenance Mode</a></li>
+<li><a href="administration/rollback/#sec-rollback">Rolling Back Configuration Changes</a></li>
+<li><a href="administration/store-corruption/#sec-nix-store-corruption">Nix Store Corruption</a></li>
+<li><a href="administration/network-problems/#sec-nix-network-issues">Network Problems</a></li>
+</ul>
+<h2>Services and Programs</h2>
+<ul>
+<li><a href="services/#ch-services">Services and Programs</a></li>
+<li><a href="modules/facter/#module-hardware-facter">NixOS Facter</a></li>
+<li><a href="modules/input-method/#module-services-input-methods">Input Methods</a></li>
+<li><a href="modules/digitalbitbox/#module-programs-digitalbitbox">Digital Bitbox</a></li>
+<li><a href="modules/plotinus/#module-program-plotinus">Plotinus</a></li>
+<li><a href="modules/oh-my-zsh/#module-programs-zsh-ohmyzsh">Oh my ZSH</a></li>
+<li><a href="modules/acme/#module-security-acme">SSL/TLS Certificates with ACME</a></li>
+<li><a href="modules/tpm2/#module-security-tpm2">TPM2</a></li>
+<li><a href="modules/navidrome/#module-services-navidrome">Navidrome</a></li>
+<li><a href="modules/borgbackup/#module-borgbase">BorgBackup</a></li>
+<li><a href="modules/garm/#module-garm">GARM</a></li>
+<li><a href="modules/cassandra/#module-services-cassandra">Apache Cassandra</a></li>
+<li><a href="modules/foundationdb/#module-services-foundationdb">FoundationDB</a></li>
+<li><a href="modules/postgresql/#module-postgresql">PostgreSQL</a></li>
+<li><a href="modules/tigerbeetle/#module-services-tigerbeetle">TigerBeetle</a></li>
+<li><a href="modules/gnome/#chap-gnome">GNOME Desktop</a></li>
+<li><a href="modules/pantheon/#chap-pantheon">Pantheon Desktop</a></li>
+<li><a href="modules/flatpak/#module-services-flatpak">Flatpak</a></li>
+<li><a href="modules/athens/#module-athens">Athens</a></li>
+<li><a href="modules/blackfire/#module-services-blackfire">Blackfire profiler</a></li>
+<li><a href="modules/livebook/#module-services-livebook">Livebook</a></li>
+<li><a href="modules/emacs/#module-services-emacs">Emacs</a></li>
+<li><a href="modules/display/#module-hardware-display">Customizing display configuration</a></li>
+<li><a href="modules/trezord/#trezor">Trezor</a></li>
+<li><a href="modules/mailman/#module-services-mailman">Mailman</a></li>
+<li><a href="modules/draupnir/#module-services-draupnir">Draupnir (Matrix Moderation Bot)</a></li>
+<li><a href="modules/maubot/#module-services-maubot">Maubot</a></li>
+<li><a href="modules/mautrix-discord/#module-services-mautrix-discord">Mautrix-Discord</a></li>
+<li><a href="modules/mautrix-signal/#module-services-mautrix-signal">Mautrix-Signal</a></li>
+<li><a href="modules/mautrix-whatsapp/#module-services-mautrix-whatsapp">Mautrix-Whatsapp</a></li>
+<li><a href="modules/mjolnir/#module-services-mjolnir">Mjolnir (Matrix Moderation Tool)</a></li>
+<li><a href="modules/synapse/#module-services-matrix">Matrix</a></li>
+<li><a href="modules/anki-sync-server/#module-services-anki-sync-server">Anki Sync Server</a></li>
+<li><a href="modules/apache-kafka/#module-services-apache-kafka">Apache Kafka</a></li>
+<li><a href="modules/cliproxyapi/#module-services-cliproxyapi">CLIProxyAPI</a></li>
+<li><a href="modules/dump1090-fa/#module-services-dump1090-fa">Dump1090-fa</a></li>
+<li><a href="modules/forgejo/#module-forgejo">Forgejo</a></li>
+<li><a href="modules/gitlab/#module-services-gitlab">GitLab</a></li>
+<li><a href="modules/jellystat/#module-services-jellystat">Jellystat</a></li>
+<li><a href="modules/mesh-llm/#module-services-mesh-llm">MeshLLM</a></li>
+<li><a href="modules/paisa/#module-services-paisa">Paisa</a></li>
+<li><a href="modules/pelican-panel/#module-pelican-panel">Pelican Panel</a></li>
+<li><a href="modules/pelican-wings/#module-pelican-wings">Pelican Wings</a></li>
+<li><a href="modules/tandoor-recipes/#module-services-tandoor-recipes">Tandoor Recipes</a></li>
+<li><a href="modules/taskserver/#module-services-taskserver">Taskserver</a></li>
+<li><a href="modules/tdarr/#module-services-tdarr">Tdarr</a></li>
+<li><a href="modules/weechat/#module-services-weechat">WeeChat</a></li>
+<li><a href="modules/certspotter/#module-services-certspotter">Cert Spotter</a></li>
+<li><a href="modules/goss/#module-services-goss">Goss</a></li>
+<li><a href="modules/ocsinventory-agent/#module-services-ocsinventory-agent">OCS Inventory Agent</a></li>
+<li><a href="modules/parsedmarc/#module-services-parsedmarc">parsedmarc</a></li>
+<li><a href="modules/exporters/#module-services-prometheus-exporters">Prometheus exporters</a></li>
+<li><a href="modules/litestream/#module-services-litestream">Litestream</a></li>
+<li><a href="modules/samba/#module-services-samba">Samba</a></li>
+<li><a href="modules/amuled/#module-services-amule">aMule</a></li>
+<li><a href="modules/anubis/#module-services-anubis">Anubis</a></li>
+<li><a href="modules/atalkd/#module-services-atalkd">atalkd</a></li>
+<li><a href="modules/crab-hole/#module-services-crab-hole">🦀 crab-hole</a></li>
+<li><a href="modules/dnsmasq/#module-services-networking-dnsmasq">Dnsmasq</a></li>
+<li><a href="modules/doh-server/#module-service-doh-server">DNS-over-HTTPS Server</a></li>
+<li><a href="modules/firefox-syncserver/#module-services-firefox-syncserver">Firefox Sync server</a></li>
+<li><a href="modules/gns3-server/#module-services-gns3-server">GNS3 Server</a></li>
+<li><a href="modules/jotta-cli/#module-services-jotta-cli">Jottacloud Command-line Tool</a></li>
+<li><a href="modules/lxmd/#module-services-lxmd">LXMD</a></li>
+<li><a href="modules/mosquitto/#module-services-mosquitto">Mosquitto</a></li>
+<li><a href="modules/netbird/#module-services-netbird">Netbird Client</a></li>
+<li><a href="modules/netbird-relay/#module-services-netbird-relay">Netbird Relay</a></li>
+<li><a href="modules/server/#module-services-netbird-server">Netbird server</a></li>
+<li><a href="modules/nextcloud-spreed-signaling/#module-services-nextcloud-spreed-signaling">Spreed standalone signaling server</a></li>
+<li><a href="modules/nordvpn/#module-services-nordvpn">NordVPN</a></li>
+<li><a href="modules/onedrive/#module-services-onedrive">Microsoft OneDrive</a></li>
+<li><a href="modules/pihole-ftl/#module-services-networking-pihole-ftl">pihole-FTL</a></li>
+<li><a href="modules/pleroma/#module-services-pleroma">Pleroma</a></li>
+<li><a href="modules/portmaster/#module-services-portmaster">Portmaster</a></li>
+<li><a href="modules/prosody/#module-services-prosody">Prosody</a></li>
+<li><a href="modules/rnsd/#module-services-rnsd">RNSD</a></li>
+<li><a href="modules/umurmur/#module-service-umurmur">uMurmur</a></li>
+<li><a href="modules/yggdrasil/#module-services-networking-yggdrasil">Yggdrasil</a></li>
+<li><a href="modules/zapret2/#module-services-zapret2">Zapret2</a></li>
+<li><a href="modules/meilisearch/#module-services-meilisearch">Meilisearch</a></li>
+<li><a href="modules/crowdsec/#sec-crowdsec-reset">How to reset data and etc directories</a></li>
+<li><a href="modules/falco/#module-services-falco">Falco</a></li>
+<li><a href="modules/kerberos/#module-services-kerberos-server">kerberos_server</a></li>
+<li><a href="modules/systemd-lock-handler/#module-services-systemd-lock-handler">systemd-lock-handler</a></li>
+<li><a href="modules/akkoma/#module-services-akkoma">Akkoma</a></li>
+<li><a href="modules/c2fmzq-server/#module-services-c2fmzq">c2FmZQ</a></li>
+<li><a href="modules/davis/#module-services-davis">Davis</a></li>
+<li><a href="modules/discourse/#module-services-discourse">Discourse</a></li>
+<li><a href="modules/ente/#module-services-ente">Ente.io</a></li>
+<li><a href="modules/filesender/#module-services-filesender">FileSender</a></li>
+<li><a href="modules/glance/#module-services-glance">Glance</a></li>
+<li><a href="modules/gotosocial/#module-services-gotosocial">GoToSocial</a></li>
+<li><a href="modules/grocy/#module-services-grocy">Grocy</a></li>
+<li><a href="modules/hatsu/#module-services-hatsu">Hatsu</a></li>
+<li><a href="modules/jitsi-meet/#module-services-jitsi-meet">Jitsi Meet</a></li>
+<li><a href="modules/keycloak/#module-services-keycloak">Keycloak</a></li>
+<li><a href="modules/lemmy/#module-services-lemmy">Lemmy</a></li>
+<li><a href="modules/matomo/#module-services-matomo">Matomo</a></li>
+<li><a href="modules/nextcloud/#module-services-nextcloud">Nextcloud</a></li>
+<li><a href="modules/opencloud/#module-services-opencloud">OpenCloud</a></li>
+<li><a href="modules/pict-rs/#module-services-pict-rs">Pict-rs</a></li>
+<li><a href="modules/pihole-web/#module-services-web-apps-pihole-web">Pi-hole Web Dashboard</a></li>
+<li><a href="modules/plausible/#module-services-plausible">Plausible</a></li>
+<li><a href="modules/strfry/#module-services-strfry">strfry</a></li>
+<li><a href="modules/suwayomi-server/#module-services-suwayomi-server">Suwayomi-Server</a></li>
+<li><a href="modules/szurubooru/#module-services-szurubooru">Szurubooru</a></li>
+<li><a href="modules/wanderer/#module-services-wanderer">wanderer</a></li>
+<li><a href="modules/youtrack/#module-services-youtrack">YouTrack</a></li>
+<li><a href="modules/garage/#module-services-garage">Garage</a></li>
+<li><a href="modules/clevis/#module-boot-clevis">Clevis</a></li>
+<li><a href="modules/external/#sec-bootloader-external">External Bootloader Backends</a></li>
+<li><a href="modules/plymouth-tpm2-totp/#module-boot-plymouth-tpm2-totp">tpm2-totp with Plymouth</a></li>
+<li><a href="modules/xen-dom0/#module-virtualisation-xen">Xen Project Hypervisor</a></li>
+<li><a href="configuration/subversion/#module-services-subversion">Subversion</a></li>
+<li><a href="configuration/mattermost/#sec-mattermost">Mattermost</a></li>
+<li><a href="configuration/kubernetes/#sec-kubernetes">Kubernetes</a></li>
+</ul>
+<h2>Reference</h2>
+<ul>
+<li><a href="reference/#ch-reference">Reference</a></li>
+</ul>
+<h2>Profiles</h2>
+<ul>
+<li><a href="configuration/profiles/#ch-profiles">Profiles</a></li>
+<li><a href="configuration/profiles/all-hardware/#sec-profile-all-hardware">All Hardware</a></li>
+<li><a href="configuration/profiles/base/#sec-profile-base">Base</a></li>
+<li><a href="configuration/profiles/clone-config/#sec-profile-clone-config">Clone Config</a></li>
+<li><a href="configuration/profiles/demo/#sec-profile-demo">Demo</a></li>
+<li><a href="configuration/profiles/docker-container/#sec-profile-docker-container">Docker Container</a></li>
+<li><a href="configuration/profiles/graphical/#sec-profile-graphical">Graphical</a></li>
+<li><a href="configuration/profiles/headless/#sec-profile-headless">Headless</a></li>
+<li><a href="configuration/profiles/installation-device/#sec-profile-installation-device">Installation Device</a></li>
+<li><a href="configuration/profiles/perlless/#sec-perlless">Perlless</a></li>
+<li><a href="configuration/profiles/minimal/#sec-profile-minimal">Minimal</a></li>
+<li><a href="configuration/profiles/qemu-guest/#sec-profile-qemu-guest">QEMU Guest</a></li>
+<li><a href="configuration/linux-kernel/#sec-kernel-config">Linux Kernel</a></li>
+</ul>
+<h2>Necessary system state</h2>
+<ul>
+<li><a href="administration/system-state/#ch-system-state">Necessary system state</a></li>
+<li><a href="administration/nixos-state/#sec-nixos-state">NixOS</a></li>
+<li><a href="administration/systemd-state/#sec-systemd-state">systemd</a></li>
+<li><a href="administration/zfs-state/#sec-zfs-state">ZFS</a></li>
+</ul>
+<h2>What happens during a system switch?</h2>
+<ul>
+<li><a href="development/what-happens-during-a-system-switch/#sec-switching-systems">What happens during a system switch?</a></li>
+<li><a href="development/unit-handling/#sec-unit-handling">Unit handling</a></li>
+<li><a href="development/activation-script/#sec-activation-script">Activation script</a></li>
+<li><a href="development/non-switchable-systems/#sec-non-switchable-system">Non Switchable Systems</a></li>
+<li><a href="development/etc-overlay/#sec-etc-overlay">/etc via overlay filesystem</a></li>
+<li><a href="administration/control-groups/#sec-cgroups">Control Groups</a></li>
+<li><a href="development/bootspec/#sec-bootspec">Bootspec</a></li>
+<li><a href="development/modular-services/#modular-services">Modular Services</a></li>
+</ul>
+<h2>Contributing</h2>
+<ul>
+<li><a href="development/development/#ch-development">Contributing</a></li>
+<li><a href="development/sources/#sec-getting-sources">Getting the Sources</a></li>
+</ul>
+<h2>Writing NixOS Modules</h2>
+<ul>
+<li><a href="development/writing-modules/#sec-writing-modules">Writing NixOS Modules</a></li>
+<li><a href="development/option-declarations/#sec-option-declarations">Option Declarations</a></li>
+<li><a href="development/option-types/#sec-option-types">Options Types</a></li>
+<li><a href="development/option-def/#sec-option-definitions">Option Definitions</a></li>
+<li><a href="development/assertions/#sec-assertions">Warnings and Assertions</a></li>
+<li><a href="development/meta-attributes/#sec-meta-attributes">Meta Attributes</a></li>
+<li><a href="development/importing-modules/#sec-importing-modules">Importing Modules</a></li>
+<li><a href="development/replace-modules/#sec-replace-modules">Replace Modules</a></li>
+<li><a href="development/freeform-modules/#sec-freeform-modules">Freeform modules</a></li>
+<li><a href="development/settings-options/#sec-settings-options">Options for Program Settings</a></li>
+<li><a href="development/state-revision/#sec-state-revision">State revision</a></li>
+</ul>
+<h2>NixOS Tests</h2>
+<ul>
+<li><a href="development/nixos-tests/#sec-nixos-tests">NixOS Tests</a></li>
+<li><a href="development/writing-nixos-tests/#sec-writing-nixos-tests">Writing Tests</a></li>
+<li><a href="development/running-nixos-tests/#sec-running-nixos-tests">Running Tests</a></li>
+<li><a href="development/running-nixos-tests-interactively/#sec-running-nixos-tests-interactively">Running Tests interactively</a></li>
+<li><a href="development/linking-nixos-tests-to-packages/#sec-linking-nixos-tests-to-packages">Linking NixOS tests to packages</a></li>
+<li><a href="development/testing-hardware-features/#sec-nixos-test-testing-hardware-features">Testing Hardware Features</a></li>
+<li><a href="development/building-parts/#sec-building-parts">Building Specific Parts of NixOS</a></li>
+<li><a href="development/developing-the-test-driver/#chap-developing-the-test-driver">Developing the NixOS Test Driver</a></li>
+<li><a href="development/testing-installer/#ch-testing-installer">Testing the Installer</a></li>
+<li><a href="development/writing-documentation/#sec-writing-documentation">Writing NixOS Documentation</a></li>
+<li><a href="contributing-to-this-manual/#chap-contributing">Contributing to this manual</a></li>
+</ul>
+<h2>Configuration Options</h2>
+<ul>
+<li><a href="nixos-options/#ch-options">Configuration Options</a>
+<ul>
+<li><a href="options/boot/#sec-options-boot">boot</a></li>
+<li><a href="options/containers/#sec-options-containers">containers</a></li>
+<li><a href="options/documentation/#sec-options-documentation">documentation</a></li>
+<li><a href="options/environment/#sec-options-environment">environment</a></li>
+<li><a href="options/fonts/#sec-options-fonts">fonts</a></li>
+<li><a href="options/hardware/#sec-options-hardware">hardware</a></li>
+<li><a href="options/i18n/#sec-options-i18n">i18n</a></li>
+<li><a href="options/image/#sec-options-image">image</a></li>
+<li><a href="options/networking/#sec-options-networking">networking</a></li>
+<li><a href="options/nix/#sec-options-nix">nix</a></li>
+<li><a href="options/power/#sec-options-power">power</a></li>
+<li><a href="options/programs/#sec-options-programs">programs</a></li>
+<li><a href="options/security/#sec-options-security">security</a></li>
+<li><a href="options/system/#sec-options-system">system</a></li>
+<li><a href="options/systemd/#sec-options-systemd">systemd</a></li>
+<li><a href="options/users/#sec-options-users">users</a></li>
+<li><a href="options/virtualisation/#sec-options-virtualisation">virtualisation</a></li>
+<li><a href="options/xdg/#sec-options-xdg">xdg</a></li>
+<li><a href="options/services-a/#sec-options-services-a">services (A)</a></li>
+<li><a href="options/services-b/#sec-options-services-b">services (B)</a></li>
+<li><a href="options/services-c/#sec-options-services-c">services (C)</a></li>
+<li><a href="options/services-d/#sec-options-services-d">services (D)</a></li>
+<li><a href="options/services-e/#sec-options-services-e">services (E)</a></li>
+<li><a href="options/services-f/#sec-options-services-f">services (F)</a></li>
+<li><a href="options/services-g/#sec-options-services-g">services (G)</a></li>
+<li><a href="options/services-h/#sec-options-services-h">services (H)</a></li>
+<li><a href="options/services-i/#sec-options-services-i">services (I)</a></li>
+<li><a href="options/services-j/#sec-options-services-j">services (J)</a></li>
+<li><a href="options/services-k/#sec-options-services-k">services (K)</a></li>
+<li><a href="options/services-l/#sec-options-services-l">services (L)</a></li>
+<li><a href="options/services-m/#sec-options-services-m">services (M)</a></li>
+<li><a href="options/services-n/#sec-options-services-n">services (N)</a></li>
+<li><a href="options/services-o/#sec-options-services-o">services (O)</a></li>
+<li><a href="options/services-other/#sec-options-services-other">services (other)</a></li>
+<li><a href="options/services-p/#sec-options-services-p">services (P)</a></li>
+<li><a href="options/services-q/#sec-options-services-q">services (Q)</a></li>
+<li><a href="options/services-r/#sec-options-services-r">services (R)</a></li>
+<li><a href="options/services-s/#sec-options-services-s">services (S)</a></li>
+<li><a href="options/services-t/#sec-options-services-t">services (T)</a></li>
+<li><a href="options/services-u/#sec-options-services-u">services (U)</a></li>
+<li><a href="options/services-v/#sec-options-services-v">services (V)</a></li>
+<li><a href="options/services-w/#sec-options-services-w">services (W)</a></li>
+<li><a href="options/services-x/#sec-options-services-x">services (X)</a></li>
+<li><a href="options/services-y/#sec-options-services-y">services (Y)</a></li>
+<li><a href="options/services-z/#sec-options-services-z">services (Z)</a></li>
+<li><a href="options/other/#sec-options-other">Other options</a></li>
+</ul>
+</li>
+</ul>
+<h2>Release Notes</h2>
+<ul>
+<li><a href="release-notes/release-notes/#ch-release-notes">Release Notes</a>
+<ul>
+<li><a href="release-notes/rl-2705/#sec-release-27.05">Release 27.05 (&quot;Axolotl&quot;, 2027.05/??)</a></li>
+<li><a href="release-notes/rl-2611/#sec-release-26.11">Release 26.11 (&quot;Zokor&quot;, 2026.11/??)</a></li>
+<li><a href="release-notes/rl-2605/#sec-release-26.05">Release 26.05 (&quot;Yarara&quot;, 2026.05/30)</a></li>
+<li><a href="release-notes/rl-2511/#sec-release-25.11">Release 25.11 (&quot;Xantusia&quot;, 2025.11/30)</a></li>
+<li><a href="release-notes/rl-2505/#sec-release-25.05">Release 25.05 (“Warbler”, 2025.05/23)</a></li>
+<li><a href="release-notes/rl-2411/#sec-release-24.11">Release 24.11 (“Vicuña”, 2024.11/28)</a></li>
+<li><a href="release-notes/rl-2405/#sec-release-24.05">Release 24.05 (“Uakari”, 2024.05/31)</a></li>
+<li><a href="release-notes/rl-2311/#sec-release-23.11">Release 23.11 (“Tapir”, 2023.11/29)</a></li>
+<li><a href="release-notes/rl-2305/#sec-release-23.05">Release 23.05 (“Stoat”, 2023.05/31)</a></li>
+<li><a href="release-notes/rl-2211/#sec-release-22.11">Release 22.11 (“Raccoon”, 2022.11/30)</a></li>
+<li><a href="release-notes/rl-2205/#sec-release-22.05">Release 22.05 (“Quokka”, 2022.05/30)</a></li>
+<li><a href="release-notes/rl-2111/#sec-release-21.11">Release 21.11 (“Porcupine”, 2021/11/30)</a></li>
+<li><a href="release-notes/rl-2105/#sec-release-21.05">Release 21.05 (&quot;Okapi&quot;, 2021.05/31)</a></li>
+<li><a href="release-notes/rl-2009/#sec-release-20.09">Release 20.09 (&quot;Nightingale&quot;, 2020.10/27)</a></li>
+<li><a href="release-notes/rl-2003/#sec-release-20.03">Release 20.03 (&quot;Markhor&quot;, 2020.04/20)</a></li>
+<li><a href="release-notes/rl-1909/#sec-release-19.09">Release 19.09 (&quot;Loris&quot;, 2019/10/09)</a></li>
+<li><a href="release-notes/rl-1903/#sec-release-19.03">Release 19.03 (&quot;Koi&quot;, 2019/04/11)</a></li>
+<li><a href="release-notes/rl-1809/#sec-release-18.09">Release 18.09 (&quot;Jellyfish&quot;, 2018/10/05)</a></li>
+<li><a href="release-notes/rl-1803/#sec-release-18.03">Release 18.03 (&quot;Impala&quot;, 2018/04/04)</a></li>
+<li><a href="release-notes/rl-1709/#sec-release-17.09">Release 17.09 (&quot;Hummingbird&quot;, 2017/09/??)</a></li>
+<li><a href="release-notes/rl-1703/#sec-release-17.03">Release 17.03 (&quot;Gorilla&quot;, 2017/03/31)</a></li>
+<li><a href="release-notes/rl-1609/#sec-release-16.09">Release 16.09 (&quot;Flounder&quot;, 2016/09/30)</a></li>
+<li><a href="release-notes/rl-1603/#sec-release-16.03">Release 16.03 (&quot;Emu&quot;, 2016/03/31)</a></li>
+<li><a href="release-notes/rl-1509/#sec-release-15.09">Release 15.09 (&quot;Dingo&quot;, 2015/09/30)</a></li>
+<li><a href="release-notes/rl-1412/#sec-release-14.12">Release 14.12 (&quot;Caterpillar&quot;, 2014/12/30)</a></li>
+<li><a href="release-notes/rl-1404/#sec-release-14.04">Release 14.04 (&quot;Baboon&quot;, 2014/04/30)</a></li>
+<li><a href="release-notes/rl-1310/#sec-release-13.10">Release 13.10 (&quot;Aardvark&quot;, 2013/10/31)</a></li>
+</ul>
+</li>
+</ul>
+    </nav>
+    <section id='main'>
+      <div id='search-panel' class='nav-search' role='search' hidden>
+        <label class='visually-hidden' for='search'>Search documentation</label>
+        <input type='search' id='search' placeholder='Search documentation (/)' autocomplete='off' aria-controls='search-results'>
+        <p id='search-status' class='visually-hidden' role='status' aria-live='polite'></p>
+        <div id='search-results'></div>
+      </div>
+      <div class='main-scroll'>
+        <main id='main-content' tabindex='-1'>
+<h1 id='sec-release-23.11'><a href='release-notes/rl-2311/#sec-release-23.11'>
+Release 23.11 (“Tapir”, 2023.11/29)
+</a></h1>
+<p>The NixOS release team is happy to announce a new version of NixOS. The release is called NixOS 23.11 (&quot;Tapir&quot;).</p>
+<p>NixOS is a Linux distribution, whose set of packages can also be used on other Linux systems and macOS.</p>
+<p>Support is planned until the end of June 2024, handing over to NixOS 24.05.</p>
+<p>To upgrade to the latest release, follow the upgrade chapter and check the <a href="release-notes/rl-2311/#sec-release-23.11-nixos-breaking-changes">Breaking Changes</a>
+section for packages and services used in your configuration.</p>
+<p>The team is excited about the many software updates and improvements in this release. Just to name a few, do check the updates
+for <code>GNOME</code> packages, <code>systemd</code>, <code>glibc</code>, the <code>ROCM</code> package set, and <code>hostapd</code> (which brings support for WiFi6 (IEEE 802.11ax) and WPA3-SAE-PK).</p>
+<p>Make sure to also check the many updates in the <a href="release-notes/rl-2311/#sec-release-23.11-nixpkgs-lib">Nixpkgs library</a> when developing your own packages.</p>
+<h2 id='sec-release-23.11-toc'><a href='release-notes/rl-2311/#sec-release-23.11-toc'>
+Table of Contents
+</a></h2>
+<ul>
+<li><a href="release-notes/rl-2311/#sec-release-23.11-nixos">NixOS</a>
+<ul>
+<li><a href="release-notes/rl-2311/#sec-release-23.11-nixos-breaking-changes">Breaking Changes</a></li>
+<li><a href="release-notes/rl-2311/#sec-release-23.11-nixos-new-services">New Services</a></li>
+<li><a href="release-notes/rl-2311/#sec-release-23.11-nixos-notable-changes">Other Notable Changes</a></li>
+</ul>
+</li>
+<li><a href="release-notes/rl-2311/#sec-release-23.11-nixpkgs-lib">Nixpkgs Library</a>
+<ul>
+<li><a href="release-notes/rl-2311/#sec-release-23.11-lib-breaking">Breaking Changes</a></li>
+<li><a href="release-notes/rl-2311/#sec-release-23.11-lib-additions-improvements">Additions and Improvements</a></li>
+<li><a href="release-notes/rl-2311/#sec-release-23.11-lib-deprecations">Deprecations</a></li>
+</ul>
+</li>
+</ul>
+<h2 id='sec-release-23.11-nixos'><a href='release-notes/rl-2311/#sec-release-23.11-nixos'>
+NixOS
+</a></h2>
+<h3 id='sec-release-23.11-nixos-breaking-changes'><a href='release-notes/rl-2311/#sec-release-23.11-nixos-breaking-changes'>
+Breaking Changes
+</a></h3>
+<ul>
+<li>
+<p><code>services.postgresql.ensurePermissions</code> has been deprecated in favor of
+<code>services.postgresql.ensureUsers.*.ensureDBOwnership</code> which simplifies the
+setup of database owned by a certain system user in local database contexts
+(which make use of peer authentication via UNIX sockets), migration
+guidelines were provided in the NixOS manual, please refer to them if you are
+affected by a PostgreSQL 15 changing the way <code>GRANT ALL PRIVILEGES</code> is
+working. <code>services.postgresql.ensurePermissions</code> will be removed in 24.05.
+All NixOS modules were migrated using one of the strategy, e.g.
+<code>ensureDBOwnership</code> or <code>postStart</code>. Refer to the <a href="https://github.com/NixOS/nixpkgs/pull/266270">PR
+#266270</a> for more details.</p>
+</li>
+<li>
+<p><code>network-online.target</code> has been fixed to no longer time out for systems with
+<code>networking.useDHCP = true</code> and <code>networking.useNetworkd = true</code>. Workarounds
+for this can be removed.</p>
+</li>
+<li>
+<p>The <code>boot.loader.raspberryPi</code> options have been marked deprecated, with
+intent of removal for NixOS 24.11. They had a limited use-case, and do not
+work like people expect. They required either very old installs from (<a href="https://github.com/NixOS/nixpkgs/pull/62462">before
+mid-2019</a>) or customized builds
+out of scope of the standard and generic AArch64 support. That option set
+never supported the Raspberry Pi 4 family of devices.</p>
+</li>
+<li>
+<p><code>python3.pkgs.sequoia</code> was removed in favor of <code>python3.pkgs.pysequoia</code>. The
+latter package is based on upstream's dedicated repository for sequoia's
+Python bindings, where the Python bindings from
+<a href="https://gitlab.com/sequoia-pgp/sequoia">gitlab:sequoia-pgp/sequoia</a> were
+removed long ago.</p>
+</li>
+<li>
+<p><code>writeTextFile</code> requires <code>executable</code> to be boolean now, values like <code>null</code>
+or <code>&quot;&quot;</code> will fail to evaluate now.</p>
+</li>
+<li>
+<p>The latest version of <code>clonehero</code> now stores custom content in
+<code>~/.clonehero</code>. Refer to the <a href="https://clonehero.net/2022/11/29/v23-to-v1-migration-instructions.html">migration
+instructions</a>
+for more details. Typically, these content files would exist along side the
+binary, but the previous build used a wrapper script that would store them in
+<code>~/.config/unity3d/srylain Inc_/Clone Hero</code>.</p>
+</li>
+<li>
+<p><code>services.mastodon</code> doesn't support providing a TCP port to its <code>streaming</code>
+component anymore, as upstream implemented parallelization by running
+multiple instances instead of running multiple processes in one instance.
+Please create a PR if you are interested in this feature.<br />
+Due to this, the desired number of such instances
+<a href="options/services-m/#opt-services.mastodon.streamingProcesses"><code>services.mastodon.streamingProcesses</code></a> now needs to be declared explicitly.</p>
+</li>
+<li>
+<p>The <code>services.hostapd</code> module was rewritten to support <code>passwordFile</code> like
+options, WPA3-SAE, and management of multiple interfaces. This breaks
+compatibility with older configurations.</p>
+<ul>
+<li><code>hostapd</code> is now started with additional systemd sandbox/hardening options
+for better security.</li>
+<li><code>services.hostapd.interface</code> was replaced with a per-radio and per-bss
+configuration scheme using
+<a href="options/services-h/#opt-services.hostapd.radios">services.hostapd.radios</a>.</li>
+<li><code>services.hostapd.wpa</code> has been replaced by
+<a href="options/services-h/#opt-services.hostapd.radios._name_.networks._name_.authentication.wpaPassword">services.hostapd.radios.&lt;name&gt;.networks.&lt;name&gt;.authentication.wpaPassword</a>
+and
+<a href="options/services-h/#opt-services.hostapd.radios._name_.networks._name_.authentication.saePasswords">services.hostapd.radios.&lt;name&gt;.networks.&lt;name&gt;.authentication.saePasswords</a>
+which configure WPA2-PSK and WP3-SAE respectively.</li>
+<li>The default authentication has been changed to WPA3-SAE. Options for other
+(legacy) schemes are still available.</li>
+</ul>
+</li>
+<li>
+<p><code>python3.pkgs.fetchPypi</code> and <code>python3Packages.fetchPypi</code> have been
+deprecated in favor of top-level <code>fetchPypi</code>.</p>
+</li>
+<li>
+<p>xdg-desktop-portal has been updated to 1.18, which reworked how portal
+implementations are selected. If you roll your own desktop environment, you
+should either set <code>xdg.portal.config</code> or <code>xdg.portal.configPackages</code>, which
+allow fine-grained control over which portal backend to use for specific
+interfaces, as described in <code>portals.conf(5)</code>.</p>
+<p>If you don't provide configurations, a portal backend will only be considered
+when the desktop you use matches its deprecated <code>UseIn</code> key. While some NixOS
+desktop modules should already ship one for you, it is suggested to test
+portal availability by trying <a href="https://flathub.org/apps/xyz.tytanium.DoorKnocker">Door
+Knocker</a> and <a href="https://flathub.org/apps/com.belmoussaoui.ashpd.demo">ASHPD
+Demo</a>. If things
+regressed, you may run <code>G_MESSAGES_DEBUG=all /path/to/xdg-desktop-portal/libexec/xdg-desktop-portal</code> for ideas on which
+config file and which portals are chosen.</p>
+</li>
+<li>
+<p><code>pass</code> now does not contain <code>password-store.el</code>. Users should get
+<code>password-store.el</code> from Emacs lisp package set <code>emacs.pkgs.password-store</code>.</p>
+</li>
+<li>
+<p><code>services.knot</code> now supports <code>.settings</code> from RFC42.  The previous
+<code>.extraConfig</code> still works the same, but it displays a warning now.</p>
+</li>
+<li>
+<p><code>services.invoiceplane</code> now supports <code>.settings</code> from RFC42. The previous
+<code>.extraConfig</code> still works the same way, but it displays a warning now.</p>
+</li>
+<li>
+<p><code>mu</code> does not install <code>mu4e</code> files by default now. Users should get <code>mu4e</code>
+from Emacs lisp package set <code>emacs.pkgs.mu4e</code>.</p>
+</li>
+<li>
+<p><code>mariadb</code> now defaults to <code>mariadb_1011</code> instead of <code>mariadb_106</code>, meaning
+the default version was upgraded from v10.6.x to v10.11.x. Refer to the
+<a href="https://mariadb.com/kb/en/upgrading-from-mariadb-10-6-to-mariadb-10-11/">upgrade
+notes</a>
+for potential issues.</p>
+</li>
+<li>
+<p><code>getent</code> has been moved from <code>glibc</code>'s <code>bin</code> output to its own dedicated
+output, reducing closure size for many dependents. Dependents using the
+<code>getent</code> alias should not be affected; others should move from using
+<code>glibc.bin</code> or <code>getBin glibc</code> to <code>getent</code> (which also improves compatibility
+with non-glibc platforms).</p>
+</li>
+<li>
+<p><code>maintainers/scripts/update-luarocks-packages</code> is now a proper package
+<code>luarocks-packages-updater</code> that can be run to maintain out-of-tree luarocks
+packages.</p>
+</li>
+<li>
+<p>The <code>users.users.&lt;name&gt;.passwordFile</code> has been renamed to
+<code>users.users.&lt;name&gt;.hashedPasswordFile</code> to avoid possible confusions. The
+option is in fact the file-based version of <code>hashedPassword</code>, not <code>password</code>,
+and expects a file containing the <code>crypt(3)</code> hash of the user
+password.</p>
+</li>
+<li>
+<p><code>chromiumBeta</code> and <code>chromiumDev</code> have been removed due to the lack of
+maintenance in nixpkgs. Consider using <code>chromium</code> instead.</p>
+</li>
+<li>
+<p><code>google-chrome-beta</code> and <code>google-chrome-dev</code> have been removed due to the
+lack of maintenance in nixpkgs. Consider using <code>google-chrome</code> instead.</p>
+</li>
+<li>
+<p>The <code>services.ananicy.extraRules</code> option now has the type of <code>listOf attrs</code>
+instead of <code>string</code>.</p>
+</li>
+<li>
+<p><code>buildVimPluginFrom2Nix</code> has been renamed to <code>buildVimPlugin</code>, which now
+now skips <code>configurePhase</code> and <code>buildPhase</code>.</p>
+</li>
+<li>
+<p>JACK tools (<code>jack_*</code> except <code>jack_control</code>) have moved from the <code>jack2</code>
+package to <code>jack-example-tools</code>.</p>
+</li>
+<li>
+<p>The <code>waagent</code> service does provisioning now.</p>
+</li>
+<li>
+<p>The <code>matrix-synapse</code> package &amp; module have undergone some significant
+internal changes, for most setups no intervention is needed, though:</p>
+<ul>
+<li>The option
+<a href="options/services-m/#opt-services.matrix-synapse.package"><code>services.matrix-synapse.package</code></a>
+is read-only now. For modifying the package, use an overlay which modifies
+<code>matrix-synapse-unwrapped</code> instead. More on that below.</li>
+<li>The <code>enableSystemd</code> &amp; <code>enableRedis</code> arguments have been removed and
+<code>matrix-synapse</code> has been renamed to <code>matrix-synapse-unwrapped</code>. Also,
+several optional dependencies (such as <code>psycopg2</code> or <code>authlib</code>) have been
+removed.</li>
+<li>These optional dependencies are automatically added via a wrapper
+(<code>pkgs.matrix-synapse.override { extras = [&quot;redis&quot;]; }</code> for <code>hiredis</code> &amp;
+<code>txredisapi</code> for instance) if the relevant config section is declared in
+<code>services.matrix-synapse.settings</code>. For instance, if
+<code>services.matrix-synapse.settings.redis.enabled</code> is set to <code>true</code>,
+<code>&quot;redis&quot;</code> will be automatically added to the <code>extras</code> list of
+<code>pkgs.matrix-synapse</code>.</li>
+<li>A list of all extras (and the extras enabled by default) can be found at
+the <a href="options/services-m/#opt-services.matrix-synapse.extras">option's reference for
+<code>services.matrix-synapse.extras</code></a>.</li>
+<li>In some cases (e.g. for running synapse workers) it was necessary to re-use
+the <code>PYTHONPATH</code> of <code>matrix-synapse.service</code>'s environment to have all
+plugins available. This isn't necessary anymore, instead
+<code>config.services.matrix-synapse.package</code> can be used as it points to the
+wrapper with properly configured <code>extras</code> and also all plugins defined via
+<a href="options/services-m/#opt-services.matrix-synapse.plugins"><code>services.matrix-synapse.plugins</code></a>
+available. This is also the reason for why the option is read-only now,
+it's supposed to be set by the module only.</li>
+</ul>
+</li>
+<li>
+<p><code>netbox</code> was updated to v3.6. <code>services.netbox.package</code> still defaults
+to v3.5 if <code>stateVersion</code> is earlier than 23.11. Refer to upstream's breaking
+changes <a href="https://github.com/netbox-community/netbox/releases/tag/v3.6.0">for
+v3.6.0</a> and
+upgrade NetBox by changing <code>services.netbox.package</code>. Database migrations
+will be run automatically.</p>
+</li>
+<li>
+<p><code>etcd</code> has been updated to v3.5. Refer to upgrade guides for <a href="https://etcd.io/docs/v3.5/upgrades/upgrade_3_4/">v3.3 to
+v3.4</a> and <a href="https://etcd.io/docs/v3.5/upgrades/upgrade_3_5/">v3.4 to
+v3.5</a> for more details.</p>
+</li>
+<li>
+<p><code>gitlab</code> installations created or updated between versions [15.11.0,
+15.11.2] have an incorrect database schema. This will become a problem when
+upgrading to <code>gitlab</code> &gt;=16.2.0. A workaround for affected users can be found
+in the <a href="https://docs.gitlab.com/ee/update/versions/gitlab_16_changes.html#undefined-column-error-upgrading-to-162-or-later">GitLab
+docs</a>.</p>
+</li>
+<li>
+<p><code>consul</code> has been updated to v1.16.0. Refer to the <a href="https://github.com/hashicorp/consul/releases/tag/v1.16.0">release
+note</a> for more
+details. Once a new Consul version has started and upgraded it's data
+directory, it generally cannot be downgraded to the previous version.</p>
+</li>
+<li>
+<p><code>llvmPackages_rocm</code> has been moved to <code>rocmPackages.llvm</code>.</p>
+</li>
+<li>
+<p><code>hip</code>, <code>rocm-opencl-runtime</code>, <code>rocm-opencl-icd</code>, and <code>rocclr</code> have been
+combined into <code>rocmPackages.clr</code>.</p>
+</li>
+<li>
+<p><code>clang-ocl</code>, <code>clr</code>, <code>composable_kernel</code>, <code>hipblas</code>, <code>hipcc</code>, <code>hip-common</code>, <code>hipcub</code>,
+<code>hipfft</code>, <code>hipfort</code>, <code>hipify</code>, <code>hipsolver</code>, <code>hipsparse</code>, <code>migraphx</code>, <code>miopen</code>, <code>miopengemm</code>,
+<code>rccl</code>, <code>rdc</code>, <code>rocalution</code>, <code>rocblas</code>, <code>rocdgbapi</code>, <code>rocfft</code>, <code>rocgdb</code>, <code>rocm-cmake</code>,
+<code>rocm-comgr</code>, <code>rocm-core</code>, <code>rocm-device-libs</code>, <code>rocminfo</code>, <code>rocmlir</code>, <code>rocm-runtime</code>,
+<code>rocm-smi</code>, <code>rocm-thunk</code>, <code>rocprim</code>, <code>rocprofiler</code>, <code>rocrand</code>, <code>rocr-debug-agent</code>,
+<code>rocsolver</code>, <code>rocsparse</code>, <code>rocthrust</code>, <code>roctracer</code>, <code>rocwmma</code>, and <code>tensile</code>
+have been moved to <code>rocmPackages</code>.</p>
+</li>
+<li>
+<p><code>himalaya</code> has been updated to v0.8.0, which drops the native TLS support
+(in favor of Rustls) and add OAuth 2.0 support. Refer to the <a href="https://github.com/soywod/himalaya/releases/tag/v0.8.0">release
+note</a> for more
+details.</p>
+</li>
+<li>
+<p><code>nix-prefetch-git</code> now ignores global and user git config, to improve
+reproducibility.</p>
+</li>
+<li>
+<p>The <a href="options/services-c/#opt-services.caddy.acmeCA">services.caddy.acmeCA</a> option defaults
+to <code>null</code> instead of <code>&quot;https://acme-v02.api.letsencrypt.org/directory&quot;</code> now.
+To use all of Caddy's default ACME CAs and enable Caddy's automatic issuer
+fallback feature by default, as recommended by upstream.</p>
+</li>
+<li>
+<p>The default priorities of
+<a href="options/services-n/#opt-services.nextcloud.phpOptions"><code>services.nextcloud.phpOptions</code></a> have
+changed. This means that e.g.
+<code>services.nextcloud.phpOptions.&quot;opcache.interned_strings_buffer&quot; = &quot;23&quot;;</code>
+doesn't discard all of the other defaults from this option anymore. The
+attribute values of <code>phpOptions</code> are still defaults, these can be overridden
+as shown here.</p>
+<p>To override all of the options (including <code>upload_max_filesize</code>,
+<code>post_max_size</code> and <code>memory_limit</code> which all point to
+<a href="options/services-n/#opt-services.nextcloud.maxUploadSize"><code>services.nextcloud.maxUploadSize</code></a>
+by default) can be done like this:</p>
+<pre><code class="language-nix">{
+  services.nextcloud.phpOptions = lib.mkForce {
+    # ...
+  };
+}
+</code></pre>
+</li>
+<li>
+<p><code>php80</code> is no longer supported due to upstream not supporting this version
+anymore.</p>
+</li>
+<li>
+<p>PHP defaults to PHP 8.2 now, updated from v8.1.</p>
+</li>
+<li>
+<p>GraalVM has been updated to the latest version, and this brings significant
+changes. Upstream don't release multiple versions targeting different JVMs
+anymore, so now we only have one GraalVM derivation (<code>graalvm-ce</code>). While at
+first glance the version may seem a downgrade (v22.3.1 -&gt; v21.0.0), the major
+version is now following the JVM it targets (so this latest version targets
+JVM 21). Also some products like <code>llvm-installable-svm</code> and
+<code>native-image-svm</code> were incorporate to the main GraalVM derivation, so
+they're included by default.</p>
+</li>
+<li>
+<p>GraalPy (<code>graalCEPackages.graalpy</code>), TruffleRuby
+(<code>graalCEPackages.truffleruby</code>), GraalJS (<code>graalCEPackages.graaljs</code>) and
+GraalNodeJS (<code>grallCEPackages.graalnodejs</code>) are now independent from the main
+GraalVM derivation.</p>
+</li>
+<li>
+<p>The ISC DHCP package and corresponding module have been removed, because they
+are EOL upstream. Refer <a href="https://www.isc.org/blogs/isc-dhcp-eol/">to this
+post</a> for details and switch to a
+different DHCP implementation like kea or dnsmasq.</p>
+</li>
+<li>
+<p><code>prometheus-unbound-exporter</code> has been replaced by the Let's Encrypt
+maintained version, since the previous version was archived. This requires
+some changes to the module configuration, most notable <code>controlInterface</code>
+needs migration towards <code>unbound.host</code> and requires either the <code>tcp://</code> or
+<code>unix://</code> URI scheme.</p>
+</li>
+<li>
+<p><code>odoo</code> defaults to v16 now, updated from v15.</p>
+</li>
+<li>
+<p><code>varnish</code> was upgraded from v7.2.x to v7.4.x. Refer to upgrade guides for
+<a href="https://varnish-cache.org/docs/7.3/whats-new/upgrading-7.3.html">v7.3</a> and
+<a href="https://varnish-cache.org/docs/7.4/whats-new/upgrading-7.4.html">v7.4</a>. The
+current LTS version is still offered as <code>varnish60</code>.</p>
+</li>
+<li>
+<p><code>util-linux</code> is now supported on Darwin and is no longer an alias to
+<code>unixtools</code>. Use the <code>unixtools.util-linux</code> package for access to the Apple
+variants of the utilities.</p>
+</li>
+<li>
+<p><code>services.keyd</code> changed API. Now you can create multiple configuration files.</p>
+</li>
+<li>
+<p><code>baloo</code>, the file indexer and search engine used by KDE now has a patch to
+prevent files from constantly being reindexed when the device IDs of the
+their underlying storage change. This happens frequently when using btrfs or
+LVM. The patch has not yet been accepted upstream but it provides a
+significantly improved experience. When upgrading, reset baloo to get a clean
+index: <code>balooctl disable ; balooctl purge ; balooctl enable</code>.</p>
+</li>
+<li>
+<p>The <code>vlock</code> program from the <code>kbd</code> package has been moved into its own
+package output and should now be referenced explicitly as <code>kbd.vlock</code> or
+replaced with an alternative such as the standalone <code>vlock</code> package or
+<code>physlock</code>.</p>
+</li>
+<li>
+<p><code>fileSystems.&lt;name&gt;.autoFormat</code> now uses <code>systemd-makefs</code>, which does not
+accept formatting options. Therefore, <code>fileSystems.&lt;name&gt;.formatOptions</code> has
+been removed.</p>
+</li>
+<li>
+<p><code>fileSystems.&lt;name&gt;.autoResize</code> uses <code>systemd-growfs</code> to resize the file
+system online in Stage 2 now. This means that <code>f2fs</code> and <code>ext2</code> can no longer
+be auto resized, while <code>xfs</code> and <code>btrfs</code> now can be.</p>
+</li>
+<li>
+<p><code>fuse3</code> has been updated from v3.11.0 to v3.16.2. Refer to the
+<a href="https://github.com/libfuse/libfuse/blob/fuse-3.16.2/ChangeLog.rst#libfuse-3162-2023-10-10">changelog</a>
+for an overview of the changes.</p>
+<p>Unsupported mount options are no longer silently accepted <a href="https://github.com/libfuse/libfuse/blob/fuse-3.16.2/ChangeLog.rst#libfuse-3150-2023-06-09">(since
+3.15.0)</a>.
+The <a href="https://github.com/libfuse/libfuse/commit/dba6b3983af34f30de01cf532dff0b66f0ed6045">affected mount
+options</a>
+are: <code>atime</code>, <code>diratime</code>, <code>lazytime</code>, <code>nolazytime</code>, <code>relatime</code>, <code>norelatime</code>,
+<code>strictatime</code>.</p>
+<p>For example,</p>
+<pre><code class="language-bash">$ sshfs 127.0.0.1:/home/test/testdir /home/test/sshfs_mnt -o atime
+</code></pre>
+<p>would previously terminate successfully with the mount point established, now
+it outputs the error message <code>fuse: unknown option(s): `-o atime'</code> and
+terminates with exit status 1.</p>
+</li>
+<li>
+<p><code>nixos-rebuild {switch,boot,test,dry-activate}</code> runs the system
+activation inside <code>systemd-run</code> now, creating an ephemeral systemd service
+and protecting the system switch against issues like network disconnections
+during remote (e.g. SSH) sessions. This has the side effect of running the
+switch in an isolated environment, that could possible break post-switch
+scripts that depends on things like environment variables being set. If you
+want to opt-out from this behavior for now, you may set the
+<code>NIXOS_SWITCH_USE_DIRTY_ENV</code> environment variable before running
+<code>nixos-rebuild</code>. However, keep in mind that this option will be removed in
+the future.</p>
+</li>
+<li>
+<p>The <code>services.vaultwarden.config</code> option default value was changed to make
+Vaultwarden only listen on localhost, following the <a href="https://github.com/NixOS/nixpkgs/issues/100192">secure defaults for most
+NixOS services</a>.</p>
+</li>
+<li>
+<p><code>services.lemmy.settings.federation</code> was removed in v0.17.0 and no longer has
+any effect. To enable federation, the hostname must be set in the
+configuration file and then federation must be enabled in the admin web UI.
+Refer to the <a href="https://github.com/LemmyNet/lemmy/blob/c32585b03429f0f76d1e4ff738786321a0a9df98/RELEASES.md#upgrade-instructions">release
+notes</a>
+for more details.</p>
+</li>
+<li>
+<p><code>pict-rs</code> was upgraded from v0.3 to v0.4 and contains an incompatible database
+&amp; configuration change. To upgrade on systems with <code>stateVersion = &quot;23.05&quot;;</code>
+or older follow the migration steps from
+https://git.asonix.dog/asonix/pict-rs#user-content-0-3-to-0-4-migration-guide
+and set <code>services.pict-rs.package = pkgs.pict-rs;</code>.</p>
+</li>
+<li>
+<p>The following packages in <code>haskellPackages</code> have a separate bin output now:
+<code>cabal-fmt</code>, <code>calligraphy</code>, <code>eventlog2html</code>, <code>ghc-debug-brick</code>, <code>hindent</code>,
+<code>nixfmt</code>, <code>releaser</code>. This means you need to replace e.g.
+<code>&quot;${pkgs.haskellPackages.nixfmt}/bin/nixfmt&quot;</code> with <code>&quot;${lib.getBin pkgs.haskellPackages.nixfmt}/bin/nixfmt&quot;</code> or <code>&quot;${lib.getExe pkgs.haskellPackages.nixfmt}&quot;</code>. The binaries also won’t be in scope if you
+rely on them being installed e.g. via <code>ghcWithPackages</code>.
+<code>environment.packages</code> picks the <code>bin</code> output automatically, so for normal
+installation no intervention is required. Also, toplevel attributes like
+<code>pkgs.nixfmt</code> are not impacted negatively by this change.</p>
+</li>
+<li>
+<p><code>spamassassin</code> no longer supports the <code>Hashcash</code> module. The module needs to
+be removed from the <code>loadplugin</code> list if it was copied over from the default
+<code>initPreConf</code> option.</p>
+</li>
+<li>
+<p><code>nano</code> was removed from <code>environment.defaultPackages</code>. To not leave systems
+without a editor, now <code>programs.nano.enable</code> is enabled by default.</p>
+</li>
+<li>
+<p><code>programs.nano.nanorc</code> and <code>programs.nano.syntaxHighlight</code> no longer have an
+effect unless <code>programs.nano.enable</code> is set to true which is the default.</p>
+</li>
+<li>
+<p><code>services.outline.sequelizeArguments</code> has been removed, as <code>outline</code> no
+longer executes database migrations via the <code>sequelize</code> cli.</p>
+</li>
+<li>
+<p>The binary of the package <code>cloud-sql-proxy</code> has changed from
+<code>cloud_sql_proxy</code> to <code>cloud-sql-proxy</code>.</p>
+</li>
+<li>
+<p>The module <code>services.apache-kafka</code> was largely rewritten and has certain
+breaking changes. To be precise, this means that the following things have
+changed:</p>
+<ul>
+<li>Most settings have been migrated to
+<a href="options/services-a/#opt-services.apache-kafka.settings">services.apache-kafka.settings</a>.
+<ul>
+<li>Care must be taken when adapting an existing cluster to these changes,
+see <a href="modules/apache-kafka/#module-services-apache-kafka-migrating-to-settings">Apache Kafka</a>.</li>
+</ul>
+</li>
+<li>By virtue of being less opinionated, it is now possible to use the module
+to run Apache Kafka in KRaft mode instead of Zookeeper mode.
+<ul>
+<li><a href="modules/apache-kafka/#module-services-apache-kafka-kraft">A few options</a> have been added to
+assist in this mode.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>Garage has been upgraded to v0.9.x. <code>services.garage.package</code> needs to be
+explicitly set now, so version upgrades can be done in a controlled fashion.
+For this, we expose <code>garage_x_y</code> attributes which can be set here.</p>
+</li>
+<li>
+<p><code>voms</code> and <code>xrootd</code> now moves the <code>$out/etc</code> content to the <code>$etc</code> output
+instead of <code>$out/etc.orig</code>, when input argument <code>externalEtc</code> is not <code>null</code>.</p>
+</li>
+<li>
+<p>The <code>woodpecker-*</code> CI packages have been updated to v1.0.0. This release is
+wildly incompatible with the v0.15.x versions that were previously packaged.
+Refer to <a href="https://woodpecker-ci.org/docs/next/migrations#100">upstream's
+documentation</a> to learn
+how to update your CI configurations.</p>
+</li>
+<li>
+<p>Meilisearch was updated from v1.3.1 to v1.5.0. The update has breaking
+changes about backslashes and filtering. Refer to the <a href="https://blog.meilisearch.com/v1-4-release/">release
+announcement</a> for more
+details.</p>
+</li>
+<li>
+<p>The Caddy module gained a new option named <code>services.caddy.enableReload</code>
+which is enabled by default. It allows reloading the service instead of
+restarting it, if only a config file has changed. This option must be
+disabled if you have turned off the <a href="https://caddyserver.com/docs/caddyfile/options#admin">Caddy admin
+API</a>. If you keep this
+option enabled, you should consider setting
+<a href="https://caddyserver.com/docs/caddyfile/options#grace-period"><code>grace_period</code></a>
+to a non-infinite value to prevent Caddy from delaying the reload
+indefinitely.</p>
+</li>
+<li>
+<p>mdraid support is optional now. This reduces initramfs size and prevents the
+potentially undesired automatic detection and activation of software RAID
+pools. It is disabled by default in new configurations (determined by
+<code>stateVersion</code>), but the appropriate settings will be generated by
+<code>nixos-generate-config</code> when installing to a software RAID device, so the
+standard installation procedure should be unaffected. If you have custom
+configs relying on mdraid, ensure that you use <code>stateVersion</code> correctly or
+set <code>boot.swraid.enable</code> manually. On systems with an updated <code>stateVersion</code>
+we now also emit warnings if <code>mdadm.conf</code> does not contain the minimum
+required configuration necessary to run the dynamically enabled monitoring
+daemons.</p>
+</li>
+<li>
+<p>The <code>go-ethereum</code> package has been updated to v1.12.0. This drops support for
+proof-of-work. Its GraphQL API now encodes all numeric values as hex strings
+and the GraphQL UI is updated to v2.0. The default database has changed from
+<code>leveldb</code> to <code>pebble</code> but <code>leveldb</code> can be forced with the
+--db.engine=leveldb flag. The <code>checkpoint-admin</code> command was <a href="https://github.com/ethereum/go-ethereum/pull/27147">removed along
+with trusted
+checkpoints</a>.</p>
+</li>
+<li>
+<p>The <code>aseprite-unfree</code> package has been upgraded from v1.2.16.3 to v1.2.40.
+The free version of aseprite has been dropped because it is EOL and the
+package attribute now points to the unfree version. A maintained fork of the
+last free version of Aseprite, named 'LibreSprite', is available in the
+<code>libresprite</code> package.</p>
+</li>
+<li>
+<p>The default <code>kops</code> version is v1.28.0 now and support for v1.25 and older have
+been dropped.</p>
+</li>
+<li>
+<p><code>pharo</code> has been updated to latest stable v10.0.8, which is compatible with
+the latest stable and oldstable images (Pharo 10 and 11). The VM in question
+is the 64bit Spur. The 32bit version has been dropped due to lack of
+maintenance. The Cog VM has been deleted because it is severely outdated.
+Finally, the <code>pharo-launcher</code> package has been deleted because it was not
+compatible with the newer VM, and due to lack of maintenance.</p>
+</li>
+<li>
+<p>Emacs mainline v29 was introduced. This new version includes many major
+additions, most notably <code>tree-sitter</code> support (enabled by default) and
+the pgtk variant (useful for Wayland users), which is available under the
+attribute <code>emacs29-pgtk</code>.</p>
+</li>
+<li>
+<p>Emacs macport version 29 was introduced.</p>
+</li>
+<li>
+<p>The option <code>services.networking.networkmanager.enableFccUnlock</code> was removed
+in favor of <code>networking.networkmanager.fccUnlockScripts</code>, which allows
+specifying unlock scripts explicitly. The previous option enabled all unlock
+scripts bundled with ModemManager, which is risky, and didn't allow using
+vendor-provided unlock scripts at all.</p>
+</li>
+<li>
+<p>The <code>html-proofer</code> package has been updated from major version 3 to major
+version 5, which includes <a href="https://github.com/gjtorikian/html-proofer/blob/v5.0.8/UPGRADING.md">breaking
+changes</a>.</p>
+</li>
+<li>
+<p><code>kratos</code> has been updated from v0.10.1 to the first stable v1.0.0, please
+read the <a href="https://github.com/ory/kratos/releases/tag/v0.11.0">v0.10.1 to
+v0.11.0</a>, <a href="https://github.com/ory/kratos/releases/tag/v0.11.1">v0.11.0 to
+v0.11.1</a>, <a href="https://github.com/ory/kratos/releases/tag/v0.13.0">v0.11.1 to
+v0.13.0</a> and <a href="https://github.com/ory/kratos/releases/tag/v1.0.0">v0.13.0 to
+v1.0.0</a> upgrade guides.
+The most notable breaking change is the introduction of one-time passwords
+(<code>code</code>) and update of the default recovery strategy from <code>link</code> to <code>code</code>.</p>
+</li>
+<li>
+<p>The <code>hail</code> module was removed, as <code>hail</code> was unmaintained since 2017.</p>
+</li>
+<li>
+<p>Package <code>noto-fonts-emoji</code> was renamed to <code>noto-fonts-color-emoji</code>. Refer to
+<a href="https://github.com/NixOS/nixpkgs/issues/221181">PR #221181</a> for more
+details.</p>
+</li>
+<li>
+<p>Package <code>cloud-sql-proxy</code> was renamed to <code>google-cloud-sql-proxy</code> as it
+cannot be used with other cloud providers.</p>
+</li>
+<li>
+<p>Package <code>pash</code> was removed due to being archived upstream. Use <code>powershell</code>
+as an alternative.</p>
+</li>
+<li>
+<p>The option <code>services.plausible.releaseCookiePath</code> has been removed. Plausible
+does not use any distributed Erlang features, and does not plan to (refer to
+<a href="https://github.com/NixOS/nixpkgs/pull/130297#issuecomment-1805851333">discussion</a>),
+Thus NixOS disables them now , and the Erlang cookie becomes unnecessary. You
+may delete the file that <code>releaseCookiePath</code> was set to.</p>
+</li>
+<li>
+<p><code>security.sudo.extraRules</code> includes <code>root</code>'s default rule now, with ordering
+priority 400. This is functionally identical for users not specifying rule
+order, or relying on <code>mkBefore</code> and <code>mkAfter</code>, but may impact users calling
+<code>mkOrder n</code> with n ≤ 400.</p>
+</li>
+<li>
+<p>X keyboard extension (XKB) options have been reorganized into a single
+attribute set, <code>services.xserver.xkb</code>. Specifically,
+<code>services.xserver.layout</code> is <code>services.xserver.xkb.layout</code> now,
+<code>services.xserver.extraLayouts</code> is <code>services.xserver.xkb.extraLayouts</code> now,
+<code>services.xserver.xkbModel</code> is <code>services.xserver.xkb.model</code> now,
+<code>services.xserver.xkbOptions</code> is <code>services.xserver.xkb.options</code> now ,
+<code>services.xserver.xkbVariant</code> is <code>services.xserver.xkb.variant</code> now, and
+<code>services.xserver.xkbDir</code> is <code>services.xserver.xkb.dir</code> now.</p>
+</li>
+<li>
+<p><code>networking.networkmanager.firewallBackend</code> was removed as NixOS is now using
+iptables-nftables-compat even when using iptables, therefore Networkmanager
+uses the nftables backend unconditionally now.</p>
+</li>
+<li>
+<p><code>rome</code> was removed because it is no longer maintained and is succeeded by
+<code>biome</code>.</p>
+</li>
+<li>
+<p>The <code>prometheus-knot-exporter</code> was migrated to a version maintained by
+CZ.NIC. Various metric names have changed, so checking existing rules is
+recommended.</p>
+</li>
+<li>
+<p>The <code>services.mtr-exporter.target</code> has been removed in favor of
+<code>services.mtr-exporter.jobs</code> which allows specifying multiple targets.</p>
+</li>
+<li>
+<p><code>blender-with-packages</code> has been deprecated in favor of
+<code>blender.withPackages</code>, for example <code>blender.withPackages (ps: [ps.bpycv])</code>.
+It behaves similarly to <code>python3.withPackages</code>.</p>
+</li>
+<li>
+<p>Setting <code>nixpkgs.config</code> options while providing an external <code>pkgs</code> instance
+will now raise an error instead of silently ignoring the options. NixOS
+modules no longer set <code>nixpkgs.config</code> to accommodate this. This specifically
+affects <code>services.locate</code>,
+<code>services.xserver.displayManager.lightdm.greeters.tiny</code> and
+<code>programs.firefox</code> NixOS modules. No manual intervention should be required
+in most cases, however, configurations relying on those modules affecting
+packages outside the system environment should switch to explicit overlays.</p>
+</li>
+<li>
+<p><code>privacyidea</code> (and the corresponding <code>privacyidea-ldap-proxy</code>) has been
+removed from nixpkgs because it has severely outdated dependencies that
+became unmaintainable with nixpkgs' python package-set.</p>
+</li>
+<li>
+<p><code>dagger</code> was removed because using a package called <code>dagger</code> and packaging it
+from source violates their trademark policy.</p>
+</li>
+<li>
+<p><code>win-virtio</code> package was renamed to <code>virtio-win</code> to be consistent with the upstream package name.</p>
+</li>
+<li>
+<p><code>ps3netsrv</code> has been replaced with the webman-mod fork, the executable has
+been renamed from <code>ps3netsrv++</code> to <code>ps3netsrv</code> and cli parameters have
+changed.</p>
+</li>
+<li>
+<p><code>ssm-agent</code> package and module were renamed to <code>amazon-ssm-agent</code> to be
+consistent with the upstream package name.</p>
+</li>
+<li>
+<p><code>services.kea.{ctrl-agent,dhcp-ddns,dhcp,dhcp6}</code> now use separate runtime
+directories instead of <code>/run/kea</code> to work around the runtime directory being
+cleared on service start.</p>
+</li>
+<li>
+<p><code>mkDerivation</code> rejects MD5 hashes now.</p>
+</li>
+<li>
+<p>The <code>junicode</code> font package has been updated to <a href="https://github.com/psb1558/Junicode-font/releases/tag/v2.001">major
+v2</a>, which is
+a font family now. In particular, plain <code>Junicode.ttf</code> no longer exists. In
+addition, TrueType font files are now placed in <code>font/truetype</code> instead of
+<code>font/junicode-ttf</code>; this change does not affect use via <code>fonts.packages</code>
+option.</p>
+</li>
+<li>
+<p>The <code>prayer</code> package as well as <code>services.prayer</code> have been removed because
+it's been unmaintained for several years and the author's website has
+vanished.</p>
+</li>
+<li>
+<p>The <code>chrony</code> NixOS module now tracks the real-time clock drift from the
+system clock with <code>rtcfile</code> and automatically adjusts it with <code>rtcautotrim</code>
+when it exceeds the maximum error specified in
+<code>services.chrony.autotrimThreshold</code> (defaults to 30 seconds). If you enabled
+<code>rtcsync</code> in <code>extraConfig</code>, you should remove RTC related options from
+<code>extraConfig</code>. If you do not want chrony configured to keep the RTC in check,
+you can set <code>services.chrony.enableRTCTrimming = false;</code>.</p>
+</li>
+<li>
+<p><code>trilium-desktop</code> and <code>trilium-server</code> have been updated to
+<a href="https://github.com/zadam/trilium/releases/tag/v0.61.12">v0.61</a>. For existing
+installations, upgrading to this version is supported only after running
+v0.60.x at least once. If you are still on an older version, make sure to
+update to v0.60 (available in NixOS 23.05) first and only then to v0.61
+(available in NixOS 23.11).</p>
+</li>
+<li>
+<p>Cassandra now defaults to v4.x, updated from v3.11.x.</p>
+</li>
+<li>
+<p>FoundationDB now defaults to major version 7.</p>
+</li>
+<li>
+<p><a href="https://www.gnu.org/software/libc/">glibc</a> has been updated from v2.37 to
+v2.38. Refer to the <a href="https://sourceware.org/glibc/wiki/Release/2.38">the release
+notes</a> for more details.</p>
+</li>
+<li>
+<p><code>linuxPackages_testing_bcachefs</code> is now soft-deprecated by
+<code>linuxPackages_testing</code>.</p>
+<ul>
+<li>Please consider changing your NixOS configuration's <code>boot.kernelPackages</code>
+to <code>linuxPackages_testing</code> until a stable kernel with bcachefs support is
+released.</li>
+</ul>
+</li>
+<li>
+<p>PostgreSQL now defaults to major version 15.</p>
+</li>
+<li>
+<p>All <a href="https://rocm.docs.amd.com/en/latest/">ROCm</a> packages have been updated
+to v5.7.0.</p>
+<ul>
+<li><a href="https://rocm.docs.amd.com/en/latest/">ROCm</a> package attribute sets are
+versioned: <code>rocmPackages</code> -&gt; <code>rocmPackages_5</code>.</li>
+</ul>
+</li>
+<li>
+<p><a href="https://systemd.io">systemd</a> has been updated from v253 to v254, refer to
+<a href="https://github.com/systemd/systemd/blob/v254/NEWS#L3-L659">the release
+notes</a> for more
+details.</p>
+<ul>
+<li><code>boot.resumeDevice</code> <strong>must be specified</strong> when hibernating if not in EFI
+mode.</li>
+<li>systemd may warn your system about the permissions of your ESP partition
+(often <code>/boot</code>), this warning can be ignored for now, we are looking into
+a satisfying solution regarding this problem.</li>
+<li>Updating with <code>nixos-rebuild boot</code> and rebooting is recommended, since in
+some rare cases the <code>nixos-rebuild switch</code> into the new generation on a
+live system might fail due to missing mount units.</li>
+</ul>
+</li>
+<li>
+<p>If the user has a custom shell enabled via <code>users.users.${USERNAME}.shell = ${CUSTOMSHELL}</code>, the assertion will require them to also set
+<code>programs.${CUSTOMSHELL}.enable = true</code>. This is generally safe behavior, but
+for anyone needing to opt out from the check
+<code>users.users.${USERNAME}.ignoreShellProgramCheck = true</code> will do the job.</p>
+</li>
+<li>
+<p><code>yarn-berry</code> has been updated to v4.0.1. This means that NodeJS versions less
+v18.12 are no longer supported by it. Refer to the <a href="https://github.com/yarnpkg/berry/blob/master/CHANGELOG.md">upstream
+changelog</a> for
+more details.</p>
+</li>
+<li>
+<p>GNOME has been updated to v45. Refer to the <a href="https://release.gnome.org/45/">release
+notes</a> for more details. Notably, Loupe has
+replaced Eye of GNOME as the default image viewer, Snapshot has replaced
+Cheese as the default camera application, and Photos will no longer be
+installed.</p>
+</li>
+<li>
+<p>The module <code>services.ankisyncd</code> has been switched to
+<a href="https://github.com/ankicommunity/anki-sync-server-rs">anki-sync-server-rs</a>.
+The former version written in Python was difficult to update, did not receive
+updates in a while, and did not support recent versions of Anki.</p>
+<p>Unfortunately all servers supporting new clients do not support the older
+sync protocol that was used in the old server. This includes newer version of
+anki-sync-server, Anki's built in sync server and this new Rust package. Thus
+old clients will also need updating. In particular nixpkgs's Anki package is
+also being updated in this release.</p>
+<p>The module update takes care of the new config syntax. The data itself (i.e.
+user login and card information) is compatible. Thus users of the module will
+be able to simply log in again after updating both client and server without
+any extra action needed to be taken.</p>
+</li>
+<li>
+<p>The argument <code>vendorSha256</code> of <code>buildGoModule</code> is deprecated. Use
+<code>vendorHash</code> instead. Refer to <a href="https://github.com/NixOS/nixpkgs/pull/259999">PR
+#259999</a>) for more details.</p>
+</li>
+<li>
+<p><code>go-modules</code> in <code>buildGoModule</code> attrs has been renamed to <code>goModules</code>.</p>
+</li>
+<li>
+<p>The package <code>cawbird</code> is dropped from nixpkgs. It broke by the Twitter API
+closing down and has been abandoned upstream.</p>
+</li>
+<li>
+<p>The Cinnamon module now enables XDG desktop integration by default. If you
+are experiencing collisions related to xdg-desktop-portal-gtk you can safely
+remove <code>xdg.portal.extraPortals = [ pkgs.xdg-desktop-portal-gtk ];</code> from your
+NixOS configuration.</p>
+</li>
+<li>
+<p>GNOME, Pantheon, Cinnamon modules no longer force Qt applications to use
+Adwaita style. This implementation  was buggy and is no longer maintained
+upstream. Specifically, Cinnamon defaults to the gtk2 style instead now,
+following the default in Linux Mint). If you still want Adwaita used, you may
+add the following options to your configuration. Please be aware, that it
+will probably be removed eventually.</p>
+<pre><code class="language-nix">{
+  qt = {
+    enable = true;
+    platformTheme = &quot;gnome&quot;;
+    style = &quot;adwaita&quot;;
+  };
+}
+</code></pre>
+</li>
+<li>
+<p>DocBook option documentation is no longer supported, all module documentation
+now uses Markdown.</p>
+</li>
+<li>
+<p>Docker defaults to v24 now, as 20.10 is stopping to receive security updates
+and bug fixes after <a href="https://github.com/moby/moby/discussions/45104">December 10,
+2023</a>.</p>
+</li>
+<li>
+<p>Elixir defaults to v1.15 now. Refer to their
+<a href="https://elixir-lang.org/blog/2023/06/19/elixir-v1-15-0-released/">changelog</a>
+for more details.</p>
+</li>
+<li>
+<p>The <code>extend</code> function of <code>llvmPackages</code> has been removed due it coming from
+the <code>tools</code> attrset thus only extending the <code>tool</code> attrset. A possible
+replacement is to construct the set from <code>libraries</code> and <code>tools</code>, or patch
+nixpkgs.</p>
+</li>
+<li>
+<p><code>ffmpeg</code> defaults to <code>ffmpeg_6</code> now, upgrading from <code>ffmpeg_5</code>.</p>
+</li>
+<li>
+<p><code>fontconfig</code> defaults to using greyscale antialiasing now. Previously
+subpixel antialiasing was used because of a <a href="https://gitlab.freedesktop.org/fontconfig/fontconfig/-/issues/337">recommendation from one of the
+downstreams</a>.
+You can change this value by configuring
+<a href="options/fonts/#opt-fonts.fontconfig.subpixel.rgba">fonts</a> accordingly.</p>
+</li>
+<li>
+<p>The <code>fonts.fonts</code> and <code>fonts.enableDefaultFonts</code> options have been renamed to
+<code>fonts.packages</code> and <code>fonts.enableDefaultPackages</code> respectively.</p>
+</li>
+<li>
+<p><code>services.hedgedoc</code> has been heavily refactored, reducing the amount of
+declared options in the module. Most of the options should still work without
+any changes to the configuration. Some options have been deprecated, as they
+no longer have any effect. Refer to <a href="https://github.com/NixOS/nixpkgs/pull/244941">PR
+#244941</a> for more details.</p>
+</li>
+<li>
+<p><code>jq</code> was updated to v1.7. This is its <a href="https://github.com/jqlang/jq/releases/tag/jq-1.7">first release in 5
+years</a>.</p>
+</li>
+<li>
+<p><a href="https://nixos.org/manual/nixpkgs/stable#function-library-lib.attrsets.foldlAttrs"><code>lib.attrsets.foldlAttrs</code></a>
+now always evaluates the initial accumulator argument first.</p>
+</li>
+<li>
+<p><a href="https://nixos.org/manual/nixpkgs/stable#function-library-lib.lists.foldl-prime"><code>lib.lists.foldl'</code></a>
+now always evaluates the initial accumulator argument first. If you depend on
+the lazier behavior, consider using
+<a href="https://nixos.org/manual/nixpkgs/stable#function-library-lib.lists.foldl"><code>lib.lists.foldl</code></a>
+or
+<a href="https://nixos.org/manual/nix/stable/language/builtins.html#builtins-foldl'"><code>builtins.foldl'</code></a>
+instead.</p>
+</li>
+<li>
+<p>Now <code>magma</code> defaults to <code>magma-hip</code> instead of <code>magma-cuda</code>. It also
+respects the <code>config.cudaSupport</code> and <code>config.rocmSupport</code> options.</p>
+</li>
+<li>
+<p>The MariaDB C client library was upgraded from v3.2.x to v3.3.x. Refer to the
+<a href="https://mariadb.com/kb/en/mariadb-connector-c-33-release-notes/">upstream release
+notes</a> for
+more details.</p>
+</li>
+<li>
+<p>Mattermost has been upgraded to extended support version 8.1 as the previously
+packaged extended support version 7.8 is <a href="https://docs.mattermost.com/upgrade/extended-support-release.html">reaching end-of-life</a>.
+Migration may take some time, refer to the <a href="https://docs.mattermost.com/install/self-managed-changelog.html#release-v8-1-extended-support-release">changelog</a>
+and <a href="https://docs.mattermost.com/upgrade/important-upgrade-notes.html">important upgrade notes</a>.</p>
+</li>
+<li>
+<p>The <code>netdata</code> package disables cloud support by default now. To enable it use the <code>netdataCloud</code> package.</p>
+</li>
+<li>
+<p><code>networking.nftables</code> is no longer flushing all rulesets on every reload.
+Use <code>networking.nftables.flushRuleset = true;</code> to enable the previous behaviour.</p>
+</li>
+<li>
+<p>Node.js v14, v16 has been removed as they were end of life. Any dependent packages that contributors were not able to reasonably upgrade were dropped after a month of notice to their maintainers, were <strong>removed</strong>.</p>
+<ul>
+<li>This includes VSCode Server.</li>
+<li>This includes Kibana 7 as the ELK stack is unmaintained in nixpkgs and is marked for slow removal.</li>
+</ul>
+</li>
+<li>
+<p>The application firewall <code>opensnitch</code> uses the process monitor method eBPF as
+default now. This is recommended by upstream. The method may be changed with
+the setting
+<a href="options/services-o/#opt-services.opensnitch.settings.ProcMonitorMethod">services.opensnitch.settings.ProcMonitorMethod</a>.</p>
+</li>
+<li>
+<p><code>paperwork</code> is updated to v2.2. Documents scanned with this version will not
+be visible to previous versions if you downgrade. Refer to the <a href="https://forum.openpaper.work/t/paperwork-2-2-testing-phase/316#important-switch-from-jpeg-to-png-for-new-pages-2">upstream
+announcement</a>
+for details and workarounds.</p>
+</li>
+<li>
+<p>The latest available version of Nextcloud is v27 (available as
+<code>pkgs.nextcloud27</code>). The installation logic is as follows:</p>
+<ul>
+<li>If <a href="options/services-n/#opt-services.nextcloud.package"><code>services.nextcloud.package</code></a> is
+specified explicitly, this package will be installed (<strong>recommended</strong>)</li>
+<li>If <a href="options/system/#opt-system.stateVersion"><code>system.stateVersion</code></a> is &gt;=23.11,
+<code>pkgs.nextcloud27</code> will be installed by default.</li>
+<li>If <a href="options/system/#opt-system.stateVersion"><code>system.stateVersion</code></a> is &gt;=23.05,
+<code>pkgs.nextcloud26</code> will be installed by default.</li>
+<li>Please note that an upgrade from v25 (or older) to v27 is not possible
+directly. Please upgrade to <code>nextcloud26</code> (or earlier) first. Nextcloud
+prohibits skipping major versions while upgrading. You may upgrade by
+declaring <a href="options/services-n/#opt-services.nextcloud.package"><code>services.nextcloud.package = pkgs.nextcloud26;</code></a> in between.</li>
+</ul>
+</li>
+<li>
+<p><code>postgresql_11</code> has been removed since it'll stop receiving fixes on November
+9th 2023.</p>
+</li>
+<li>
+<p><code>programs.gnupg.agent.pinentryFlavor</code> is set in <code>/etc/gnupg/gpg-agent.conf</code>
+now. It will no longer take precedence over a <code>pinentry-program</code> set in
+<code>~/.gnupg/gpg-agent.conf</code>.</p>
+</li>
+<li>
+<p><code>python3.pkgs.flitBuildHook</code> has been removed. Use <code>flit-core</code> and <code>format = &quot;pyproject&quot;</code> instead.</p>
+</li>
+<li>
+<p>Certificate generation via the <code>security.acme</code> limits the concurrent number
+of running certificate renewals and generation jobs now. This is to avoid
+spiking resource usage when processing many certificates at once. The limit
+defaults to <em>5</em> and can be adjusted via <code>maxConcurrentRenewals</code>. Setting the
+value to <em>0</em> disables the limits altogether.</p>
+</li>
+<li>
+<p><code>services.borgmatic.settings.location</code> and
+<code>services.borgmatic.configurations.&lt;name&gt;.location</code> are deprecated, please
+move your options out of sections to the global scope.</p>
+</li>
+<li>
+<p><code>services.fail2ban.jails</code> can be configured with attribute sets now, defining
+settings and filters instead of lines. The stringed options <code>daemonConfig</code>
+and <code>extraSettings</code> have respectively been replaced by <code>daemonSettings</code> and
+<code>jails.DEFAULT.settings</code>. Those  use attribute sets.</p>
+</li>
+<li>
+<p>The <code>services.mbpfan</code> module has the option <code>aggressive</code> enabled by default
+now. This is for better heat moderation. To get the upstream defaults you may
+disable this.</p>
+</li>
+<li>
+<p>Apptainer/Singularity defaults to using <code>&quot;$out/var/lib&quot;</code> for the
+<code>LOCALSTATEDIR</code> configuration option instead of the top-level <code>&quot;/var/lib&quot;</code>
+now. This change impacts the <code>SESSIONDIR</code> (container-run-time mount point)
+configuration, which is set to <code>$LOCALSTATEDIR/&lt;apptainer or singularity&gt;/mnt/session</code>. This detaches the packages from the top-level
+directory, rendering the NixOS module optional.</p>
+<p>The default behavior of the NixOS module <code>programs.singularity</code> stays
+unchanged. We add a new option
+<code>programs.singularity.enableExternalSysConfDir</code> (default to <code>true</code>) to
+specify whether to set the top-level <code>&quot;/var/lib&quot;</code> as <code>LOCALSTATEDIR</code> or not.</p>
+</li>
+<li>
+<p>The <code>services.sslh</code> module has been updated to follow <a href="https://github.com/NixOS/rfcs/blob/master/rfcs/0042-config-option.md">RFC
+0042</a>.
+As such, several options have been moved to the freeform attribute set
+<a href="options/services-s/#opt-services.sslh.settings">services.sslh.settings</a>, which allows to change
+any of the settings in <code>sslh(8)</code>.</p>
+<p>In addition, the newly added option
+<a href="options/services-s/#opt-services.sslh.method">services.sslh.method</a> allows to switch between
+the <code>fork(2)</code>, <code>select(2)</code> and <code>libev</code>-based connection
+handling method. Refer to the <a href="https://github.com/yrutschle/sslh/blob/master/doc/INSTALL.md#binaries">sslh
+docs</a>
+for a comparison.</p>
+</li>
+<li>
+<p>Suricata was upgraded from v6.0 to v7.0 and no longer considers HTTP/2
+support as experimental. Refer to <a href="https://forum.suricata.io/t/suricata-7-0-0-released/3715">upstream release
+notes</a> for more
+details.</p>
+</li>
+<li>
+<p><code>teleport</code> has been upgraded from major version 12 to major version 14.
+Refer to upstream <a href="https://goteleport.com/docs/management/operations/upgrading/">upgrade
+instructions</a>
+and release notes for
+<a href="https://goteleport.com/docs/changelog/#1300-050823">v13</a> and
+<a href="https://goteleport.com/docs/changelog/#1400-092023">v14</a>. Note that Teleport
+does not officially support upgrades across more than one major version at a
+time. If you're running Teleport server components, it is recommended to
+first upgrade to an intermediate v13.x version by setting
+<code>services.teleport.package = pkgs.teleport_13</code>. Afterwards, this option can
+be removed to upgrade to the default version (14).</p>
+</li>
+<li>
+<p><code>zfs</code> was updated from v2.1.x to v2.2.0, <a href="https://github.com/openzfs/zfs/releases/tag/zfs-2.2.0">enabling newer kernel support and
+adding new features</a>.</p>
+</li>
+<li>
+<p>The use of <code>sourceRoot = &quot;source&quot;;</code>, <code>sourceRoot = &quot;source/subdir&quot;;</code>, and
+similar lines in package derivations using the default <code>unpackPhase</code> is
+deprecated as it requires <code>unpackPhase</code> to always produce a directory named
+&quot;source&quot;. Use <code>sourceRoot = src.name</code>, <code>sourceRoot = &quot;${src.name}/subdir&quot;;</code>,
+or <code>setSourceRoot = &quot;sourceRoot=$(echo */subdir)&quot;;</code> or similar instead.</p>
+</li>
+<li>
+<p>The <code>django</code> alias in the python package set was upgraded to Django v4.x.
+Applications that consume Django should always pin their python environment
+to a compatible major version, so they can move at their own pace.</p>
+<pre><code class="language-nix">{
+  python = python3.override {
+    packageOverrides = self: super: { django = super.django_3; };
+  };
+}
+</code></pre>
+</li>
+<li>
+<p>The <code>qemu-vm.nix</code> module by default now identifies block devices via
+persistent names available in <code>/dev/disk/by-*</code>. Because the rootDevice is
+identified by its filesystem label, it needs to be formatted before the VM is
+started. The functionality of automatically formatting the rootDevice in the
+initrd is removed from the QEMU module. However, for tests that depend on
+this functionality, a test utility for the scripted initrd is added
+(<code>nixos/tests/common/auto-format-root-device.nix</code>). To use this in a NixOS
+test, import the module, e.g. <code>imports = [ ./common/auto-format-root-device.nix ];</code> When you use the systemd initrd, you
+can automatically format the root device by setting
+<code>virtualisation.fileSystems.&quot;/&quot;.autoFormat = true;</code>.</p>
+</li>
+<li>
+<p>The <code>electron</code> packages places its application files in
+<code>$out/libexec/electron</code> instead of <code>$out/lib/electron</code> now. Packages using
+electron-builder will fail to build and need to be adjusted by changing <code>lib</code>
+to <code>libexec</code>.</p>
+</li>
+</ul>
+<h3 id='sec-release-23.11-nixos-new-services'><a href='release-notes/rl-2311/#sec-release-23.11-nixos-new-services'>
+New Services
+</a></h3>
+<ul>
+<li>
+<p><a href="https://github.com/MCHPR/MCHPRS">MCHPRS</a>, a multithreaded Minecraft server
+built for redstone. Available as
+<a href="options/services-m/#opt-services.mchprs.enable">services.mchprs</a>.</p>
+</li>
+<li>
+<p><a href="https://github.com/joohoi/acme-dns">acme-dns</a>, a limited DNS server to
+handle ACME DNS challenges easily and securely. Available as
+<a href="options/services-a/#opt-services.acme-dns.enable">services.acme-dns</a>.</p>
+</li>
+<li>
+<p><a href="https://github.com/fatedier/frp">frp</a>, a fast reverse proxy to help you
+expose a local server behind a NAT or firewall to the Internet. Available as
+<code>services.frp</code>.</p>
+</li>
+<li>
+<p><a href="https://github.com/riverwm/river">river</a>, A dynamic tiling wayland
+compositor. Available as <code>programs.river</code>.</p>
+</li>
+<li>
+<p><a href="https://wayfire.org">wayfire</a>, a modular and extensible wayland compositor.
+Available as <a href="options/programs/#opt-programs.wayfire.enable">programs.wayfire</a>.</p>
+</li>
+<li>
+<p><a href="https://docs.mau.fi/bridges/go/whatsapp/index.html">mautrix-whatsapp</a>, a
+Matrix-WhatsApp puppeting bridge. Available as
+<a href="options/services-m/#opt-services.mautrix-whatsapp.enable">services.mautrix-whatsapp</a>.</p>
+</li>
+<li>
+<p><a href="https://github.com/desbma/hddfancontrol">hddfancontrol</a>, a service to
+regulate fan speeds based on hard drive temperature. Available as
+<a href="options/services-h/#opt-services.hddfancontrol.enable">services.hddfancontrol</a>.</p>
+</li>
+<li>
+<p><a href="https://sr.ht/~kennylevinsen/seatd/">seatd</a>, A minimal seat management
+daemon. Available as <a href="options/services-s/#opt-services.seatd.enable">services.seatd</a>.</p>
+</li>
+<li>
+<p><a href="https://gotosocial.org/">GoToSocial</a>, an ActivityPub social network server
+written in Golang. Available as
+<a href="options/services-g/#opt-services.gotosocial.enable">services.gotosocial</a>.</p>
+</li>
+<li>
+<p><a href="https://castopod.org/">Castopod</a>, an open-source hosting platform made for
+podcasters who want to engage and interact with their audience. Available as
+services.castopod.</p>
+</li>
+<li>
+<p><a href="https://github.com/typesense/typesense">Typesense</a>, a fast, typo-tolerant
+search engine for building delightful search experiences. Available as
+<a href="options/services-t/#opt-services.typesense.enable">services.typesense</a>.</p>
+</li>
+</ul>
+<ul>
+<li><a href="https://github.com/developersu/ns-usbloader/">NS-USBLoader</a>, an all-in-one
+tool for managing Nintendo Switch homebrew. Available as
+<a href="options/programs/#opt-programs.ns-usbloader.enable">programs.ns-usbloader</a>.</li>
+</ul>
+<ul>
+<li>
+<p><a href="https://github.com/gomods/athens">athens</a>, a Go module datastore and proxy. Available as <a href="options/services-a/#opt-services.athens.enable">services.athens</a>.</p>
+</li>
+<li>
+<p><a href="https://joinmobilizon.org/">Mobilizon</a>, a Fediverse platform for publishing
+events. Available as <a href="options/services-m/#opt-services.mobilizon.enable">services.mobilizon</a>.</p>
+</li>
+<li>
+<p><a href="https://github.com/anuko/timetracker">Anuko Time Tracker</a>, a simple, easy to
+use, open source time tracking system. Available as
+<a href="options/services-a/#opt-services.anuko-time-tracker.enable">services.anuko-time-tracker</a>.</p>
+</li>
+<li>
+<p><a href="https://github.com/prometheus/mysqld_exporter">Prometheus MySQL exporter</a>, a
+MySQL server exporter for Prometheus. Available as
+<a href="options/services-p/#opt-services.prometheus.exporters.mysqld.enable">services.prometheus.exporters.mysqld</a>.</p>
+</li>
+<li>
+<p><a href="https://www.librenms.org">LibreNMS</a>, a auto-discovering PHP/MySQL/SNMP based
+network monitoring. Available as
+<a href="options/services-l/#opt-services.librenms.enable">services.librenms</a>.</p>
+</li>
+<li>
+<p><a href="https://livebook.dev/">Livebook</a>, an interactive notebook with support for
+Elixir, graphs, machine learning, and more. Available as
+<a href="options/services-l/#opt-services.livebook.enableUserService">services.livebook</a>.</p>
+</li>
+<li>
+<p><a href="https://sitespeed.io">sitespeed-io</a>, a tool that can generate metrics such
+as timings and diagnostics for websites. Available as
+<a href="options/services-s/#opt-services.sitespeed-io.enable">services.sitespeed-io</a>.</p>
+</li>
+<li>
+<p><a href="https://stalw.art">stalwart-mail</a>, an all-in-one email server (SMTP, IMAP,
+JMAP). Available as <code>services.stalwart-mail</code>.</p>
+</li>
+<li>
+<p><a href="https://github.com/latchset/tang">tang</a>, a server for binding data to
+network presence. Available as <a href="options/services-t/#opt-services.tang.enable">services.tang</a>.</p>
+</li>
+<li>
+<p><a href="https://nicmx.github.io/Jool/en/index.html">Jool</a>, a kernelspace NAT64 and
+SIIT implementation providing translation between IPv4 and IPv6. Available as
+<a href="options/networking/#opt-networking.jool.enable">networking.jool.enable</a>.</p>
+</li>
+<li>
+<p><a href="https://github.com/synesthesiam/homeassistant-satellite">Home Assistant
+Satellite</a>, a
+streaming audio satellite for Home Assistant voice pipelines, where you can
+reuse existing mic and speaker hardware. Available as
+<code>services.homeassistant-satellite</code>.</p>
+</li>
+<li>
+<p><a href="https://guacamole.apache.org/">Apache Guacamole</a>, a cross-platform,
+clientless remote desktop gateway. Available as
+<a href="options/services-g/#opt-services.guacamole-server.enable">services.guacamole-server</a> and
+<a href="options/services-g/#opt-services.guacamole-client.enable">services.guacamole-client</a> services.</p>
+</li>
+<li>
+<p><a href="https://www.pgbouncer.org">pgBouncer</a>, a PostgreSQL connection pooler.
+Available as <a href="options/services-p/#opt-services.pgbouncer.enable">services.pgbouncer</a>.</p>
+</li>
+<li>
+<p><a href="https://goss.rocks/">Goss</a>, a YAML based serverspec alternative tool for
+validating a server's configuration. Available as
+<a href="options/services-g/#opt-services.goss.enable">services.goss</a>.</p>
+</li>
+<li>
+<p><a href="https://trust-dns.org/">trust-dns</a>, a Rust based DNS server built to be safe
+and secure from the ground up. Available as
+<code>services.trust-dns</code>.</p>
+</li>
+<li>
+<p><a href="https://www.osquery.io/">osquery</a>, a SQL powered operating system
+instrumentation, monitoring, and analytics. Available as
+<a href="options/services-o/#opt-services.osquery.enable">services.osquery</a>.</p>
+</li>
+<li>
+<p><a href="https://ebusd.eu">ebusd</a>, a daemon for handling communication with eBUS
+devices connected to a 2-wire bus system (&quot;energy bus&quot; used by numerous
+heating systems). Available as <a href="options/services-e/#opt-services.ebusd.enable">services.ebusd</a>.</p>
+</li>
+<li>
+<p><a href="https://www.freedesktop.org/software/systemd/man/systemd-sysupdate.html">systemd-sysupdate</a>,
+atomically updates the host OS, container images, portable service images or
+other sources. Available as <a href="opt-systemd.sysupdate">systemd.sysupdate</a>.</p>
+</li>
+<li>
+<p><a href="https://codeberg.org/eris/eris-go">eris-server</a>, an implementation of the
+Encoding for Robust Immutable Storage (ERIS). Available as
+<code>services.eris-server</code>.</p>
+</li>
+<li>
+<p><a href="https://forgejo.org/">forgejo</a>, a git forge and drop-in replacement for
+Gitea. Available as <a href="options/services-f/#opt-services.forgejo.enable">services.forgejo</a>.</p>
+</li>
+<li>
+<p><code>hardware/infiniband.nix</code> adds infiniband subnet manager support using an
+<a href="https://github.com/linux-rdma/opensm">opensm</a> systemd-template service,
+instantiated on card guids. The module also adds kernel modules and cli
+tooling to help administrators debug and measure performance. Available as
+<a href="options/hardware/#opt-hardware.infiniband.enable">hardware.infiniband.enable</a>.</p>
+</li>
+<li>
+<p><a href="https://github.com/zwave-js/zwave-js-server">zwave-js</a>, a small server
+wrapper around Z-Wave JS to access it via a WebSocket. Available as
+<a href="options/services-z/#opt-services.zwave-js.enable">services.zwave-js</a>.</p>
+</li>
+<li>
+<p>Honk, a complete ActivityPub server with minimal setup and support costs.
+Available as services.honk.</p>
+</li>
+<li>
+<p><a href="https://www.ferretdb.io/">ferretdb</a>, an open-source proxy, converting the
+MongoDB 6.0+ wire protocol queries to PostgreSQL or SQLite. Available as
+<a href="options/services-f/#opt-services.ferretdb.enable">services.ferretdb</a>.</p>
+</li>
+<li>
+<p><a href="https://microbin.eu/">MicroBin</a>, a feature rich, performant and secure text
+and file sharing web application, a &quot;paste bin&quot;. Available as
+<a href="options/services-m/#opt-services.microbin.enable">services.microbin</a>.</p>
+</li>
+<li>
+<p><a href="http://www.nncpgo.org/">NNCP</a>, nncp-daemon and nncp-caller services.
+Available as <a href="options/programs/#opt-programs.nncp.settings">programs.nncp.settings</a> and
+<a href="options/services-n/#opt-services.nncp.caller.enable">services.nncp</a>.</p>
+</li>
+<li>
+<p><a href="https://fastnetmon.com/product-overview/">FastNetMon Advanced</a>, a commercial
+high performance DDoS detector and sensor. Available as
+<a href="options/services-f/#opt-services.fastnetmon-advanced.enable">services.fastnetmon-advanced</a>.</p>
+</li>
+<li>
+<p><a href="https://github.com/AaronErhardt/tuxedo-rs">tuxedo-rs</a>, Rust utilities for
+interacting with hardware from TUXEDO Computers. Available as
+<a href="options/hardware/#opt-hardware.tuxedo-rs.enable">hardware.tuxedo-rs</a>.</p>
+</li>
+<li>
+<p><a href="https://github.com/SSLMate/certspotter">certspotter</a>, a certificate
+transparency log monitor. Available as
+<a href="options/services-c/#opt-services.certspotter.enable">services.certspotter</a>.</p>
+</li>
+<li>
+<p><a href="https://github.com/advplyr/audiobookshelf/">audiobookshelf</a>, a self-hosted
+audiobook and podcast server. Available as
+<a href="options/services-a/#opt-services.audiobookshelf.enable">services.audiobookshelf</a>.</p>
+</li>
+<li>
+<p><a href="https://zitadel.com">ZITADEL</a>, a turnkey identity and access management
+platform. Available as <a href="options/services-z/#opt-services.zitadel.enable">services.zitadel</a>.</p>
+</li>
+<li>
+<p><a href="https://github.com/onedr0p/exportarr">exportarr</a>, Prometheus Exporters for
+Bazarr, Lidarr, Prowlarr, Radarr, Readarr, and Sonarr. Available as
+<a href="options/services-p/#opt-services.prometheus.exporters.exportarr-bazarr.enable">services.prometheus.exporters.exportarr-bazarr</a>/<a href="options/services-p/#opt-services.prometheus.exporters.exportarr-lidarr.enable">services.prometheus.exporters.exportarr-lidarr</a>/<a href="options/services-p/#opt-services.prometheus.exporters.exportarr-prowlarr.enable">services.prometheus.exporters.exportarr-prowlarr</a>/<a href="options/services-p/#opt-services.prometheus.exporters.exportarr-radarr.enable">services.prometheus.exporters.exportarr-radarr</a>/<a href="options/services-p/#opt-services.prometheus.exporters.exportarr-readarr.enable">services.prometheus.exporters.exportarr-readarr</a>/<a href="options/services-p/#opt-services.prometheus.exporters.exportarr-sonarr.enable">services.prometheus.exporters.exportarr-sonarr</a>.</p>
+</li>
+<li>
+<p><a href="https://github.com/gravitl/netclient">netclient</a>, an automated WireGuard
+Management Client. Available as
+<a href="options/services-n/#opt-services.netclient.enable">services.netclient</a>.</p>
+</li>
+<li>
+<p><a href="https://github.com/ctron/trunk">trunk-ng</a>, A fork of <code>trunk</code>: Build, bundle
+&amp; ship your Rust WASM application to the web</p>
+</li>
+<li>
+<p><a href="https://virt-manager.org/">virt-manager</a>, an UI for managing virtual
+machines in libvirt. Available as
+<a href="options/programs/#opt-programs.virt-manager.enable">programs.virt-manager</a>.</p>
+</li>
+<li>
+<p><a href="https://github.com/charmbracelet/soft-serve">Soft Serve</a>, a tasty,
+self-hostable Git server for the command line. Available as
+<a href="options/services-s/#opt-services.soft-serve.enable">services.soft-serve</a>.</p>
+</li>
+<li>
+<p><a href="https://rosenpass.eu/">Rosenpass</a>, a service for post-quantum-secure VPNs
+with WireGuard. Available as
+<a href="options/services-r/#opt-services.rosenpass.enable">services.rosenpass</a>.</p>
+</li>
+<li>
+<p><a href="https://github.com/c2FmZQ/c2FmZQ/">c2FmZQ</a>, an application that can securely
+encrypt, store, and share files, including but not limited to pictures and
+videos. Available as
+<a href="options/services-c/#opt-services.c2fmzq-server.enable">services.c2fmzq-server</a>.</p>
+</li>
+<li>
+<p><a href="http://sourceforge.net/projects/preload">preload</a>, a service that makes
+applications run faster by prefetching binaries and shared objects.
+Available as <code>services.preload</code>.</p>
+</li>
+</ul>
+<h3 id='sec-release-23.11-nixos-notable-changes'><a href='release-notes/rl-2311/#sec-release-23.11-nixos-notable-changes'>
+Other Notable Changes
+</a></h3>
+<ul>
+<li>
+<p>The new option <code>system.switch.enable</code> was added. It is enabled by default.
+Disabling it makes the system unable to be reconfigured via <code>nixos-rebuild</code>.
+This is of advantage for image based appliances where updates are handled
+outside the image.</p>
+</li>
+<li>
+<p><code>services.searx</code> receives new options for better SearXNG support. This
+includes options for the built-in rate limiter, bot protection and
+automatically configuring a local Redis server.</p>
+</li>
+<li>
+<p>The iptables firewall module installs the <code>nixos-firewall-tool</code> now which
+allows the user to easily temporarily open ports through the firewall.</p>
+</li>
+<li>
+<p>A new option was added to the virtualisation module that enables specifying
+explicitly named network interfaces in QEMU VMs. The existing
+<code>virtualisation.vlans</code> is still supported for cases where the name of the
+network interface is irrelevant.</p>
+</li>
+<li>
+<p><code>services.outline</code> can be configured to use local filesystem storage now.
+Previously only S3 storage was possible. This may be set using
+<a href="options/services-o/#opt-services.outline.storage.storageType">services.outline.storage.storageType</a>.</p>
+</li>
+<li>
+<p><code>pkgs.openvpn3</code> optionally supports systemd-resolved now. <code>programs.openvpn3</code>
+will automatically enable systemd-resolved support if
+<a href="options/services-r/#opt-services.resolved.enable">services.resolved.enable</a> is set to true.</p>
+</li>
+<li>
+<p>The
+<a href="options/services-w/#opt-services.woodpecker-server.environmentFile">services.woodpecker-server.environmentFile</a>
+type was changed to list of paths to be more consistent to the
+woodpecker-agent module</p>
+</li>
+<li>
+<p><code>services.matrix-synapse</code> has new options to configure worker processes for
+matrix-synapse using
+<a href="options/services-m/#opt-services.matrix-synapse.workers"><code>services.matrix-synapse.workers</code></a>.
+Configuring a local redis server using
+<a href="options/services-m/#opt-services.matrix-synapse.configureRedisLocally"><code>services.matrix-synapse.configureRedisLocally</code></a>
+is also possible now.</p>
+</li>
+<li>
+<p>The <code>services.nginx</code> module gained a <code>defaultListen</code> option at server-level
+with support for PROXY protocol listeners. Also <code>proxyProtocol</code> is exposed in
+the <code>services.nginx.virtualHosts.&lt;name&gt;.listen</code> option now. This it is
+possible to run PROXY listeners and non-PROXY listeners at a server-level.
+Refer to <a href="https://github.com/NixOS/nixpkgs/pull/213510/">PR #213510</a> for more
+details.</p>
+</li>
+<li>
+<p><code>services.restic.backups</code> adds wrapper scripts to your system path now. This
+wrapper script sets the same environment variables as the service, so restic
+operations can easily be run from the command line. This behavior can be
+disabled by setting <code>createWrapper</code> to <code>false</code>, for each backup
+configuration.</p>
+</li>
+<li>
+<p><code>services.prometheus.exporters</code> has a new exporter to monitor electrical
+power consumption based on PowercapRAPL sensor called
+<a href="https://github.com/hubblo-org/scaphandre">Scaphandre</a>. Refer to <a href="https://github.com/NixOS/nixpkgs/pull/239803">PR
+#239803</a> for more details.</p>
+</li>
+<li>
+<p>The <code>services.calibre-server</code> module has new options to configure the <code>host</code>,
+<code>port</code>, <code>auth.enable</code>, <code>auth.mode</code> and <code>auth.userDb</code> path. Refer to <a href="https://github.com/NixOS/nixpkgs/pull/216497/">PR
+#216497</a> for more details.</p>
+</li>
+<li>
+<p><code>services.prometheus.exporters</code> has a new
+<a href="https://github.com/hipages/php-fpm_exporter">exporter</a> to monitor PHP-FPM
+processes. Refer to <a href="https://github.com/NixOS/nixpkgs/pull/240394">PR
+#240394</a> for more details.</p>
+</li>
+<li>
+<p><code>services.github-runner</code> and <code>services.github-runners.&lt;name&gt;</code> gained the
+option <code>nodeRuntimes</code>. This option defaults to <code>[ &quot;node20&quot; ]</code>.  I.e., the
+service supports Node.js 20 GitHub Actions only. The list of Node.js versions
+accepted by <code>nodeRuntimes</code> tracks the versions the upstream GitHub Actions
+runner supports. Refer to <a href="https://github.com/NixOS/nixpkgs/pull/249103">PR
+#249103</a> for details.</p>
+</li>
+<li>
+<p><code>programs.gnupg</code> has the option <code>agent.settings</code> now. This allows setting
+verbatim config values in <code>/etc/gnupg/gpg-agent.conf</code>.</p>
+</li>
+<li>
+<p><code>dockerTools.buildImage</code>, <code>dockerTools.buildLayeredImage</code> and
+<code>dockerTools.streamLayeredImage</code> use <code>lib.makeOverridable</code> now . This allows
+<code>dockerTools</code>-based images to be customized more efficiently at the Nix
+level.</p>
+</li>
+<li>
+<p><code>services.influxdb2</code> supports doing an automatic initial setup and
+provisioning of users, organizations, buckets and authentication tokens now.
+Refer to <a href="https://github.com/NixOS/nixpkgs/pull/249502">PR #249502</a> for more
+details.</p>
+</li>
+<li>
+<p><code>wrapHelm</code> exposes <code>passthru.pluginsDir</code> now which can be passed to
+<code>helmfile</code>. For convenience, a top-level package <code>helmfile-wrapped</code> has been
+added, which inherits <code>passthru.pluginsDir</code> from <code>kubernetes-helm-wrapped</code>.
+Refer to <a href="https://github.com/NixOS/nixpkgs/issues/217768">PR #217768</a> for
+more details.</p>
+</li>
+<li>
+<p>The <code>boot.initrd.network.udhcp.enable</code> option allows control over DHCP during
+Stage 1 regardless of what <code>networking.useDHCP</code> is set to.</p>
+</li>
+<li>
+<p><code>networking.nftables</code> has the option <code>networking.nftables.table.&lt;table&gt;</code> now. This creates tables
+and have them be updated atomically, instead of flushing the ruleset.</p>
+</li>
+<li>
+<p><code>hardware.nvidia</code> gained <code>datacenter</code> options for enabling NVIDIA Data Center
+drivers and configuration of NVLink/NVSwitch topologies through
+<code>nv-fabricmanager</code>.</p>
+</li>
+<li>
+<p>The new <code>boot.bcache.enable</code> option allows completely removing <code>bcache</code>
+mount support. It is enabled by default.</p>
+</li>
+<li>
+<p><code>security.sudo</code> provides two extra options now, while not changing the
+module's default behaviour:</p>
+<ul>
+<li><code>defaultOptions</code> controls the options used for the default rules;</li>
+<li><code>keepTerminfo</code> controls whether <code>TERMINFO</code> and <code>TERMINFO_DIRS</code> are preserved
+for <code>root</code> and the <code>wheel</code> group.</li>
+</ul>
+</li>
+<li>
+<p><code>virtualisation.googleComputeImage</code> provides a <code>efi</code> option to support UEFI
+booting now.</p>
+</li>
+<li>
+<p>CoreDNS may be built with external plugins now. This may be done by
+overriding <code>externalPlugins</code> and <code>vendorHash</code> arguments like this:</p>
+<pre><code class="language-nix">{
+  services.coredns = {
+    enable = true;
+    package = pkgs.coredns.override {
+      externalPlugins = [
+        {
+          name = &quot;fanout&quot;;
+          repo = &quot;github.com/networkservicemesh/fanout&quot;;
+          version = &quot;v1.9.1&quot;;
+        }
+      ];
+      vendorHash = &quot;&lt;SRI hash&gt;&quot;;
+    };
+  };
+}
+</code></pre>
+<p>To get the necessary SRI hash, set <code>vendorHash = &quot;&quot;;</code>. The build will fail
+and produce the correct <code>vendorHash</code> in the error message.</p>
+<p>If you use this feature, updates to CoreDNS may require updating <code>vendorHash</code>
+by following these steps again.</p>
+</li>
+<li>
+<p>Using <code>fusuma</code> enables the following plugins now:
+<a href="https://github.com/iberianpig/fusuma-plugin-appmatcher">appmatcher</a>,
+<a href="https://github.com/iberianpig/fusuma-plugin-keypress">keypress</a>,
+<a href="https://github.com/iberianpig/fusuma-plugin-sendkey">sendkey</a>,
+<a href="https://github.com/iberianpig/fusuma-plugin-tap">tap</a> and
+<a href="https://github.com/iberianpig/fusuma-plugin-wmctrl">wmctrl</a>.</p>
+</li>
+<li>
+<p>The Home Assistant module offers support for installing custom components and
+lovelace modules now. Available at
+<a href="options/services-h/#opt-services.home-assistant.customComponents"><code>services.home-assistant.customComponents</code></a>
+and
+<a href="options/services-h/#opt-services.home-assistant.customLovelaceModules"><code>services.home-assistant.customLovelaceModules</code></a>.</p>
+</li>
+<li>
+<p>TeX Live environments can now be built with the new <code>texlive.withPackages</code>.
+The procedure for creating custom TeX packages has been changed. Refer to the
+<a href="https://nixos.org/manual/nixpkgs/stable/#sec-language-texlive-custom-packages">Nixpkgs
+manual</a>
+for more details.</p>
+</li>
+<li>
+<p>In <code>wxGTK32</code>, the webkit module <code>wxWebView</code> has been enabled on all builds.
+Prior releases only enabled this on Darwin.</p>
+</li>
+<li>
+<p>Support for WiFi6 (IEEE 802.11ax) and WPA3-SAE-PK was enabled in the
+<code>hostapd</code> package, along with a significant rework of the hostapd module.</p>
+</li>
+<li>
+<p>LXD supports virtual machine instances now to complement the existing
+container support.</p>
+</li>
+<li>
+<p>The <code>nixos-rebuild</code> command has been given a <code>list-generations</code> subcommand.
+Refer to <code>man nixos-rebuild</code> for more details.</p>
+</li>
+<li>
+<p><a href="https://github.com/memorysafety/sudo-rs/"><code>sudo-rs</code></a>, a reimplementation of <code>sudo</code> in Rust, is now supported.
+An experimental new module <code>security.sudo-rs</code> was added.
+Switching to it (via <code> security.sudo-rs.enable = true;</code>) introduces
+slight changes in sudo behaviour, due to <code>sudo-rs</code>' current limitations:</p>
+<ul>
+<li>terminfo-related environment variables aren't preserved for <code>root</code> and <code>wheel</code>;</li>
+<li><code>root</code> and <code>wheel</code> are not given the ability to set (or preserve)
+arbitrary environment variables.</li>
+</ul>
+<p><strong>Note:</strong> The <code>sudo-rs</code> module only takes configuration through <code>security.sudo-rs</code>,
+and in particular does not automatically use previously-set rules; this could be
+achieved with <code>security.sudo-rs.extraRules = security.sudo.extraRules;</code> for instance.</p>
+</li>
+</ul>
+<ul>
+<li>
+<p>There is a new NixOS option when writing NixOS tests
+<code>testing.initrdBackdoor</code>, that enables <code>backdoor.service</code> in initrd. Requires
+<code>boot.initrd.systemd.enable</code> to be enabled. Boot will pause in Stage 1 at
+<code>initrd.target</code>, and will listen for commands from the <code>Machine</code> python
+interface, just like Stage 2 normally does. This enables commands to be sent
+to test and debug Stage 1. Use <code>machine.switch_root()</code> to leave Stage 1 and
+proceed to Stage 2.</p>
+</li>
+<li>
+<p>The Linux kernel module <code>msr</code> (refer to
+<a href="https://man7.org/linux/man-pages/man4/msr.4.html"><code>msr(4)</code></a>), which provides
+an interface to read and write the model-specific registers (MSRs) of an x86
+CPU, can now be configured via <code>hardware.cpu.x86.msr</code>.</p>
+</li>
+<li>
+<p>The <code>qemu-vm.nix</code> module now supports disabling overriding <code>fileSystems</code> with
+<code>virtualisation.fileSystems</code>. This enables the user to boot VMs from
+&quot;external&quot; disk images not created by the qemu-vm module. You can stop the
+qemu-vm module from overriding <code>fileSystems</code> by setting
+<code>virtualisation.fileSystems = lib.mkForce { };</code>.</p>
+</li>
+<li>
+<p>When using <a href="https://www.snapraid.it/manual#7.1">split parity files</a> in <code>snapraid</code>,
+the snapraid-sync systemd service will no longer fail to run.</p>
+</li>
+<li>
+<p><code>wpa_supplicant</code>'s configuration file cannot be read by non-root users, and
+secrets (such as Pre-Shared Keys) can safely be passed via
+<code>networking.wireless.environmentFile</code>.</p>
+<p>The configuration file could previously be read, when <code>userControlled.enable</code> (non-default),
+by users who are in both <code>wheel</code> and <code>userControlled.group</code> (defaults to <code>wheel</code>)</p>
+</li>
+</ul>
+<h2 id='sec-release-23.11-nixpkgs-lib'><a href='release-notes/rl-2311/#sec-release-23.11-nixpkgs-lib'>
+Nixpkgs Library
+</a></h2>
+<h3 id='sec-release-23.11-lib-breaking'><a href='release-notes/rl-2311/#sec-release-23.11-lib-breaking'>
+Breaking Changes
+</a></h3>
+<ul>
+<li><a href="https://nixos.org/manual/nixpkgs/stable#function-library-lib.lists.foldl-prime"><code>lib.lists.foldl'</code></a>
+now always evaluates the initial accumulator argument first. If you depend on
+the lazier behavior, consider using
+<a href="https://nixos.org/manual/nixpkgs/stable#function-library-lib.lists.foldl"><code>lib.lists.foldl</code></a>
+or
+<a href="https://nixos.org/manual/nix/stable/language/builtins.html#builtins-foldl'"><code>builtins.foldl'</code></a>
+instead.</li>
+<li><a href="https://nixos.org/manual/nixpkgs/stable#function-library-lib.attrsets.foldlAttrs"><code>lib.attrsets.foldlAttrs</code></a>
+now always evaluates the initial accumulator argument first.</li>
+<li>Now that the internal NixOS transition to Markdown documentation is complete,
+<code>lib.options.literalDocBook</code> has been removed after deprecation in 22.11.</li>
+<li><code>lib.types.string</code> is now fully deprecated and gives a warning when used.</li>
+</ul>
+<h3 id='sec-release-23.11-lib-additions-improvements'><a href='release-notes/rl-2311/#sec-release-23.11-lib-additions-improvements'>
+Additions and Improvements
+</a></h3>
+<ul>
+<li>
+<p><a href="https://nixos.org/manual/nixpkgs/stable#sec-functions-library-fileset"><code>lib.fileset</code></a>:
+A new sub-library to select local files to use for sources, designed to be
+easy and safe to use.</p>
+<p>This aims to be a replacement for <code>lib.sources</code>-based filtering. To learn
+more about it, see <a href="https://www.tweag.io/blog/2023-11-28-file-sets/">the blog
+post</a> or <a href="https://nix.dev/tutorials/file-sets">the
+tutorial</a>.</p>
+</li>
+<li>
+<p><a href="https://nixos.org/manual/nixpkgs/stable#sec-functions-library-gvariant"><code>lib.gvariant</code></a>:
+A partial and basic implementation of GVariant formatted strings. See
+<a href="https://docs.gtk.org/glib/gvariant-format-strings.html">GVariant Format
+Strings</a> for details.</p>
+<div class='admonition warning'><h3 class='title'>Warning</h3>
+<p>
+This API is not considered fully stable and it might therefore
+change in backwards incompatible ways without prior notice.
+</p>
+</div>
+</li>
+<li>
+<p><a href="https://nixos.org/manual/nixpkgs/stable#sec-functions-library-asserts"><code>lib.asserts</code></a>:
+New function:
+<a href="https://nixos.org/manual/nixpkgs/stable#function-library-lib.asserts.assertEachOneOf"><code>assertEachOneOf</code></a>.</p>
+</li>
+<li>
+<p><a href="https://nixos.org/manual/nixpkgs/stable#sec-functions-library-attrsets"><code>lib.attrsets</code></a>:
+New function:
+<a href="https://nixos.org/manual/nixpkgs/stable#function-library-lib.attrsets.attrsToList"><code>attrsToList</code></a>.</p>
+</li>
+<li>
+<p><a href="https://nixos.org/manual/nixpkgs/stable#sec-functions-library-customisation"><code>lib.customisation</code></a>:
+New function:
+<a href="https://nixos.org/manual/nixpkgs/stable#function-library-lib.customisation.makeScopeWithSplicing-prime"><code>makeScopeWithSplicing'</code></a>.</p>
+</li>
+<li>
+<p><a href="https://nixos.org/manual/nixpkgs/stable#sec-functions-library-fixedPoints"><code>lib.fixedPoints</code></a>:
+Documentation improvements for
+<a href="https://nixos.org/manual/nixpkgs/stable#function-library-lib.fixedPoints.fix"><code>lib.fixedPoints.fix</code></a>.</p>
+</li>
+<li>
+<p><code>lib.generators</code>: New functions:
+<a href="https://nixos.org/manual/nixpkgs/stable#function-library-lib.generators.mkDconfKeyValue"><code>mkDconfKeyValue</code></a>,
+<a href="https://nixos.org/manual/nixpkgs/stable#function-library-lib.generators.toDconfINI"><code>toDconfINI</code></a>.</p>
+<p><code>lib.generators.toKeyValue</code> now supports the <code>indent</code> attribute in its first
+argument.</p>
+</li>
+<li>
+<p><a href="https://nixos.org/manual/nixpkgs/stable#sec-functions-library-lists"><code>lib.lists</code></a>:
+New functions:
+<a href="https://nixos.org/manual/nixpkgs/stable#function-library-lib.lists.findFirstIndex"><code>findFirstIndex</code></a>,
+<a href="https://nixos.org/manual/nixpkgs/stable#function-library-lib.lists.hasPrefix"><code>hasPrefix</code></a>,
+<a href="https://nixos.org/manual/nixpkgs/stable#function-library-lib.lists.removePrefix"><code>removePrefix</code></a>,
+<a href="https://nixos.org/manual/nixpkgs/stable#function-library-lib.lists.commonPrefix"><code>commonPrefix</code></a>,
+<a href="https://nixos.org/manual/nixpkgs/stable#function-library-lib.lists.allUnique"><code>allUnique</code></a>.</p>
+<p>Documentation improvements for
+<a href="https://nixos.org/manual/nixpkgs/stable#function-library-lib.lists.foldl-prime"><code>lib.lists.foldl'</code></a>.</p>
+</li>
+<li>
+<p><a href="https://nixos.org/manual/nixpkgs/stable#sec-functions-library-meta"><code>lib.meta</code></a>:
+Documentation of functions now gets rendered</p>
+</li>
+<li>
+<p><a href="https://nixos.org/manual/nixpkgs/stable#sec-functions-library-path"><code>lib.path</code></a>:
+New functions:
+<a href="https://nixos.org/manual/nixpkgs/stable#function-library-lib.path.hasPrefix"><code>hasPrefix</code></a>,
+<a href="https://nixos.org/manual/nixpkgs/stable#function-library-lib.path.removePrefix"><code>removePrefix</code></a>,
+<a href="https://nixos.org/manual/nixpkgs/stable#function-library-lib.path.splitRoot"><code>splitRoot</code></a>,
+<a href="https://nixos.org/manual/nixpkgs/stable#function-library-lib.path.subpath.components"><code>subpath.components</code></a>.</p>
+</li>
+<li>
+<p><a href="https://nixos.org/manual/nixpkgs/stable#sec-functions-library-strings"><code>lib.strings</code></a>:
+New functions:
+<a href="https://nixos.org/manual/nixpkgs/stable#function-library-lib.strings.replicate"><code>replicate</code></a>,
+<a href="https://nixos.org/manual/nixpkgs/stable#function-library-lib.strings.cmakeOptionType"><code>cmakeOptionType</code></a>,
+<a href="https://nixos.org/manual/nixpkgs/stable#function-library-lib.strings.cmakeBool"><code>cmakeBool</code></a>,
+<a href="https://nixos.org/manual/nixpkgs/stable#function-library-lib.strings.cmakeFeature"><code>cmakeFeature</code></a>.</p>
+</li>
+<li>
+<p><a href="https://nixos.org/manual/nixpkgs/stable#sec-functions-library-trivial"><code>lib.trivial</code></a>:
+New function:
+<a href="https://nixos.org/manual/nixpkgs/stable#function-library-lib.trivial.mirrorFunctionArgs"><code>mirrorFunctionArgs</code></a>.</p>
+</li>
+<li>
+<p><code>lib.systems</code>: New function:
+<a href="https://nixos.org/manual/nixpkgs/stable#function-library-lib.systems.equals"><code>equals</code></a>.</p>
+</li>
+<li>
+<p><a href="https://nixos.org/manual/nixpkgs/stable#sec-functions-library-options"><code>lib.options</code></a>:
+Improved documentation for
+<a href="https://nixos.org/manual/nixpkgs/stable#function-library-lib.options.mkPackageOption"><code>mkPackageOption</code></a>.</p>
+<p><a href="https://nixos.org/manual/nixpkgs/stable#function-library-lib.options.mkPackageOption"><code>mkPackageOption</code></a>.
+now also supports the <code>pkgsText</code> attribute.</p>
+</li>
+</ul>
+<p>Module system:</p>
+<ul>
+<li>
+<p>Options in the <code>options</code> module argument now have the <code>declarationPositions</code>
+attribute containing the position where the option was declared:</p>
+<pre><code>$ nix-repl -f '&lt;nixpkgs/nixos&gt;' [...]
+nix-repl&gt; :p options.environment.systemPackages.declarationPositions
+[ {
+  column = 7;
+  file = &quot;/nix/store/vm9zf9wvfd628cchj0hdij1g4hzjrcz9-source/nixos/modules/config/system-path.nix&quot;;
+  line = 62;
+} ]
+</code></pre>
+<p>Not to be confused with <code>definitionsWithLocations</code>, which is the same but for option <em>definitions</em>.</p>
+</li>
+<li>
+<p>Improved error message for option declarations missing <code>mkOption</code></p>
+</li>
+</ul>
+<h3 id='sec-release-23.11-lib-deprecations'><a href='release-notes/rl-2311/#sec-release-23.11-lib-deprecations'>
+Deprecations
+</a></h3>
+<ul>
+<li><code>lib.meta.getExe pkg</code> (also available as <code>lib.getExe</code>) now gives a warning if
+<code>pkg.meta.mainProgram</code> is not set, but it continues to default to the
+derivation name. Nixpkgs accepts PRs that set <code>meta.mainProgram</code> on packages
+where it makes sense. Use <code>lib.getExe' pkg &quot;some-command&quot;</code> to avoid the
+warning and/or select a different executable.</li>
+</ul>
+
+        <nav class='chapter-pagination' aria-label='Chapter pagination'>
+          <a class='chapter-pagination-link chapter-pagination-previous' href='release-notes/rl-2405/#sec-release-24.05'><span class='chapter-pagination-label'>Previous</span><span class='chapter-pagination-title'>Release 24.05 (“Uakari”, 2024.05/31)</span></a>
+          <a class='chapter-pagination-link chapter-pagination-next' href='release-notes/rl-2305/#sec-release-23.05'><span class='chapter-pagination-label'>Next</span><span class='chapter-pagination-title'>Release 23.05 (“Stoat”, 2023.05/31)</span></a>
+        </nav>
+        </main>
+      </div>
+    </section>
+<script defer src='highlight.pack.bb58bc6b7daef61c.js'></script>
+<script defer src='mmdoc.0eac5034aeb9595f.js'></script>
+<script defer src='mmdoc_search.1e3e2ead6263c722.js' data-search-index='search_index.fa825f5e481818a3.js' data-fuse='fuse.basic.min.296619aed362de6d.js'></script>
+  </div>
+  </body>
+</html>

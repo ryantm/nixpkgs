@@ -1,0 +1,1796 @@
+<!doctype html>
+<html lang='en'>
+  <head>
+    <base href='../../'>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, viewport-fit=cover'>
+    <script>
+      (() => {
+        let theme = null
+        try { theme = localStorage.getItem('theme') } catch (error) {}
+        if (theme !== 'light' && theme !== 'dark')
+          theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+        document.documentElement.classList.add(theme + '-theme')
+        const ua = navigator.userAgent || ''
+        const isWebView = /;\s*wv\)|Twitter|FBAN|FBAV|Instagram|LinkedInApp|BytedanceWebview|musical_ly|Line\/|MicroMessenger/i.test(ua) || (/(iPhone|iPad|iPod)/i.test(ua) && /AppleWebKit/i.test(ua) && !/Safari\//i.test(ua))
+        const fromX = /^https?:\/\/([a-z0-9-]+\.)?(t\.co|x\.com|twitter\.com)(\/|$)/i.test(document.referrer || '')
+        let topNav = isWebView || fromX
+        try {
+          if (topNav) sessionStorage.setItem('mmdoc-top-nav', '1')
+          else if (sessionStorage.getItem('mmdoc-top-nav') === '1') topNav = true
+        } catch (error) {}
+        if (topNav) document.documentElement.classList.add('mobile-top-nav')
+      })()
+    </script>
+    <meta name='description' content='Writing Tests'>
+    <link rel='icon' href='favicon.svg'>
+    <link rel='stylesheet' href='a11y-dark.773c5c24f666bae4.css'>
+    <link rel='stylesheet' href='a11y-light.519a1765fd6efc61.css'>
+    <link rel='stylesheet' href='mmdoc.1fa5ef6417bedb91.css'>
+    <title>Writing Tests | nixos</title>
+  </head>
+  <body>
+  <a class='skip-link' href='development/writing-nixos-tests/#main-content'>Skip to main content</a>
+  <input type='checkbox' id='sidebar-checkbox' aria-hidden='true' tabindex='-1' style='display: none;'>
+  <div class='body'>
+    <header class='nav-top-container'>
+    <nav class='nav-top' aria-label='Documentation controls'>
+      <button type='button' class='sidebar-toggle' title='Toggle table of contents' aria-label='Toggle table of contents' aria-controls='sidebar' aria-expanded='true'></button>    <button type='button' class='search-toggle' title='Open search (/)' aria-label='Open search' aria-controls='search-panel' aria-expanded='false'></button>    <button type='button' class='theme-toggle' title='Switch to dark theme' aria-label='Switch to dark theme' aria-pressed='false'></button>    <a id='chapter-previous-button' class='chapter-previous' href='development/nixos-tests/#sec-nixos-tests' title='NixOS Tests' aria-label='Previous: NixOS Tests'>&lt;</a>
+    <a id='chapter-next-button' class='chapter-next' href='development/running-nixos-tests/#sec-running-nixos-tests' title='Running Tests' aria-label='Next: Running Tests'>&gt;</a>
+    </nav>
+    </header>
+    <nav id='sidebar' class='sidebar' aria-label='Table of contents'>
+<h1>NixOS Manual</h1>
+<p>Version 27.05.20261128.4b21f50</p>
+<ul>
+<li><a href="./#preface">Preface</a></li>
+</ul>
+<h2>Getting started</h2>
+<ul>
+<li><a href="installation/installation/#ch-installation">Getting started</a></li>
+<li><a href="installation/obtaining/#sec-obtaining">Obtaining NixOS</a></li>
+</ul>
+<h2>Installing NixOS</h2>
+<ul>
+<li><a href="installation/installing/#sec-installation">Installing NixOS</a></li>
+<li><a href="installation/installing-usb/#sec-booting-from-usb">Booting from a USB flash drive</a></li>
+<li><a href="installation/installing-pxe/#sec-booting-from-pxe">Booting from the &quot;netboot&quot; media (PXE)</a></li>
+<li><a href="installation/installing-kexec/#sec-booting-via-kexec">&quot;Booting&quot; into NixOS via kexec</a></li>
+<li><a href="installation/installing-virtualbox-guest/#sec-installing-virtualbox-guest">Installing in a VirtualBox guest</a></li>
+<li><a href="installation/installing-from-other-distro/#sec-installing-from-other-distro">Installing from another Linux distribution</a></li>
+<li><a href="installation/installing-behind-a-proxy/#sec-installing-behind-proxy">Installing behind a proxy</a></li>
+<li><a href="installation/changing-config/#sec-changing-config">Changing the Configuration</a></li>
+<li><a href="installation/upgrading/#sec-upgrading">Upgrading NixOS</a></li>
+</ul>
+<h2>Guides</h2>
+<ul>
+<li><a href="configuration/configuration/#ch-configuration">Guides</a></li>
+</ul>
+<h2>Configuration Syntax</h2>
+<ul>
+<li><a href="configuration/config-syntax/#sec-configuration-syntax">Configuration Syntax</a></li>
+<li><a href="configuration/config-file/#sec-configuration-file">NixOS Configuration File</a></li>
+<li><a href="configuration/abstractions/#sec-module-abstractions">Abstractions</a></li>
+<li><a href="configuration/modularity/#sec-modularity">Modularity</a></li>
+</ul>
+<h2>Package Management</h2>
+<ul>
+<li><a href="configuration/package-mgmt/#sec-package-management">Package Management</a></li>
+<li><a href="configuration/declarative-packages/#sec-declarative-package-mgmt">Declarative Package Management</a></li>
+<li><a href="configuration/customizing-packages/#sec-customising-packages">Customising Packages</a></li>
+<li><a href="configuration/adding-custom-packages/#sec-custom-packages">Adding Custom Packages</a></li>
+<li><a href="configuration/ad-hoc-packages/#sec-ad-hoc-packages">Ad-Hoc Package Management</a></li>
+<li><a href="configuration/user-mgmt/#sec-user-management">User Management</a></li>
+</ul>
+<h2>File Systems</h2>
+<ul>
+<li><a href="configuration/file-systems/#ch-file-systems">File Systems</a></li>
+<li><a href="configuration/luks-file-systems/#sec-luks-file-systems">LUKS-Encrypted File Systems</a></li>
+<li><a href="configuration/sshfs-file-systems/#sec-sshfs-file-systems">SSHFS File Systems</a></li>
+<li><a href="configuration/nfs-file-systems/#sec-nfs-file-systems">NFS File Systems</a></li>
+<li><a href="configuration/overlayfs/#sec-overlayfs">Overlayfs</a></li>
+</ul>
+<h2>Networking</h2>
+<ul>
+<li><a href="configuration/networking/#sec-networking">Networking</a></li>
+<li><a href="configuration/network-manager/#sec-networkmanager">NetworkManager</a></li>
+<li><a href="configuration/ssh/#sec-ssh">Secure Shell Access</a></li>
+<li><a href="configuration/ipv4-config/#sec-ipv4">IPv4 Configuration</a></li>
+<li><a href="configuration/ipv6-config/#sec-ipv6">IPv6 Configuration</a></li>
+<li><a href="configuration/firewall/#sec-firewall">Firewall</a></li>
+<li><a href="configuration/wireless/#sec-wireless">Wireless Networks</a></li>
+<li><a href="configuration/ad-hoc-network-config/#ad-hoc-network-config">Ad-Hoc Configuration</a></li>
+<li><a href="configuration/renaming-interfaces/#sec-rename-ifs">Renaming network interfaces</a></li>
+</ul>
+<h2>Graphical Desktops</h2>
+<ul>
+<li><a href="configuration/x-windows/#sec-x11">X Window System</a></li>
+<li><a href="configuration/wayland/#sec-wayland">Wayland</a></li>
+<li><a href="configuration/gpu-accel/#sec-gpu-accel">GPU acceleration</a></li>
+<li><a href="configuration/xfce/#sec-xfce">Xfce Desktop Environment</a></li>
+</ul>
+<h2>Building Images</h2>
+<ul>
+<li><a href="installation/building-nixos/#sec-building-image">Building a NixOS (Live) ISO</a></li>
+<li><a href="installation/building-images-via-nixos-rebuild-build-image/#sec-image-nixos-rebuild-build-image">Building Images with nixos-rebuild build-image</a></li>
+<li><a href="installation/building-images-via-systemd-repart/#sec-image-repart">Building Images via systemd-repart</a></li>
+</ul>
+<h2>Administration</h2>
+<ul>
+<li><a href="administration/running/#ch-running">Administration</a></li>
+<li><a href="administration/service-mgmt/#sec-systemctl">Service Management</a></li>
+<li><a href="administration/rebooting/#sec-rebooting">Rebooting and Shutting Down</a></li>
+<li><a href="administration/user-sessions/#sec-user-sessions">User Sessions</a></li>
+<li><a href="administration/logging/#sec-logging">Logging</a></li>
+<li><a href="administration/cleaning-store/#sec-nix-gc">Cleaning the Nix Store</a></li>
+</ul>
+<h2>Container Management</h2>
+<ul>
+<li><a href="administration/containers/#ch-containers">Container Management</a></li>
+<li><a href="administration/imperative-containers/#sec-imperative-containers">Imperative Container Management</a></li>
+<li><a href="administration/declarative-containers/#sec-declarative-containers">Declarative Container Specification</a></li>
+<li><a href="administration/container-networking/#sec-container-networking">Container Networking</a></li>
+</ul>
+<h2>Troubleshooting</h2>
+<ul>
+<li><a href="administration/troubleshooting/#ch-troubleshooting">Troubleshooting</a></li>
+<li><a href="administration/boot-problems/#sec-boot-problems">Boot Problems</a></li>
+<li><a href="administration/maintenance-mode/#sec-maintenance-mode">Maintenance Mode</a></li>
+<li><a href="administration/rollback/#sec-rollback">Rolling Back Configuration Changes</a></li>
+<li><a href="administration/store-corruption/#sec-nix-store-corruption">Nix Store Corruption</a></li>
+<li><a href="administration/network-problems/#sec-nix-network-issues">Network Problems</a></li>
+</ul>
+<h2>Services and Programs</h2>
+<ul>
+<li><a href="services/#ch-services">Services and Programs</a></li>
+<li><a href="modules/facter/#module-hardware-facter">NixOS Facter</a></li>
+<li><a href="modules/input-method/#module-services-input-methods">Input Methods</a></li>
+<li><a href="modules/digitalbitbox/#module-programs-digitalbitbox">Digital Bitbox</a></li>
+<li><a href="modules/plotinus/#module-program-plotinus">Plotinus</a></li>
+<li><a href="modules/oh-my-zsh/#module-programs-zsh-ohmyzsh">Oh my ZSH</a></li>
+<li><a href="modules/acme/#module-security-acme">SSL/TLS Certificates with ACME</a></li>
+<li><a href="modules/tpm2/#module-security-tpm2">TPM2</a></li>
+<li><a href="modules/navidrome/#module-services-navidrome">Navidrome</a></li>
+<li><a href="modules/borgbackup/#module-borgbase">BorgBackup</a></li>
+<li><a href="modules/garm/#module-garm">GARM</a></li>
+<li><a href="modules/cassandra/#module-services-cassandra">Apache Cassandra</a></li>
+<li><a href="modules/foundationdb/#module-services-foundationdb">FoundationDB</a></li>
+<li><a href="modules/postgresql/#module-postgresql">PostgreSQL</a></li>
+<li><a href="modules/tigerbeetle/#module-services-tigerbeetle">TigerBeetle</a></li>
+<li><a href="modules/gnome/#chap-gnome">GNOME Desktop</a></li>
+<li><a href="modules/pantheon/#chap-pantheon">Pantheon Desktop</a></li>
+<li><a href="modules/flatpak/#module-services-flatpak">Flatpak</a></li>
+<li><a href="modules/athens/#module-athens">Athens</a></li>
+<li><a href="modules/blackfire/#module-services-blackfire">Blackfire profiler</a></li>
+<li><a href="modules/livebook/#module-services-livebook">Livebook</a></li>
+<li><a href="modules/emacs/#module-services-emacs">Emacs</a></li>
+<li><a href="modules/display/#module-hardware-display">Customizing display configuration</a></li>
+<li><a href="modules/trezord/#trezor">Trezor</a></li>
+<li><a href="modules/mailman/#module-services-mailman">Mailman</a></li>
+<li><a href="modules/draupnir/#module-services-draupnir">Draupnir (Matrix Moderation Bot)</a></li>
+<li><a href="modules/maubot/#module-services-maubot">Maubot</a></li>
+<li><a href="modules/mautrix-discord/#module-services-mautrix-discord">Mautrix-Discord</a></li>
+<li><a href="modules/mautrix-signal/#module-services-mautrix-signal">Mautrix-Signal</a></li>
+<li><a href="modules/mautrix-whatsapp/#module-services-mautrix-whatsapp">Mautrix-Whatsapp</a></li>
+<li><a href="modules/mjolnir/#module-services-mjolnir">Mjolnir (Matrix Moderation Tool)</a></li>
+<li><a href="modules/synapse/#module-services-matrix">Matrix</a></li>
+<li><a href="modules/anki-sync-server/#module-services-anki-sync-server">Anki Sync Server</a></li>
+<li><a href="modules/apache-kafka/#module-services-apache-kafka">Apache Kafka</a></li>
+<li><a href="modules/cliproxyapi/#module-services-cliproxyapi">CLIProxyAPI</a></li>
+<li><a href="modules/dump1090-fa/#module-services-dump1090-fa">Dump1090-fa</a></li>
+<li><a href="modules/forgejo/#module-forgejo">Forgejo</a></li>
+<li><a href="modules/gitlab/#module-services-gitlab">GitLab</a></li>
+<li><a href="modules/jellystat/#module-services-jellystat">Jellystat</a></li>
+<li><a href="modules/mesh-llm/#module-services-mesh-llm">MeshLLM</a></li>
+<li><a href="modules/paisa/#module-services-paisa">Paisa</a></li>
+<li><a href="modules/pelican-panel/#module-pelican-panel">Pelican Panel</a></li>
+<li><a href="modules/pelican-wings/#module-pelican-wings">Pelican Wings</a></li>
+<li><a href="modules/tandoor-recipes/#module-services-tandoor-recipes">Tandoor Recipes</a></li>
+<li><a href="modules/taskserver/#module-services-taskserver">Taskserver</a></li>
+<li><a href="modules/tdarr/#module-services-tdarr">Tdarr</a></li>
+<li><a href="modules/weechat/#module-services-weechat">WeeChat</a></li>
+<li><a href="modules/certspotter/#module-services-certspotter">Cert Spotter</a></li>
+<li><a href="modules/goss/#module-services-goss">Goss</a></li>
+<li><a href="modules/ocsinventory-agent/#module-services-ocsinventory-agent">OCS Inventory Agent</a></li>
+<li><a href="modules/parsedmarc/#module-services-parsedmarc">parsedmarc</a></li>
+<li><a href="modules/exporters/#module-services-prometheus-exporters">Prometheus exporters</a></li>
+<li><a href="modules/litestream/#module-services-litestream">Litestream</a></li>
+<li><a href="modules/samba/#module-services-samba">Samba</a></li>
+<li><a href="modules/amuled/#module-services-amule">aMule</a></li>
+<li><a href="modules/anubis/#module-services-anubis">Anubis</a></li>
+<li><a href="modules/atalkd/#module-services-atalkd">atalkd</a></li>
+<li><a href="modules/crab-hole/#module-services-crab-hole">🦀 crab-hole</a></li>
+<li><a href="modules/dnsmasq/#module-services-networking-dnsmasq">Dnsmasq</a></li>
+<li><a href="modules/doh-server/#module-service-doh-server">DNS-over-HTTPS Server</a></li>
+<li><a href="modules/firefox-syncserver/#module-services-firefox-syncserver">Firefox Sync server</a></li>
+<li><a href="modules/gns3-server/#module-services-gns3-server">GNS3 Server</a></li>
+<li><a href="modules/jotta-cli/#module-services-jotta-cli">Jottacloud Command-line Tool</a></li>
+<li><a href="modules/lxmd/#module-services-lxmd">LXMD</a></li>
+<li><a href="modules/mosquitto/#module-services-mosquitto">Mosquitto</a></li>
+<li><a href="modules/netbird/#module-services-netbird">Netbird Client</a></li>
+<li><a href="modules/netbird-relay/#module-services-netbird-relay">Netbird Relay</a></li>
+<li><a href="modules/server/#module-services-netbird-server">Netbird server</a></li>
+<li><a href="modules/nextcloud-spreed-signaling/#module-services-nextcloud-spreed-signaling">Spreed standalone signaling server</a></li>
+<li><a href="modules/nordvpn/#module-services-nordvpn">NordVPN</a></li>
+<li><a href="modules/onedrive/#module-services-onedrive">Microsoft OneDrive</a></li>
+<li><a href="modules/pihole-ftl/#module-services-networking-pihole-ftl">pihole-FTL</a></li>
+<li><a href="modules/pleroma/#module-services-pleroma">Pleroma</a></li>
+<li><a href="modules/portmaster/#module-services-portmaster">Portmaster</a></li>
+<li><a href="modules/prosody/#module-services-prosody">Prosody</a></li>
+<li><a href="modules/rnsd/#module-services-rnsd">RNSD</a></li>
+<li><a href="modules/umurmur/#module-service-umurmur">uMurmur</a></li>
+<li><a href="modules/yggdrasil/#module-services-networking-yggdrasil">Yggdrasil</a></li>
+<li><a href="modules/zapret2/#module-services-zapret2">Zapret2</a></li>
+<li><a href="modules/meilisearch/#module-services-meilisearch">Meilisearch</a></li>
+<li><a href="modules/crowdsec/#sec-crowdsec-reset">How to reset data and etc directories</a></li>
+<li><a href="modules/falco/#module-services-falco">Falco</a></li>
+<li><a href="modules/kerberos/#module-services-kerberos-server">kerberos_server</a></li>
+<li><a href="modules/systemd-lock-handler/#module-services-systemd-lock-handler">systemd-lock-handler</a></li>
+<li><a href="modules/akkoma/#module-services-akkoma">Akkoma</a></li>
+<li><a href="modules/c2fmzq-server/#module-services-c2fmzq">c2FmZQ</a></li>
+<li><a href="modules/davis/#module-services-davis">Davis</a></li>
+<li><a href="modules/discourse/#module-services-discourse">Discourse</a></li>
+<li><a href="modules/ente/#module-services-ente">Ente.io</a></li>
+<li><a href="modules/filesender/#module-services-filesender">FileSender</a></li>
+<li><a href="modules/glance/#module-services-glance">Glance</a></li>
+<li><a href="modules/gotosocial/#module-services-gotosocial">GoToSocial</a></li>
+<li><a href="modules/grocy/#module-services-grocy">Grocy</a></li>
+<li><a href="modules/hatsu/#module-services-hatsu">Hatsu</a></li>
+<li><a href="modules/jitsi-meet/#module-services-jitsi-meet">Jitsi Meet</a></li>
+<li><a href="modules/keycloak/#module-services-keycloak">Keycloak</a></li>
+<li><a href="modules/lemmy/#module-services-lemmy">Lemmy</a></li>
+<li><a href="modules/matomo/#module-services-matomo">Matomo</a></li>
+<li><a href="modules/nextcloud/#module-services-nextcloud">Nextcloud</a></li>
+<li><a href="modules/opencloud/#module-services-opencloud">OpenCloud</a></li>
+<li><a href="modules/pict-rs/#module-services-pict-rs">Pict-rs</a></li>
+<li><a href="modules/pihole-web/#module-services-web-apps-pihole-web">Pi-hole Web Dashboard</a></li>
+<li><a href="modules/plausible/#module-services-plausible">Plausible</a></li>
+<li><a href="modules/strfry/#module-services-strfry">strfry</a></li>
+<li><a href="modules/suwayomi-server/#module-services-suwayomi-server">Suwayomi-Server</a></li>
+<li><a href="modules/szurubooru/#module-services-szurubooru">Szurubooru</a></li>
+<li><a href="modules/wanderer/#module-services-wanderer">wanderer</a></li>
+<li><a href="modules/youtrack/#module-services-youtrack">YouTrack</a></li>
+<li><a href="modules/garage/#module-services-garage">Garage</a></li>
+<li><a href="modules/clevis/#module-boot-clevis">Clevis</a></li>
+<li><a href="modules/external/#sec-bootloader-external">External Bootloader Backends</a></li>
+<li><a href="modules/plymouth-tpm2-totp/#module-boot-plymouth-tpm2-totp">tpm2-totp with Plymouth</a></li>
+<li><a href="modules/xen-dom0/#module-virtualisation-xen">Xen Project Hypervisor</a></li>
+<li><a href="configuration/subversion/#module-services-subversion">Subversion</a></li>
+<li><a href="configuration/mattermost/#sec-mattermost">Mattermost</a></li>
+<li><a href="configuration/kubernetes/#sec-kubernetes">Kubernetes</a></li>
+</ul>
+<h2>Reference</h2>
+<ul>
+<li><a href="reference/#ch-reference">Reference</a></li>
+</ul>
+<h2>Profiles</h2>
+<ul>
+<li><a href="configuration/profiles/#ch-profiles">Profiles</a></li>
+<li><a href="configuration/profiles/all-hardware/#sec-profile-all-hardware">All Hardware</a></li>
+<li><a href="configuration/profiles/base/#sec-profile-base">Base</a></li>
+<li><a href="configuration/profiles/clone-config/#sec-profile-clone-config">Clone Config</a></li>
+<li><a href="configuration/profiles/demo/#sec-profile-demo">Demo</a></li>
+<li><a href="configuration/profiles/docker-container/#sec-profile-docker-container">Docker Container</a></li>
+<li><a href="configuration/profiles/graphical/#sec-profile-graphical">Graphical</a></li>
+<li><a href="configuration/profiles/headless/#sec-profile-headless">Headless</a></li>
+<li><a href="configuration/profiles/installation-device/#sec-profile-installation-device">Installation Device</a></li>
+<li><a href="configuration/profiles/perlless/#sec-perlless">Perlless</a></li>
+<li><a href="configuration/profiles/minimal/#sec-profile-minimal">Minimal</a></li>
+<li><a href="configuration/profiles/qemu-guest/#sec-profile-qemu-guest">QEMU Guest</a></li>
+<li><a href="configuration/linux-kernel/#sec-kernel-config">Linux Kernel</a></li>
+</ul>
+<h2>Necessary system state</h2>
+<ul>
+<li><a href="administration/system-state/#ch-system-state">Necessary system state</a></li>
+<li><a href="administration/nixos-state/#sec-nixos-state">NixOS</a></li>
+<li><a href="administration/systemd-state/#sec-systemd-state">systemd</a></li>
+<li><a href="administration/zfs-state/#sec-zfs-state">ZFS</a></li>
+</ul>
+<h2>What happens during a system switch?</h2>
+<ul>
+<li><a href="development/what-happens-during-a-system-switch/#sec-switching-systems">What happens during a system switch?</a></li>
+<li><a href="development/unit-handling/#sec-unit-handling">Unit handling</a></li>
+<li><a href="development/activation-script/#sec-activation-script">Activation script</a></li>
+<li><a href="development/non-switchable-systems/#sec-non-switchable-system">Non Switchable Systems</a></li>
+<li><a href="development/etc-overlay/#sec-etc-overlay">/etc via overlay filesystem</a></li>
+<li><a href="administration/control-groups/#sec-cgroups">Control Groups</a></li>
+<li><a href="development/bootspec/#sec-bootspec">Bootspec</a></li>
+<li><a href="development/modular-services/#modular-services">Modular Services</a></li>
+</ul>
+<h2>Contributing</h2>
+<ul>
+<li><a href="development/development/#ch-development">Contributing</a></li>
+<li><a href="development/sources/#sec-getting-sources">Getting the Sources</a></li>
+</ul>
+<h2>Writing NixOS Modules</h2>
+<ul>
+<li><a href="development/writing-modules/#sec-writing-modules">Writing NixOS Modules</a></li>
+<li><a href="development/option-declarations/#sec-option-declarations">Option Declarations</a></li>
+<li><a href="development/option-types/#sec-option-types">Options Types</a></li>
+<li><a href="development/option-def/#sec-option-definitions">Option Definitions</a></li>
+<li><a href="development/assertions/#sec-assertions">Warnings and Assertions</a></li>
+<li><a href="development/meta-attributes/#sec-meta-attributes">Meta Attributes</a></li>
+<li><a href="development/importing-modules/#sec-importing-modules">Importing Modules</a></li>
+<li><a href="development/replace-modules/#sec-replace-modules">Replace Modules</a></li>
+<li><a href="development/freeform-modules/#sec-freeform-modules">Freeform modules</a></li>
+<li><a href="development/settings-options/#sec-settings-options">Options for Program Settings</a></li>
+<li><a href="development/state-revision/#sec-state-revision">State revision</a></li>
+</ul>
+<h2>NixOS Tests</h2>
+<ul>
+<li><a href="development/nixos-tests/#sec-nixos-tests">NixOS Tests</a></li>
+<li><a href="development/writing-nixos-tests/#sec-writing-nixos-tests">Writing Tests</a></li>
+<li><a href="development/running-nixos-tests/#sec-running-nixos-tests">Running Tests</a></li>
+<li><a href="development/running-nixos-tests-interactively/#sec-running-nixos-tests-interactively">Running Tests interactively</a></li>
+<li><a href="development/linking-nixos-tests-to-packages/#sec-linking-nixos-tests-to-packages">Linking NixOS tests to packages</a></li>
+<li><a href="development/testing-hardware-features/#sec-nixos-test-testing-hardware-features">Testing Hardware Features</a></li>
+<li><a href="development/building-parts/#sec-building-parts">Building Specific Parts of NixOS</a></li>
+<li><a href="development/developing-the-test-driver/#chap-developing-the-test-driver">Developing the NixOS Test Driver</a></li>
+<li><a href="development/testing-installer/#ch-testing-installer">Testing the Installer</a></li>
+<li><a href="development/writing-documentation/#sec-writing-documentation">Writing NixOS Documentation</a></li>
+<li><a href="contributing-to-this-manual/#chap-contributing">Contributing to this manual</a></li>
+</ul>
+<h2>Configuration Options</h2>
+<ul>
+<li><a href="nixos-options/#ch-options">Configuration Options</a>
+<ul>
+<li><a href="options/boot/#sec-options-boot">boot</a></li>
+<li><a href="options/containers/#sec-options-containers">containers</a></li>
+<li><a href="options/documentation/#sec-options-documentation">documentation</a></li>
+<li><a href="options/environment/#sec-options-environment">environment</a></li>
+<li><a href="options/fonts/#sec-options-fonts">fonts</a></li>
+<li><a href="options/hardware/#sec-options-hardware">hardware</a></li>
+<li><a href="options/i18n/#sec-options-i18n">i18n</a></li>
+<li><a href="options/image/#sec-options-image">image</a></li>
+<li><a href="options/networking/#sec-options-networking">networking</a></li>
+<li><a href="options/nix/#sec-options-nix">nix</a></li>
+<li><a href="options/power/#sec-options-power">power</a></li>
+<li><a href="options/programs/#sec-options-programs">programs</a></li>
+<li><a href="options/security/#sec-options-security">security</a></li>
+<li><a href="options/system/#sec-options-system">system</a></li>
+<li><a href="options/systemd/#sec-options-systemd">systemd</a></li>
+<li><a href="options/users/#sec-options-users">users</a></li>
+<li><a href="options/virtualisation/#sec-options-virtualisation">virtualisation</a></li>
+<li><a href="options/xdg/#sec-options-xdg">xdg</a></li>
+<li><a href="options/services-a/#sec-options-services-a">services (A)</a></li>
+<li><a href="options/services-b/#sec-options-services-b">services (B)</a></li>
+<li><a href="options/services-c/#sec-options-services-c">services (C)</a></li>
+<li><a href="options/services-d/#sec-options-services-d">services (D)</a></li>
+<li><a href="options/services-e/#sec-options-services-e">services (E)</a></li>
+<li><a href="options/services-f/#sec-options-services-f">services (F)</a></li>
+<li><a href="options/services-g/#sec-options-services-g">services (G)</a></li>
+<li><a href="options/services-h/#sec-options-services-h">services (H)</a></li>
+<li><a href="options/services-i/#sec-options-services-i">services (I)</a></li>
+<li><a href="options/services-j/#sec-options-services-j">services (J)</a></li>
+<li><a href="options/services-k/#sec-options-services-k">services (K)</a></li>
+<li><a href="options/services-l/#sec-options-services-l">services (L)</a></li>
+<li><a href="options/services-m/#sec-options-services-m">services (M)</a></li>
+<li><a href="options/services-n/#sec-options-services-n">services (N)</a></li>
+<li><a href="options/services-o/#sec-options-services-o">services (O)</a></li>
+<li><a href="options/services-other/#sec-options-services-other">services (other)</a></li>
+<li><a href="options/services-p/#sec-options-services-p">services (P)</a></li>
+<li><a href="options/services-q/#sec-options-services-q">services (Q)</a></li>
+<li><a href="options/services-r/#sec-options-services-r">services (R)</a></li>
+<li><a href="options/services-s/#sec-options-services-s">services (S)</a></li>
+<li><a href="options/services-t/#sec-options-services-t">services (T)</a></li>
+<li><a href="options/services-u/#sec-options-services-u">services (U)</a></li>
+<li><a href="options/services-v/#sec-options-services-v">services (V)</a></li>
+<li><a href="options/services-w/#sec-options-services-w">services (W)</a></li>
+<li><a href="options/services-x/#sec-options-services-x">services (X)</a></li>
+<li><a href="options/services-y/#sec-options-services-y">services (Y)</a></li>
+<li><a href="options/services-z/#sec-options-services-z">services (Z)</a></li>
+<li><a href="options/other/#sec-options-other">Other options</a></li>
+</ul>
+</li>
+</ul>
+<h2>Release Notes</h2>
+<ul>
+<li><a href="release-notes/release-notes/#ch-release-notes">Release Notes</a>
+<ul>
+<li><a href="release-notes/rl-2705/#sec-release-27.05">Release 27.05 (&quot;Axolotl&quot;, 2027.05/??)</a></li>
+<li><a href="release-notes/rl-2611/#sec-release-26.11">Release 26.11 (&quot;Zokor&quot;, 2026.11/??)</a></li>
+<li><a href="release-notes/rl-2605/#sec-release-26.05">Release 26.05 (&quot;Yarara&quot;, 2026.05/30)</a></li>
+<li><a href="release-notes/rl-2511/#sec-release-25.11">Release 25.11 (&quot;Xantusia&quot;, 2025.11/30)</a></li>
+<li><a href="release-notes/rl-2505/#sec-release-25.05">Release 25.05 (“Warbler”, 2025.05/23)</a></li>
+<li><a href="release-notes/rl-2411/#sec-release-24.11">Release 24.11 (“Vicuña”, 2024.11/28)</a></li>
+<li><a href="release-notes/rl-2405/#sec-release-24.05">Release 24.05 (“Uakari”, 2024.05/31)</a></li>
+<li><a href="release-notes/rl-2311/#sec-release-23.11">Release 23.11 (“Tapir”, 2023.11/29)</a></li>
+<li><a href="release-notes/rl-2305/#sec-release-23.05">Release 23.05 (“Stoat”, 2023.05/31)</a></li>
+<li><a href="release-notes/rl-2211/#sec-release-22.11">Release 22.11 (“Raccoon”, 2022.11/30)</a></li>
+<li><a href="release-notes/rl-2205/#sec-release-22.05">Release 22.05 (“Quokka”, 2022.05/30)</a></li>
+<li><a href="release-notes/rl-2111/#sec-release-21.11">Release 21.11 (“Porcupine”, 2021/11/30)</a></li>
+<li><a href="release-notes/rl-2105/#sec-release-21.05">Release 21.05 (&quot;Okapi&quot;, 2021.05/31)</a></li>
+<li><a href="release-notes/rl-2009/#sec-release-20.09">Release 20.09 (&quot;Nightingale&quot;, 2020.10/27)</a></li>
+<li><a href="release-notes/rl-2003/#sec-release-20.03">Release 20.03 (&quot;Markhor&quot;, 2020.04/20)</a></li>
+<li><a href="release-notes/rl-1909/#sec-release-19.09">Release 19.09 (&quot;Loris&quot;, 2019/10/09)</a></li>
+<li><a href="release-notes/rl-1903/#sec-release-19.03">Release 19.03 (&quot;Koi&quot;, 2019/04/11)</a></li>
+<li><a href="release-notes/rl-1809/#sec-release-18.09">Release 18.09 (&quot;Jellyfish&quot;, 2018/10/05)</a></li>
+<li><a href="release-notes/rl-1803/#sec-release-18.03">Release 18.03 (&quot;Impala&quot;, 2018/04/04)</a></li>
+<li><a href="release-notes/rl-1709/#sec-release-17.09">Release 17.09 (&quot;Hummingbird&quot;, 2017/09/??)</a></li>
+<li><a href="release-notes/rl-1703/#sec-release-17.03">Release 17.03 (&quot;Gorilla&quot;, 2017/03/31)</a></li>
+<li><a href="release-notes/rl-1609/#sec-release-16.09">Release 16.09 (&quot;Flounder&quot;, 2016/09/30)</a></li>
+<li><a href="release-notes/rl-1603/#sec-release-16.03">Release 16.03 (&quot;Emu&quot;, 2016/03/31)</a></li>
+<li><a href="release-notes/rl-1509/#sec-release-15.09">Release 15.09 (&quot;Dingo&quot;, 2015/09/30)</a></li>
+<li><a href="release-notes/rl-1412/#sec-release-14.12">Release 14.12 (&quot;Caterpillar&quot;, 2014/12/30)</a></li>
+<li><a href="release-notes/rl-1404/#sec-release-14.04">Release 14.04 (&quot;Baboon&quot;, 2014/04/30)</a></li>
+<li><a href="release-notes/rl-1310/#sec-release-13.10">Release 13.10 (&quot;Aardvark&quot;, 2013/10/31)</a></li>
+</ul>
+</li>
+</ul>
+    </nav>
+    <section id='main'>
+      <div id='search-panel' class='nav-search' role='search' hidden>
+        <label class='visually-hidden' for='search'>Search documentation</label>
+        <input type='search' id='search' placeholder='Search documentation (/)' autocomplete='off' aria-controls='search-results'>
+        <p id='search-status' class='visually-hidden' role='status' aria-live='polite'></p>
+        <div id='search-results'></div>
+      </div>
+      <div class='main-scroll'>
+        <main id='main-content' tabindex='-1'>
+<h1 id='sec-writing-nixos-tests'><a href='development/writing-nixos-tests/#sec-writing-nixos-tests'>
+Writing Tests
+</a></h1>
+<p>A NixOS test is a module that has the following structure:</p>
+<pre><code class="language-nix">{
+  # QEMU virtual machines:
+  nodes = {
+    vm1 =
+      { config, pkgs, ... }:
+      {
+        # ...
+      };
+    vm2 =
+      { config, pkgs, ... }:
+      {
+        # ...
+      };
+    # …
+  };
+
+  # systemd-nspawn containers:
+  containers = {
+    container1 =
+      { config, pkgs, ... }:
+      {
+        # ...
+      };
+    container2 =
+      { config, pkgs, ... }:
+      {
+        # ...
+      };
+  };
+
+  testScript = ''
+    Python code…
+  '';
+}
+</code></pre>
+<p>We refer to the whole test above as a test module, whereas the values
+in <a href="development/writing-nixos-tests/#test-opt-nodes"><code>nodes.&lt;name&gt;</code></a> and <a href="development/writing-nixos-tests/#test-opt-containers"><code>containers.&lt;name&gt;</code></a>
+are NixOS modules themselves.</p>
+<p>The option <a href="development/writing-nixos-tests/#test-opt-testScript"><code>testScript</code></a> is a piece of Python code that executes the
+test (described <a href="development/writing-nixos-tests/#ssec-test-script">below</a>). During the test, it will start one or more
+virtual machines and/or <code>systemd-nspawn</code> containers, the configuration of which is described by
+the options <a href="development/writing-nixos-tests/#test-opt-nodes"><code>nodes</code></a> and <a href="development/writing-nixos-tests/#test-opt-containers"><code>containers</code></a>, respectively.</p>
+<p>An example of a single-node test is
+<a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/tests/login.nix"><code>login.nix</code></a>.
+It only needs a single machine to test whether users can log in
+on the virtual console, whether device ownership is correctly maintained
+when switching between consoles, and so on. An interesting multi-node test is
+<a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/tests/nfs/simple.nix"><code>nfs/simple.nix</code></a>.
+It uses two client nodes to test correct locking across server crashes.</p>
+<p>A test can contain both virtual machines and containers.
+If configured to share a common VLAN,
+they can reach each other over the network.
+See <a href="https://github.com/applicative-systems/nixpkgs/blob/78100f9077ab50604ab9c9514e442bbc7ac7ca5b/nixos/tests/nixos-test-driver/containers.nix"></a>
+for an example of this and <a href="development/running-nixos-tests/#sec-running-nixos-tests-requirements">Running Tests</a> for the system requirements for this scenario.</p>
+<h2 id='sec-calling-nixos-tests'><a href='development/writing-nixos-tests/#sec-calling-nixos-tests'>
+Calling a test
+</a></h2>
+<p>Tests are invoked differently depending on whether the test is part of NixOS or lives in a different project.</p>
+<h3 id='sec-call-nixos-test-in-nixos'><a href='development/writing-nixos-tests/#sec-call-nixos-test-in-nixos'>
+Testing within NixOS
+</a></h3>
+<p>Tests that are part of NixOS are added to <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/tests/all-tests.nix"><code>nixos/tests/all-tests.nix</code></a>.</p>
+<pre><code class="language-nix">{ hostname = runTest ./hostname.nix; }
+</code></pre>
+<p>Overrides can be added by defining an anonymous module in <code>all-tests.nix</code>.</p>
+<pre><code class="language-nix">{
+  hostname = runTest {
+    imports = [ ./hostname.nix ];
+    defaults.networking.firewall.enable = false;
+  };
+}
+</code></pre>
+<p>You can run a test with attribute name <code>hostname</code> in <code>nixos/tests/all-tests.nix</code> by invoking:</p>
+<pre><code class="language-shell">cd /my/git/clone/of/nixpkgs
+nix-build -A nixosTests.hostname
+</code></pre>
+<p>In-tree tests run with a few changes to defaults, notably</p>
+<ul>
+<li>The <code>pkgs.*</code> are read only by default. You can opt out with <code>node.pkgsReadOnly = false;</code> at the test level.</li>
+<li><code>nix.enable</code> defaults to <code>false</code> to reduce build closure size; in particular the reverse build closure of <code>nix</code> and its dependencies.</li>
+</ul>
+<h3 id='sec-call-nixos-test-outside-nixos'><a href='development/writing-nixos-tests/#sec-call-nixos-test-outside-nixos'>
+Testing outside the NixOS project
+</a></h3>
+<p>Outside the <code>nixpkgs</code> repository, you can use the <code>runNixOSTest</code> function from
+<code>pkgs.testers</code>:</p>
+<pre><code class="language-nix">let
+  pkgs = import &lt;nixpkgs&gt; { };
+
+in
+pkgs.testers.runNixOSTest {
+  name = &quot;test&quot;;
+  imports = [ ./test.nix ];
+  defaults.services.foo.package = mypkg;
+}
+</code></pre>
+<p><code>runNixOSTest</code> returns a derivation that runs the test.</p>
+<p>Out-of-tree tests evaluate with a set of defaults that balances the principle of least surprise in the general case, but has a few differences from in-tree NixOS tests. See <a href="development/writing-nixos-tests/#sec-call-nixos-test-in-nixos">Testing within NixOS</a>.</p>
+<h2 id='ssec-nixos-test-machines'><a href='development/writing-nixos-tests/#ssec-nixos-test-machines'>
+Test machines
+</a></h2>
+<p>A NixOS test usually consists of one or more test machines. Each machine is either a
+QEMU virtual machine or a <code>systemd-nspawn</code> container.</p>
+<p>QEMU virtual machines are defined in the
+<a href="development/writing-nixos-tests/#test-opt-nodes"><code>nodes</code></a> attribute set, whereas <code>systemd-nspawn</code> containers are defined in the
+<a href="development/writing-nixos-tests/#test-opt-containers"><code>containers</code></a> attribute set.</p>
+<p>To set NixOS options for all machines in the test, use the attribute
+<a href="development/writing-nixos-tests/#test-opt-defaults"><code>defaults</code></a>. These options are applied to both virtual machines
+and containers. You can set separate defaults for virtual machines and containers
+using the attributes <a href="development/writing-nixos-tests/#test-opt-nodeDefaults"><code>nodeDefaults</code></a> and
+<a href="development/writing-nixos-tests/#test-opt-containerDefaults"><code>containerDefaults</code></a>, respectively.</p>
+<h3 id='sec-nixos-test-vms-vs-containers'><a href='development/writing-nixos-tests/#sec-nixos-test-vms-vs-containers'>
+Virtual machines vs. containers
+</a></h3>
+<p>QEMU virtual machines and <code>systemd-nspawn</code> containers offer different
+trade-offs which make them suitable for different use cases.</p>
+<p>Some advantages of containers over virtual machines are:</p>
+<ul>
+<li>Containers share the kernel of the host system; they are
+significantly faster to start up than virtual machines.</li>
+<li>Containers are more lightweight in terms of resource usage, which
+allows running more of them in parallel on a single host.</li>
+<li>Containers can easily be run in virtualised environments, e.g., CI systems.</li>
+<li>Containers allow direct bind-mounting of host device nodes, which enables
+testing of GPU code (CUDA), for example.</li>
+</ul>
+<p>Some advantages of virtual machines over containers are:</p>
+<ul>
+<li>Virtual machines run a separate kernel, which allows testing kernel features
+(kernel modules, etc.).</li>
+<li>Virtual machines allow testing NixOS modules that use systemd's namespacing options (such as <code>ProtectSystem=</code> or <code>MountAPIVFS=</code>).</li>
+<li>Virtual machines allow testing <a href="options/other/#opt-specialisation"><code>specialisation</code></a>.
+(Switching to a specialisation requires the creation of SUID/SGID wrappers, which is disallowed in <code>systemd-nspawn</code> within the Nix sandbox.)</li>
+<li>Virtual machines allow the execution of <code>setuid</code> binaries.</li>
+</ul>
+<p>Both backends support testing graphical applications on X11. Virtual machines
+provide emulated display hardware, while containers use a headless X server.
+See <a href="development/running-nixos-tests-interactively/#sec-nixos-test-interactive-graphical">running tests interactively</a> for how
+to view container displays during debugging.</p>
+<p>Refer to the sections on <a href="development/writing-nixos-tests/#ssec-nixos-test-qemu-vms">QEMU virtual machines</a>
+and <a href="development/writing-nixos-tests/#ssec-nixos-test-nspawn-containers">systemd-nspawn containers</a> below
+for more details on configuring each type of machine.</p>
+<h3 id='sec-nixos-test-machines-config'><a href='development/writing-nixos-tests/#sec-nixos-test-machines-config'>
+Configuring test machines
+</a></h3>
+<p>The following special NixOS option can be used to configure
+machines in a NixOS test, whether they are virtual machines or containers:</p>
+<dl>
+<dt>
+<p><code>virtualisation.vlans</code></p>
+</dt>
+<dd>
+<p>The virtual networks to which the VM is connected. See
+<a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/tests/nat.nix"><code>nat.nix</code></a>
+for an example.</p>
+</dd>
+</dl>
+<h4 id='ssec-nixos-test-nspawn-containers'><a href='development/writing-nixos-tests/#ssec-nixos-test-nspawn-containers'>
+Configuring <code>systemd-nspawn</code> containers
+</a></h4>
+<p>Some options are specific to <code>systemd-nspawn</code> containers:</p>
+<dl>
+<dt>
+<p><code>virtualisation.systemd-nspawn.options</code></p>
+</dt>
+<dd>
+<p>A list of additional command-line options to pass to
+<code>systemd-nspawn</code> when starting the container. For example, to
+bind mount a directory from the host into the container, you could
+use: <code>[ &quot;--bind=/host/dir:/container/dir&quot; ]</code>.</p>
+</dd>
+</dl>
+<p>For more options, see the module
+<a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/virtualisation/nspawn-container/default.nix"><code>nspawn-container</code></a>.</p>
+<p>Note that the paths used in <code>--bind</code> or <code>--bind-ro</code> options have to be accessible from within the Nix sandbox.
+Use the Nix option
+<a href="https://nix.dev/manual/nix/stable/command-ref/conf-file#conf-sandbox-paths"><code>sandbox-paths</code></a>
+and/or the module <a href="options/programs/#opt-programs.nix-required-mounts.enable"><code>programs.nix-required-mounts</code></a> on the host
+to add additional paths to the sandbox.</p>
+<h4 id='ssec-nixos-test-qemu-vms'><a href='development/writing-nixos-tests/#ssec-nixos-test-qemu-vms'>
+Configuring QEMU virtual machines
+</a></h4>
+<p>Some options are specific to QEMU virtual machines:</p>
+<dl>
+<dt>
+<p><code>virtualisation.memorySize</code></p>
+</dt>
+<dd>
+<p>The memory of the VM in MiB (1024×1024 bytes).</p>
+</dd>
+<dt>
+<p><code>virtualisation.writableStore</code></p>
+</dt>
+<dd>
+<p>By default, the Nix store in the VM is not writable. If you enable
+this option, a writable union file system is mounted on top of the
+Nix store to make it appear writable. This is necessary for tests
+that run Nix operations that modify the store.</p>
+</dd>
+</dl>
+<p>For more options, see the module
+<a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/virtualisation/qemu-vm.nix"><code>qemu-vm.nix</code></a>.</p>
+<h2 id='ssec-test-script'><a href='development/writing-nixos-tests/#ssec-test-script'>
+Writing the test script
+</a></h2>
+<p>The test script is a sequence of Python statements that perform various
+actions, such as starting machines, executing commands in them, and so on. For
+example, if you specified a virtual machine in <code>nodes.machine</code>, there will be
+a Python variable <code>machine</code> available in the test script that represents that
+virtual machine. The following example would start the machine, wait until it
+has finished booting, and then execute a command and check that the output is
+more-or-less correct:</p>
+<pre><code class="language-py">machine.start()
+machine.wait_for_unit(&quot;default.target&quot;)
+t.assertIn(&quot;Linux&quot;, machine.succeed(&quot;uname&quot;), &quot;Wrong OS&quot;)
+</code></pre>
+<p>The first line is technically unnecessary; machines are implicitly started
+when you first execute an action on them (such as <code>wait_for_unit</code> or
+<code>succeed</code>). If you have multiple machines, you can speed up the test by
+starting them in parallel:</p>
+<pre><code class="language-py">start_all()
+</code></pre>
+<p>Under the variable <code>t</code>, all assertions from <a href="https://docs.python.org/3/library/unittest.html"><code>unittest.TestCase</code></a> are available.</p>
+<p>If the hostname of a machine contains characters that can't be used in a
+Python variable name, those characters will be replaced with
+underscores in the variable name, so <code>nodes.machine-a</code> will be exposed
+to Python as <code>machine_a</code>.</p>
+<h3 id='ssec-machine-objects'><a href='development/writing-nixos-tests/#ssec-machine-objects'>
+Methods available on machine objects
+</a></h3>
+<p>The following methods are available on machine objects (like <code>machine</code> in
+the examples above):</p>
+<h4 id='ssec-all-machine-objects'><a href='development/writing-nixos-tests/#ssec-all-machine-objects'>
+Generic machine objects
+</a></h4>
+<dl>
+<dt>
+<p>copy_from_host(source, target)</p>
+</dt>
+<dd>
+<p>Copies a file from host to machine, e.g.,
+<code>copy_from_host(&quot;myfile&quot;, &quot;/etc/my/important/file&quot;)</code>.</p>
+<p>The first argument is the file on the host. Note that the &quot;host&quot; refers
+to the environment in which the test driver runs, which is typically the
+Nix build sandbox.</p>
+<p>The second argument is the location of the file on the machine that will
+be written to.</p>
+<p>The file is copied via the <code>shared_dir</code> directory which is shared among
+all the machines (using a temporary directory).
+The access rights bits will mimic the ones from the host file and
+user:group will be root:root.</p>
+</dd>
+<dt>
+<p>copy_from_host_via_shell(source, target)</p>
+</dt>
+<dd>
+<p>Copy a file from the host into the guest by piping it over the
+shell into the destination file. Works without host-guest shared folder.
+Prefer copy_from_host for whenever possible.</p>
+</dd>
+<dt>
+<p>copy_from_machine(source, target_dir)</p>
+</dt>
+<dd>
+<p>Copy a file from the machine (specified by an in-machine source path) to a path
+relative to <code>$out</code>. The file is copied via the <code>shared_dir</code> shared among
+all the machines.</p>
+</dd>
+<dt>
+<p>execute(command, check_return, check_output, timeout)</p>
+</dt>
+<dd>
+<p>Execute a shell command, returning a list <code>(status, stdout)</code>.</p>
+<p>Commands are run with <code>set -euo pipefail</code> set:</p>
+<ul>
+<li>
+<p>If several commands are separated by <code>;</code> and one fails, the
+command as a whole will fail.</p>
+</li>
+<li>
+<p>For pipelines, the last non-zero exit status will be returned
+(if there is one; otherwise zero will be returned).</p>
+</li>
+<li>
+<p>Dereferencing unset variables fails the command.</p>
+</li>
+<li>
+<p>It will wait for stdout to be closed.</p>
+</li>
+</ul>
+<p>If the command detaches, it must close stdout, as <code>execute</code> will wait
+for this to consume all output reliably. This can be achieved by
+redirecting stdout to stderr <code>&gt;&amp;2</code>, to <code>/dev/console</code>, <code>/dev/null</code> or
+a file. Examples of detaching commands are <code>sleep 365d &amp;</code>, where the
+shell forks a new process that can write to stdout and <code>xclip -i</code>, where
+the <code>xclip</code> command itself forks without closing stdout.</p>
+<p>Takes an optional parameter <code>check_return</code> that defaults to <code>True</code>.
+Setting this parameter to <code>False</code> will not check for the return code
+and return -1 instead. This can be used for commands that shut down
+the machine and would therefore break the pipe that would be used for
+retrieving the return code.</p>
+<p>Has a default timeout of 15 minutes which can be modified.
+Example:
+```py
+import datetime as dt</p>
+<pre><code>execute(cmd, timeout=dt.timedelta(seconds=10))
+execute(cmd, timeout=None)
+```
+</code></pre>
+<p>A bare number is still accepted and interpreted as a number of seconds.</p>
+</dd>
+<dt>
+<p>fail()</p>
+</dt>
+<dd>
+<p>Like <code>succeed</code>, but raising an exception if the command returns a zero
+status.</p>
+</dd>
+<dt>
+<p>get_screen_text()</p>
+</dt>
+<dd>
+<p>Return a textual representation of what is currently visible on the
+machine's screen using optical character recognition.</p>
+<div class='admonition note'><h3 class='title'>Note</h3>
+<p>
+This requires <a href="development/writing-nixos-tests/#test-opt-enableOCR"><code>enableOCR</code></a> to be set to <code>true</code>.
+</p>
+</div>
+</dd>
+<dt>
+<p>get_screen_text_variants()</p>
+</dt>
+<dd>
+<p>Return a list of different interpretations of what is currently
+visible on the machine's screen using optical character
+recognition. The number and order of the interpretations is not
+specified and is subject to change, but if no exception is raised at
+least one will be returned.</p>
+<div class='admonition note'><h3 class='title'>Note</h3>
+<p>
+This requires <a href="development/writing-nixos-tests/#test-opt-enableOCR"><code>enableOCR</code></a> to be set to <code>true</code>.
+</p>
+</div>
+</dd>
+<dt>
+<p>get_unit_info(unit, user)</p>
+</dt>
+<dd>
+<p>Get a dictionary of systemd unit properties, as obtained via <code>systemctl show</code>.</p>
+</dd>
+<dt>
+<p>get_unit_property(unit, property, user)</p>
+</dt>
+<dd>
+<p>Get the string value of a single systemd unit property</p>
+</dd>
+<dt>
+<p>log(msg)</p>
+</dt>
+<dd>
+<p>Log a message to console.</p>
+</dd>
+<dt>
+<p>nested(msg, attrs)</p>
+</dt>
+<dd>
+<p>Get nested logger, optionally with extra attributes.</p>
+</dd>
+<dt>
+<p>require_unit_state(unit, require_state)</p>
+</dt>
+<dd>
+<p>Assert that the current state of a unit has a specific value. The default state is &quot;active&quot;.</p>
+</dd>
+<dt>
+<p>screenshot(filename)</p>
+</dt>
+<dd>
+<p>Take a picture of the display of the machine, in PNG format.
+The screenshot will be available in the derivation output.</p>
+</dd>
+<dt>
+<p>send_chars(chars, delay)</p>
+</dt>
+<dd>
+<p>Simulate typing a sequence of characters on the virtual keyboard,
+e.g., <code>send_chars(&quot;foobar\n&quot;)</code> will type the string <code>foobar</code>
+followed by the Enter key.</p>
+</dd>
+<dt>
+<p>send_key(key, delay, log)</p>
+</dt>
+<dd>
+<p>Simulate pressing a key or key chord, e.g.,
+<code>send_key(&quot;ctrl-alt-delete&quot;)</code>.</p>
+<p>Key names follow QEMU's sendkey vocabulary: <code>ret</code> means Enter and
+<code>spc</code> means Space. Named keys and modifiers are case-sensitive;
+use lowercase names, e.g. <code>f1</code> or <code>ctrl-alt-f1</code>. Literal characters
+preserve case: <code>F</code> types uppercase F, while <code>f</code> types lowercase f.
+See https://www.qemu.org/docs/master/interop/qemu-qmp-ref.html#enum-QKeyCode.</p>
+<p>Portable key names include printable ASCII characters, function keys,
+<code>tab</code>, <code>ret</code>, <code>esc</code>, <code>spc</code>, <code>backspace</code>, <code>delete</code>, <code>left</code>, <code>right</code>,
+<code>up</code>, <code>down</code>, and <code>kp_enter</code>. Chords may use the <code>ctrl</code>, <code>alt</code>,
+<code>shift</code>, <code>meta_l</code>, and <code>meta_r</code> modifiers. Machine backends may accept
+additional key names.</p>
+</dd>
+<dt>
+<p>shutdown()</p>
+</dt>
+<dd>
+<p>Shutdown the machine gracefully, waiting for it to exit.</p>
+</dd>
+<dt>
+<p>start()</p>
+</dt>
+<dd>
+<p>Start the machine. This method is asynchronous --- it does
+not wait for the machine to finish booting.</p>
+</dd>
+<dt>
+<p>start_job(jobname, user)</p>
+</dt>
+<dd>
+<p>Start systemd service.</p>
+</dd>
+<dt>
+<p>stop_job(jobname, user)</p>
+</dt>
+<dd>
+<p>Stop systemd service.</p>
+</dd>
+<dt>
+<p>succeed()</p>
+</dt>
+<dd>
+<p>Execute a shell command, raising an exception if the exit status is
+not zero, otherwise returning the standard output. Similar to <code>execute</code>,
+except that the timeout is <code>None</code> by default. See <code>execute</code> for details on
+command execution.</p>
+</dd>
+<dt>
+<p>systemctl(q, user)</p>
+</dt>
+<dd>
+<p>Runs <code>systemctl</code> commands with optional support for
+<code>systemctl --user</code></p>
+<pre><code class="language-py"># run `systemctl list-jobs --no-pager`
+machine.systemctl(&quot;list-jobs --no-pager&quot;)
+
+# spawn a shell for `any-user` and run
+# `systemctl --user list-jobs --no-pager`
+machine.systemctl(&quot;list-jobs --no-pager&quot;, &quot;any-user&quot;)
+</code></pre>
+</dd>
+<dt>
+<p>wait_for_closed_port(port, addr, timeout)</p>
+</dt>
+<dd>
+<p>Wait until nobody is listening on the given TCP port and IP address
+(default <code>localhost</code>).</p>
+</dd>
+<dt>
+<p>wait_for_file(filename, timeout)</p>
+</dt>
+<dd>
+<p>Waits until the file exists in the machine's file system.</p>
+</dd>
+<dt>
+<p>wait_for_open_port(port, addr, timeout)</p>
+</dt>
+<dd>
+<p>Wait until a process is listening on the given TCP port and IP address
+(default <code>localhost</code>).</p>
+</dd>
+<dt>
+<p>wait_for_open_unix_socket(addr, is_datagram, timeout)</p>
+</dt>
+<dd>
+<p>Wait until a process is listening on the given UNIX-domain socket
+(default to a UNIX-domain stream socket).</p>
+</dd>
+<dt>
+<p>wait_for_shutdown(timeout)</p>
+</dt>
+<dd>
+<p>Wait for the machine to power off. This does <em>not</em> initiate a shutdown;
+that's usually done via <code>shutdown()</code>.</p>
+</dd>
+<dt>
+<p>wait_for_text(regex, timeout)</p>
+</dt>
+<dd>
+<p>Wait until the supplied regular expressions matches the textual
+contents of the screen by using optical character recognition (see
+<code>get_screen_text</code> and <code>get_screen_text_variants</code>).</p>
+<div class='admonition note'><h3 class='title'>Note</h3>
+<p>
+This requires <a href="development/writing-nixos-tests/#test-opt-enableOCR"><code>enableOCR</code></a> to be set to <code>true</code>.
+</p>
+</div>
+</dd>
+<dt>
+<p>wait_for_unit(unit, user, timeout)</p>
+</dt>
+<dd>
+<p>Wait for a systemd unit to get into &quot;active&quot; state.
+Throws exceptions on &quot;failed&quot; and &quot;inactive&quot; states as well as after
+timing out.</p>
+</dd>
+<dt>
+<p>wait_for_window(regexp, timeout)</p>
+</dt>
+<dd>
+<p>Wait until an X11 window has appeared whose name matches the given
+regular expression, e.g., <code>wait_for_window(&quot;Terminal&quot;)</code>.</p>
+</dd>
+<dt>
+<p>wait_until_fails(command, timeout)</p>
+</dt>
+<dd>
+<p>Like <code>wait_until_succeeds</code>, but repeating the command until it fails.</p>
+</dd>
+<dt>
+<p>wait_until_succeeds(command, timeout)</p>
+</dt>
+<dd>
+<p>Repeat a shell command on 1-second intervals until it succeeds.
+Has a default timeout of 15 minutes which can be modified.
+Example:
+```py
+import datetime as dt</p>
+<pre><code>wait_until_succeeds(cmd, timeout=dt.timedelta(seconds=10))
+```
+</code></pre>
+<p>A bare number is still accepted and interpreted as a number of seconds.
+See <code>execute</code> for details on command execution.
+Throws an exception on timeout.</p>
+</dd>
+</dl>
+<h4 id='ssec-qemu-machine-objects'><a href='development/writing-nixos-tests/#ssec-qemu-machine-objects'>
+QEMU VM objects
+</a></h4>
+<dl>
+<dt>
+<p>block()</p>
+</dt>
+<dd>
+<p>Simulate unplugging the Ethernet cable that connects the machine to
+the other machines.
+This happens by shutting down eth1 (the multicast interface used to talk
+to the other VMs). eth0 is kept online to still enable the test driver
+to communicate with the machine.</p>
+</dd>
+<dt>
+<p>connect()</p>
+</dt>
+<dd>
+<p>Wait for a connection to the guest root shell</p>
+</dd>
+<dt>
+<p>console_interact()</p>
+</dt>
+<dd>
+<p>Allows you to directly interact with QEMU's stdin, by forwarding
+terminal input to the QEMU process.
+This is for use with the interactive test driver, not for production
+tests, which run unattended.
+Output from QEMU is only read line-wise. <code>Ctrl-c</code> kills QEMU and
+<code>Ctrl-d</code> closes console and returns to the test runner.</p>
+</dd>
+<dt>
+<p>crash()</p>
+</dt>
+<dd>
+<p>Simulate a sudden power failure, by telling the VM to exit immediately.</p>
+</dd>
+<dt>
+<p>dump_tty_contents(tty)</p>
+</dt>
+<dd>
+<p>Debugging: Dump the contents of the TTY<n></p>
+</dd>
+<dt>
+<p>forward_port(host_port, guest_port)</p>
+</dt>
+<dd>
+<p>Forward a TCP port on the host to a TCP port on the guest.
+Useful during interactive testing.</p>
+</dd>
+<dt>
+<p>get_console_log()</p>
+</dt>
+<dd>
+<p>Get the full console output from the machine since boot.
+Returns all serial console output as a single string.</p>
+</dd>
+<dt>
+<p>get_tty_text(tty)</p>
+</dt>
+<dd>
+<p>Get the output printed to a given TTY.</p>
+</dd>
+<dt>
+<p>reboot()</p>
+</dt>
+<dd>
+<p>Press Ctrl+Alt+Delete in the guest.</p>
+<p>Prepares the machine to be reconnected which is useful if the
+machine was started with <code>allow_reboot = True</code></p>
+</dd>
+<dt>
+<p>send_console(chars)</p>
+</dt>
+<dd>
+<p>Send keys to the kernel console. This allows interaction with the systemd
+emergency mode, for example. Takes a string that is sent, e.g.,
+<code>send_console(&quot;\n\nsystemctl default\n&quot;)</code>.</p>
+</dd>
+<dt>
+<p>send_monitor_command(command)</p>
+</dt>
+<dd>
+<p>Send a command to the QEMU monitor. This allows attaching
+virtual USB disks to a running machine, among other things.</p>
+</dd>
+<dt>
+<p>shell_interact(address)</p>
+</dt>
+<dd>
+<p>Allows you to directly interact with the guest shell. This should
+only be used during test development, not in production tests.
+Killing the interactive session with <code>Ctrl-d</code> or <code>Ctrl-c</code> also ends
+the guest session.</p>
+</dd>
+<dt>
+<p>switch_root()</p>
+</dt>
+<dd>
+<p>Transition from stage 1 to stage 2. This requires the
+machine to be configured with <code>testing.initrdBackdoor = true</code>.</p>
+</dd>
+<dt>
+<p>unblock()</p>
+</dt>
+<dd>
+<p>Undo the effect of <code>block</code>.</p>
+</dd>
+<dt>
+<p>wait_for_console_text(regex, timeout)</p>
+</dt>
+<dd>
+<p>Wait until the supplied regular expressions match a line of the
+serial console output.
+This method is useful when OCR is not possible or inaccurate.</p>
+<p>When this method returns, the console output that includes the match has already become part of get_console_log().</p>
+</dd>
+<dt>
+<p>wait_for_qmp_event(event_filter, timeout)</p>
+</dt>
+<dd>
+<p>Wait for a QMP event which you can filter with the <code>event_filter</code> function.
+The function takes as an input a dictionary of the event and if it returns True, we return that event,
+if it does not, we wait for the next event and retry.</p>
+<p>It will skip all events received in the meantime, if you want to keep them,
+you have to do the bookkeeping yourself and store them somewhere.</p>
+<p>By default, it will wait up to 10 minutes.</p>
+</dd>
+<dt>
+<p>wait_for_x(timeout)</p>
+</dt>
+<dd>
+<p>Wait until it is possible to connect to the X server.</p>
+</dd>
+<dt>
+<p>wait_until_tty_matches(tty, regexp, timeout)</p>
+</dt>
+<dd>
+<p>Wait until the visible output on the chosen TTY matches regular
+expression. Throws an exception on timeout.</p>
+</dd>
+</dl>
+<h4 id='ssec-nspawn-machine-objects'><a href='development/writing-nixos-tests/#ssec-nspawn-machine-objects'>
+<code>systemd-nspawn</code> container objects
+</a></h4>
+<dl>
+<dt>
+<p>get_systemd_process()</p>
+</dt>
+<dd>
+<p>Block until startup is complete and return the PID of the container's systemd process.</p>
+<p>Readiness and the leader PID are reported over NOTIFY_SOCKET, which is
+drained by <code>_drain_notify_socket</code> (started in <code>start()</code>); we just wait
+for that thread to record both.</p>
+</dd>
+<dt>
+<p>wait_for_x(timeout)</p>
+</dt>
+<dd>
+<p>Wait until it is possible to connect to the X server.</p>
+</dd>
+</dl>
+<h3 id='ssec-testing-user-units'><a href='development/writing-nixos-tests/#ssec-testing-user-units'>
+Testing user units
+</a></h3>
+<p>To test user units declared by <code>systemd.user.services</code> the optional
+<code>user</code> argument can be used:</p>
+<pre><code class="language-py">machine.start()
+machine.wait_for_x()
+machine.wait_for_unit(&quot;xautolock.service&quot;, &quot;x-session-user&quot;)
+</code></pre>
+<p>This applies to <code>systemctl</code>, <code>get_unit_info</code>, <code>wait_for_unit</code>,
+<code>start_job</code> and <code>stop_job</code>.</p>
+<h3 id='ssec-failing-tests-early'><a href='development/writing-nixos-tests/#ssec-failing-tests-early'>
+Failing tests early
+</a></h3>
+<p>To fail tests early when certain invariants are no longer met (instead of waiting for the build to time out), the decorator <code>polling_condition</code> is provided. For example, if we are testing a program <code>foo</code> that should not quit after being started, we might write the following:</p>
+<pre><code class="language-py">@polling_condition
+def foo_running():
+    machine.succeed(&quot;pgrep -x foo&quot;)
+
+
+machine.succeed(&quot;foo --start&quot;)
+machine.wait_until_succeeds(&quot;pgrep -x foo&quot;)
+
+with foo_running:
+    ...  # Put `foo` through its paces
+</code></pre>
+<p><code>polling_condition</code> takes the following (optional) arguments:</p>
+<dl>
+<dt>
+<p><code>interval</code></p>
+</dt>
+<dd>
+<p>specifies how often the condition should be polled, as a <code>datetime.timedelta</code>:</p>
+</dd>
+</dl>
+<pre><code class="language-py">import datetime as dt
+
+
+@polling_condition(interval=dt.timedelta(seconds=10))
+def foo_running():
+    machine.succeed(&quot;pgrep -x foo&quot;)
+</code></pre>
+<dl>
+<dt>
+<p><code>description</code></p>
+</dt>
+<dd>
+<p>is used in the log when the condition is checked. If this is not provided, the description is pulled from the docstring of the function. These two are therefore equivalent:</p>
+</dd>
+</dl>
+<pre><code class="language-py">@polling_condition
+def foo_running():
+    &quot;check that foo is running&quot;
+    machine.succeed(&quot;pgrep -x foo&quot;)
+</code></pre>
+<pre><code class="language-py">@polling_condition(description=&quot;check that foo is running&quot;)
+def foo_running():
+    machine.succeed(&quot;pgrep -x foo&quot;)
+</code></pre>
+<h3 id='ssec-python-packages-in-test-script'><a href='development/writing-nixos-tests/#ssec-python-packages-in-test-script'>
+Adding Python packages to the test script
+</a></h3>
+<p>When additional Python libraries are required in the test script, they can be
+added using the parameter <code>extraPythonPackages</code>. For example, you could add
+<code>numpy</code> like this:</p>
+<pre><code class="language-nix">{
+  extraPythonPackages = p: [ p.numpy ];
+
+  nodes = { };
+
+  # Type checking on extra packages doesn't work yet
+  skipTypeCheck = true;
+
+  testScript = ''
+    import numpy as np
+    assert str(np.zeros(4)) == &quot;[0. 0. 0. 0.]&quot;
+  '';
+}
+</code></pre>
+<p>In that case, <code>numpy</code> is chosen from the generic <code>python3Packages</code>.</p>
+<h3 id='ssec-test-script-checks'><a href='development/writing-nixos-tests/#ssec-test-script-checks'>
+Linting and type checking test scripts
+</a></h3>
+<p>Test scripts are automatically linted with
+<a href="https://pypi.org/project/pyflakes/">Pyflakes</a> and type-checked with
+<a href="https://mypy.readthedocs.io/en/stable/">Mypy</a>.
+If there are any linting or type checking errors, the test will
+fail to evaluate.</p>
+<p>For faster dev cycles it's also possible to disable the code-linters
+(this shouldn't be committed though):</p>
+<pre><code class="language-nix">{
+  skipLint = true;
+  nodes.machine =
+    { config, pkgs, ... }:
+    {
+      # configuration…
+    };
+
+  testScript = ''
+    Python code…
+  '';
+}
+</code></pre>
+<p>This will produce a Nix warning at evaluation time. To fully disable the
+linter, wrap the test script in comment directives to disable the Black
+linter directly (again, don't commit this within the Nixpkgs
+repository):</p>
+<pre><code class="language-nix">{
+  testScript = ''
+    # fmt: off
+    Python code…
+    # fmt: on
+  '';
+}
+</code></pre>
+<p>Similarly, the type checking of test scripts can be disabled in the following
+way:</p>
+<pre><code class="language-nix">{
+  skipTypeCheck = true;
+  nodes.machine =
+    { config, pkgs, ... }:
+    {
+      # configuration…
+    };
+}
+</code></pre>
+<h2 id='sec-override-nixos-test'><a href='development/writing-nixos-tests/#sec-override-nixos-test'>
+Overriding a test
+</a></h2>
+<p>The NixOS test framework returns tests with multiple overriding methods.</p>
+<dl>
+<dt>
+<p><code>overrideTestDerivation</code> <em>function</em></p>
+</dt>
+<dd>
+<p>Like applying <code>overrideAttrs</code> on the <a href="development/writing-nixos-tests/#test-opt-test">test</a> derivation.</p>
+<p>This is a convenience for <code>extend</code> with an override on the <a href="development/writing-nixos-tests/#test-opt-rawTestDerivationArg"><code>rawTestDerivationArg</code></a> option.</p>
+<dl>
+<dt>
+<p><em>function</em></p>
+</dt>
+<dd>
+<p>An extension function, e.g. <code>finalAttrs: prevAttrs: { /* … */ }</code>, the result of which is passed to <a href="https://nixos.org/manual/nixpkgs/stable/#sec-using-stdenv"><code>mkDerivation</code></a>.
+Just as with <code>overrideAttrs</code>, an abbreviated form can be used, e.g. <code>prevAttrs: { /* … */ }</code> or even <code>{ /* … */ }</code>.
+See <a href="https://nixos.org/manual/nixpkgs/stable/#function-library-lib.fixedPoints.extends"><code>lib.extends</code></a>.</p>
+</dd>
+</dl>
+</dd>
+<dt>
+<p><code>extendNixOS { module = </code> <em>module</em> <code>; specialArgs = </code> <em>specialArgs</em> <code>; }</code></p>
+</dt>
+<dd>
+<p>Evaluates the test with additional NixOS modules and/or arguments.</p>
+<dl>
+<dt>
+<p><code>module</code></p>
+</dt>
+<dd>
+<p>A NixOS module to add to all the machines in the test. Sets test option <a href="development/writing-nixos-tests/#test-opt-extraBaseModules"><code>extraBaseModules</code></a>.</p>
+</dd>
+<dt>
+<p><code>specialArgs</code></p>
+</dt>
+<dd>
+<p>An attribute set of arguments to pass to all NixOS modules. These override the existing arguments, as well as any <code>_module.args.&lt;name&gt;</code> that the modules may define. Sets test option <a href="development/writing-nixos-tests/#test-opt-node.specialArgs"><code>node.specialArgs</code></a>.</p>
+</dd>
+</dl>
+<p>This is a convenience function for <code>extend</code> that overrides the aforementioned test options.</p>
+<div class='admonition example'><h3 id='ex-nixos-test-extendNixOS' class='title'><a href='development/writing-nixos-tests/#ex-nixos-test-extendNixOS'>Example</a></h3>
+<h1>Using extendNixOS in <code>passthru.tests</code> to make <code>(openssh.tests.overrideAttrs f).tests.nixos</code> coherent</h1>
+<pre><code class="language-nix">mkDerivation (finalAttrs: {
+  # …
+  passthru = {
+    tests = {
+      nixos = nixosTests.openssh.extendNixOS {
+        module = {
+          services.openssh.package = finalAttrs.finalPackage;
+        };
+      };
+    };
+  };
+})
+</code></pre>
+</div>
+</dd>
+<dt>
+<p><code>extend { modules = </code> <em>modules</em> <code>; specialArgs = </code> <em>specialArgs</em> <code>; }</code></p>
+</dt>
+<dd>
+<p>Adds new <code>nixosTest</code> modules and/or module arguments to the test, which are evaluated together with the existing modules and <a href="development/writing-nixos-tests/#sec-test-options-reference">built-in options</a>.</p>
+<p>If you're only looking to extend the <em>NixOS</em> configurations of the test, and not something else about the test, you may use the <code>extendNixOS</code> convenience function instead.</p>
+<dl>
+<dt>
+<p><code>modules</code></p>
+</dt>
+<dd>
+<p>A list of modules to add to the test. These are added to the existing modules and then <a href="https://nixos.org/manual/nixpkgs/stable/index.html#module-system-lib-evalModules">evaluated</a> together.</p>
+</dd>
+<dt>
+<p><code>specialArgs</code></p>
+</dt>
+<dd>
+<p>An attribute of arguments to pass to the test. These override the existing arguments, as well as any <code>_module.args.&lt;name&gt;</code> that the modules may define. See <a href="https://nixos.org/manual/nixpkgs/stable/#module-system-lib-evalModules-param-specialArgs"><code>evalModules</code>/<code>specialArgs</code></a>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<h2 id='sec-test-options-reference'><a href='development/writing-nixos-tests/#sec-test-options-reference'>
+Test Options Reference
+</a></h2>
+<p>The following options can be used when writing tests.</p>
+<h3 id='test-opt-containerDefaults'><a href='development/writing-nixos-tests/#test-opt-containerDefaults'>
+<code>containerDefaults</code>
+</a></h3>
+<p>NixOS configuration that is applied to all [<a href="options/containers/#opt-containers"><code>containers</code></a>](#test-opt-containers).</p>
+<p><em>Type:</em> module</p>
+<p><em>Default:</em> <code>{ }</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/lib/testing/nodes.nix"><code>nixos/lib/testing/nodes.nix</code></a></p>
+<h3 id='test-opt-containers'><a href='development/writing-nixos-tests/#test-opt-containers'>
+<code>containers</code>
+</a></h3>
+<p>An attribute set of NixOS configuration modules representing systemd-nspawn containers that can be started during a test.</p>
+<p>The configurations are augmented by the <a href="development/writing-nixos-tests/#test-opt-defaults"><code>defaults</code></a> option.</p>
+<p>They are assigned network addresses according to the <code>nixos/lib/testing/network.nix</code> module.</p>
+<p>A few special options are available, that aren't in a plain NixOS configuration. See <a href="development/writing-nixos-tests/#ssec-nixos-test-nspawn-containers">Configuring containers</a></p>
+<p><em>Type:</em> lazy attribute set of (submodule)</p>
+<p><em>Default:</em> <code>{ }</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/lib/testing/nodes.nix"><code>nixos/lib/testing/nodes.nix</code></a></p>
+<h3 id='test-opt-defaults'><a href='development/writing-nixos-tests/#test-opt-defaults'>
+<code>defaults</code>
+</a></h3>
+<p>NixOS configuration that is applied to all <a href="development/writing-nixos-tests/#test-opt-nodes"><code>nodes</code></a> and [<a href="options/containers/#opt-containers"><code>containers</code></a>](#test-opt-containers).</p>
+<p><em>Type:</em> module</p>
+<p><em>Default:</em> <code>{ }</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/lib/testing/nodes.nix"><code>nixos/lib/testing/nodes.nix</code></a></p>
+<h3 id='test-opt-driver'><a href='development/writing-nixos-tests/#test-opt-driver'>
+<code>driver</code>
+</a></h3>
+<p>Package containing a script that runs the test.</p>
+<p><em>Type:</em> package</p>
+<p><em>Default:</em> set by the test framework</p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/lib/testing/driver.nix"><code>nixos/lib/testing/driver.nix</code></a></p>
+<h3 id='test-opt-enableDebugHook'><a href='development/writing-nixos-tests/#test-opt-enableDebugHook'>
+<code>enableDebugHook</code>
+</a></h3>
+<p>Halt test execution after any test fail and provide the possibility to
+hook into the sandbox to connect with either the test driver via
+<code>socat readline tcp:127.0.0.1:4444</code> or with the VMs via SSH and vsocks
+(see also <code>sshBackdoor.enable</code>).</p>
+<p>When using this option, consider running tests with build log output
+enabled and without remote builders. Otherwise you will not see the
+command required to attach to the test controller, and you cannot
+connect to the test controller, respectively.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Example:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/lib/testing/run.nix"><code>nixos/lib/testing/run.nix</code></a></p>
+<h3 id='test-opt-enableOCR'><a href='development/writing-nixos-tests/#test-opt-enableOCR'>
+<code>enableOCR</code>
+</a></h3>
+<p>Whether to enable Optical Character Recognition functionality for
+testing graphical programs. See <a href="development/writing-nixos-tests/#ssec-machine-objects"><code>Machine objects</code></a>.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/lib/testing/driver.nix"><code>nixos/lib/testing/driver.nix</code></a></p>
+<h3 id='test-opt-extraBaseModules'><a href='development/writing-nixos-tests/#test-opt-extraBaseModules'>
+<code>extraBaseModules</code>
+</a></h3>
+<p>NixOS configuration that, like <a href="development/writing-nixos-tests/#test-opt-defaults"><code>defaults</code></a>, is applied to all <a href="development/writing-nixos-tests/#test-opt-nodes"><code>nodes</code></a> and [<a href="options/containers/#opt-containers"><code>containers</code></a>](#test-opt-containers) and can not be undone with <a href="https://search.nixos.org/options?show=specialisation.%3Cname%3E.inheritParentConfig&amp;from=0&amp;size=50&amp;sort=relevance&amp;type=packages&amp;query=specialisation"><code>specialisation.&lt;name&gt;.inheritParentConfig</code></a>.</p>
+<p><em>Type:</em> module</p>
+<p><em>Default:</em> <code>{ }</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/lib/testing/nodes.nix"><code>nixos/lib/testing/nodes.nix</code></a></p>
+<h3 id='test-opt-extraBaseNodeModules'><a href='development/writing-nixos-tests/#test-opt-extraBaseNodeModules'>
+<code>extraBaseNodeModules</code>
+</a></h3>
+<p>NixOS configuration that, like <a href="development/writing-nixos-tests/#test-opt-defaults"><code>defaults</code></a>, is applied to all <a href="development/writing-nixos-tests/#test-opt-nodes"><code>nodes</code></a> and can not be undone with <a href="https://search.nixos.org/options?show=specialisation.%3Cname%3E.inheritParentConfig&amp;from=0&amp;size=50&amp;sort=relevance&amp;type=packages&amp;query=specialisation"><code>specialisation.&lt;name&gt;.inheritParentConfig</code></a>.</p>
+<p><em>Type:</em> module</p>
+<p><em>Default:</em> <code>{ }</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/lib/testing/nodes.nix"><code>nixos/lib/testing/nodes.nix</code></a></p>
+<h3 id='test-opt-extraDriverArgs'><a href='development/writing-nixos-tests/#test-opt-extraDriverArgs'>
+<code>extraDriverArgs</code>
+</a></h3>
+<p>Extra arguments to pass to the test driver.</p>
+<p>They become part of <a href="development/writing-nixos-tests/#test-opt-driver"><code>driver</code></a> via <code>wrapProgram</code>.</p>
+<p><em>Type:</em> list of string</p>
+<p><em>Default:</em> <code>[ ]</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/lib/testing/driver.nix"><code>nixos/lib/testing/driver.nix</code></a></p>
+<h3 id='test-opt-extraPythonPackages'><a href='development/writing-nixos-tests/#test-opt-extraPythonPackages'>
+<code>extraPythonPackages</code>
+</a></h3>
+<p>Python packages to add to the test driver.</p>
+<p>The argument is a Python package set, similar to <code>pkgs.pythonPackages</code>.</p>
+<p><em>Type:</em> function that evaluates to a(n) list of package</p>
+<p><em>Default:</em> <code>&lt;function&gt;</code></p>
+<p><em>Example:</em></p>
+<pre><code class="language-nix">p: [ p.numpy ]
+</code></pre>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/lib/testing/driver.nix"><code>nixos/lib/testing/driver.nix</code></a></p>
+<h3 id='test-opt-globalTimeout'><a href='development/writing-nixos-tests/#test-opt-globalTimeout'>
+<code>globalTimeout</code>
+</a></h3>
+<p>A global timeout for the complete test, expressed in seconds.
+Beyond that timeout, every resource will be killed and released and the test will fail.</p>
+<p>By default, we use a 1 hour timeout.</p>
+<p><em>Type:</em> signed integer</p>
+<p><em>Default:</em> <code>3600</code></p>
+<p><em>Example:</em> <code>600</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/lib/testing/driver.nix"><code>nixos/lib/testing/driver.nix</code></a></p>
+<h3 id='test-opt-hostPkgs'><a href='development/writing-nixos-tests/#test-opt-hostPkgs'>
+<code>hostPkgs</code>
+</a></h3>
+<p>Nixpkgs attrset used outside the nodes.</p>
+<p><em>Type:</em> raw value</p>
+<p><em>Example:</em></p>
+<pre><code class="language-nix">import nixpkgs { inherit system config overlays; }
+</code></pre>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/lib/testing/driver.nix"><code>nixos/lib/testing/driver.nix</code></a></p>
+<h3 id='test-opt-interactive'><a href='development/writing-nixos-tests/#test-opt-interactive'>
+<code>interactive</code>
+</a></h3>
+<p>Tests <a href="development/running-nixos-tests-interactively/#sec-running-nixos-tests-interactively">can be run interactively</a>
+using the program in the test derivation's <code>.driverInteractive</code> attribute.</p>
+<p>When they are, the configuration will include anything set in this submodule.</p>
+<p>You can set any top-level test option here.</p>
+<p>Example test module:</p>
+<pre><code class="language-nix">{ config, lib, ... }: {
+
+  nodes.rabbitmq = {
+    services.rabbitmq.enable = true;
+  };
+
+  # When running interactively ...
+  interactive.nodes.rabbitmq = {
+    # ... enable the web ui.
+    services.rabbitmq.managementPlugin.enable = true;
+  };
+}
+</code></pre>
+<p>For details, see the section about <a href="development/running-nixos-tests-interactively/#sec-running-nixos-tests-interactively">running tests interactively</a>.</p>
+<p><em>Type:</em> submodule</p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/lib/testing/interactive.nix"><code>nixos/lib/testing/interactive.nix</code></a></p>
+<h3 id='test-opt-logLevel'><a href='development/writing-nixos-tests/#test-opt-logLevel'>
+<code>logLevel</code>
+</a></h3>
+<p>Log level for the test driver.</p>
+<p><em>Type:</em> one of &quot;debug&quot;, &quot;info&quot;, &quot;warning&quot;, &quot;error&quot;</p>
+<p><em>Default:</em> <code>&quot;info&quot;</code></p>
+<p><em>Example:</em> <code>&quot;warning&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/lib/testing/driver.nix"><code>nixos/lib/testing/driver.nix</code></a></p>
+<h3 id='test-opt-meta'><a href='development/writing-nixos-tests/#test-opt-meta'>
+<code>meta</code>
+</a></h3>
+<p>The <a href="https://nixos.org/manual/nixpkgs/stable/#chap-meta"><code>meta</code></a> attributes that will be set on the returned derivations.</p>
+<p>Not all <a href="https://nixos.org/manual/nixpkgs/stable/#chap-meta"><code>meta</code></a> attributes are supported, but more can be added as desired.</p>
+<p><em>Type:</em> submodule</p>
+<p><em>Default:</em> <code>{ }</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/lib/testing/meta.nix"><code>nixos/lib/testing/meta.nix</code></a></p>
+<h3 id='test-opt-meta.broken'><a href='development/writing-nixos-tests/#test-opt-meta.broken'>
+<code>meta.broken</code>
+</a></h3>
+<p>Sets the <a href="https://nixos.org/manual/nixpkgs/stable/#var-meta-broken"><code>meta.broken</code></a> attribute on the <a href="development/writing-nixos-tests/#test-opt-test"><code>test</code></a> derivation.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/lib/testing/meta.nix"><code>nixos/lib/testing/meta.nix</code></a></p>
+<h3 id='test-opt-meta.hydraPlatforms'><a href='development/writing-nixos-tests/#test-opt-meta.hydraPlatforms'>
+<code>meta.hydraPlatforms</code>
+</a></h3>
+<p>Sets the <a href="https://nixos.org/manual/nixpkgs/stable/#var-meta-hydraPlatforms"><code>meta.hydraPlatforms</code></a> attribute on the <a href="development/writing-nixos-tests/#test-opt-test"><code>test</code></a> derivation.</p>
+<p><em>Type:</em> list of raw value</p>
+<p><em>Default:</em> <code>lib.platforms.linux</code> only, as the <code>hydra.nixos.org</code> build farm does not currently support virtualisation on Darwin.</p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/lib/testing/meta.nix"><code>nixos/lib/testing/meta.nix</code></a></p>
+<h3 id='test-opt-meta.maintainers'><a href='development/writing-nixos-tests/#test-opt-meta.maintainers'>
+<code>meta.maintainers</code>
+</a></h3>
+<p>The <a href="https://nixos.org/manual/nixpkgs/stable/#var-meta-maintainers">list of maintainers</a> for this test.</p>
+<p><em>Type:</em> list of raw value</p>
+<p><em>Default:</em> <code>[ ]</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/lib/testing/meta.nix"><code>nixos/lib/testing/meta.nix</code></a></p>
+<h3 id='test-opt-meta.platforms'><a href='development/writing-nixos-tests/#test-opt-meta.platforms'>
+<code>meta.platforms</code>
+</a></h3>
+<p>Sets the <a href="https://nixos.org/manual/nixpkgs/stable/#var-meta-platforms"><code>meta.platforms</code></a> attribute on the <a href="development/writing-nixos-tests/#test-opt-test"><code>test</code></a> derivation.</p>
+<p><em>Type:</em> list of raw value</p>
+<p><em>Default:</em> <code>lib.platforms.linux ++ lib.platforms.darwin</code> when no containers are configured; otherwise <code>lib.platforms.linux</code>.</p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/lib/testing/meta.nix"><code>nixos/lib/testing/meta.nix</code></a></p>
+<h3 id='test-opt-meta.teams'><a href='development/writing-nixos-tests/#test-opt-meta.teams'>
+<code>meta.teams</code>
+</a></h3>
+<p>The <a href="https://nixos.org/manual/nixpkgs/stable/#var-meta-teams">list of maintainer-teams</a> for this test.</p>
+<p><em>Type:</em> list of raw value</p>
+<p><em>Default:</em> <code>[ ]</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/lib/testing/meta.nix"><code>nixos/lib/testing/meta.nix</code></a></p>
+<h3 id='test-opt-meta.timeout'><a href='development/writing-nixos-tests/#test-opt-meta.timeout'>
+<code>meta.timeout</code>
+</a></h3>
+<p>The <a href="development/writing-nixos-tests/#test-opt-test"><code>test</code></a>'s <a href="https://nixos.org/manual/nixpkgs/stable/#var-meta-timeout"><code>meta.timeout</code></a> in seconds.</p>
+<p><em>Type:</em> null or signed integer</p>
+<p><em>Default:</em> <code>3600</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/lib/testing/meta.nix"><code>nixos/lib/testing/meta.nix</code></a></p>
+<h3 id='test-opt-name'><a href='development/writing-nixos-tests/#test-opt-name'>
+<code>name</code>
+</a></h3>
+<p>The name of the test.</p>
+<p>This is used in the derivation names of the <a href="development/writing-nixos-tests/#test-opt-driver"><code>driver</code></a> and <a href="development/writing-nixos-tests/#test-opt-test"><code>test</code></a> runner.</p>
+<p><em>Type:</em> string</p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/lib/testing/name.nix"><code>nixos/lib/testing/name.nix</code></a></p>
+<h3 id='test-opt-node.pkgs'><a href='development/writing-nixos-tests/#test-opt-node.pkgs'>
+<code>node.pkgs</code>
+</a></h3>
+<p>The Nixpkgs to use for the nodes and containers.</p>
+<p>Setting this will make the <code>nixpkgs.*</code> options read-only, to avoid mistakenly testing with a Nixpkgs configuration that diverges from regular use.</p>
+<p><em>Type:</em> null or Nixpkgs package set</p>
+<p><em>Default:</em> <code>null</code>, so construct <code>pkgs</code> according to the <code>nixpkgs.*</code> options as usual.</p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/lib/testing/nodes.nix"><code>nixos/lib/testing/nodes.nix</code></a></p>
+<h3 id='test-opt-node.pkgsReadOnly'><a href='development/writing-nixos-tests/#test-opt-node.pkgsReadOnly'>
+<code>node.pkgsReadOnly</code>
+</a></h3>
+<p>Whether to make the <code>nixpkgs.*</code> options read-only. This is only relevant when <a href="development/writing-nixos-tests/#test-opt-node.pkgs"><code>node.pkgs</code></a> is set.</p>
+<p>Set this to <code>false</code> when any of the <a href="development/writing-nixos-tests/#test-opt-nodes"><code>nodes</code></a> or [<a href="options/containers/#opt-containers"><code>containers</code></a>](#test-opt-containers) need to configure any of the <code>nixpkgs.*</code> options. This will slow down evaluation of your test a bit.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>node.pkgs != null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/lib/testing/nodes.nix"><code>nixos/lib/testing/nodes.nix</code></a></p>
+<h3 id='test-opt-node.specialArgs'><a href='development/writing-nixos-tests/#test-opt-node.specialArgs'>
+<code>node.specialArgs</code>
+</a></h3>
+<p>An attribute set of arbitrary values that will be made available as module arguments during the resolution of module <code>imports</code>.</p>
+<p>Note that it is not possible to override these from within the NixOS configurations. If you argument is not relevant to <code>imports</code>, consider setting <code>defaults._module.args.&lt;name&gt;</code> instead.</p>
+<p><em>Type:</em> lazy attribute set of raw value</p>
+<p><em>Default:</em> <code>{ }</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/lib/testing/nodes.nix"><code>nixos/lib/testing/nodes.nix</code></a></p>
+<h3 id='test-opt-nodeDefaults'><a href='development/writing-nixos-tests/#test-opt-nodeDefaults'>
+<code>nodeDefaults</code>
+</a></h3>
+<p>NixOS configuration that is applied to all <a href="development/writing-nixos-tests/#test-opt-nodes"><code>nodes</code></a>.</p>
+<p><em>Type:</em> module</p>
+<p><em>Default:</em> <code>{ }</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/lib/testing/nodes.nix"><code>nixos/lib/testing/nodes.nix</code></a></p>
+<h3 id='test-opt-nodes'><a href='development/writing-nixos-tests/#test-opt-nodes'>
+<code>nodes</code>
+</a></h3>
+<p>An attribute set of NixOS configuration modules representing QEMU vms that can be started during a test.</p>
+<p>The configurations are augmented by the <a href="development/writing-nixos-tests/#test-opt-defaults"><code>defaults</code></a> option.</p>
+<p>They are assigned network addresses according to the <code>nixos/lib/testing/network.nix</code> module.</p>
+<p>A few special options are available, that aren't in a plain NixOS configuration. See <a href="development/writing-nixos-tests/#ssec-nixos-test-qemu-vms">Configuring virtual machines</a></p>
+<p><em>Type:</em> lazy attribute set of module</p>
+<p><em>Default:</em> <code>{ }</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/lib/testing/nodes.nix"><code>nixos/lib/testing/nodes.nix</code></a></p>
+<h3 id='test-opt-passthru'><a href='development/writing-nixos-tests/#test-opt-passthru'>
+<code>passthru</code>
+</a></h3>
+<p>Attributes to add to the returned derivations,
+which are not necessarily part of the build.</p>
+<p>This is a bit like doing <code>drv // { myAttr = true; }</code> (which would be lost by <code>overrideAttrs</code>).
+It does not change the actual derivation, but adds the attribute nonetheless, so that
+consumers of what would be <code>drv</code> have more information.</p>
+<p><em>Type:</em> lazy attribute set of raw value</p>
+<p><em>Default:</em> <code>{ }</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/lib/testing/run.nix"><code>nixos/lib/testing/run.nix</code></a></p>
+<h3 id='test-opt-pythonTestDriverPackage'><a href='development/writing-nixos-tests/#test-opt-pythonTestDriverPackage'>
+<code>pythonTestDriverPackage</code>
+</a></h3>
+<p>Package containing the python NixOS test driver implementation</p>
+<p><em>Type:</em> package</p>
+<p><em>Default:</em> <code>hostPkgs.nixos-test-driver</code></p>
+<p><em>Read only</em></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/lib/testing/driver.nix"><code>nixos/lib/testing/driver.nix</code></a></p>
+<h3 id='test-opt-qemu.forceAccel'><a href='development/writing-nixos-tests/#test-opt-qemu.forceAccel'>
+<code>qemu.forceAccel</code>
+</a></h3>
+<p>Whether to force the use of hardware-accelerated virtualisation.
+When enabled, QEMU will not fall back to the slower software emulation
+(TCG) and will instead error out if the accelerator is not available.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/lib/testing/driver.nix"><code>nixos/lib/testing/driver.nix</code></a></p>
+<h3 id='test-opt-qemu.package'><a href='development/writing-nixos-tests/#test-opt-qemu.package'>
+<code>qemu.package</code>
+</a></h3>
+<p>Which qemu package to use for the virtualisation of <a href="development/writing-nixos-tests/#test-opt-nodes"><code>nodes</code></a>.</p>
+<p><em>Type:</em> package</p>
+<p><em>Default:</em> <code>&quot;hostPkgs.qemu_test&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/lib/testing/driver.nix"><code>nixos/lib/testing/driver.nix</code></a></p>
+<h3 id='test-opt-rawTestDerivationArg'><a href='development/writing-nixos-tests/#test-opt-rawTestDerivationArg'>
+<code>rawTestDerivationArg</code>
+</a></h3>
+<p>Argument passed to <code>mkDerivation</code> to create the <code>rawTestDerivation</code>.</p>
+<p><em>Type:</em> function that evaluates to a(n) raw value</p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/lib/testing/run.nix"><code>nixos/lib/testing/run.nix</code></a></p>
+<h3 id='test-opt-requiredFeatures'><a href='development/writing-nixos-tests/#test-opt-requiredFeatures'>
+<code>requiredFeatures</code>
+</a></h3>
+<p>Builder features that are required for running this test.</p>
+<p><em>Type:</em> open submodule of attribute set of boolean</p>
+<p><em>Default:</em> <code>{ }</code></p>
+<p><em>Example:</em></p>
+<pre><code class="language-nix">{
+  cuda = true;
+  devnet = mkForce false;
+}
+</code></pre>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/lib/testing/run.nix"><code>nixos/lib/testing/run.nix</code></a></p>
+<h3 id='test-opt-requiredFeatures.apple-virt'><a href='development/writing-nixos-tests/#test-opt-requiredFeatures.apple-virt'>
+<code>requiredFeatures.apple-virt</code>
+</a></h3>
+<p>Whether Apple virtualization functionality is required for running this test.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>true</code> if built to run on Darwin.</p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/lib/testing/run.nix"><code>nixos/lib/testing/run.nix</code></a></p>
+<h3 id='test-opt-requiredFeatures.devnet'><a href='development/writing-nixos-tests/#test-opt-requiredFeatures.devnet'>
+<code>requiredFeatures.devnet</code>
+</a></h3>
+<p>This heuristic setting that assumes that the majority of tests requires VMs and containers
+to communicate over network. To support such tests, adding &quot;/dev/net&quot; to <code>nix.settings.extra-sandbox-paths</code> is necessary.</p>
+<p>Override this to <code>false</code> if the heuristic is wrong in some cases.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>true</code> if both VMs and containers are present.</p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/lib/testing/run.nix"><code>nixos/lib/testing/run.nix</code></a></p>
+<h3 id='test-opt-requiredFeatures.kvm'><a href='development/writing-nixos-tests/#test-opt-requiredFeatures.kvm'>
+<code>requiredFeatures.kvm</code>
+</a></h3>
+<p>Whether Linux KVM virtualization is required when running this test. Can be disabled to allow emulated execution.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>true</code> if built to run on Linux and any virtual machines are specified.</p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/lib/testing/run.nix"><code>nixos/lib/testing/run.nix</code></a></p>
+<h3 id='test-opt-requiredFeatures.nixos-test'><a href='development/writing-nixos-tests/#test-opt-requiredFeatures.nixos-test'>
+<code>requiredFeatures.nixos-test</code>
+</a></h3>
+<p>Standard requirement for NixOS integration tests</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/lib/testing/run.nix"><code>nixos/lib/testing/run.nix</code></a></p>
+<h3 id='test-opt-requiredFeatures.uid-range'><a href='development/writing-nixos-tests/#test-opt-requiredFeatures.uid-range'>
+<code>requiredFeatures.uid-range</code>
+</a></h3>
+<p>Containers use systemd-nspawn, which requires pid 0 inside of the sandbox. <code>uid-range</code> enables that.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>true</code> if containers are present.</p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/lib/testing/run.nix"><code>nixos/lib/testing/run.nix</code></a></p>
+<h3 id='test-opt-skipLint'><a href='development/writing-nixos-tests/#test-opt-skipLint'>
+<code>skipLint</code>
+</a></h3>
+<p>Do not run the linters. This may speed up your iteration cycle, but it is not something you should commit.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/lib/testing/driver.nix"><code>nixos/lib/testing/driver.nix</code></a></p>
+<h3 id='test-opt-skipTypeCheck'><a href='development/writing-nixos-tests/#test-opt-skipTypeCheck'>
+<code>skipTypeCheck</code>
+</a></h3>
+<p>Disable type checking. This must not be enabled for new NixOS tests.</p>
+<p>This may speed up your iteration cycle, unless you're working on the <a href="development/writing-nixos-tests/#test-opt-testScript"><code>testScript</code></a>.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/lib/testing/driver.nix"><code>nixos/lib/testing/driver.nix</code></a></p>
+<h3 id='test-opt-sshBackdoor.enable'><a href='development/writing-nixos-tests/#test-opt-sshBackdoor.enable'>
+<code>sshBackdoor.enable</code>
+</a></h3>
+<p>Whether to turn on the VSOCK-based access to all VMs. This provides an unauthenticated access intended for debugging.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>config.enableDebugHook</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/lib/testing/nodes.nix"><code>nixos/lib/testing/nodes.nix</code></a></p>
+<h3 id='test-opt-test'><a href='development/writing-nixos-tests/#test-opt-test'>
+<code>test</code>
+</a></h3>
+<p>Derivation that runs the test as its &quot;build&quot; process.</p>
+<p>This implies that NixOS tests run isolated from the network, making them
+more dependable.</p>
+<p><em>Type:</em> package</p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/lib/testing/run.nix"><code>nixos/lib/testing/run.nix</code></a></p>
+<h3 id='test-opt-testScript'><a href='development/writing-nixos-tests/#test-opt-testScript'>
+<code>testScript</code>
+</a></h3>
+<p>A series of python declarations and statements that you write to perform
+the test.</p>
+<p><em>Type:</em> (function that evaluates to a(n) strings concatenated with &quot;
+&quot;) or strings concatenated with &quot;
+&quot; convertible to it</p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/lib/testing/testScript.nix"><code>nixos/lib/testing/testScript.nix</code></a></p>
+<h2 id='sec-test-sandbox-breakpoint'><a href='development/writing-nixos-tests/#sec-test-sandbox-breakpoint'>
+Debugging test machines
+</a></h2>
+<p>You can set the <a href="development/writing-nixos-tests/#test-opt-enableDebugHook"><code>enableDebugHook</code></a> option to pause
+a test on the first failure and have it print instructions on how to enter the
+sandbox shell of the test. Suppose you have the following test module:</p>
+<pre><code class="language-nix">{
+  name = &quot;foo&quot;;
+
+  nodes.machine = { };
+
+  enableDebugHook = true;
+  sshBackdoor.enable = true;
+
+  testScript = ''
+    start_all()
+    machine.succeed(&quot;false&quot;) # this will fail
+  '';
+}
+</code></pre>
+<p>The test will fail with an output like this:</p>
+<pre><code>vm-test-run-foo&gt; !!! Breakpoint reached, run 'sudo /nix/store/eeeee-attach/bin/attach &lt;PID&gt;'
+</code></pre>
+<p>You can then enter the sandbox shell:</p>
+<pre><code>$ sudo /nix/store/eeeee-attach/bin/attach &lt;PID&gt;
+bash#
+</code></pre>
+<p>There, you can attach to a <a href="https://docs.python.org/3/library/pdb.html"><code>pdb</code></a> session
+to step through the Python test script:</p>
+<pre><code>bash# socat readline tcp:127.0.0.1:4444
+pdb$
+</code></pre>
+<p>Note that it is also possible to set breakpoints in the test script using <code>debug.breakpoint()</code>.</p>
+<h3 id='sec-test-vm-ssh-access'><a href='development/writing-nixos-tests/#sec-test-vm-ssh-access'>
+SSH access to test VMs
+</a></h3>
+<div class='admonition note'><h3 class='title'>Note</h3>
+<p>
+For debugging with SSH access into the machines, it's recommended to try using
+<a href="development/running-nixos-tests-interactively/#sec-running-nixos-tests-interactively">the interactive driver</a> with its
+<a href="development/running-nixos-tests-interactively/#sec-nixos-test-ssh-access">SSH backdoor</a> first.</p>
+<p>This feature is mostly intended to debug flaky test failures that aren't
+reproducible elsewhere.
+</p>
+</div>
+<p>If you set the <a href="development/writing-nixos-tests/#test-opt-sshBackdoor.enable"><code>sshBackdoor.enable</code></a> option,
+QEMU virtual machines will open an SSH backdoor based on AF_VSOCK
+(see <a href="development/running-nixos-tests-interactively/#sec-nixos-test-ssh-access">Running Tests interactively</a>).
+Once you are in the sandbox shell, you can access the VMs (for example, <code>machine</code>)
+with SSH over vsock:</p>
+<pre><code>bash# ssh -F ./ssh_config -o User=root vsock-mux//tmp/.../machine_host.socket
+</code></pre>
+<p>The socket paths are printed at the beginning of the test. See
+<a href="development/running-nixos-tests-interactively/#sec-nixos-test-ssh-access">Running Tests interactively</a> for more context.</p>
+<h3 id='sec-test-container-ssh-access'><a href='development/writing-nixos-tests/#sec-test-container-ssh-access'>
+SSH access to test containers
+</a></h3>
+<p>If you set the <a href="development/writing-nixos-tests/#test-opt-sshBackdoor.enable"><code>sshBackdoor.enable</code></a> option,
+each <code>systemd-nspawn</code> container will open an SSH backdoor.
+Once the container starts,
+it will print instructions on how to log into the container via SSH.
+If the test fails,
+attach to the sandbox as described above,
+and then use the provided SSH command to log into the container.
+For example:</p>
+<pre><code>$ sudo /nix/store/eeeee-attach &lt;PID&gt;
+bash# ssh -o User=root -o ProxyCommand=&quot;socat - UNIX-CLIENT:/run/systemd/nspawn/unix-export/machine/ssh&quot; bash
+[root@machine:~]# hostname
+machine
+</code></pre>
+
+        <nav class='chapter-pagination' aria-label='Chapter pagination'>
+          <a class='chapter-pagination-link chapter-pagination-previous' href='development/nixos-tests/#sec-nixos-tests'><span class='chapter-pagination-label'>Previous</span><span class='chapter-pagination-title'>NixOS Tests</span></a>
+          <a class='chapter-pagination-link chapter-pagination-next' href='development/running-nixos-tests/#sec-running-nixos-tests'><span class='chapter-pagination-label'>Next</span><span class='chapter-pagination-title'>Running Tests</span></a>
+        </nav>
+        </main>
+      </div>
+    </section>
+<script defer src='highlight.pack.bb58bc6b7daef61c.js'></script>
+<script defer src='mmdoc.0eac5034aeb9595f.js'></script>
+<script defer src='mmdoc_search.1e3e2ead6263c722.js' data-search-index='search_index.fa825f5e481818a3.js' data-fuse='fuse.basic.min.296619aed362de6d.js'></script>
+  </div>
+  </body>
+</html>

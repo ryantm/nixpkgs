@@ -1,0 +1,2613 @@
+<!doctype html>
+<html lang='en'>
+  <head>
+    <base href='../../'>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, viewport-fit=cover'>
+    <script>
+      (() => {
+        let theme = null
+        try { theme = localStorage.getItem('theme') } catch (error) {}
+        if (theme !== 'light' && theme !== 'dark')
+          theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+        document.documentElement.classList.add(theme + '-theme')
+        const ua = navigator.userAgent || ''
+        const isWebView = /;\s*wv\)|Twitter|FBAN|FBAV|Instagram|LinkedInApp|BytedanceWebview|musical_ly|Line\/|MicroMessenger/i.test(ua) || (/(iPhone|iPad|iPod)/i.test(ua) && /AppleWebKit/i.test(ua) && !/Safari\//i.test(ua))
+        const fromX = /^https?:\/\/([a-z0-9-]+\.)?(t\.co|x\.com|twitter\.com)(\/|$)/i.test(document.referrer || '')
+        let topNav = isWebView || fromX
+        try {
+          if (topNav) sessionStorage.setItem('mmdoc-top-nav', '1')
+          else if (sessionStorage.getItem('mmdoc-top-nav') === '1') topNav = true
+        } catch (error) {}
+        if (topNav) document.documentElement.classList.add('mobile-top-nav')
+      })()
+    </script>
+    <meta name='description' content='services (V)'>
+    <link rel='icon' href='favicon.svg'>
+    <link rel='stylesheet' href='a11y-dark.773c5c24f666bae4.css'>
+    <link rel='stylesheet' href='a11y-light.519a1765fd6efc61.css'>
+    <link rel='stylesheet' href='mmdoc.1fa5ef6417bedb91.css'>
+    <title>services (V) | nixos</title>
+  </head>
+  <body>
+  <a class='skip-link' href='options/services-v/#main-content'>Skip to main content</a>
+  <input type='checkbox' id='sidebar-checkbox' aria-hidden='true' tabindex='-1' style='display: none;'>
+  <div class='body'>
+    <header class='nav-top-container'>
+    <nav class='nav-top' aria-label='Documentation controls'>
+      <button type='button' class='sidebar-toggle' title='Toggle table of contents' aria-label='Toggle table of contents' aria-controls='sidebar' aria-expanded='true'></button>    <button type='button' class='search-toggle' title='Open search (/)' aria-label='Open search' aria-controls='search-panel' aria-expanded='false'></button>    <button type='button' class='theme-toggle' title='Switch to dark theme' aria-label='Switch to dark theme' aria-pressed='false'></button>    <a id='chapter-previous-button' class='chapter-previous' href='options/services-u/#sec-options-services-u' title='services (U)' aria-label='Previous: services (U)'>&lt;</a>
+    <a id='chapter-next-button' class='chapter-next' href='options/services-w/#sec-options-services-w' title='services (W)' aria-label='Next: services (W)'>&gt;</a>
+    </nav>
+    </header>
+    <nav id='sidebar' class='sidebar' aria-label='Table of contents'>
+<h1>NixOS Manual</h1>
+<p>Version 27.05.20261128.4b21f50</p>
+<ul>
+<li><a href="./#preface">Preface</a></li>
+</ul>
+<h2>Getting started</h2>
+<ul>
+<li><a href="installation/installation/#ch-installation">Getting started</a></li>
+<li><a href="installation/obtaining/#sec-obtaining">Obtaining NixOS</a></li>
+</ul>
+<h2>Installing NixOS</h2>
+<ul>
+<li><a href="installation/installing/#sec-installation">Installing NixOS</a></li>
+<li><a href="installation/installing-usb/#sec-booting-from-usb">Booting from a USB flash drive</a></li>
+<li><a href="installation/installing-pxe/#sec-booting-from-pxe">Booting from the &quot;netboot&quot; media (PXE)</a></li>
+<li><a href="installation/installing-kexec/#sec-booting-via-kexec">&quot;Booting&quot; into NixOS via kexec</a></li>
+<li><a href="installation/installing-virtualbox-guest/#sec-installing-virtualbox-guest">Installing in a VirtualBox guest</a></li>
+<li><a href="installation/installing-from-other-distro/#sec-installing-from-other-distro">Installing from another Linux distribution</a></li>
+<li><a href="installation/installing-behind-a-proxy/#sec-installing-behind-proxy">Installing behind a proxy</a></li>
+<li><a href="installation/changing-config/#sec-changing-config">Changing the Configuration</a></li>
+<li><a href="installation/upgrading/#sec-upgrading">Upgrading NixOS</a></li>
+</ul>
+<h2>Guides</h2>
+<ul>
+<li><a href="configuration/configuration/#ch-configuration">Guides</a></li>
+</ul>
+<h2>Configuration Syntax</h2>
+<ul>
+<li><a href="configuration/config-syntax/#sec-configuration-syntax">Configuration Syntax</a></li>
+<li><a href="configuration/config-file/#sec-configuration-file">NixOS Configuration File</a></li>
+<li><a href="configuration/abstractions/#sec-module-abstractions">Abstractions</a></li>
+<li><a href="configuration/modularity/#sec-modularity">Modularity</a></li>
+</ul>
+<h2>Package Management</h2>
+<ul>
+<li><a href="configuration/package-mgmt/#sec-package-management">Package Management</a></li>
+<li><a href="configuration/declarative-packages/#sec-declarative-package-mgmt">Declarative Package Management</a></li>
+<li><a href="configuration/customizing-packages/#sec-customising-packages">Customising Packages</a></li>
+<li><a href="configuration/adding-custom-packages/#sec-custom-packages">Adding Custom Packages</a></li>
+<li><a href="configuration/ad-hoc-packages/#sec-ad-hoc-packages">Ad-Hoc Package Management</a></li>
+<li><a href="configuration/user-mgmt/#sec-user-management">User Management</a></li>
+</ul>
+<h2>File Systems</h2>
+<ul>
+<li><a href="configuration/file-systems/#ch-file-systems">File Systems</a></li>
+<li><a href="configuration/luks-file-systems/#sec-luks-file-systems">LUKS-Encrypted File Systems</a></li>
+<li><a href="configuration/sshfs-file-systems/#sec-sshfs-file-systems">SSHFS File Systems</a></li>
+<li><a href="configuration/nfs-file-systems/#sec-nfs-file-systems">NFS File Systems</a></li>
+<li><a href="configuration/overlayfs/#sec-overlayfs">Overlayfs</a></li>
+</ul>
+<h2>Networking</h2>
+<ul>
+<li><a href="configuration/networking/#sec-networking">Networking</a></li>
+<li><a href="configuration/network-manager/#sec-networkmanager">NetworkManager</a></li>
+<li><a href="configuration/ssh/#sec-ssh">Secure Shell Access</a></li>
+<li><a href="configuration/ipv4-config/#sec-ipv4">IPv4 Configuration</a></li>
+<li><a href="configuration/ipv6-config/#sec-ipv6">IPv6 Configuration</a></li>
+<li><a href="configuration/firewall/#sec-firewall">Firewall</a></li>
+<li><a href="configuration/wireless/#sec-wireless">Wireless Networks</a></li>
+<li><a href="configuration/ad-hoc-network-config/#ad-hoc-network-config">Ad-Hoc Configuration</a></li>
+<li><a href="configuration/renaming-interfaces/#sec-rename-ifs">Renaming network interfaces</a></li>
+</ul>
+<h2>Graphical Desktops</h2>
+<ul>
+<li><a href="configuration/x-windows/#sec-x11">X Window System</a></li>
+<li><a href="configuration/wayland/#sec-wayland">Wayland</a></li>
+<li><a href="configuration/gpu-accel/#sec-gpu-accel">GPU acceleration</a></li>
+<li><a href="configuration/xfce/#sec-xfce">Xfce Desktop Environment</a></li>
+</ul>
+<h2>Building Images</h2>
+<ul>
+<li><a href="installation/building-nixos/#sec-building-image">Building a NixOS (Live) ISO</a></li>
+<li><a href="installation/building-images-via-nixos-rebuild-build-image/#sec-image-nixos-rebuild-build-image">Building Images with nixos-rebuild build-image</a></li>
+<li><a href="installation/building-images-via-systemd-repart/#sec-image-repart">Building Images via systemd-repart</a></li>
+</ul>
+<h2>Administration</h2>
+<ul>
+<li><a href="administration/running/#ch-running">Administration</a></li>
+<li><a href="administration/service-mgmt/#sec-systemctl">Service Management</a></li>
+<li><a href="administration/rebooting/#sec-rebooting">Rebooting and Shutting Down</a></li>
+<li><a href="administration/user-sessions/#sec-user-sessions">User Sessions</a></li>
+<li><a href="administration/logging/#sec-logging">Logging</a></li>
+<li><a href="administration/cleaning-store/#sec-nix-gc">Cleaning the Nix Store</a></li>
+</ul>
+<h2>Container Management</h2>
+<ul>
+<li><a href="administration/containers/#ch-containers">Container Management</a></li>
+<li><a href="administration/imperative-containers/#sec-imperative-containers">Imperative Container Management</a></li>
+<li><a href="administration/declarative-containers/#sec-declarative-containers">Declarative Container Specification</a></li>
+<li><a href="administration/container-networking/#sec-container-networking">Container Networking</a></li>
+</ul>
+<h2>Troubleshooting</h2>
+<ul>
+<li><a href="administration/troubleshooting/#ch-troubleshooting">Troubleshooting</a></li>
+<li><a href="administration/boot-problems/#sec-boot-problems">Boot Problems</a></li>
+<li><a href="administration/maintenance-mode/#sec-maintenance-mode">Maintenance Mode</a></li>
+<li><a href="administration/rollback/#sec-rollback">Rolling Back Configuration Changes</a></li>
+<li><a href="administration/store-corruption/#sec-nix-store-corruption">Nix Store Corruption</a></li>
+<li><a href="administration/network-problems/#sec-nix-network-issues">Network Problems</a></li>
+</ul>
+<h2>Services and Programs</h2>
+<ul>
+<li><a href="services/#ch-services">Services and Programs</a></li>
+<li><a href="modules/facter/#module-hardware-facter">NixOS Facter</a></li>
+<li><a href="modules/input-method/#module-services-input-methods">Input Methods</a></li>
+<li><a href="modules/digitalbitbox/#module-programs-digitalbitbox">Digital Bitbox</a></li>
+<li><a href="modules/plotinus/#module-program-plotinus">Plotinus</a></li>
+<li><a href="modules/oh-my-zsh/#module-programs-zsh-ohmyzsh">Oh my ZSH</a></li>
+<li><a href="modules/acme/#module-security-acme">SSL/TLS Certificates with ACME</a></li>
+<li><a href="modules/tpm2/#module-security-tpm2">TPM2</a></li>
+<li><a href="modules/navidrome/#module-services-navidrome">Navidrome</a></li>
+<li><a href="modules/borgbackup/#module-borgbase">BorgBackup</a></li>
+<li><a href="modules/garm/#module-garm">GARM</a></li>
+<li><a href="modules/cassandra/#module-services-cassandra">Apache Cassandra</a></li>
+<li><a href="modules/foundationdb/#module-services-foundationdb">FoundationDB</a></li>
+<li><a href="modules/postgresql/#module-postgresql">PostgreSQL</a></li>
+<li><a href="modules/tigerbeetle/#module-services-tigerbeetle">TigerBeetle</a></li>
+<li><a href="modules/gnome/#chap-gnome">GNOME Desktop</a></li>
+<li><a href="modules/pantheon/#chap-pantheon">Pantheon Desktop</a></li>
+<li><a href="modules/flatpak/#module-services-flatpak">Flatpak</a></li>
+<li><a href="modules/athens/#module-athens">Athens</a></li>
+<li><a href="modules/blackfire/#module-services-blackfire">Blackfire profiler</a></li>
+<li><a href="modules/livebook/#module-services-livebook">Livebook</a></li>
+<li><a href="modules/emacs/#module-services-emacs">Emacs</a></li>
+<li><a href="modules/display/#module-hardware-display">Customizing display configuration</a></li>
+<li><a href="modules/trezord/#trezor">Trezor</a></li>
+<li><a href="modules/mailman/#module-services-mailman">Mailman</a></li>
+<li><a href="modules/draupnir/#module-services-draupnir">Draupnir (Matrix Moderation Bot)</a></li>
+<li><a href="modules/maubot/#module-services-maubot">Maubot</a></li>
+<li><a href="modules/mautrix-discord/#module-services-mautrix-discord">Mautrix-Discord</a></li>
+<li><a href="modules/mautrix-signal/#module-services-mautrix-signal">Mautrix-Signal</a></li>
+<li><a href="modules/mautrix-whatsapp/#module-services-mautrix-whatsapp">Mautrix-Whatsapp</a></li>
+<li><a href="modules/mjolnir/#module-services-mjolnir">Mjolnir (Matrix Moderation Tool)</a></li>
+<li><a href="modules/synapse/#module-services-matrix">Matrix</a></li>
+<li><a href="modules/anki-sync-server/#module-services-anki-sync-server">Anki Sync Server</a></li>
+<li><a href="modules/apache-kafka/#module-services-apache-kafka">Apache Kafka</a></li>
+<li><a href="modules/cliproxyapi/#module-services-cliproxyapi">CLIProxyAPI</a></li>
+<li><a href="modules/dump1090-fa/#module-services-dump1090-fa">Dump1090-fa</a></li>
+<li><a href="modules/forgejo/#module-forgejo">Forgejo</a></li>
+<li><a href="modules/gitlab/#module-services-gitlab">GitLab</a></li>
+<li><a href="modules/jellystat/#module-services-jellystat">Jellystat</a></li>
+<li><a href="modules/mesh-llm/#module-services-mesh-llm">MeshLLM</a></li>
+<li><a href="modules/paisa/#module-services-paisa">Paisa</a></li>
+<li><a href="modules/pelican-panel/#module-pelican-panel">Pelican Panel</a></li>
+<li><a href="modules/pelican-wings/#module-pelican-wings">Pelican Wings</a></li>
+<li><a href="modules/tandoor-recipes/#module-services-tandoor-recipes">Tandoor Recipes</a></li>
+<li><a href="modules/taskserver/#module-services-taskserver">Taskserver</a></li>
+<li><a href="modules/tdarr/#module-services-tdarr">Tdarr</a></li>
+<li><a href="modules/weechat/#module-services-weechat">WeeChat</a></li>
+<li><a href="modules/certspotter/#module-services-certspotter">Cert Spotter</a></li>
+<li><a href="modules/goss/#module-services-goss">Goss</a></li>
+<li><a href="modules/ocsinventory-agent/#module-services-ocsinventory-agent">OCS Inventory Agent</a></li>
+<li><a href="modules/parsedmarc/#module-services-parsedmarc">parsedmarc</a></li>
+<li><a href="modules/exporters/#module-services-prometheus-exporters">Prometheus exporters</a></li>
+<li><a href="modules/litestream/#module-services-litestream">Litestream</a></li>
+<li><a href="modules/samba/#module-services-samba">Samba</a></li>
+<li><a href="modules/amuled/#module-services-amule">aMule</a></li>
+<li><a href="modules/anubis/#module-services-anubis">Anubis</a></li>
+<li><a href="modules/atalkd/#module-services-atalkd">atalkd</a></li>
+<li><a href="modules/crab-hole/#module-services-crab-hole">🦀 crab-hole</a></li>
+<li><a href="modules/dnsmasq/#module-services-networking-dnsmasq">Dnsmasq</a></li>
+<li><a href="modules/doh-server/#module-service-doh-server">DNS-over-HTTPS Server</a></li>
+<li><a href="modules/firefox-syncserver/#module-services-firefox-syncserver">Firefox Sync server</a></li>
+<li><a href="modules/gns3-server/#module-services-gns3-server">GNS3 Server</a></li>
+<li><a href="modules/jotta-cli/#module-services-jotta-cli">Jottacloud Command-line Tool</a></li>
+<li><a href="modules/lxmd/#module-services-lxmd">LXMD</a></li>
+<li><a href="modules/mosquitto/#module-services-mosquitto">Mosquitto</a></li>
+<li><a href="modules/netbird/#module-services-netbird">Netbird Client</a></li>
+<li><a href="modules/netbird-relay/#module-services-netbird-relay">Netbird Relay</a></li>
+<li><a href="modules/server/#module-services-netbird-server">Netbird server</a></li>
+<li><a href="modules/nextcloud-spreed-signaling/#module-services-nextcloud-spreed-signaling">Spreed standalone signaling server</a></li>
+<li><a href="modules/nordvpn/#module-services-nordvpn">NordVPN</a></li>
+<li><a href="modules/onedrive/#module-services-onedrive">Microsoft OneDrive</a></li>
+<li><a href="modules/pihole-ftl/#module-services-networking-pihole-ftl">pihole-FTL</a></li>
+<li><a href="modules/pleroma/#module-services-pleroma">Pleroma</a></li>
+<li><a href="modules/portmaster/#module-services-portmaster">Portmaster</a></li>
+<li><a href="modules/prosody/#module-services-prosody">Prosody</a></li>
+<li><a href="modules/rnsd/#module-services-rnsd">RNSD</a></li>
+<li><a href="modules/umurmur/#module-service-umurmur">uMurmur</a></li>
+<li><a href="modules/yggdrasil/#module-services-networking-yggdrasil">Yggdrasil</a></li>
+<li><a href="modules/zapret2/#module-services-zapret2">Zapret2</a></li>
+<li><a href="modules/meilisearch/#module-services-meilisearch">Meilisearch</a></li>
+<li><a href="modules/crowdsec/#sec-crowdsec-reset">How to reset data and etc directories</a></li>
+<li><a href="modules/falco/#module-services-falco">Falco</a></li>
+<li><a href="modules/kerberos/#module-services-kerberos-server">kerberos_server</a></li>
+<li><a href="modules/systemd-lock-handler/#module-services-systemd-lock-handler">systemd-lock-handler</a></li>
+<li><a href="modules/akkoma/#module-services-akkoma">Akkoma</a></li>
+<li><a href="modules/c2fmzq-server/#module-services-c2fmzq">c2FmZQ</a></li>
+<li><a href="modules/davis/#module-services-davis">Davis</a></li>
+<li><a href="modules/discourse/#module-services-discourse">Discourse</a></li>
+<li><a href="modules/ente/#module-services-ente">Ente.io</a></li>
+<li><a href="modules/filesender/#module-services-filesender">FileSender</a></li>
+<li><a href="modules/glance/#module-services-glance">Glance</a></li>
+<li><a href="modules/gotosocial/#module-services-gotosocial">GoToSocial</a></li>
+<li><a href="modules/grocy/#module-services-grocy">Grocy</a></li>
+<li><a href="modules/hatsu/#module-services-hatsu">Hatsu</a></li>
+<li><a href="modules/jitsi-meet/#module-services-jitsi-meet">Jitsi Meet</a></li>
+<li><a href="modules/keycloak/#module-services-keycloak">Keycloak</a></li>
+<li><a href="modules/lemmy/#module-services-lemmy">Lemmy</a></li>
+<li><a href="modules/matomo/#module-services-matomo">Matomo</a></li>
+<li><a href="modules/nextcloud/#module-services-nextcloud">Nextcloud</a></li>
+<li><a href="modules/opencloud/#module-services-opencloud">OpenCloud</a></li>
+<li><a href="modules/pict-rs/#module-services-pict-rs">Pict-rs</a></li>
+<li><a href="modules/pihole-web/#module-services-web-apps-pihole-web">Pi-hole Web Dashboard</a></li>
+<li><a href="modules/plausible/#module-services-plausible">Plausible</a></li>
+<li><a href="modules/strfry/#module-services-strfry">strfry</a></li>
+<li><a href="modules/suwayomi-server/#module-services-suwayomi-server">Suwayomi-Server</a></li>
+<li><a href="modules/szurubooru/#module-services-szurubooru">Szurubooru</a></li>
+<li><a href="modules/wanderer/#module-services-wanderer">wanderer</a></li>
+<li><a href="modules/youtrack/#module-services-youtrack">YouTrack</a></li>
+<li><a href="modules/garage/#module-services-garage">Garage</a></li>
+<li><a href="modules/clevis/#module-boot-clevis">Clevis</a></li>
+<li><a href="modules/external/#sec-bootloader-external">External Bootloader Backends</a></li>
+<li><a href="modules/plymouth-tpm2-totp/#module-boot-plymouth-tpm2-totp">tpm2-totp with Plymouth</a></li>
+<li><a href="modules/xen-dom0/#module-virtualisation-xen">Xen Project Hypervisor</a></li>
+<li><a href="configuration/subversion/#module-services-subversion">Subversion</a></li>
+<li><a href="configuration/mattermost/#sec-mattermost">Mattermost</a></li>
+<li><a href="configuration/kubernetes/#sec-kubernetes">Kubernetes</a></li>
+</ul>
+<h2>Reference</h2>
+<ul>
+<li><a href="reference/#ch-reference">Reference</a></li>
+</ul>
+<h2>Profiles</h2>
+<ul>
+<li><a href="configuration/profiles/#ch-profiles">Profiles</a></li>
+<li><a href="configuration/profiles/all-hardware/#sec-profile-all-hardware">All Hardware</a></li>
+<li><a href="configuration/profiles/base/#sec-profile-base">Base</a></li>
+<li><a href="configuration/profiles/clone-config/#sec-profile-clone-config">Clone Config</a></li>
+<li><a href="configuration/profiles/demo/#sec-profile-demo">Demo</a></li>
+<li><a href="configuration/profiles/docker-container/#sec-profile-docker-container">Docker Container</a></li>
+<li><a href="configuration/profiles/graphical/#sec-profile-graphical">Graphical</a></li>
+<li><a href="configuration/profiles/headless/#sec-profile-headless">Headless</a></li>
+<li><a href="configuration/profiles/installation-device/#sec-profile-installation-device">Installation Device</a></li>
+<li><a href="configuration/profiles/perlless/#sec-perlless">Perlless</a></li>
+<li><a href="configuration/profiles/minimal/#sec-profile-minimal">Minimal</a></li>
+<li><a href="configuration/profiles/qemu-guest/#sec-profile-qemu-guest">QEMU Guest</a></li>
+<li><a href="configuration/linux-kernel/#sec-kernel-config">Linux Kernel</a></li>
+</ul>
+<h2>Necessary system state</h2>
+<ul>
+<li><a href="administration/system-state/#ch-system-state">Necessary system state</a></li>
+<li><a href="administration/nixos-state/#sec-nixos-state">NixOS</a></li>
+<li><a href="administration/systemd-state/#sec-systemd-state">systemd</a></li>
+<li><a href="administration/zfs-state/#sec-zfs-state">ZFS</a></li>
+</ul>
+<h2>What happens during a system switch?</h2>
+<ul>
+<li><a href="development/what-happens-during-a-system-switch/#sec-switching-systems">What happens during a system switch?</a></li>
+<li><a href="development/unit-handling/#sec-unit-handling">Unit handling</a></li>
+<li><a href="development/activation-script/#sec-activation-script">Activation script</a></li>
+<li><a href="development/non-switchable-systems/#sec-non-switchable-system">Non Switchable Systems</a></li>
+<li><a href="development/etc-overlay/#sec-etc-overlay">/etc via overlay filesystem</a></li>
+<li><a href="administration/control-groups/#sec-cgroups">Control Groups</a></li>
+<li><a href="development/bootspec/#sec-bootspec">Bootspec</a></li>
+<li><a href="development/modular-services/#modular-services">Modular Services</a></li>
+</ul>
+<h2>Contributing</h2>
+<ul>
+<li><a href="development/development/#ch-development">Contributing</a></li>
+<li><a href="development/sources/#sec-getting-sources">Getting the Sources</a></li>
+</ul>
+<h2>Writing NixOS Modules</h2>
+<ul>
+<li><a href="development/writing-modules/#sec-writing-modules">Writing NixOS Modules</a></li>
+<li><a href="development/option-declarations/#sec-option-declarations">Option Declarations</a></li>
+<li><a href="development/option-types/#sec-option-types">Options Types</a></li>
+<li><a href="development/option-def/#sec-option-definitions">Option Definitions</a></li>
+<li><a href="development/assertions/#sec-assertions">Warnings and Assertions</a></li>
+<li><a href="development/meta-attributes/#sec-meta-attributes">Meta Attributes</a></li>
+<li><a href="development/importing-modules/#sec-importing-modules">Importing Modules</a></li>
+<li><a href="development/replace-modules/#sec-replace-modules">Replace Modules</a></li>
+<li><a href="development/freeform-modules/#sec-freeform-modules">Freeform modules</a></li>
+<li><a href="development/settings-options/#sec-settings-options">Options for Program Settings</a></li>
+<li><a href="development/state-revision/#sec-state-revision">State revision</a></li>
+</ul>
+<h2>NixOS Tests</h2>
+<ul>
+<li><a href="development/nixos-tests/#sec-nixos-tests">NixOS Tests</a></li>
+<li><a href="development/writing-nixos-tests/#sec-writing-nixos-tests">Writing Tests</a></li>
+<li><a href="development/running-nixos-tests/#sec-running-nixos-tests">Running Tests</a></li>
+<li><a href="development/running-nixos-tests-interactively/#sec-running-nixos-tests-interactively">Running Tests interactively</a></li>
+<li><a href="development/linking-nixos-tests-to-packages/#sec-linking-nixos-tests-to-packages">Linking NixOS tests to packages</a></li>
+<li><a href="development/testing-hardware-features/#sec-nixos-test-testing-hardware-features">Testing Hardware Features</a></li>
+<li><a href="development/building-parts/#sec-building-parts">Building Specific Parts of NixOS</a></li>
+<li><a href="development/developing-the-test-driver/#chap-developing-the-test-driver">Developing the NixOS Test Driver</a></li>
+<li><a href="development/testing-installer/#ch-testing-installer">Testing the Installer</a></li>
+<li><a href="development/writing-documentation/#sec-writing-documentation">Writing NixOS Documentation</a></li>
+<li><a href="contributing-to-this-manual/#chap-contributing">Contributing to this manual</a></li>
+</ul>
+<h2>Configuration Options</h2>
+<ul>
+<li><a href="nixos-options/#ch-options">Configuration Options</a>
+<ul>
+<li><a href="options/boot/#sec-options-boot">boot</a></li>
+<li><a href="options/containers/#sec-options-containers">containers</a></li>
+<li><a href="options/documentation/#sec-options-documentation">documentation</a></li>
+<li><a href="options/environment/#sec-options-environment">environment</a></li>
+<li><a href="options/fonts/#sec-options-fonts">fonts</a></li>
+<li><a href="options/hardware/#sec-options-hardware">hardware</a></li>
+<li><a href="options/i18n/#sec-options-i18n">i18n</a></li>
+<li><a href="options/image/#sec-options-image">image</a></li>
+<li><a href="options/networking/#sec-options-networking">networking</a></li>
+<li><a href="options/nix/#sec-options-nix">nix</a></li>
+<li><a href="options/power/#sec-options-power">power</a></li>
+<li><a href="options/programs/#sec-options-programs">programs</a></li>
+<li><a href="options/security/#sec-options-security">security</a></li>
+<li><a href="options/system/#sec-options-system">system</a></li>
+<li><a href="options/systemd/#sec-options-systemd">systemd</a></li>
+<li><a href="options/users/#sec-options-users">users</a></li>
+<li><a href="options/virtualisation/#sec-options-virtualisation">virtualisation</a></li>
+<li><a href="options/xdg/#sec-options-xdg">xdg</a></li>
+<li><a href="options/services-a/#sec-options-services-a">services (A)</a></li>
+<li><a href="options/services-b/#sec-options-services-b">services (B)</a></li>
+<li><a href="options/services-c/#sec-options-services-c">services (C)</a></li>
+<li><a href="options/services-d/#sec-options-services-d">services (D)</a></li>
+<li><a href="options/services-e/#sec-options-services-e">services (E)</a></li>
+<li><a href="options/services-f/#sec-options-services-f">services (F)</a></li>
+<li><a href="options/services-g/#sec-options-services-g">services (G)</a></li>
+<li><a href="options/services-h/#sec-options-services-h">services (H)</a></li>
+<li><a href="options/services-i/#sec-options-services-i">services (I)</a></li>
+<li><a href="options/services-j/#sec-options-services-j">services (J)</a></li>
+<li><a href="options/services-k/#sec-options-services-k">services (K)</a></li>
+<li><a href="options/services-l/#sec-options-services-l">services (L)</a></li>
+<li><a href="options/services-m/#sec-options-services-m">services (M)</a></li>
+<li><a href="options/services-n/#sec-options-services-n">services (N)</a></li>
+<li><a href="options/services-o/#sec-options-services-o">services (O)</a></li>
+<li><a href="options/services-other/#sec-options-services-other">services (other)</a></li>
+<li><a href="options/services-p/#sec-options-services-p">services (P)</a></li>
+<li><a href="options/services-q/#sec-options-services-q">services (Q)</a></li>
+<li><a href="options/services-r/#sec-options-services-r">services (R)</a></li>
+<li><a href="options/services-s/#sec-options-services-s">services (S)</a></li>
+<li><a href="options/services-t/#sec-options-services-t">services (T)</a></li>
+<li><a href="options/services-u/#sec-options-services-u">services (U)</a></li>
+<li><a href="options/services-v/#sec-options-services-v">services (V)</a></li>
+<li><a href="options/services-w/#sec-options-services-w">services (W)</a></li>
+<li><a href="options/services-x/#sec-options-services-x">services (X)</a></li>
+<li><a href="options/services-y/#sec-options-services-y">services (Y)</a></li>
+<li><a href="options/services-z/#sec-options-services-z">services (Z)</a></li>
+<li><a href="options/other/#sec-options-other">Other options</a></li>
+</ul>
+</li>
+</ul>
+<h2>Release Notes</h2>
+<ul>
+<li><a href="release-notes/release-notes/#ch-release-notes">Release Notes</a>
+<ul>
+<li><a href="release-notes/rl-2705/#sec-release-27.05">Release 27.05 (&quot;Axolotl&quot;, 2027.05/??)</a></li>
+<li><a href="release-notes/rl-2611/#sec-release-26.11">Release 26.11 (&quot;Zokor&quot;, 2026.11/??)</a></li>
+<li><a href="release-notes/rl-2605/#sec-release-26.05">Release 26.05 (&quot;Yarara&quot;, 2026.05/30)</a></li>
+<li><a href="release-notes/rl-2511/#sec-release-25.11">Release 25.11 (&quot;Xantusia&quot;, 2025.11/30)</a></li>
+<li><a href="release-notes/rl-2505/#sec-release-25.05">Release 25.05 (“Warbler”, 2025.05/23)</a></li>
+<li><a href="release-notes/rl-2411/#sec-release-24.11">Release 24.11 (“Vicuña”, 2024.11/28)</a></li>
+<li><a href="release-notes/rl-2405/#sec-release-24.05">Release 24.05 (“Uakari”, 2024.05/31)</a></li>
+<li><a href="release-notes/rl-2311/#sec-release-23.11">Release 23.11 (“Tapir”, 2023.11/29)</a></li>
+<li><a href="release-notes/rl-2305/#sec-release-23.05">Release 23.05 (“Stoat”, 2023.05/31)</a></li>
+<li><a href="release-notes/rl-2211/#sec-release-22.11">Release 22.11 (“Raccoon”, 2022.11/30)</a></li>
+<li><a href="release-notes/rl-2205/#sec-release-22.05">Release 22.05 (“Quokka”, 2022.05/30)</a></li>
+<li><a href="release-notes/rl-2111/#sec-release-21.11">Release 21.11 (“Porcupine”, 2021/11/30)</a></li>
+<li><a href="release-notes/rl-2105/#sec-release-21.05">Release 21.05 (&quot;Okapi&quot;, 2021.05/31)</a></li>
+<li><a href="release-notes/rl-2009/#sec-release-20.09">Release 20.09 (&quot;Nightingale&quot;, 2020.10/27)</a></li>
+<li><a href="release-notes/rl-2003/#sec-release-20.03">Release 20.03 (&quot;Markhor&quot;, 2020.04/20)</a></li>
+<li><a href="release-notes/rl-1909/#sec-release-19.09">Release 19.09 (&quot;Loris&quot;, 2019/10/09)</a></li>
+<li><a href="release-notes/rl-1903/#sec-release-19.03">Release 19.03 (&quot;Koi&quot;, 2019/04/11)</a></li>
+<li><a href="release-notes/rl-1809/#sec-release-18.09">Release 18.09 (&quot;Jellyfish&quot;, 2018/10/05)</a></li>
+<li><a href="release-notes/rl-1803/#sec-release-18.03">Release 18.03 (&quot;Impala&quot;, 2018/04/04)</a></li>
+<li><a href="release-notes/rl-1709/#sec-release-17.09">Release 17.09 (&quot;Hummingbird&quot;, 2017/09/??)</a></li>
+<li><a href="release-notes/rl-1703/#sec-release-17.03">Release 17.03 (&quot;Gorilla&quot;, 2017/03/31)</a></li>
+<li><a href="release-notes/rl-1609/#sec-release-16.09">Release 16.09 (&quot;Flounder&quot;, 2016/09/30)</a></li>
+<li><a href="release-notes/rl-1603/#sec-release-16.03">Release 16.03 (&quot;Emu&quot;, 2016/03/31)</a></li>
+<li><a href="release-notes/rl-1509/#sec-release-15.09">Release 15.09 (&quot;Dingo&quot;, 2015/09/30)</a></li>
+<li><a href="release-notes/rl-1412/#sec-release-14.12">Release 14.12 (&quot;Caterpillar&quot;, 2014/12/30)</a></li>
+<li><a href="release-notes/rl-1404/#sec-release-14.04">Release 14.04 (&quot;Baboon&quot;, 2014/04/30)</a></li>
+<li><a href="release-notes/rl-1310/#sec-release-13.10">Release 13.10 (&quot;Aardvark&quot;, 2013/10/31)</a></li>
+</ul>
+</li>
+</ul>
+    </nav>
+    <section id='main'>
+      <div id='search-panel' class='nav-search' role='search' hidden>
+        <label class='visually-hidden' for='search'>Search documentation</label>
+        <input type='search' id='search' placeholder='Search documentation (/)' autocomplete='off' aria-controls='search-results'>
+        <p id='search-status' class='visually-hidden' role='status' aria-live='polite'></p>
+        <div id='search-results'></div>
+      </div>
+      <div class='main-scroll'>
+        <main id='main-content' tabindex='-1'>
+<h1 id='sec-options-services-v'><a href='options/services-v/#sec-options-services-v'>
+services (V)
+</a></h1>
+<h2 id='opt-services.v2ray.config'><a href='options/services-v/#opt-services.v2ray.config'>
+<code>services.v2ray.config</code>
+</a></h2>
+<p>The configuration object.</p>
+<p>Either <code>configFile</code> or <code>config</code> must be specified.</p>
+<p>See <a href="https://www.v2fly.org/en_US/v5/config/overview.html">https://www.v2fly.org/en_US/v5/config/overview.html</a>.</p>
+<p><em>Type:</em> null or JSON value</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Example:</em></p>
+<pre><code class="language-nix">{
+  inbounds = [
+    {
+      listen = &quot;127.0.0.1&quot;;
+      port = 1080;
+      protocol = &quot;http&quot;;
+    }
+  ];
+  outbounds = [
+    {
+      protocol = &quot;freedom&quot;;
+    }
+  ];
+}
+</code></pre>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/v2ray.nix"><code>nixos/modules/services/networking/v2ray.nix</code></a></p>
+<h2 id='opt-services.v2ray.configFile'><a href='options/services-v/#opt-services.v2ray.configFile'>
+<code>services.v2ray.configFile</code>
+</a></h2>
+<p>The absolute path to the configuration file.</p>
+<p>Either <code>configFile</code> or <code>config</code> must be specified.</p>
+<p>See <a href="https://www.v2fly.org/en_US/v5/config/overview.html">https://www.v2fly.org/en_US/v5/config/overview.html</a>.</p>
+<p><em>Type:</em> null or string</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Example:</em> <code>&quot;/etc/v2ray/config.json&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/v2ray.nix"><code>nixos/modules/services/networking/v2ray.nix</code></a></p>
+<h2 id='opt-services.v2ray.enable'><a href='options/services-v/#opt-services.v2ray.enable'>
+<code>services.v2ray.enable</code>
+</a></h2>
+<p>Whether to run v2ray server.</p>
+<p>Either <code>configFile</code> or <code>config</code> must be specified.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/v2ray.nix"><code>nixos/modules/services/networking/v2ray.nix</code></a></p>
+<h2 id='opt-services.v2ray.package'><a href='options/services-v/#opt-services.v2ray.package'>
+<code>services.v2ray.package</code>
+</a></h2>
+<p>The v2ray package to use.</p>
+<p><em>Type:</em> package</p>
+<p><em>Default:</em> <code>pkgs.v2ray</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/v2ray.nix"><code>nixos/modules/services/networking/v2ray.nix</code></a></p>
+<h2 id='opt-services.v2raya.cliPackage'><a href='options/services-v/#opt-services.v2raya.cliPackage'>
+<code>services.v2raya.cliPackage</code>
+</a></h2>
+<p>The v2ray package to use. This is the package used for overriding the value of the <code>v2ray</code> attribute in the package set by <code>services.v2raya.package</code>.</p>
+<p><em>Type:</em> package</p>
+<p><em>Default:</em> <code>pkgs.v2ray</code></p>
+<p><em>Example:</em> <code>pkgs.xray</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/v2raya.nix"><code>nixos/modules/services/networking/v2raya.nix</code></a></p>
+<h2 id='opt-services.v2raya.enable'><a href='options/services-v/#opt-services.v2raya.enable'>
+<code>services.v2raya.enable</code>
+</a></h2>
+<p>Whether to enable the v2rayA service.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Example:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/v2raya.nix"><code>nixos/modules/services/networking/v2raya.nix</code></a></p>
+<h2 id='opt-services.v2raya.package'><a href='options/services-v/#opt-services.v2raya.package'>
+<code>services.v2raya.package</code>
+</a></h2>
+<p>The v2raya package to use.</p>
+<p><em>Type:</em> package</p>
+<p><em>Default:</em> <code>pkgs.v2raya</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/v2raya.nix"><code>nixos/modules/services/networking/v2raya.nix</code></a></p>
+<h2 id='opt-services.v4l2-relayd.instances'><a href='options/services-v/#opt-services.v4l2-relayd.instances'>
+<code>services.v4l2-relayd.instances</code>
+</a></h2>
+<p>v4l2-relayd instances to be created.</p>
+<p><em>Type:</em> attribute set of (submodule)</p>
+<p><em>Default:</em> <code>{ }</code></p>
+<p><em>Example:</em></p>
+<pre><code class="language-nix">{
+  example = {
+    cardLabel = &quot;Example card&quot;;
+    input.pipeline = &quot;videotestsrc&quot;;
+  };
+}
+</code></pre>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/video/v4l2-relayd.nix"><code>nixos/modules/services/video/v4l2-relayd.nix</code></a></p>
+<h2 id='opt-services.v4l2-relayd.instances._name_.bufferCount'><a href='options/services-v/#opt-services.v4l2-relayd.instances._name_.bufferCount'>
+<code>services.v4l2-relayd.instances.&lt;name&gt;.bufferCount</code>
+</a></h2>
+<p>How many buffers to allocate for the v4l2loopback device.
+The program default of 2 is not enough for consuming GStreamer.</p>
+<p><em>Type:</em> positive integer, meaning &gt;0</p>
+<p><em>Default:</em> <code>8</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/video/v4l2-relayd.nix"><code>nixos/modules/services/video/v4l2-relayd.nix</code></a></p>
+<h2 id='opt-services.v4l2-relayd.instances._name_.cardLabel'><a href='options/services-v/#opt-services.v4l2-relayd.instances._name_.cardLabel'>
+<code>services.v4l2-relayd.instances.&lt;name&gt;.cardLabel</code>
+</a></h2>
+<p>The name the camera will show up as.</p>
+<p><em>Type:</em> string</p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/video/v4l2-relayd.nix"><code>nixos/modules/services/video/v4l2-relayd.nix</code></a></p>
+<h2 id='opt-services.v4l2-relayd.instances._name_.enable'><a href='options/services-v/#opt-services.v4l2-relayd.instances._name_.enable'>
+<code>services.v4l2-relayd.instances.&lt;name&gt;.enable</code>
+</a></h2>
+<p>Whether to enable this v4l2-relayd instance.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Example:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/video/v4l2-relayd.nix"><code>nixos/modules/services/video/v4l2-relayd.nix</code></a></p>
+<h2 id='opt-services.v4l2-relayd.instances._name_.extraPackages'><a href='options/services-v/#opt-services.v4l2-relayd.instances._name_.extraPackages'>
+<code>services.v4l2-relayd.instances.&lt;name&gt;.extraPackages</code>
+</a></h2>
+<p>Extra packages to add to <code>GST_PLUGIN_PATH</code> for the instance.</p>
+<p><em>Type:</em> list of package</p>
+<p><em>Default:</em> <code>[ ]</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/video/v4l2-relayd.nix"><code>nixos/modules/services/video/v4l2-relayd.nix</code></a></p>
+<h2 id='opt-services.v4l2-relayd.instances._name_.input.format'><a href='options/services-v/#opt-services.v4l2-relayd.instances._name_.input.format'>
+<code>services.v4l2-relayd.instances.&lt;name&gt;.input.format</code>
+</a></h2>
+<p>The video-format to read from input-stream.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;YUY2&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/video/v4l2-relayd.nix"><code>nixos/modules/services/video/v4l2-relayd.nix</code></a></p>
+<h2 id='opt-services.v4l2-relayd.instances._name_.input.framerate'><a href='options/services-v/#opt-services.v4l2-relayd.instances._name_.input.framerate'>
+<code>services.v4l2-relayd.instances.&lt;name&gt;.input.framerate</code>
+</a></h2>
+<p>The framerate to read from input-stream.</p>
+<p><em>Type:</em> positive integer, meaning &gt;0</p>
+<p><em>Default:</em> <code>30</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/video/v4l2-relayd.nix"><code>nixos/modules/services/video/v4l2-relayd.nix</code></a></p>
+<h2 id='opt-services.v4l2-relayd.instances._name_.input.height'><a href='options/services-v/#opt-services.v4l2-relayd.instances._name_.input.height'>
+<code>services.v4l2-relayd.instances.&lt;name&gt;.input.height</code>
+</a></h2>
+<p>The height to read from input-stream.</p>
+<p><em>Type:</em> positive integer, meaning &gt;0</p>
+<p><em>Default:</em> <code>720</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/video/v4l2-relayd.nix"><code>nixos/modules/services/video/v4l2-relayd.nix</code></a></p>
+<h2 id='opt-services.v4l2-relayd.instances._name_.input.pipeline'><a href='options/services-v/#opt-services.v4l2-relayd.instances._name_.input.pipeline'>
+<code>services.v4l2-relayd.instances.&lt;name&gt;.input.pipeline</code>
+</a></h2>
+<p>The gstreamer-pipeline to use for the input-stream.</p>
+<p><em>Type:</em> string</p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/video/v4l2-relayd.nix"><code>nixos/modules/services/video/v4l2-relayd.nix</code></a></p>
+<h2 id='opt-services.v4l2-relayd.instances._name_.input.width'><a href='options/services-v/#opt-services.v4l2-relayd.instances._name_.input.width'>
+<code>services.v4l2-relayd.instances.&lt;name&gt;.input.width</code>
+</a></h2>
+<p>The width to read from input-stream.</p>
+<p><em>Type:</em> positive integer, meaning &gt;0</p>
+<p><em>Default:</em> <code>1280</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/video/v4l2-relayd.nix"><code>nixos/modules/services/video/v4l2-relayd.nix</code></a></p>
+<h2 id='opt-services.v4l2-relayd.instances._name_.name'><a href='options/services-v/#opt-services.v4l2-relayd.instances._name_.name'>
+<code>services.v4l2-relayd.instances.&lt;name&gt;.name</code>
+</a></h2>
+<p>The name of the instance.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;‹name›&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/video/v4l2-relayd.nix"><code>nixos/modules/services/video/v4l2-relayd.nix</code></a></p>
+<h2 id='opt-services.v4l2-relayd.instances._name_.output.format'><a href='options/services-v/#opt-services.v4l2-relayd.instances._name_.output.format'>
+<code>services.v4l2-relayd.instances.&lt;name&gt;.output.format</code>
+</a></h2>
+<p>The video-format to write to output-stream.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;YUY2&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/video/v4l2-relayd.nix"><code>nixos/modules/services/video/v4l2-relayd.nix</code></a></p>
+<h2 id='opt-services.vault-agent.instances'><a href='options/services-v/#opt-services.vault-agent.instances'>
+<code>services.vault-agent.instances</code>
+</a></h2>
+<p>Attribute set of vault-agent instances.
+Creates independent <code>vault-agent-${name}.service</code> systemd units for each instance defined here.</p>
+<p><em>Type:</em> attribute set of (submodule)</p>
+<p><em>Default:</em> <code>{ }</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/security/vault-agent.nix"><code>nixos/modules/services/security/vault-agent.nix</code></a></p>
+<h2 id='opt-services.vault-agent.instances._name_.enable'><a href='options/services-v/#opt-services.vault-agent.instances._name_.enable'>
+<code>services.vault-agent.instances.&lt;name&gt;.enable</code>
+</a></h2>
+<p>Whether to enable this vault-agent instance.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>true</code></p>
+<p><em>Example:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/security/vault-agent.nix"><code>nixos/modules/services/security/vault-agent.nix</code></a></p>
+<h2 id='opt-services.vault-agent.instances._name_.group'><a href='options/services-v/#opt-services.vault-agent.instances._name_.group'>
+<code>services.vault-agent.instances.&lt;name&gt;.group</code>
+</a></h2>
+<p>Group under which this instance runs.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;root&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/security/vault-agent.nix"><code>nixos/modules/services/security/vault-agent.nix</code></a></p>
+<h2 id='opt-services.vault-agent.instances._name_.package'><a href='options/services-v/#opt-services.vault-agent.instances._name_.package'>
+<code>services.vault-agent.instances.&lt;name&gt;.package</code>
+</a></h2>
+<p>The vault package to use.</p>
+<p><em>Type:</em> package</p>
+<p><em>Default:</em> <code>pkgs.vault</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/security/vault-agent.nix"><code>nixos/modules/services/security/vault-agent.nix</code></a></p>
+<h2 id='opt-services.vault-agent.instances._name_.settings'><a href='options/services-v/#opt-services.vault-agent.instances._name_.settings'>
+<code>services.vault-agent.instances.&lt;name&gt;.settings</code>
+</a></h2>
+<p>Free-form settings written directly to the <code>config.json</code> file.
+Refer to <a href="https://developer.hashicorp.com/vault/docs/agent#configuration-file-options">https://developer.hashicorp.com/vault/docs/agent#configuration-file-options</a> for supported values.</p>
+<div class='admonition note'><h3 class='title'>Note</h3>
+<p>
+Resulting format is JSON not HCL.
+Refer to <a href="https://www.hcl2json.com/">https://www.hcl2json.com/</a> if you are unsure how to convert HCL options to JSON.
+</p>
+</div>
+<p><em>Type:</em> open submodule of (JSON value)</p>
+<p><em>Default:</em> <code>{ }</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/security/vault-agent.nix"><code>nixos/modules/services/security/vault-agent.nix</code></a></p>
+<h2 id='opt-services.vault-agent.instances._name_.settings.pid_file'><a href='options/services-v/#opt-services.vault-agent.instances._name_.settings.pid_file'>
+<code>services.vault-agent.instances.&lt;name&gt;.settings.pid_file</code>
+</a></h2>
+<p>Path to use for the pid file.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;/run/vault-agent/‹name›.pid&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/security/vault-agent.nix"><code>nixos/modules/services/security/vault-agent.nix</code></a></p>
+<h2 id='opt-services.vault-agent.instances._name_.user'><a href='options/services-v/#opt-services.vault-agent.instances._name_.user'>
+<code>services.vault-agent.instances.&lt;name&gt;.user</code>
+</a></h2>
+<p>User under which this instance runs.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;root&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/security/vault-agent.nix"><code>nixos/modules/services/security/vault-agent.nix</code></a></p>
+<h2 id='opt-services.vault.address'><a href='options/services-v/#opt-services.vault.address'>
+<code>services.vault.address</code>
+</a></h2>
+<p>The name of the ip interface to listen to</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;127.0.0.1:8200&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/security/vault.nix"><code>nixos/modules/services/security/vault.nix</code></a></p>
+<h2 id='opt-services.vault.dev'><a href='options/services-v/#opt-services.vault.dev'>
+<code>services.vault.dev</code>
+</a></h2>
+<p>In this mode, Vault runs in-memory and starts unsealed. This option is not meant production but for development and testing i.e. for nixos tests.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/security/vault.nix"><code>nixos/modules/services/security/vault.nix</code></a></p>
+<h2 id='opt-services.vault.devRootTokenID'><a href='options/services-v/#opt-services.vault.devRootTokenID'>
+<code>services.vault.devRootTokenID</code>
+</a></h2>
+<p>Initial root token. This only applies when <a href="options/services-v/#opt-services.vault.dev"><code>services.vault.dev</code></a> is true</p>
+<p><em>Type:</em> null or string</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/security/vault.nix"><code>nixos/modules/services/security/vault.nix</code></a></p>
+<h2 id='opt-services.vault.enable'><a href='options/services-v/#opt-services.vault.enable'>
+<code>services.vault.enable</code>
+</a></h2>
+<p>Whether to enable Vault daemon.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Example:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/security/vault.nix"><code>nixos/modules/services/security/vault.nix</code></a></p>
+<h2 id='opt-services.vault.extraConfig'><a href='options/services-v/#opt-services.vault.extraConfig'>
+<code>services.vault.extraConfig</code>
+</a></h2>
+<p>Extra text appended to <code>vault.hcl</code>.</p>
+<p><em>Type:</em> strings concatenated with &quot;\n&quot;</p>
+<p><em>Default:</em> <code>&quot;&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/security/vault.nix"><code>nixos/modules/services/security/vault.nix</code></a></p>
+<h2 id='opt-services.vault.extraSettingsPaths'><a href='options/services-v/#opt-services.vault.extraSettingsPaths'>
+<code>services.vault.extraSettingsPaths</code>
+</a></h2>
+<p>Configuration files to load besides the immutable one defined by the NixOS module.
+This can be used to avoid putting credentials in the Nix store, which can be read by any user.</p>
+<p>Each path can point to a JSON- or HCL-formatted file, or a directory
+to be scanned for files with <code>.hcl</code> or
+<code>.json</code> extensions.</p>
+<p>To upload the confidential file with NixOps, use for example:</p>
+<pre><code># https://releases.nixos.org/nixops/latest/manual/manual.html#opt-deployment.keys
+deployment.keys.&quot;vault.hcl&quot; = let db = import ./db-credentials.nix; in {
+  text = ''
+    storage &quot;postgresql&quot; {
+      connection_url = &quot;postgres://${db.username}:${db.password}@host.example.com/exampledb?sslmode=verify-ca&quot;
+    }
+  '';
+  user = &quot;vault&quot;;
+};
+services.vault.extraSettingsPaths = [&quot;/run/keys/vault.hcl&quot;];
+services.vault.storageBackend = &quot;postgresql&quot;;
+users.users.vault.extraGroups = [&quot;keys&quot;];
+</code></pre>
+<p><em>Type:</em> list of absolute path</p>
+<p><em>Default:</em> <code>[ ]</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/security/vault.nix"><code>nixos/modules/services/security/vault.nix</code></a></p>
+<h2 id='opt-services.vault.listenerExtraConfig'><a href='options/services-v/#opt-services.vault.listenerExtraConfig'>
+<code>services.vault.listenerExtraConfig</code>
+</a></h2>
+<p>Extra text appended to the listener section.</p>
+<p><em>Type:</em> strings concatenated with &quot;\n&quot;</p>
+<p><em>Default:</em></p>
+<pre><code class="language-nix">''
+  tls_min_version = &quot;tls12&quot;
+''
+</code></pre>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/security/vault.nix"><code>nixos/modules/services/security/vault.nix</code></a></p>
+<h2 id='opt-services.vault.package'><a href='options/services-v/#opt-services.vault.package'>
+<code>services.vault.package</code>
+</a></h2>
+<p>The vault package to use.</p>
+<p><em>Type:</em> package</p>
+<p><em>Default:</em> <code>pkgs.vault</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/security/vault.nix"><code>nixos/modules/services/security/vault.nix</code></a></p>
+<h2 id='opt-services.vault.storageBackend'><a href='options/services-v/#opt-services.vault.storageBackend'>
+<code>services.vault.storageBackend</code>
+</a></h2>
+<p>The name of the type of storage backend</p>
+<p><em>Type:</em> one of &quot;inmem&quot;, &quot;file&quot;, &quot;consul&quot;, &quot;zookeeper&quot;, &quot;s3&quot;, &quot;azure&quot;, &quot;dynamodb&quot;, &quot;etcd&quot;, &quot;mssql&quot;, &quot;mysql&quot;, &quot;postgresql&quot;, &quot;swift&quot;, &quot;gcs&quot;, &quot;raft&quot;</p>
+<p><em>Default:</em> <code>&quot;inmem&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/security/vault.nix"><code>nixos/modules/services/security/vault.nix</code></a></p>
+<h2 id='opt-services.vault.storageConfig'><a href='options/services-v/#opt-services.vault.storageConfig'>
+<code>services.vault.storageConfig</code>
+</a></h2>
+<p>HCL configuration to insert in the storageBackend section.</p>
+<p>Confidential values should not be specified here because this option's
+value is written to the Nix store, which is publicly readable.
+Provide credentials and such in a separate file using
+<a href="options/services-v/#opt-services.vault.extraSettingsPaths">services (V)</a>.</p>
+<p><em>Type:</em> null or strings concatenated with &quot;\n&quot;</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/security/vault.nix"><code>nixos/modules/services/security/vault.nix</code></a></p>
+<h2 id='opt-services.vault.storagePath'><a href='options/services-v/#opt-services.vault.storagePath'>
+<code>services.vault.storagePath</code>
+</a></h2>
+<p>Data directory for file backend</p>
+<p><em>Type:</em> null or absolute path</p>
+<p><em>Default:</em></p>
+<pre><code class="language-nix">if config.services.vault.storageBackend == &quot;file&quot; || cfg.storageBackend == &quot;raft&quot;
+then &quot;/var/lib/vault&quot;
+else null
+</code></pre>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/security/vault.nix"><code>nixos/modules/services/security/vault.nix</code></a></p>
+<h2 id='opt-services.vault.telemetryConfig'><a href='options/services-v/#opt-services.vault.telemetryConfig'>
+<code>services.vault.telemetryConfig</code>
+</a></h2>
+<p>Telemetry configuration</p>
+<p><em>Type:</em> strings concatenated with &quot;\n&quot;</p>
+<p><em>Default:</em> <code>&quot;&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/security/vault.nix"><code>nixos/modules/services/security/vault.nix</code></a></p>
+<h2 id='opt-services.vault.tlsCertFile'><a href='options/services-v/#opt-services.vault.tlsCertFile'>
+<code>services.vault.tlsCertFile</code>
+</a></h2>
+<p>TLS certificate file. TLS will be disabled unless this option is set</p>
+<p><em>Type:</em> null or string</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Example:</em> <code>&quot;/path/to/your/cert.pem&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/security/vault.nix"><code>nixos/modules/services/security/vault.nix</code></a></p>
+<h2 id='opt-services.vault.tlsKeyFile'><a href='options/services-v/#opt-services.vault.tlsKeyFile'>
+<code>services.vault.tlsKeyFile</code>
+</a></h2>
+<p>TLS private key file. TLS will be disabled unless this option is set</p>
+<p><em>Type:</em> null or string</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Example:</em> <code>&quot;/path/to/your/key.pem&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/security/vault.nix"><code>nixos/modules/services/security/vault.nix</code></a></p>
+<h2 id='opt-services.vaultwarden.backupDir'><a href='options/services-v/#opt-services.vaultwarden.backupDir'>
+<code>services.vaultwarden.backupDir</code>
+</a></h2>
+<p>The directory under which vaultwarden will backup its persistent data.</p>
+<p><em>Type:</em> null or string</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Example:</em> <code>&quot;/var/backup/vaultwarden&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/security/vaultwarden/default.nix"><code>nixos/modules/services/security/vaultwarden/default.nix</code></a></p>
+<h2 id='opt-services.vaultwarden.config'><a href='options/services-v/#opt-services.vaultwarden.config'>
+<code>services.vaultwarden.config</code>
+</a></h2>
+<p>The configuration of vaultwarden is done through environment variables,
+therefore it is recommended to use upper snake case (e.g. <code>DISABLE_2FA_REMEMBER</code>).</p>
+<p>However, camel case (e.g. <code>disable2FARemember</code>) is also supported:
+The NixOS module will convert it automatically to
+upper case snake case (e.g. <code>DISABLE_2FA_REMEMBER</code>).
+In this conversion digits (0-9) are handled just like upper case characters,
+so <code>foo2</code> would be converted to <code>FOO_2</code>.
+Names already in this format remain unchanged, so <code>FOO2</code> remains <code>FOO2</code> if passed as such,
+even though <code>foo2</code> would have been converted to <code>FOO_2</code>.
+This allows working around any potential future conflicting naming conventions.</p>
+<p>Based on the attributes passed to this config option an environment file will be generated
+that is passed to vaultwarden's systemd service.</p>
+<p>The available configuration options can be found in
+<a href="https://github.com/dani-garcia/vaultwarden/blob/1.37.5/.env.template">the environment template file</a>.</p>
+<p>See <a href="options/services-v/#opt-services.vaultwarden.environmentFile">services (V)</a> for how
+to set up access to the Admin UI to invite initial users.</p>
+<p><em>Type:</em> attribute set of (null or boolean or signed integer or string)</p>
+<p><em>Default:</em></p>
+<pre><code class="language-nix">{
+  ROCKET_ADDRESS = &quot;::1&quot;;
+  ROCKET_PORT = 8222;
+}
+</code></pre>
+<p><em>Example:</em></p>
+<pre><code class="language-nix">{
+  DOMAIN = &quot;https://bitwarden.example.com&quot;;
+  SIGNUPS_ALLOWED = false;
+
+  # Vaultwarden recommends running behind a reverse proxy, the configureNginx option can be used for that.
+  ROCKET_ADDRESS = &quot;127.0.0.1&quot;;
+  ROCKET_PORT = 8222;
+
+  ROCKET_LOG = &quot;critical&quot;;
+
+  # This example assumes a mailserver running on localhost,
+  # thus without transport encryption.
+  # If you use an external mail server, follow:
+  #   https://github.com/dani-garcia/vaultwarden/wiki/SMTP-configuration
+  SMTP_HOST = &quot;127.0.0.1&quot;;
+  SMTP_PORT = 25;
+  SMTP_SSL = false;
+
+  SMTP_FROM = &quot;admin@bitwarden.example.com&quot;;
+  SMTP_FROM_NAME = &quot;example.com Bitwarden server&quot;;
+}
+</code></pre>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/security/vaultwarden/default.nix"><code>nixos/modules/services/security/vaultwarden/default.nix</code></a></p>
+<h2 id='opt-services.vaultwarden.configureNginx'><a href='options/services-v/#opt-services.vaultwarden.configureNginx'>
+<code>services.vaultwarden.configureNginx</code>
+</a></h2>
+<p>Whether to configure nginx to serve VaultWarden.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/security/vaultwarden/default.nix"><code>nixos/modules/services/security/vaultwarden/default.nix</code></a></p>
+<h2 id='opt-services.vaultwarden.configurePostgres'><a href='options/services-v/#opt-services.vaultwarden.configurePostgres'>
+<code>services.vaultwarden.configurePostgres</code>
+</a></h2>
+<p>Whether to configure a local PostgreSQL server.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/security/vaultwarden/default.nix"><code>nixos/modules/services/security/vaultwarden/default.nix</code></a></p>
+<h2 id='opt-services.vaultwarden.dbBackend'><a href='options/services-v/#opt-services.vaultwarden.dbBackend'>
+<code>services.vaultwarden.dbBackend</code>
+</a></h2>
+<p>Which database backend vaultwarden will be using.</p>
+<p><em>Type:</em> one of &quot;sqlite&quot;, &quot;mysql&quot;, &quot;postgresql&quot;, &quot;sqlite_system&quot;</p>
+<p><em>Default:</em> <code>&quot;sqlite_system&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/security/vaultwarden/default.nix"><code>nixos/modules/services/security/vaultwarden/default.nix</code></a></p>
+<h2 id='opt-services.vaultwarden.domain'><a href='options/services-v/#opt-services.vaultwarden.domain'>
+<code>services.vaultwarden.domain</code>
+</a></h2>
+<p>The domain under which VaultWarden will be reachable.</p>
+<p><em>Type:</em> null or string</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Example:</em> <code>&quot;bitwarden.example.com&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/security/vaultwarden/default.nix"><code>nixos/modules/services/security/vaultwarden/default.nix</code></a></p>
+<h2 id='opt-services.vaultwarden.enable'><a href='options/services-v/#opt-services.vaultwarden.enable'>
+<code>services.vaultwarden.enable</code>
+</a></h2>
+<p>Whether to enable vaultwarden.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Example:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/security/vaultwarden/default.nix"><code>nixos/modules/services/security/vaultwarden/default.nix</code></a></p>
+<h2 id='opt-services.vaultwarden.environmentFile'><a href='options/services-v/#opt-services.vaultwarden.environmentFile'>
+<code>services.vaultwarden.environmentFile</code>
+</a></h2>
+<p>Additional environment file or files as defined in <code>systemd.exec(5)</code>.</p>
+<p>Secrets like <code>ADMIN_TOKEN</code> and <code>SMTP_PASSWORD</code>
+should be passed to the service without adding them to the world-readable Nix store.</p>
+<p>Note that this file needs to be available on the host on which <code>vaultwarden</code> is running.</p>
+<p>As a concrete example, to make the Admin UI available (from which new users can be invited initially),
+the secret <code>ADMIN_TOKEN</code> needs to be defined as described
+<a href="https://github.com/dani-garcia/vaultwarden/wiki/Enabling-admin-page">here</a>:</p>
+<pre><code># Admin secret token, see
+# https://github.com/dani-garcia/vaultwarden/wiki/Enabling-admin-page
+ADMIN_TOKEN=...copy-paste a unique generated secret token here...
+</code></pre>
+<p><em>Type:</em> (list of absolute path) or absolute path convertible to it</p>
+<p><em>Default:</em> <code>[ ]</code></p>
+<p><em>Example:</em> <code>&quot;/var/lib/vaultwarden.env&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/security/vaultwarden/default.nix"><code>nixos/modules/services/security/vaultwarden/default.nix</code></a></p>
+<h2 id='opt-services.vaultwarden.package'><a href='options/services-v/#opt-services.vaultwarden.package'>
+<code>services.vaultwarden.package</code>
+</a></h2>
+<p>The vaultwarden package to use.</p>
+<p><em>Type:</em> package</p>
+<p><em>Default:</em> <code>pkgs.vaultwarden</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/security/vaultwarden/default.nix"><code>nixos/modules/services/security/vaultwarden/default.nix</code></a></p>
+<h2 id='opt-services.vaultwarden.webVaultPackage'><a href='options/services-v/#opt-services.vaultwarden.webVaultPackage'>
+<code>services.vaultwarden.webVaultPackage</code>
+</a></h2>
+<p>The webvault package to use.</p>
+<p><em>Type:</em> package</p>
+<p><em>Default:</em> <code>pkgs.vaultwarden.webvault</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/security/vaultwarden/default.nix"><code>nixos/modules/services/security/vaultwarden/default.nix</code></a></p>
+<h2 id='opt-services.vdirsyncer.enable'><a href='options/services-v/#opt-services.vdirsyncer.enable'>
+<code>services.vdirsyncer.enable</code>
+</a></h2>
+<p>Whether to enable vdirsyncer.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Example:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/vdirsyncer.nix"><code>nixos/modules/services/networking/vdirsyncer.nix</code></a></p>
+<h2 id='opt-services.vdirsyncer.jobs'><a href='options/services-v/#opt-services.vdirsyncer.jobs'>
+<code>services.vdirsyncer.jobs</code>
+</a></h2>
+<p>vdirsyncer job configurations</p>
+<p><em>Type:</em> attribute set of (submodule)</p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/vdirsyncer.nix"><code>nixos/modules/services/networking/vdirsyncer.nix</code></a></p>
+<h2 id='opt-services.vdirsyncer.jobs._name_.additionalGroups'><a href='options/services-v/#opt-services.vdirsyncer.jobs._name_.additionalGroups'>
+<code>services.vdirsyncer.jobs.&lt;name&gt;.additionalGroups</code>
+</a></h2>
+<p>additional groups to add the dynamic user to</p>
+<p><em>Type:</em> list of string</p>
+<p><em>Default:</em> <code>[ ]</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/vdirsyncer.nix"><code>nixos/modules/services/networking/vdirsyncer.nix</code></a></p>
+<h2 id='opt-services.vdirsyncer.jobs._name_.config.general'><a href='options/services-v/#opt-services.vdirsyncer.jobs._name_.config.general'>
+<code>services.vdirsyncer.jobs.&lt;name&gt;.config.general</code>
+</a></h2>
+<p>general configuration</p>
+<p><em>Type:</em> attribute set</p>
+<p><em>Default:</em> <code>{ }</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/vdirsyncer.nix"><code>nixos/modules/services/networking/vdirsyncer.nix</code></a></p>
+<h2 id='opt-services.vdirsyncer.jobs._name_.config.pairs'><a href='options/services-v/#opt-services.vdirsyncer.jobs._name_.config.pairs'>
+<code>services.vdirsyncer.jobs.&lt;name&gt;.config.pairs</code>
+</a></h2>
+<p>vdirsyncer pair configurations</p>
+<p><em>Type:</em> attribute set of (attribute set)</p>
+<p><em>Default:</em> <code>{ }</code></p>
+<p><em>Example:</em></p>
+<pre><code class="language-nix">{
+  my_contacts = {
+    a = &quot;my_cloud_contacts&quot;;
+    b = &quot;my_local_contacts&quot;;
+    collections = [ &quot;from a&quot; ];
+    conflict_resolution = &quot;a wins&quot;;
+    metadata = [ &quot;color&quot; &quot;displayname&quot; ];
+  };
+};
+</code></pre>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/vdirsyncer.nix"><code>nixos/modules/services/networking/vdirsyncer.nix</code></a></p>
+<h2 id='opt-services.vdirsyncer.jobs._name_.config.statusPath'><a href='options/services-v/#opt-services.vdirsyncer.jobs._name_.config.statusPath'>
+<code>services.vdirsyncer.jobs.&lt;name&gt;.config.statusPath</code>
+</a></h2>
+<p>vdirsyncer's status path</p>
+<p><em>Type:</em> null or string</p>
+<p><em>Default:</em> <code>/var/lib/vdirsyncer/${attrName}</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/vdirsyncer.nix"><code>nixos/modules/services/networking/vdirsyncer.nix</code></a></p>
+<h2 id='opt-services.vdirsyncer.jobs._name_.config.storages'><a href='options/services-v/#opt-services.vdirsyncer.jobs._name_.config.storages'>
+<code>services.vdirsyncer.jobs.&lt;name&gt;.config.storages</code>
+</a></h2>
+<p>vdirsyncer storage configurations</p>
+<p><em>Type:</em> attribute set of (attribute set)</p>
+<p><em>Default:</em> <code>{ }</code></p>
+<p><em>Example:</em></p>
+<pre><code class="language-nix">{
+  my_cloud_contacts = {
+    type = &quot;carddav&quot;;
+    url = &quot;https://dav.example.com/&quot;;
+    read_only = true;
+    username = &quot;user&quot;;
+    &quot;password.fetch&quot; = [ &quot;command&quot; &quot;cat&quot; &quot;/etc/vdirsyncer/cloud.passwd&quot; ];
+  };
+  my_local_contacts = {
+    type = &quot;carddav&quot;;
+    url = &quot;https://localhost/&quot;;
+    username = &quot;user&quot;;
+    &quot;password.fetch&quot; = [ &quot;command&quot; &quot;cat&quot; &quot;/etc/vdirsyncer/local.passwd&quot; ];
+  };
+}
+</code></pre>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/vdirsyncer.nix"><code>nixos/modules/services/networking/vdirsyncer.nix</code></a></p>
+<h2 id='opt-services.vdirsyncer.jobs._name_.configFile'><a href='options/services-v/#opt-services.vdirsyncer.jobs._name_.configFile'>
+<code>services.vdirsyncer.jobs.&lt;name&gt;.configFile</code>
+</a></h2>
+<p>existing configuration file</p>
+<p><em>Type:</em> null or absolute path</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/vdirsyncer.nix"><code>nixos/modules/services/networking/vdirsyncer.nix</code></a></p>
+<h2 id='opt-services.vdirsyncer.jobs._name_.enable'><a href='options/services-v/#opt-services.vdirsyncer.jobs._name_.enable'>
+<code>services.vdirsyncer.jobs.&lt;name&gt;.enable</code>
+</a></h2>
+<p>Whether to enable this vdirsyncer job.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>true</code></p>
+<p><em>Example:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/vdirsyncer.nix"><code>nixos/modules/services/networking/vdirsyncer.nix</code></a></p>
+<h2 id='opt-services.vdirsyncer.jobs._name_.forceDiscover'><a href='options/services-v/#opt-services.vdirsyncer.jobs._name_.forceDiscover'>
+<code>services.vdirsyncer.jobs.&lt;name&gt;.forceDiscover</code>
+</a></h2>
+<p>Run <code>yes | vdirsyncer discover</code> prior to <code>vdirsyncer sync</code></p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/vdirsyncer.nix"><code>nixos/modules/services/networking/vdirsyncer.nix</code></a></p>
+<h2 id='opt-services.vdirsyncer.jobs._name_.group'><a href='options/services-v/#opt-services.vdirsyncer.jobs._name_.group'>
+<code>services.vdirsyncer.jobs.&lt;name&gt;.group</code>
+</a></h2>
+<p>group to run vdirsyncer as</p>
+<p><em>Type:</em> null or string</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/vdirsyncer.nix"><code>nixos/modules/services/networking/vdirsyncer.nix</code></a></p>
+<h2 id='opt-services.vdirsyncer.jobs._name_.timerConfig'><a href='options/services-v/#opt-services.vdirsyncer.jobs._name_.timerConfig'>
+<code>services.vdirsyncer.jobs.&lt;name&gt;.timerConfig</code>
+</a></h2>
+<p>systemd timer configuration</p>
+<p><em>Type:</em> attribute set</p>
+<p><em>Default:</em></p>
+<pre><code class="language-nix">{
+  OnBootSec = &quot;1h&quot;;
+  OnUnitActiveSec = &quot;6h&quot;;
+}
+</code></pre>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/vdirsyncer.nix"><code>nixos/modules/services/networking/vdirsyncer.nix</code></a></p>
+<h2 id='opt-services.vdirsyncer.jobs._name_.user'><a href='options/services-v/#opt-services.vdirsyncer.jobs._name_.user'>
+<code>services.vdirsyncer.jobs.&lt;name&gt;.user</code>
+</a></h2>
+<p>User account to run vdirsyncer as, otherwise as a systemd
+dynamic user</p>
+<p><em>Type:</em> null or string</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/vdirsyncer.nix"><code>nixos/modules/services/networking/vdirsyncer.nix</code></a></p>
+<h2 id='opt-services.vdirsyncer.package'><a href='options/services-v/#opt-services.vdirsyncer.package'>
+<code>services.vdirsyncer.package</code>
+</a></h2>
+<p>The vdirsyncer package to use.</p>
+<p><em>Type:</em> package</p>
+<p><em>Default:</em> <code>pkgs.vdirsyncer</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/vdirsyncer.nix"><code>nixos/modules/services/networking/vdirsyncer.nix</code></a></p>
+<h2 id='opt-services.vdr.enable'><a href='options/services-v/#opt-services.vdr.enable'>
+<code>services.vdr.enable</code>
+</a></h2>
+<p>Whether to enable VDR, a video disk recorder.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Example:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/hardware/vdr.nix"><code>nixos/modules/services/hardware/vdr.nix</code></a></p>
+<h2 id='opt-services.vdr.enableLirc'><a href='options/services-v/#opt-services.vdr.enableLirc'>
+<code>services.vdr.enableLirc</code>
+</a></h2>
+<p>Whether to enable LIRC.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Example:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/hardware/vdr.nix"><code>nixos/modules/services/hardware/vdr.nix</code></a></p>
+<h2 id='opt-services.vdr.extraArguments'><a href='options/services-v/#opt-services.vdr.extraArguments'>
+<code>services.vdr.extraArguments</code>
+</a></h2>
+<p>Additional command line arguments to pass to VDR.</p>
+<p><em>Type:</em> list of string</p>
+<p><em>Default:</em> <code>[ ]</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/hardware/vdr.nix"><code>nixos/modules/services/hardware/vdr.nix</code></a></p>
+<h2 id='opt-services.vdr.group'><a href='options/services-v/#opt-services.vdr.group'>
+<code>services.vdr.group</code>
+</a></h2>
+<p>Group under which the VDRvdr service runs.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;vdr&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/hardware/vdr.nix"><code>nixos/modules/services/hardware/vdr.nix</code></a></p>
+<h2 id='opt-services.vdr.package'><a href='options/services-v/#opt-services.vdr.package'>
+<code>services.vdr.package</code>
+</a></h2>
+<p>The vdr package to use.</p>
+<p><em>Type:</em> package</p>
+<p><em>Default:</em> <code>pkgs.vdr</code></p>
+<p><em>Example:</em> <code>wrapVdr.override { plugins = with pkgs.vdrPlugins; [ hello ]; }</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/hardware/vdr.nix"><code>nixos/modules/services/hardware/vdr.nix</code></a></p>
+<h2 id='opt-services.vdr.user'><a href='options/services-v/#opt-services.vdr.user'>
+<code>services.vdr.user</code>
+</a></h2>
+<p>User under which the VDR service runs.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;vdr&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/hardware/vdr.nix"><code>nixos/modules/services/hardware/vdr.nix</code></a></p>
+<h2 id='opt-services.vdr.videoDir'><a href='options/services-v/#opt-services.vdr.videoDir'>
+<code>services.vdr.videoDir</code>
+</a></h2>
+<p>Recording directory</p>
+<p><em>Type:</em> absolute path</p>
+<p><em>Default:</em> <code>&quot;/srv/vdr/video&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/hardware/vdr.nix"><code>nixos/modules/services/hardware/vdr.nix</code></a></p>
+<h2 id='opt-services.vector.enable'><a href='options/services-v/#opt-services.vector.enable'>
+<code>services.vector.enable</code>
+</a></h2>
+<p>Whether to enable Vector, a high-performance observability data pipeline.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Example:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/logging/vector.nix"><code>nixos/modules/services/logging/vector.nix</code></a></p>
+<h2 id='opt-services.vector.gracefulShutdownLimitSecs'><a href='options/services-v/#opt-services.vector.gracefulShutdownLimitSecs'>
+<code>services.vector.gracefulShutdownLimitSecs</code>
+</a></h2>
+<p>Set the duration in seconds to wait for graceful shutdown after SIGINT or SIGTERM are received.
+After the duration has passed, Vector will force shutdown.</p>
+<p><em>Type:</em> positive integer, meaning &gt;0</p>
+<p><em>Default:</em> <code>60</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/logging/vector.nix"><code>nixos/modules/services/logging/vector.nix</code></a></p>
+<h2 id='opt-services.vector.journaldAccess'><a href='options/services-v/#opt-services.vector.journaldAccess'>
+<code>services.vector.journaldAccess</code>
+</a></h2>
+<p>Enable Vector to access journald.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/logging/vector.nix"><code>nixos/modules/services/logging/vector.nix</code></a></p>
+<h2 id='opt-services.vector.package'><a href='options/services-v/#opt-services.vector.package'>
+<code>services.vector.package</code>
+</a></h2>
+<p>The vector package to use.</p>
+<p><em>Type:</em> package</p>
+<p><em>Default:</em> <code>pkgs.vector</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/logging/vector.nix"><code>nixos/modules/services/logging/vector.nix</code></a></p>
+<h2 id='opt-services.vector.settings'><a href='options/services-v/#opt-services.vector.settings'>
+<code>services.vector.settings</code>
+</a></h2>
+<p>Specify the configuration for Vector in Nix.</p>
+<p><em>Type:</em> JSON value</p>
+<p><em>Default:</em> <code>{ }</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/logging/vector.nix"><code>nixos/modules/services/logging/vector.nix</code></a></p>
+<h2 id='opt-services.vector.validateConfig'><a href='options/services-v/#opt-services.vector.validateConfig'>
+<code>services.vector.validateConfig</code>
+</a></h2>
+<p>Enable the checking of the vector config during build time. This should be disabled when interpolating environment variables.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/logging/vector.nix"><code>nixos/modules/services/logging/vector.nix</code></a></p>
+<h2 id='opt-services.veilid.enable'><a href='options/services-v/#opt-services.veilid.enable'>
+<code>services.veilid.enable</code>
+</a></h2>
+<p>Whether to enable Veilid Headless Node.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Example:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/veilid.nix"><code>nixos/modules/services/networking/veilid.nix</code></a></p>
+<h2 id='opt-services.veilid.openFirewall'><a href='options/services-v/#opt-services.veilid.openFirewall'>
+<code>services.veilid.openFirewall</code>
+</a></h2>
+<p>Whether to open firewall on ports 5150/tcp, 5150/udp</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/veilid.nix"><code>nixos/modules/services/networking/veilid.nix</code></a></p>
+<h2 id='opt-services.veilid.settings'><a href='options/services-v/#opt-services.veilid.settings'>
+<code>services.veilid.settings</code>
+</a></h2>
+<p>Build veilid-server.conf with nix expression.
+Check <a href="https://veilid.gitlab.io/developer-book/admin/config.html#configuration-keys">Configuration Keys</a>.</p>
+<p><em>Type:</em> open submodule of (YAML 1.1 value)</p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/veilid.nix"><code>nixos/modules/services/networking/veilid.nix</code></a></p>
+<h2 id='opt-services.veilid.settings.client_api.ipc_directory'><a href='options/services-v/#opt-services.veilid.settings.client_api.ipc_directory'>
+<code>services.veilid.settings.client_api.ipc_directory</code>
+</a></h2>
+<p>IPC directory where file sockets are stored.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;/var/db/veilid-server/ipc&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/veilid.nix"><code>nixos/modules/services/networking/veilid.nix</code></a></p>
+<h2 id='opt-services.veilid.settings.client_api.ipc_enabled'><a href='options/services-v/#opt-services.veilid.settings.client_api.ipc_enabled'>
+<code>services.veilid.settings.client_api.ipc_enabled</code>
+</a></h2>
+<p>veilid-server will respond to Python and other JSON client requests.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/veilid.nix"><code>nixos/modules/services/networking/veilid.nix</code></a></p>
+<h2 id='opt-services.veilid.settings.core.block_store.directory'><a href='options/services-v/#opt-services.veilid.settings.core.block_store.directory'>
+<code>services.veilid.settings.core.block_store.directory</code>
+</a></h2>
+<p>The filesystem directory to store blocks for the block store.</p>
+<p><em>Type:</em> null or string</p>
+<p><em>Default:</em> <code>&quot;/var/db/veilid-server/block_store&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/veilid.nix"><code>nixos/modules/services/networking/veilid.nix</code></a></p>
+<h2 id='opt-services.veilid.settings.core.capabilities.disable'><a href='options/services-v/#opt-services.veilid.settings.core.capabilities.disable'>
+<code>services.veilid.settings.core.capabilities.disable</code>
+</a></h2>
+<p>A list of capabilities to disable (for example, DHTV to say you cannot store DHT information).</p>
+<p><em>Type:</em> list of string</p>
+<p><em>Default:</em> <code>[ ]</code></p>
+<p><em>Example:</em></p>
+<pre><code class="language-nix">[
+  &quot;APPM&quot;
+]
+</code></pre>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/veilid.nix"><code>nixos/modules/services/networking/veilid.nix</code></a></p>
+<h2 id='opt-services.veilid.settings.core.network.detect_address_changes'><a href='options/services-v/#opt-services.veilid.settings.core.network.detect_address_changes'>
+<code>services.veilid.settings.core.network.detect_address_changes</code>
+</a></h2>
+<p>Should veilid-core detect and notify on network address changes?</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/veilid.nix"><code>nixos/modules/services/networking/veilid.nix</code></a></p>
+<h2 id='opt-services.veilid.settings.core.network.dht.min_peer_count'><a href='options/services-v/#opt-services.veilid.settings.core.network.dht.min_peer_count'>
+<code>services.veilid.settings.core.network.dht.min_peer_count</code>
+</a></h2>
+<p>Minimum number of nodes to keep in the peer table.</p>
+<p><em>Type:</em> null or signed integer or floating point number</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/veilid.nix"><code>nixos/modules/services/networking/veilid.nix</code></a></p>
+<h2 id='opt-services.veilid.settings.core.network.routing_table.bootstrap'><a href='options/services-v/#opt-services.veilid.settings.core.network.routing_table.bootstrap'>
+<code>services.veilid.settings.core.network.routing_table.bootstrap</code>
+</a></h2>
+<p>Host name of existing well-known Veilid bootstrap servers for the network to connect to.</p>
+<p><em>Type:</em> null or (list of string)</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/veilid.nix"><code>nixos/modules/services/networking/veilid.nix</code></a></p>
+<h2 id='opt-services.veilid.settings.core.network.routing_table.public_keys'><a href='options/services-v/#opt-services.veilid.settings.core.network.routing_table.public_keys'>
+<code>services.veilid.settings.core.network.routing_table.public_keys</code>
+</a></h2>
+<p>Base64-encoded public key for the node, used as the node's ID.</p>
+<p><em>Type:</em> null or string</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/veilid.nix"><code>nixos/modules/services/networking/veilid.nix</code></a></p>
+<h2 id='opt-services.veilid.settings.core.network.upnp'><a href='options/services-v/#opt-services.veilid.settings.core.network.upnp'>
+<code>services.veilid.settings.core.network.upnp</code>
+</a></h2>
+<p>Should the app try to improve its incoming network connectivity using UPnP?</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/veilid.nix"><code>nixos/modules/services/networking/veilid.nix</code></a></p>
+<h2 id='opt-services.veilid.settings.core.protected_store.allow_insecure_fallback'><a href='options/services-v/#opt-services.veilid.settings.core.protected_store.allow_insecure_fallback'>
+<code>services.veilid.settings.core.protected_store.allow_insecure_fallback</code>
+</a></h2>
+<p>If we can't use system-provided secure storage, should we proceed anyway?</p>
+<p><em>Type:</em> null or boolean</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/veilid.nix"><code>nixos/modules/services/networking/veilid.nix</code></a></p>
+<h2 id='opt-services.veilid.settings.core.protected_store.always_use_insecure_storage'><a href='options/services-v/#opt-services.veilid.settings.core.protected_store.always_use_insecure_storage'>
+<code>services.veilid.settings.core.protected_store.always_use_insecure_storage</code>
+</a></h2>
+<p>Should we bypass any attempt to use system-provided secure storage?</p>
+<p><em>Type:</em> null or boolean</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/veilid.nix"><code>nixos/modules/services/networking/veilid.nix</code></a></p>
+<h2 id='opt-services.veilid.settings.core.protected_store.directory'><a href='options/services-v/#opt-services.veilid.settings.core.protected_store.directory'>
+<code>services.veilid.settings.core.protected_store.directory</code>
+</a></h2>
+<p>The filesystem directory to store your protected store in.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;/var/db/veilid-server/protected_store&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/veilid.nix"><code>nixos/modules/services/networking/veilid.nix</code></a></p>
+<h2 id='opt-services.veilid.settings.core.table_store.directory'><a href='options/services-v/#opt-services.veilid.settings.core.table_store.directory'>
+<code>services.veilid.settings.core.table_store.directory</code>
+</a></h2>
+<p>The filesystem directory to store your table store within.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;/var/db/veilid-server/table_store&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/veilid.nix"><code>nixos/modules/services/networking/veilid.nix</code></a></p>
+<h2 id='opt-services.veilid.settings.logging.api.enabled'><a href='options/services-v/#opt-services.veilid.settings.logging.api.enabled'>
+<code>services.veilid.settings.logging.api.enabled</code>
+</a></h2>
+<p>Events of type 'api' will be logged.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/veilid.nix"><code>nixos/modules/services/networking/veilid.nix</code></a></p>
+<h2 id='opt-services.veilid.settings.logging.api.level'><a href='options/services-v/#opt-services.veilid.settings.logging.api.level'>
+<code>services.veilid.settings.logging.api.level</code>
+</a></h2>
+<p>The minimum priority of api events to be logged.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;info&quot;</code></p>
+<p><em>Example:</em> <code>&quot;debug&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/veilid.nix"><code>nixos/modules/services/networking/veilid.nix</code></a></p>
+<h2 id='opt-services.veilid.settings.logging.system.enabled'><a href='options/services-v/#opt-services.veilid.settings.logging.system.enabled'>
+<code>services.veilid.settings.logging.system.enabled</code>
+</a></h2>
+<p>Events of type 'system' will be logged.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/veilid.nix"><code>nixos/modules/services/networking/veilid.nix</code></a></p>
+<h2 id='opt-services.veilid.settings.logging.system.level'><a href='options/services-v/#opt-services.veilid.settings.logging.system.level'>
+<code>services.veilid.settings.logging.system.level</code>
+</a></h2>
+<p>The minimum priority of system events to be logged.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;info&quot;</code></p>
+<p><em>Example:</em> <code>&quot;debug&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/veilid.nix"><code>nixos/modules/services/networking/veilid.nix</code></a></p>
+<h2 id='opt-services.veilid.settings.logging.terminal.enabled'><a href='options/services-v/#opt-services.veilid.settings.logging.terminal.enabled'>
+<code>services.veilid.settings.logging.terminal.enabled</code>
+</a></h2>
+<p>Events of type 'terminal' will be logged.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/veilid.nix"><code>nixos/modules/services/networking/veilid.nix</code></a></p>
+<h2 id='opt-services.veilid.settings.logging.terminal.level'><a href='options/services-v/#opt-services.veilid.settings.logging.terminal.level'>
+<code>services.veilid.settings.logging.terminal.level</code>
+</a></h2>
+<p>The minimum priority of terminal events to be logged.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;info&quot;</code></p>
+<p><em>Example:</em> <code>&quot;debug&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/veilid.nix"><code>nixos/modules/services/networking/veilid.nix</code></a></p>
+<h2 id='opt-services.vellum.enable'><a href='options/services-v/#opt-services.vellum.enable'>
+<code>services.vellum.enable</code>
+</a></h2>
+<p>Whether to enable vellum, a live screen annotation overlay for Wayland.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Example:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/wayland/vellum.nix"><code>nixos/modules/services/wayland/vellum.nix</code></a></p>
+<h2 id='opt-services.vellum.package'><a href='options/services-v/#opt-services.vellum.package'>
+<code>services.vellum.package</code>
+</a></h2>
+<p>The vellum package to use.</p>
+<p><em>Type:</em> package</p>
+<p><em>Default:</em> <code>pkgs.vellum</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/wayland/vellum.nix"><code>nixos/modules/services/wayland/vellum.nix</code></a></p>
+<h2 id='opt-services.vellum.settings'><a href='options/services-v/#opt-services.vellum.settings'>
+<code>services.vellum.settings</code>
+</a></h2>
+<p>Configuration options for vellum.
+See available options at <a href="https://github.com/greyxp1/vellum/blob/master/default-config.toml">https://github.com/greyxp1/vellum/blob/master/default-config.toml</a>.</p>
+<p><em>Type:</em> TOML value</p>
+<p><em>Default:</em> <code>{ }</code></p>
+<p><em>Example:</em></p>
+<pre><code class="language-nix">{
+  default_fill_shapes = true;
+  default_tool = &quot;arrow&quot;;
+  feedback_duration_ms = 250;
+  palette = [
+    &quot;#FF6B6B&quot;
+    &quot;#FFD93D&quot;
+    &quot;#6BCB77&quot;
+    &quot;#4D96FF&quot;
+    &quot;#845EC2&quot;
+  ];
+  remember_last_tool = false;
+  tools = {
+    pen = {
+      opacity = 0.75;
+    };
+  };
+}
+</code></pre>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/wayland/vellum.nix"><code>nixos/modules/services/wayland/vellum.nix</code></a></p>
+<h2 id='opt-services.victorialogs.basicAuthPasswordFile'><a href='options/services-v/#opt-services.victorialogs.basicAuthPasswordFile'>
+<code>services.victorialogs.basicAuthPasswordFile</code>
+</a></h2>
+<p>File that contains the Basic Auth password used to protect VictoriaLogs instance by authorization</p>
+<p><em>Type:</em> null or string</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/databases/victorialogs.nix"><code>nixos/modules/services/databases/victorialogs.nix</code></a></p>
+<h2 id='opt-services.victorialogs.basicAuthUsername'><a href='options/services-v/#opt-services.victorialogs.basicAuthUsername'>
+<code>services.victorialogs.basicAuthUsername</code>
+</a></h2>
+<p>Basic Auth username used to protect VictoriaLogs instance by authorization</p>
+<p><em>Type:</em> null or string</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/databases/victorialogs.nix"><code>nixos/modules/services/databases/victorialogs.nix</code></a></p>
+<h2 id='opt-services.victorialogs.enable'><a href='options/services-v/#opt-services.victorialogs.enable'>
+<code>services.victorialogs.enable</code>
+</a></h2>
+<p>Whether to enable VictoriaLogs is an open source user-friendly database for logs from VictoriaMetrics.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Example:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/databases/victorialogs.nix"><code>nixos/modules/services/databases/victorialogs.nix</code></a></p>
+<h2 id='opt-services.victorialogs.extraOptions'><a href='options/services-v/#opt-services.victorialogs.extraOptions'>
+<code>services.victorialogs.extraOptions</code>
+</a></h2>
+<p>Extra options to pass to VictoriaLogs. See <code>victoria-logs -help</code> for
+possible options.</p>
+<p><em>Type:</em> list of string</p>
+<p><em>Default:</em> <code>[ ]</code></p>
+<p><em>Example:</em></p>
+<pre><code class="language-nix">[
+  &quot;-loggerLevel=WARN&quot;
+]
+</code></pre>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/databases/victorialogs.nix"><code>nixos/modules/services/databases/victorialogs.nix</code></a></p>
+<h2 id='opt-services.victorialogs.listenAddress'><a href='options/services-v/#opt-services.victorialogs.listenAddress'>
+<code>services.victorialogs.listenAddress</code>
+</a></h2>
+<p>TCP address to listen for incoming http requests.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;:9428&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/databases/victorialogs.nix"><code>nixos/modules/services/databases/victorialogs.nix</code></a></p>
+<h2 id='opt-services.victorialogs.package'><a href='options/services-v/#opt-services.victorialogs.package'>
+<code>services.victorialogs.package</code>
+</a></h2>
+<p>The victorialogs package to use.</p>
+<p><em>Type:</em> package</p>
+<p><em>Default:</em> <code>pkgs.victorialogs</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/databases/victorialogs.nix"><code>nixos/modules/services/databases/victorialogs.nix</code></a></p>
+<h2 id='opt-services.victorialogs.stateDir'><a href='options/services-v/#opt-services.victorialogs.stateDir'>
+<code>services.victorialogs.stateDir</code>
+</a></h2>
+<p>Directory below <code>/var/lib</code> to store VictoriaLogs data.
+This directory will be created automatically using systemd's StateDirectory mechanism.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;victorialogs&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/databases/victorialogs.nix"><code>nixos/modules/services/databases/victorialogs.nix</code></a></p>
+<h2 id='opt-services.victoriametrics.basicAuthPasswordFile'><a href='options/services-v/#opt-services.victoriametrics.basicAuthPasswordFile'>
+<code>services.victoriametrics.basicAuthPasswordFile</code>
+</a></h2>
+<p>File that contains the Basic Auth password used to protect VictoriaMetrics instance by authorization</p>
+<p><em>Type:</em> null or absolute path</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/databases/victoriametrics.nix"><code>nixos/modules/services/databases/victoriametrics.nix</code></a></p>
+<h2 id='opt-services.victoriametrics.basicAuthUsername'><a href='options/services-v/#opt-services.victoriametrics.basicAuthUsername'>
+<code>services.victoriametrics.basicAuthUsername</code>
+</a></h2>
+<p>Basic Auth username used to protect VictoriaMetrics instance by authorization</p>
+<p><em>Type:</em> null or string</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/databases/victoriametrics.nix"><code>nixos/modules/services/databases/victoriametrics.nix</code></a></p>
+<h2 id='opt-services.victoriametrics.checkConfig'><a href='options/services-v/#opt-services.victoriametrics.checkConfig'>
+<code>services.victoriametrics.checkConfig</code>
+</a></h2>
+<p>Check configuration.</p>
+<p>If you use credentials stored in external files (<code>environmentFile</code>, etc),
+they will not be visible  and it will report errors, despite a correct configuration.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/databases/victoriametrics.nix"><code>nixos/modules/services/databases/victoriametrics.nix</code></a></p>
+<h2 id='opt-services.victoriametrics.enable'><a href='options/services-v/#opt-services.victoriametrics.enable'>
+<code>services.victoriametrics.enable</code>
+</a></h2>
+<p>Whether to enable VictoriaMetrics in single-node mode.</p>
+<p>VictoriaMetrics is a fast, cost-effective and scalable monitoring solution and time series database.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/databases/victoriametrics.nix"><code>nixos/modules/services/databases/victoriametrics.nix</code></a></p>
+<h2 id='opt-services.victoriametrics.extraOptions'><a href='options/services-v/#opt-services.victoriametrics.extraOptions'>
+<code>services.victoriametrics.extraOptions</code>
+</a></h2>
+<p>Extra options to pass to VictoriaMetrics. See the docs:
+<a href="https://docs.victoriametrics.com/single-server-victoriametrics/#list-of-command-line-flags">https://docs.victoriametrics.com/single-server-victoriametrics/#list-of-command-line-flags</a>
+or <code>victoriametrics -help</code> for more information.</p>
+<p><em>Type:</em> list of string</p>
+<p><em>Default:</em> <code>[ ]</code></p>
+<p><em>Example:</em></p>
+<pre><code class="language-nix">[
+  &quot;-loggerLevel=WARN&quot;
+]
+</code></pre>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/databases/victoriametrics.nix"><code>nixos/modules/services/databases/victoriametrics.nix</code></a></p>
+<h2 id='opt-services.victoriametrics.listenAddress'><a href='options/services-v/#opt-services.victoriametrics.listenAddress'>
+<code>services.victoriametrics.listenAddress</code>
+</a></h2>
+<p>TCP address to listen for incoming http requests.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;:8428&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/databases/victoriametrics.nix"><code>nixos/modules/services/databases/victoriametrics.nix</code></a></p>
+<h2 id='opt-services.victoriametrics.package'><a href='options/services-v/#opt-services.victoriametrics.package'>
+<code>services.victoriametrics.package</code>
+</a></h2>
+<p>The victoriametrics package to use.</p>
+<p><em>Type:</em> package</p>
+<p><em>Default:</em> <code>pkgs.victoriametrics</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/databases/victoriametrics.nix"><code>nixos/modules/services/databases/victoriametrics.nix</code></a></p>
+<h2 id='opt-services.victoriametrics.prometheusConfig'><a href='options/services-v/#opt-services.victoriametrics.prometheusConfig'>
+<code>services.victoriametrics.prometheusConfig</code>
+</a></h2>
+<p>Config for prometheus style metrics.
+See the docs: <a href="https://docs.victoriametrics.com/vmagent/#how-to-collect-metrics-in-prometheus-format">https://docs.victoriametrics.com/vmagent/#how-to-collect-metrics-in-prometheus-format</a>
+for more information.</p>
+<p><em>Type:</em> open submodule of (YAML 1.1 value)</p>
+<p><em>Default:</em> <code>{ }</code></p>
+<p><em>Example:</em></p>
+<pre><code class="language-nix">{
+  scrape_configs = [
+    {
+      job_name = &quot;postgres-exporter&quot;;
+      metrics_path = &quot;/metrics&quot;;
+      static_configs = [
+        {
+          targets = [&quot;1.2.3.4:9187&quot;];
+          labels.type = &quot;database&quot;;
+        }
+      ];
+    }
+    {
+      job_name = &quot;node-exporter&quot;;
+      metrics_path = &quot;/metrics&quot;;
+      static_configs = [
+        {
+          targets = [&quot;1.2.3.4:9100&quot;];
+          labels.type = &quot;node&quot;;
+        }
+        {
+          targets = [&quot;5.6.7.8:9100&quot;];
+          labels.type = &quot;node&quot;;
+        }
+      ];
+    }
+  ];
+}
+</code></pre>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/databases/victoriametrics.nix"><code>nixos/modules/services/databases/victoriametrics.nix</code></a></p>
+<h2 id='opt-services.victoriametrics.retentionPeriod'><a href='options/services-v/#opt-services.victoriametrics.retentionPeriod'>
+<code>services.victoriametrics.retentionPeriod</code>
+</a></h2>
+<p>How long to retain samples in storage.
+The minimum retentionPeriod is 24h or 1d. See also -retentionFilter
+The following optional suffixes are supported: s (second), h (hour), d (day), w (week), y (year).
+If suffix isn't set, then the duration is counted in months (default 1)</p>
+<p><em>Type:</em> null or string</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Example:</em> <code>&quot;15d&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/databases/victoriametrics.nix"><code>nixos/modules/services/databases/victoriametrics.nix</code></a></p>
+<h2 id='opt-services.victoriametrics.stateDir'><a href='options/services-v/#opt-services.victoriametrics.stateDir'>
+<code>services.victoriametrics.stateDir</code>
+</a></h2>
+<p>Directory below <code>/var/lib</code> to store VictoriaMetrics metrics data.
+This directory will be created automatically using systemd's StateDirectory mechanism.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;victoriametrics&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/databases/victoriametrics.nix"><code>nixos/modules/services/databases/victoriametrics.nix</code></a></p>
+<h2 id='opt-services.victoriatraces.basicAuthPasswordFile'><a href='options/services-v/#opt-services.victoriatraces.basicAuthPasswordFile'>
+<code>services.victoriatraces.basicAuthPasswordFile</code>
+</a></h2>
+<p>File that contains the Basic Auth password used to protect VictoriaTraces instance by authorization</p>
+<p><em>Type:</em> null or string</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/databases/victoriatraces.nix"><code>nixos/modules/services/databases/victoriatraces.nix</code></a></p>
+<h2 id='opt-services.victoriatraces.basicAuthUsername'><a href='options/services-v/#opt-services.victoriatraces.basicAuthUsername'>
+<code>services.victoriatraces.basicAuthUsername</code>
+</a></h2>
+<p>Basic Auth username used to protect VictoriaTraces instance by authorization</p>
+<p><em>Type:</em> null or string</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/databases/victoriatraces.nix"><code>nixos/modules/services/databases/victoriatraces.nix</code></a></p>
+<h2 id='opt-services.victoriatraces.enable'><a href='options/services-v/#opt-services.victoriatraces.enable'>
+<code>services.victoriatraces.enable</code>
+</a></h2>
+<p>Whether to enable VictoriaTraces is an open source distributed traces storage and query engine from VictoriaMetrics.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Example:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/databases/victoriatraces.nix"><code>nixos/modules/services/databases/victoriatraces.nix</code></a></p>
+<h2 id='opt-services.victoriatraces.extraOptions'><a href='options/services-v/#opt-services.victoriatraces.extraOptions'>
+<code>services.victoriatraces.extraOptions</code>
+</a></h2>
+<p>Extra options to pass to VictoriaTraces. See <code>victoria-traces -help</code> for
+possible options.</p>
+<p><em>Type:</em> list of string</p>
+<p><em>Default:</em> <code>[ ]</code></p>
+<p><em>Example:</em></p>
+<pre><code class="language-nix">[
+  &quot;-loggerLevel=WARN&quot;
+  &quot;-retention.maxDiskSpaceUsageBytes=1073741824&quot;
+]
+</code></pre>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/databases/victoriatraces.nix"><code>nixos/modules/services/databases/victoriatraces.nix</code></a></p>
+<h2 id='opt-services.victoriatraces.listenAddress'><a href='options/services-v/#opt-services.victoriatraces.listenAddress'>
+<code>services.victoriatraces.listenAddress</code>
+</a></h2>
+<p>TCP address to listen for incoming http requests.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;:10428&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/databases/victoriatraces.nix"><code>nixos/modules/services/databases/victoriatraces.nix</code></a></p>
+<h2 id='opt-services.victoriatraces.package'><a href='options/services-v/#opt-services.victoriatraces.package'>
+<code>services.victoriatraces.package</code>
+</a></h2>
+<p>The victoriatraces package to use.</p>
+<p><em>Type:</em> package</p>
+<p><em>Default:</em> <code>pkgs.victoriatraces</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/databases/victoriatraces.nix"><code>nixos/modules/services/databases/victoriatraces.nix</code></a></p>
+<h2 id='opt-services.victoriatraces.retentionPeriod'><a href='options/services-v/#opt-services.victoriatraces.retentionPeriod'>
+<code>services.victoriatraces.retentionPeriod</code>
+</a></h2>
+<p>Retention period for trace data. Data older than retentionPeriod is automatically deleted.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;7d&quot;</code></p>
+<p><em>Example:</em> <code>&quot;30d&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/databases/victoriatraces.nix"><code>nixos/modules/services/databases/victoriatraces.nix</code></a></p>
+<h2 id='opt-services.victoriatraces.stateDir'><a href='options/services-v/#opt-services.victoriatraces.stateDir'>
+<code>services.victoriatraces.stateDir</code>
+</a></h2>
+<p>Directory below <code>/var/lib</code> to store VictoriaTraces data.
+This directory will be created automatically using systemd's StateDirectory mechanism.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;victoriatraces&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/databases/victoriatraces.nix"><code>nixos/modules/services/databases/victoriatraces.nix</code></a></p>
+<h2 id='opt-services.vikunja.address'><a href='options/services-v/#opt-services.vikunja.address'>
+<code>services.vikunja.address</code>
+</a></h2>
+<p>The IP address to bind to.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/web-apps/vikunja.nix"><code>nixos/modules/services/web-apps/vikunja.nix</code></a></p>
+<h2 id='opt-services.vikunja.database.database'><a href='options/services-v/#opt-services.vikunja.database.database'>
+<code>services.vikunja.database.database</code>
+</a></h2>
+<p>Database name.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;vikunja&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/web-apps/vikunja.nix"><code>nixos/modules/services/web-apps/vikunja.nix</code></a></p>
+<h2 id='opt-services.vikunja.database.host'><a href='options/services-v/#opt-services.vikunja.database.host'>
+<code>services.vikunja.database.host</code>
+</a></h2>
+<p>Database host address. Can also be a socket.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;localhost&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/web-apps/vikunja.nix"><code>nixos/modules/services/web-apps/vikunja.nix</code></a></p>
+<h2 id='opt-services.vikunja.database.path'><a href='options/services-v/#opt-services.vikunja.database.path'>
+<code>services.vikunja.database.path</code>
+</a></h2>
+<p>Path to the sqlite3 database file.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;/var/lib/vikunja/vikunja.db&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/web-apps/vikunja.nix"><code>nixos/modules/services/web-apps/vikunja.nix</code></a></p>
+<h2 id='opt-services.vikunja.database.type'><a href='options/services-v/#opt-services.vikunja.database.type'>
+<code>services.vikunja.database.type</code>
+</a></h2>
+<p>Database engine to use.</p>
+<p><em>Type:</em> one of &quot;sqlite&quot;, &quot;mysql&quot;, &quot;postgres&quot;</p>
+<p><em>Default:</em> <code>&quot;sqlite&quot;</code></p>
+<p><em>Example:</em> <code>&quot;postgres&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/web-apps/vikunja.nix"><code>nixos/modules/services/web-apps/vikunja.nix</code></a></p>
+<h2 id='opt-services.vikunja.database.user'><a href='options/services-v/#opt-services.vikunja.database.user'>
+<code>services.vikunja.database.user</code>
+</a></h2>
+<p>Database user.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;vikunja&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/web-apps/vikunja.nix"><code>nixos/modules/services/web-apps/vikunja.nix</code></a></p>
+<h2 id='opt-services.vikunja.enable'><a href='options/services-v/#opt-services.vikunja.enable'>
+<code>services.vikunja.enable</code>
+</a></h2>
+<p>Whether to enable vikunja service.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Example:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/web-apps/vikunja.nix"><code>nixos/modules/services/web-apps/vikunja.nix</code></a></p>
+<h2 id='opt-services.vikunja.environmentFiles'><a href='options/services-v/#opt-services.vikunja.environmentFiles'>
+<code>services.vikunja.environmentFiles</code>
+</a></h2>
+<p>List of environment files set in the vikunja systemd service.
+For example passwords should be set in one of these files.</p>
+<p><em>Type:</em> list of absolute path</p>
+<p><em>Default:</em> <code>[ ]</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/web-apps/vikunja.nix"><code>nixos/modules/services/web-apps/vikunja.nix</code></a></p>
+<h2 id='opt-services.vikunja.frontendHostname'><a href='options/services-v/#opt-services.vikunja.frontendHostname'>
+<code>services.vikunja.frontendHostname</code>
+</a></h2>
+<p>The Hostname under which the frontend is running.</p>
+<p><em>Type:</em> string</p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/web-apps/vikunja.nix"><code>nixos/modules/services/web-apps/vikunja.nix</code></a></p>
+<h2 id='opt-services.vikunja.frontendScheme'><a href='options/services-v/#opt-services.vikunja.frontendScheme'>
+<code>services.vikunja.frontendScheme</code>
+</a></h2>
+<p>Whether the site is available via http or https.</p>
+<p><em>Type:</em> one of &quot;http&quot;, &quot;https&quot;</p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/web-apps/vikunja.nix"><code>nixos/modules/services/web-apps/vikunja.nix</code></a></p>
+<h2 id='opt-services.vikunja.package'><a href='options/services-v/#opt-services.vikunja.package'>
+<code>services.vikunja.package</code>
+</a></h2>
+<p>The vikunja package to use.</p>
+<p><em>Type:</em> package</p>
+<p><em>Default:</em> <code>pkgs.vikunja</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/web-apps/vikunja.nix"><code>nixos/modules/services/web-apps/vikunja.nix</code></a></p>
+<h2 id='opt-services.vikunja.port'><a href='options/services-v/#opt-services.vikunja.port'>
+<code>services.vikunja.port</code>
+</a></h2>
+<p>The TCP port exposed by the API.</p>
+<p><em>Type:</em> 16 bit unsigned integer; between 0 and 65535 (both inclusive)</p>
+<p><em>Default:</em> <code>3456</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/web-apps/vikunja.nix"><code>nixos/modules/services/web-apps/vikunja.nix</code></a></p>
+<h2 id='opt-services.vikunja.settings'><a href='options/services-v/#opt-services.vikunja.settings'>
+<code>services.vikunja.settings</code>
+</a></h2>
+<p>Vikunja configuration. Refer to
+<a href="https://vikunja.io/docs/config-options/">https://vikunja.io/docs/config-options/</a>
+for details on supported values.</p>
+<p><em>Type:</em> YAML 1.1 value</p>
+<p><em>Default:</em> <code>{ }</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/web-apps/vikunja.nix"><code>nixos/modules/services/web-apps/vikunja.nix</code></a></p>
+<h2 id='opt-services.vinyl-cache.config'><a href='options/services-v/#opt-services.vinyl-cache.config'>
+<code>services.vinyl-cache.config</code>
+</a></h2>
+<p>Verbatim default.vcl configuration.</p>
+<p><em>Type:</em> strings concatenated with &quot;\n&quot;</p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/web-servers/vinyl-cache/default.nix"><code>nixos/modules/services/web-servers/vinyl-cache/default.nix</code></a></p>
+<h2 id='opt-services.vinyl-cache.enable'><a href='options/services-v/#opt-services.vinyl-cache.enable'>
+<code>services.vinyl-cache.enable</code>
+</a></h2>
+<p>Whether to enable Vinyl Cache.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Example:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/web-servers/vinyl-cache/default.nix"><code>nixos/modules/services/web-servers/vinyl-cache/default.nix</code></a></p>
+<h2 id='opt-services.vinyl-cache.enableConfigCheck'><a href='options/services-v/#opt-services.vinyl-cache.enableConfigCheck'>
+<code>services.vinyl-cache.enableConfigCheck</code>
+</a></h2>
+<p>Whether to enable checking the config during build time.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>true</code></p>
+<p><em>Example:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/web-servers/vinyl-cache/default.nix"><code>nixos/modules/services/web-servers/vinyl-cache/default.nix</code></a></p>
+<h2 id='opt-services.vinyl-cache.enableFileLogging'><a href='options/services-v/#opt-services.vinyl-cache.enableFileLogging'>
+<code>services.vinyl-cache.enableFileLogging</code>
+</a></h2>
+<p>Whether to enable file based logging.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Example:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/web-servers/vinyl-cache/default.nix"><code>nixos/modules/services/web-servers/vinyl-cache/default.nix</code></a></p>
+<h2 id='opt-services.vinyl-cache.extraCommandLine'><a href='options/services-v/#opt-services.vinyl-cache.extraCommandLine'>
+<code>services.vinyl-cache.extraCommandLine</code>
+</a></h2>
+<p>Command line switches for vinyld (run 'vinyld -?' to get list of options)</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;&quot;</code></p>
+<p><em>Example:</em> <code>&quot;-s malloc,256M&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/web-servers/vinyl-cache/default.nix"><code>nixos/modules/services/web-servers/vinyl-cache/default.nix</code></a></p>
+<h2 id='opt-services.vinyl-cache.extraModules'><a href='options/services-v/#opt-services.vinyl-cache.extraModules'>
+<code>services.vinyl-cache.extraModules</code>
+</a></h2>
+<p>Vinyl Cache modules (except 'std').</p>
+<p><em>Type:</em> list of package</p>
+<p><em>Default:</em> <code>[ ]</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/web-servers/vinyl-cache/default.nix"><code>nixos/modules/services/web-servers/vinyl-cache/default.nix</code></a></p>
+<h2 id='opt-services.vinyl-cache.listen'><a href='options/services-v/#opt-services.vinyl-cache.listen'>
+<code>services.vinyl-cache.listen</code>
+</a></h2>
+<p>Accept for client requests on the specified listen addresses.</p>
+<p><em>Type:</em> list of (submodule)</p>
+<p><em>Default:</em> <code>[ { address=&quot;*&quot;; port=6081; } ]</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/web-servers/vinyl-cache/default.nix"><code>nixos/modules/services/web-servers/vinyl-cache/default.nix</code></a></p>
+<h2 id='opt-services.vinyl-cache.listen._.address'><a href='options/services-v/#opt-services.vinyl-cache.listen._.address'>
+<code>services.vinyl-cache.listen.*.address</code>
+</a></h2>
+<p>If given an IP address, it can be a host name (&quot;localhost&quot;), an IPv4 dotted-quad
+(&quot;127.0.0.1&quot;) or an IPv6  address enclosed in square brackets (&quot;[::1]&quot;).</p>
+<p>(VCL4.1 and higher) If given an absolute Path (&quot;/path/to/listen.sock&quot;) or &quot;@&quot;
+followed by the name of an abstract socket (&quot;@myvinyld&quot;) accept connections
+on a Unix domain socket.</p>
+<p>The user, group and mode sub-arguments may be used to specify the permissions
+of the socket file. These sub-arguments do not apply to  abstract sockets.</p>
+<p><em>Type:</em> string</p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/web-servers/vinyl-cache/default.nix"><code>nixos/modules/services/web-servers/vinyl-cache/default.nix</code></a></p>
+<h2 id='opt-services.vinyl-cache.listen._.group'><a href='options/services-v/#opt-services.vinyl-cache.listen._.group'>
+<code>services.vinyl-cache.listen.*.group</code>
+</a></h2>
+<p>Group name who owns the socket file.</p>
+<p><em>Type:</em> null or string</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/web-servers/vinyl-cache/default.nix"><code>nixos/modules/services/web-servers/vinyl-cache/default.nix</code></a></p>
+<h2 id='opt-services.vinyl-cache.listen._.mode'><a href='options/services-v/#opt-services.vinyl-cache.listen._.mode'>
+<code>services.vinyl-cache.listen.*.mode</code>
+</a></h2>
+<p>Permission of the socket file (3-digit octal value).</p>
+<p><em>Type:</em> null or string</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/web-servers/vinyl-cache/default.nix"><code>nixos/modules/services/web-servers/vinyl-cache/default.nix</code></a></p>
+<h2 id='opt-services.vinyl-cache.listen._.name'><a href='options/services-v/#opt-services.vinyl-cache.listen._.name'>
+<code>services.vinyl-cache.listen.*.name</code>
+</a></h2>
+<p>Name is referenced in logs. If name is not specified, 'a0', 'a1', etc. is used.</p>
+<p><em>Type:</em> null or string</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/web-servers/vinyl-cache/default.nix"><code>nixos/modules/services/web-servers/vinyl-cache/default.nix</code></a></p>
+<h2 id='opt-services.vinyl-cache.listen._.port'><a href='options/services-v/#opt-services.vinyl-cache.listen._.port'>
+<code>services.vinyl-cache.listen.*.port</code>
+</a></h2>
+<p>The port to use for IP sockets. If port is not specified, port 80 (http) is used.</p>
+<p><em>Type:</em> null or 16 bit unsigned integer; between 0 and 65535 (both inclusive)</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/web-servers/vinyl-cache/default.nix"><code>nixos/modules/services/web-servers/vinyl-cache/default.nix</code></a></p>
+<h2 id='opt-services.vinyl-cache.listen._.proto'><a href='options/services-v/#opt-services.vinyl-cache.listen._.proto'>
+<code>services.vinyl-cache.listen.*.proto</code>
+</a></h2>
+<p>PROTO can be 'HTTP' (the default) or 'PROXY'.  Both version 1 and 2 of the proxy protocol can be used.</p>
+<p><em>Type:</em> one of &quot;HTTP&quot;, &quot;PROXY&quot;</p>
+<p><em>Default:</em> <code>&quot;HTTP&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/web-servers/vinyl-cache/default.nix"><code>nixos/modules/services/web-servers/vinyl-cache/default.nix</code></a></p>
+<h2 id='opt-services.vinyl-cache.listen._.user'><a href='options/services-v/#opt-services.vinyl-cache.listen._.user'>
+<code>services.vinyl-cache.listen.*.user</code>
+</a></h2>
+<p>User name who owns the socket file.</p>
+<p><em>Type:</em> null or string</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/web-servers/vinyl-cache/default.nix"><code>nixos/modules/services/web-servers/vinyl-cache/default.nix</code></a></p>
+<h2 id='opt-services.vinyl-cache.package'><a href='options/services-v/#opt-services.vinyl-cache.package'>
+<code>services.vinyl-cache.package</code>
+</a></h2>
+<p>The vinyl-cache package to use.</p>
+<p><em>Type:</em> package</p>
+<p><em>Default:</em> <code>pkgs.vinyl-cache</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/web-servers/vinyl-cache/default.nix"><code>nixos/modules/services/web-servers/vinyl-cache/default.nix</code></a></p>
+<h2 id='opt-services.vlagent.enable'><a href='options/services-v/#opt-services.vlagent.enable'>
+<code>services.vlagent.enable</code>
+</a></h2>
+<p>Whether to enable VictoriaMetrics's <code>vlagent</code>.</p>
+<p><code>vlagent</code> is a tiny agent which helps you collect logs from various sources and store them in VictoriaLogs .</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/vlagent.nix"><code>nixos/modules/services/monitoring/vlagent.nix</code></a></p>
+<h2 id='opt-services.vlagent.extraArgs'><a href='options/services-v/#opt-services.vlagent.extraArgs'>
+<code>services.vlagent.extraArgs</code>
+</a></h2>
+<p>Extra args to pass to <code>vlagent</code>. See the docs:
+<a href="https://docs.victoriametrics.com/vlagent.html#advanced-usage">https://docs.victoriametrics.com/vlagent.html#advanced-usage</a>
+or <code>vlagent -help</code> for more information.</p>
+<p><em>Type:</em> list of string</p>
+<p><em>Default:</em> <code>[ ]</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/vlagent.nix"><code>nixos/modules/services/monitoring/vlagent.nix</code></a></p>
+<h2 id='opt-services.vlagent.openFirewall'><a href='options/services-v/#opt-services.vlagent.openFirewall'>
+<code>services.vlagent.openFirewall</code>
+</a></h2>
+<p>Whether to open the firewall for the default ports.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/vlagent.nix"><code>nixos/modules/services/monitoring/vlagent.nix</code></a></p>
+<h2 id='opt-services.vlagent.package'><a href='options/services-v/#opt-services.vlagent.package'>
+<code>services.vlagent.package</code>
+</a></h2>
+<p>The vlagent package to use.</p>
+<p><em>Type:</em> package</p>
+<p><em>Default:</em> <code>pkgs.vlagent</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/vlagent.nix"><code>nixos/modules/services/monitoring/vlagent.nix</code></a></p>
+<h2 id='opt-services.vlagent.remoteWrite.basicAuthPasswordFile'><a href='options/services-v/#opt-services.vlagent.remoteWrite.basicAuthPasswordFile'>
+<code>services.vlagent.remoteWrite.basicAuthPasswordFile</code>
+</a></h2>
+<p>File that contains the Basic Auth password used to connect to remote_write endpoint</p>
+<p><em>Type:</em> null or string</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/vlagent.nix"><code>nixos/modules/services/monitoring/vlagent.nix</code></a></p>
+<h2 id='opt-services.vlagent.remoteWrite.basicAuthUsername'><a href='options/services-v/#opt-services.vlagent.remoteWrite.basicAuthUsername'>
+<code>services.vlagent.remoteWrite.basicAuthUsername</code>
+</a></h2>
+<p>Basic Auth username used to connect to remote_write endpoint</p>
+<p><em>Type:</em> null or string</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/vlagent.nix"><code>nixos/modules/services/monitoring/vlagent.nix</code></a></p>
+<h2 id='opt-services.vlagent.remoteWrite.maxDiskUsagePerUrl'><a href='options/services-v/#opt-services.vlagent.remoteWrite.maxDiskUsagePerUrl'>
+<code>services.vlagent.remoteWrite.maxDiskUsagePerUrl</code>
+</a></h2>
+<p>The maximum file-based buffer size in bytes. Supports the following optional suffixes for size values: KB, MB, GB, TB, KiB, MiB, GiB, TiB.
+See docs for more infomations: <a href="https://docs.victoriametrics.com/vlagent.html#advanced-usage">https://docs.victoriametrics.com/vlagent.html#advanced-usage</a></p>
+<p><em>Type:</em> null or string</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/vlagent.nix"><code>nixos/modules/services/monitoring/vlagent.nix</code></a></p>
+<h2 id='opt-services.vlagent.remoteWrite.url'><a href='options/services-v/#opt-services.vlagent.remoteWrite.url'>
+<code>services.vlagent.remoteWrite.url</code>
+</a></h2>
+<p>Endpoint for the victorialogs instance</p>
+<p><em>Type:</em> null or string</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/vlagent.nix"><code>nixos/modules/services/monitoring/vlagent.nix</code></a></p>
+<h2 id='opt-services.vmagent.checkConfig'><a href='options/services-v/#opt-services.vmagent.checkConfig'>
+<code>services.vmagent.checkConfig</code>
+</a></h2>
+<p>Check configuration.</p>
+<p>If you use credentials stored in external files (<code>environmentFile</code>, etc),
+they will not be visible  and it will report errors, despite a correct configuration.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/vmagent.nix"><code>nixos/modules/services/monitoring/vmagent.nix</code></a></p>
+<h2 id='opt-services.vmagent.enable'><a href='options/services-v/#opt-services.vmagent.enable'>
+<code>services.vmagent.enable</code>
+</a></h2>
+<p>Whether to enable VictoriaMetrics's <code>vmagent</code>.</p>
+<p><code>vmagent</code> efficiently scrape metrics from Prometheus-compatible exporters</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/vmagent.nix"><code>nixos/modules/services/monitoring/vmagent.nix</code></a></p>
+<h2 id='opt-services.vmagent.extraArgs'><a href='options/services-v/#opt-services.vmagent.extraArgs'>
+<code>services.vmagent.extraArgs</code>
+</a></h2>
+<p>Extra args to pass to <code>vmagent</code>. See the docs:
+<a href="https://docs.victoriametrics.com/vmagent.html#advanced-usage">https://docs.victoriametrics.com/vmagent.html#advanced-usage</a>
+or <code>vmagent -help</code> for more information.</p>
+<p><em>Type:</em> list of string</p>
+<p><em>Default:</em> <code>[ ]</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/vmagent.nix"><code>nixos/modules/services/monitoring/vmagent.nix</code></a></p>
+<h2 id='opt-services.vmagent.openFirewall'><a href='options/services-v/#opt-services.vmagent.openFirewall'>
+<code>services.vmagent.openFirewall</code>
+</a></h2>
+<p>Whether to open the firewall for the default ports.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/vmagent.nix"><code>nixos/modules/services/monitoring/vmagent.nix</code></a></p>
+<h2 id='opt-services.vmagent.package'><a href='options/services-v/#opt-services.vmagent.package'>
+<code>services.vmagent.package</code>
+</a></h2>
+<p>The vmagent package to use.</p>
+<p><em>Type:</em> package</p>
+<p><em>Default:</em> <code>pkgs.vmagent</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/vmagent.nix"><code>nixos/modules/services/monitoring/vmagent.nix</code></a></p>
+<h2 id='opt-services.vmagent.prometheusConfig'><a href='options/services-v/#opt-services.vmagent.prometheusConfig'>
+<code>services.vmagent.prometheusConfig</code>
+</a></h2>
+<p>Config for prometheus style metrics</p>
+<p><em>Type:</em> open submodule of (YAML 1.1 value)</p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/vmagent.nix"><code>nixos/modules/services/monitoring/vmagent.nix</code></a></p>
+<h2 id='opt-services.vmagent.remoteWrite.basicAuthPasswordFile'><a href='options/services-v/#opt-services.vmagent.remoteWrite.basicAuthPasswordFile'>
+<code>services.vmagent.remoteWrite.basicAuthPasswordFile</code>
+</a></h2>
+<p>File that contains the Basic Auth password used to connect to remote_write endpoint</p>
+<p><em>Type:</em> null or string</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/vmagent.nix"><code>nixos/modules/services/monitoring/vmagent.nix</code></a></p>
+<h2 id='opt-services.vmagent.remoteWrite.basicAuthUsername'><a href='options/services-v/#opt-services.vmagent.remoteWrite.basicAuthUsername'>
+<code>services.vmagent.remoteWrite.basicAuthUsername</code>
+</a></h2>
+<p>Basic Auth username used to connect to remote_write endpoint</p>
+<p><em>Type:</em> null or string</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/vmagent.nix"><code>nixos/modules/services/monitoring/vmagent.nix</code></a></p>
+<h2 id='opt-services.vmagent.remoteWrite.url'><a href='options/services-v/#opt-services.vmagent.remoteWrite.url'>
+<code>services.vmagent.remoteWrite.url</code>
+</a></h2>
+<p>Endpoint for prometheus compatible remote_write</p>
+<p><em>Type:</em> null or string</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/vmagent.nix"><code>nixos/modules/services/monitoring/vmagent.nix</code></a></p>
+<h2 id='opt-services.vmalert.instances'><a href='options/services-v/#opt-services.vmalert.instances'>
+<code>services.vmalert.instances</code>
+</a></h2>
+<p>Define multiple instances of vmalert.</p>
+<p><em>Type:</em> attribute set of (submodule)</p>
+<p><em>Default:</em> <code>{ }</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/vmalert.nix"><code>nixos/modules/services/monitoring/vmalert.nix</code></a></p>
+<h2 id='opt-services.vmalert.instances._name_.enable'><a href='options/services-v/#opt-services.vmalert.instances._name_.enable'>
+<code>services.vmalert.instances.&lt;name&gt;.enable</code>
+</a></h2>
+<p>Wether to enable VictoriaMetrics's <code>vmalert</code>.</p>
+<p><code>vmalert</code> evaluates alerting and recording rules against a data source, sends notifications via Alertmanager.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/vmalert.nix"><code>nixos/modules/services/monitoring/vmalert.nix</code></a></p>
+<h2 id='opt-services.vmalert.instances._name_.rules'><a href='options/services-v/#opt-services.vmalert.instances._name_.rules'>
+<code>services.vmalert.instances.&lt;name&gt;.rules</code>
+</a></h2>
+<p>A list of the given alerting or recording rules against configured <code>&quot;datasource.url&quot;</code> compatible with
+Prometheus HTTP API for <code>vmalert</code> to execute. Refer to
+<a href="https://github.com/VictoriaMetrics/VictoriaMetrics/blob/master/app/vmalert/README.md#rules">https://github.com/VictoriaMetrics/VictoriaMetrics/blob/master/app/vmalert/README.md#rules</a>
+for details on supported values.</p>
+<p><em>Type:</em> YAML 1.1 value</p>
+<p><em>Default:</em> <code>{ }</code></p>
+<p><em>Example:</em></p>
+<pre><code class="language-nix">{
+  group = [
+    {
+      name = &quot;TestGroup&quot;;
+      rules = [
+        {
+          alert = &quot;ExampleAlertAlwaysFiring&quot;;
+          expr = ''
+            sum by(job)
+            (up == 1)
+          '';
+        }
+      ];
+    }
+  ];
+}
+</code></pre>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/vmalert.nix"><code>nixos/modules/services/monitoring/vmalert.nix</code></a></p>
+<h2 id='opt-services.vmalert.instances._name_.settings'><a href='options/services-v/#opt-services.vmalert.instances._name_.settings'>
+<code>services.vmalert.instances.&lt;name&gt;.settings</code>
+</a></h2>
+<p><code>vmalert</code> configuration, passed via command line flags. Refer to
+<a href="https://github.com/VictoriaMetrics/VictoriaMetrics/blob/master/app/vmalert/README.md#configuration">https://github.com/VictoriaMetrics/VictoriaMetrics/blob/master/app/vmalert/README.md#configuration</a>
+for details on supported values.</p>
+<p><em>Type:</em> open submodule of attribute set of (boolean or signed integer or absolute path or string or list of (boolean or signed integer or absolute path or string))</p>
+<p><em>Default:</em> <code>{ }</code></p>
+<p><em>Example:</em></p>
+<pre><code class="language-nix">{
+  &quot;datasource.disableKeepAlive&quot; = true;
+  &quot;datasource.showURL&quot; = false;
+  &quot;datasource.url&quot; = &quot;http://localhost:8428&quot;;
+  rule = [
+    &quot;http://&lt;some-server-addr&gt;/path/to/rules&quot;
+    &quot;dir/*.yaml&quot;
+  ];
+}
+</code></pre>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/vmalert.nix"><code>nixos/modules/services/monitoring/vmalert.nix</code></a></p>
+<h2 id='opt-services.vmalert.instances._name_.settings._datasource.url_'><a href='options/services-v/#opt-services.vmalert.instances._name_.settings._datasource.url_'>
+<code>services.vmalert.instances.&lt;name&gt;.settings.&quot;datasource.url&quot;</code>
+</a></h2>
+<p>Datasource compatible with Prometheus HTTP API.</p>
+<p><em>Type:</em> non-empty string</p>
+<p><em>Example:</em> <code>&quot;http://localhost:8428&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/vmalert.nix"><code>nixos/modules/services/monitoring/vmalert.nix</code></a></p>
+<h2 id='opt-services.vmalert.instances._name_.settings._notifier.url_'><a href='options/services-v/#opt-services.vmalert.instances._name_.settings._notifier.url_'>
+<code>services.vmalert.instances.&lt;name&gt;.settings.&quot;notifier.url&quot;</code>
+</a></h2>
+<p>Prometheus Alertmanager URL. List all Alertmanager URLs if it runs in the cluster mode to ensure high availability.</p>
+<p><em>Type:</em> list of non-empty string</p>
+<p><em>Default:</em> <code>[ ]</code></p>
+<p><em>Example:</em></p>
+<pre><code class="language-nix">[
+  &quot;http://127.0.0.1:9093&quot;
+]
+</code></pre>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/vmalert.nix"><code>nixos/modules/services/monitoring/vmalert.nix</code></a></p>
+<h2 id='opt-services.vmalert.instances._name_.settings.rule'><a href='options/services-v/#opt-services.vmalert.instances._name_.settings.rule'>
+<code>services.vmalert.instances.&lt;name&gt;.settings.rule</code>
+</a></h2>
+<p>Path to the files with alerting and/or recording rules.</p>
+<div class='admonition note'><h3 class='title'>Note</h3>
+<p>
+Consider using the <a href="options/services-v/#opt-services.vmalert.instances._name_.rules"><code>services.vmalert.instances.&lt;name&gt;.rules</code></a> option as a convenient alternative for declaring rules
+directly in the <code>nix</code> language.
+</p>
+</div>
+<p><em>Type:</em> list of absolute path</p>
+<p><em>Default:</em> <code>[ ]</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/vmalert.nix"><code>nixos/modules/services/monitoring/vmalert.nix</code></a></p>
+<h2 id='opt-services.vmalert.package'><a href='options/services-v/#opt-services.vmalert.package'>
+<code>services.vmalert.package</code>
+</a></h2>
+<p>The victoriametrics package to use.</p>
+<p><em>Type:</em> package</p>
+<p><em>Default:</em> <code>pkgs.victoriametrics</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/vmalert.nix"><code>nixos/modules/services/monitoring/vmalert.nix</code></a></p>
+<h2 id='opt-services.vnstat.enable'><a href='options/services-v/#opt-services.vnstat.enable'>
+<code>services.vnstat.enable</code>
+</a></h2>
+<p>Whether to enable update of network usage statistics via vnstatd.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Example:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/vnstat.nix"><code>nixos/modules/services/monitoring/vnstat.nix</code></a></p>
+<h2 id='opt-services.vnstat.package'><a href='options/services-v/#opt-services.vnstat.package'>
+<code>services.vnstat.package</code>
+</a></h2>
+<p>The vnstat package to use.</p>
+<p><em>Type:</em> package</p>
+<p><em>Default:</em> <code>pkgs.vnstat</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/vnstat.nix"><code>nixos/modules/services/monitoring/vnstat.nix</code></a></p>
+<h2 id='opt-services.vnstat.settings'><a href='options/services-v/#opt-services.vnstat.settings'>
+<code>services.vnstat.settings</code>
+</a></h2>
+<p>Configuration for vnstat. Refer to
+[https://humdi.net/vnstat/man/vnstat.conf.html]
+or <code>vnstat.conf(5)</code> for more information.</p>
+<p><em>Type:</em> open submodule of attribute set of (atom (null, bool, int, float or string))</p>
+<p><em>Default:</em> <code>{ }</code></p>
+<p><em>Example:</em></p>
+<pre><code class="language-nix">{
+  AlwaysAddNewInterfaces = 1;
+}
+</code></pre>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/monitoring/vnstat.nix"><code>nixos/modules/services/monitoring/vnstat.nix</code></a></p>
+<h2 id='opt-services.vouch-proxy.clients'><a href='options/services-v/#opt-services.vouch-proxy.clients'>
+<code>services.vouch-proxy.clients</code>
+</a></h2>
+<p>Set of oauth2 clients. A vouch-proxy systemd unit with the name of the client will be run for every client in this set.
+Each of these sets should at least define the <code>port</code> attribute that defines the port this client's specific vouch-proxy instance listens on.</p>
+<p>If <code>configureNginx</code> is set to <code>true</code>, the <code>domain</code> attribute defining the name of the nginx virtualHost (<code>services.nginx.virtualHost.&lt;name&gt;</code>) that this client is running under should also be set.</p>
+<p><em>Type:</em> attribute set of (submodule)</p>
+<p><em>Default:</em> <code>{ }</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/security/vouch-proxy.nix"><code>nixos/modules/services/security/vouch-proxy.nix</code></a></p>
+<h2 id='opt-services.vouch-proxy.clients._name_.domain'><a href='options/services-v/#opt-services.vouch-proxy.clients._name_.domain'>
+<code>services.vouch-proxy.clients.&lt;name&gt;.domain</code>
+</a></h2>
+<p>The domain of the nginx.virtualHost this client is running under. This should match the corresponding attribute name in <code>services.nginx.virtualHost.&lt;name&gt;</code>.</p>
+<p><em>Type:</em> string</p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/security/vouch-proxy.nix"><code>nixos/modules/services/security/vouch-proxy.nix</code></a></p>
+<h2 id='opt-services.vouch-proxy.clients._name_.environmentFile'><a href='options/services-v/#opt-services.vouch-proxy.clients._name_.environmentFile'>
+<code>services.vouch-proxy.clients.&lt;name&gt;.environmentFile</code>
+</a></h2>
+<p>Environment file as defined in <code>systemd.exec(5)</code>.</p>
+<p>The environment variables defined therein are passed to the vouch-proxy instance protecting this client.
+You can use environment variables to pass secrets to the service without adding
+them to the world-redable nix store.</p>
+<p><em>Type:</em> null or absolute path</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/security/vouch-proxy.nix"><code>nixos/modules/services/security/vouch-proxy.nix</code></a></p>
+<h2 id='opt-services.vouch-proxy.clients._name_.port'><a href='options/services-v/#opt-services.vouch-proxy.clients._name_.port'>
+<code>services.vouch-proxy.clients.&lt;name&gt;.port</code>
+</a></h2>
+<p>The port the vouch-proxy instance protecting this client is listening on.</p>
+<p><em>Type:</em> 16 bit unsigned integer; between 0 and 65535 (both inclusive)</p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/security/vouch-proxy.nix"><code>nixos/modules/services/security/vouch-proxy.nix</code></a></p>
+<h2 id='opt-services.vouch-proxy.clients._name_.settings'><a href='options/services-v/#opt-services.vouch-proxy.clients._name_.settings'>
+<code>services.vouch-proxy.clients.&lt;name&gt;.settings</code>
+</a></h2>
+<p>Free-form settings written to the <code>config.yml</code> file used by vouch-proxy.
+These settings override the global settings set in <code>services.vouch-proxy.settings</code> for this specific client.
+A sample config can be found at <a href="https://github.com/vouch/vouch-proxy/blob/master/config/config.yml_example">https://github.com/vouch/vouch-proxy/blob/master/config/config.yml_example</a>.</p>
+<p><em>Type:</em> open submodule of (YAML 1.1 value)</p>
+<p><em>Default:</em> <code>{ }</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/security/vouch-proxy.nix"><code>nixos/modules/services/security/vouch-proxy.nix</code></a></p>
+<h2 id='opt-services.vouch-proxy.clients._name_.settings.vouch.domains'><a href='options/services-v/#opt-services.vouch-proxy.clients._name_.settings.vouch.domains'>
+<code>services.vouch-proxy.clients.&lt;name&gt;.settings.vouch.domains</code>
+</a></h2>
+<p>Explicit list of domains protected by this vouch-proxy instance. Each $domain in this list must serve the url <code>https://vouch.$domain</code>.</p>
+<p>If left empty, anyone who can authenticate with the configured provider will be accepted.</p>
+<p><em>Type:</em> list of string</p>
+<p><em>Default:</em> <code>[ ]</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/security/vouch-proxy.nix"><code>nixos/modules/services/security/vouch-proxy.nix</code></a></p>
+<h2 id='opt-services.vouch-proxy.configureNginx'><a href='options/services-v/#opt-services.vouch-proxy.configureNginx'>
+<code>services.vouch-proxy.configureNginx</code>
+</a></h2>
+<p>Automatic configuration of <code>services.nginx.virtualHosts.${services.vouch-proxy.clients.&lt;name&gt;.domain}</code> to use vouch-proxy, for every client defined in <code>services.vouch-proxy.clients</code>.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/security/vouch-proxy.nix"><code>nixos/modules/services/security/vouch-proxy.nix</code></a></p>
+<h2 id='opt-services.vouch-proxy.enable'><a href='options/services-v/#opt-services.vouch-proxy.enable'>
+<code>services.vouch-proxy.enable</code>
+</a></h2>
+<p>Whether to enable vouch-proxy.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Example:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/security/vouch-proxy.nix"><code>nixos/modules/services/security/vouch-proxy.nix</code></a></p>
+<h2 id='opt-services.vouch-proxy.group'><a href='options/services-v/#opt-services.vouch-proxy.group'>
+<code>services.vouch-proxy.group</code>
+</a></h2>
+<p>The unix group all vouch-proxy instances run as.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;vouch-proxy&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/security/vouch-proxy.nix"><code>nixos/modules/services/security/vouch-proxy.nix</code></a></p>
+<h2 id='opt-services.vouch-proxy.kanidmDomain'><a href='options/services-v/#opt-services.vouch-proxy.kanidmDomain'>
+<code>services.vouch-proxy.kanidmDomain</code>
+</a></h2>
+<p>If kanidm is used as an oauth2 provider, this can be set to the domain kanidm manages. From this setting, <code>settings.oauth.auth_url</code>, <code>settings.oauth.token_url</code> and <code>settings.oauth.user_info_url</code> are set accordingly for every client.</p>
+<p><em>Type:</em> null or string</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/security/vouch-proxy.nix"><code>nixos/modules/services/security/vouch-proxy.nix</code></a></p>
+<h2 id='opt-services.vouch-proxy.package'><a href='options/services-v/#opt-services.vouch-proxy.package'>
+<code>services.vouch-proxy.package</code>
+</a></h2>
+<p>The vouch-proxy package to use.</p>
+<p><em>Type:</em> package</p>
+<p><em>Default:</em> <code>pkgs.vouch-proxy</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/security/vouch-proxy.nix"><code>nixos/modules/services/security/vouch-proxy.nix</code></a></p>
+<h2 id='opt-services.vouch-proxy.settings'><a href='options/services-v/#opt-services.vouch-proxy.settings'>
+<code>services.vouch-proxy.settings</code>
+</a></h2>
+<p>Free-form settings written to the <code>config.yml</code> file used by vouch-proxy.
+These settings will be used globally for all clients running behind vouch-proxy.
+A sample config can be found at <a href="https://github.com/vouch/vouch-proxy/blob/master/config/config.yml_example">https://github.com/vouch/vouch-proxy/blob/master/config/config.yml_example</a>.</p>
+<p><em>Type:</em> open submodule of (YAML 1.1 value)</p>
+<p><em>Default:</em> <code>{ }</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/security/vouch-proxy.nix"><code>nixos/modules/services/security/vouch-proxy.nix</code></a></p>
+<h2 id='opt-services.vouch-proxy.settings.oauth.code_challenge_method'><a href='options/services-v/#opt-services.vouch-proxy.settings.oauth.code_challenge_method'>
+<code>services.vouch-proxy.settings.oauth.code_challenge_method</code>
+</a></h2>
+<p>PKCE method if enabled, S256 is currently supported.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;S256&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/security/vouch-proxy.nix"><code>nixos/modules/services/security/vouch-proxy.nix</code></a></p>
+<h2 id='opt-services.vouch-proxy.settings.oauth.provider'><a href='options/services-v/#opt-services.vouch-proxy.settings.oauth.provider'>
+<code>services.vouch-proxy.settings.oauth.provider</code>
+</a></h2>
+<p>The oauth2 provider to use.</p>
+<p><em>Type:</em> one of &quot;adfs&quot;, &quot;google&quot;, &quot;github&quot;, &quot;indieauth&quot;, &quot;oidc&quot;</p>
+<p><em>Default:</em> <code>&quot;oidc&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/security/vouch-proxy.nix"><code>nixos/modules/services/security/vouch-proxy.nix</code></a></p>
+<h2 id='opt-services.vouch-proxy.settings.oauth.scopes'><a href='options/services-v/#opt-services.vouch-proxy.settings.oauth.scopes'>
+<code>services.vouch-proxy.settings.oauth.scopes</code>
+</a></h2>
+<p>List of oauth2 scopes requested by vouch-proxy.</p>
+<p><em>Type:</em> list of string</p>
+<p><em>Default:</em></p>
+<pre><code class="language-nix">[
+  &quot;openid&quot;
+  &quot;email&quot;
+]
+</code></pre>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/security/vouch-proxy.nix"><code>nixos/modules/services/security/vouch-proxy.nix</code></a></p>
+<h2 id='opt-services.vouch-proxy.settings.vouch.document_root'><a href='options/services-v/#opt-services.vouch-proxy.settings.vouch.document_root'>
+<code>services.vouch-proxy.settings.vouch.document_root</code>
+</a></h2>
+<p>The location within every client's host where its corresponding vouch-proxy is served.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;/vouch&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/security/vouch-proxy.nix"><code>nixos/modules/services/security/vouch-proxy.nix</code></a></p>
+<h2 id='opt-services.vouch-proxy.settings.vouch.listen'><a href='options/services-v/#opt-services.vouch-proxy.settings.vouch.listen'>
+<code>services.vouch-proxy.settings.vouch.listen</code>
+</a></h2>
+<p>The address vouch-proxy listens on.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;[::1]&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/security/vouch-proxy.nix"><code>nixos/modules/services/security/vouch-proxy.nix</code></a></p>
+<h2 id='opt-services.vouch-proxy.user'><a href='options/services-v/#opt-services.vouch-proxy.user'>
+<code>services.vouch-proxy.user</code>
+</a></h2>
+<p>The unix user all vouch-proxy instances run as.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;vouch-proxy&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/security/vouch-proxy.nix"><code>nixos/modules/services/security/vouch-proxy.nix</code></a></p>
+<h2 id='opt-services.vsftpd.allowWriteableChroot'><a href='options/services-v/#opt-services.vsftpd.allowWriteableChroot'>
+<code>services.vsftpd.allowWriteableChroot</code>
+</a></h2>
+<p>Allow the use of writeable root inside chroot().</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/vsftpd.nix"><code>nixos/modules/services/networking/vsftpd.nix</code></a></p>
+<h2 id='opt-services.vsftpd.anonymousMkdirEnable'><a href='options/services-v/#opt-services.vsftpd.anonymousMkdirEnable'>
+<code>services.vsftpd.anonymousMkdirEnable</code>
+</a></h2>
+<p>Whether any uploads are permitted to anonymous users.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/vsftpd.nix"><code>nixos/modules/services/networking/vsftpd.nix</code></a></p>
+<h2 id='opt-services.vsftpd.anonymousUmask'><a href='options/services-v/#opt-services.vsftpd.anonymousUmask'>
+<code>services.vsftpd.anonymousUmask</code>
+</a></h2>
+<p>Anonymous write umask.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;077&quot;</code></p>
+<p><em>Example:</em> <code>&quot;002&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/vsftpd.nix"><code>nixos/modules/services/networking/vsftpd.nix</code></a></p>
+<h2 id='opt-services.vsftpd.anonymousUploadEnable'><a href='options/services-v/#opt-services.vsftpd.anonymousUploadEnable'>
+<code>services.vsftpd.anonymousUploadEnable</code>
+</a></h2>
+<p>Whether any uploads are permitted to anonymous users.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/vsftpd.nix"><code>nixos/modules/services/networking/vsftpd.nix</code></a></p>
+<h2 id='opt-services.vsftpd.anonymousUser'><a href='options/services-v/#opt-services.vsftpd.anonymousUser'>
+<code>services.vsftpd.anonymousUser</code>
+</a></h2>
+<p>Whether to enable the anonymous FTP user.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/vsftpd.nix"><code>nixos/modules/services/networking/vsftpd.nix</code></a></p>
+<h2 id='opt-services.vsftpd.anonymousUserHome'><a href='options/services-v/#opt-services.vsftpd.anonymousUserHome'>
+<code>services.vsftpd.anonymousUserHome</code>
+</a></h2>
+<p>Directory to consider the HOME of the anonymous user.</p>
+<p><em>Type:</em> absolute path</p>
+<p><em>Default:</em> <code>&quot;/home/ftp/&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/vsftpd.nix"><code>nixos/modules/services/networking/vsftpd.nix</code></a></p>
+<h2 id='opt-services.vsftpd.anonymousUserNoPassword'><a href='options/services-v/#opt-services.vsftpd.anonymousUserNoPassword'>
+<code>services.vsftpd.anonymousUserNoPassword</code>
+</a></h2>
+<p>Whether to disable the password for the anonymous FTP user.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/vsftpd.nix"><code>nixos/modules/services/networking/vsftpd.nix</code></a></p>
+<h2 id='opt-services.vsftpd.chrootlocalUser'><a href='options/services-v/#opt-services.vsftpd.chrootlocalUser'>
+<code>services.vsftpd.chrootlocalUser</code>
+</a></h2>
+<p>Whether local users are confined to their home directory.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/vsftpd.nix"><code>nixos/modules/services/networking/vsftpd.nix</code></a></p>
+<h2 id='opt-services.vsftpd.enable'><a href='options/services-v/#opt-services.vsftpd.enable'>
+<code>services.vsftpd.enable</code>
+</a></h2>
+<p>Whether to enable vsftpd.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Example:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/vsftpd.nix"><code>nixos/modules/services/networking/vsftpd.nix</code></a></p>
+<h2 id='opt-services.vsftpd.enableVirtualUsers'><a href='options/services-v/#opt-services.vsftpd.enableVirtualUsers'>
+<code>services.vsftpd.enableVirtualUsers</code>
+</a></h2>
+<p>Whether to enable the <code>pam_userdb</code>-based
+virtual user system</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/vsftpd.nix"><code>nixos/modules/services/networking/vsftpd.nix</code></a></p>
+<h2 id='opt-services.vsftpd.extraConfig'><a href='options/services-v/#opt-services.vsftpd.extraConfig'>
+<code>services.vsftpd.extraConfig</code>
+</a></h2>
+<p>Extra configuration to add at the bottom of the generated configuration file.</p>
+<p><em>Type:</em> strings concatenated with &quot;\n&quot;</p>
+<p><em>Default:</em> <code>&quot;&quot;</code></p>
+<p><em>Example:</em> <code>&quot;ftpd_banner=Hello&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/vsftpd.nix"><code>nixos/modules/services/networking/vsftpd.nix</code></a></p>
+<h2 id='opt-services.vsftpd.forceLocalDataSSL'><a href='options/services-v/#opt-services.vsftpd.forceLocalDataSSL'>
+<code>services.vsftpd.forceLocalDataSSL</code>
+</a></h2>
+<p>Only applies if <code>sslEnable</code> is true. Non anonymous (local) users
+must use a secure SSL connection for sending/receiving data on data connection.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/vsftpd.nix"><code>nixos/modules/services/networking/vsftpd.nix</code></a></p>
+<h2 id='opt-services.vsftpd.forceLocalLoginsSSL'><a href='options/services-v/#opt-services.vsftpd.forceLocalLoginsSSL'>
+<code>services.vsftpd.forceLocalLoginsSSL</code>
+</a></h2>
+<p>Only applies if <code>sslEnable</code> is true. Non anonymous (local) users
+must use a secure SSL connection to send a password.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/vsftpd.nix"><code>nixos/modules/services/networking/vsftpd.nix</code></a></p>
+<h2 id='opt-services.vsftpd.localRoot'><a href='options/services-v/#opt-services.vsftpd.localRoot'>
+<code>services.vsftpd.localRoot</code>
+</a></h2>
+<p>This option represents a directory which vsftpd will try to
+change into after a local (i.e. non- anonymous) login.</p>
+<p>Failure is silently ignored.</p>
+<p><em>Type:</em> null or string</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Example:</em> <code>&quot;/var/www/$USER&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/vsftpd.nix"><code>nixos/modules/services/networking/vsftpd.nix</code></a></p>
+<h2 id='opt-services.vsftpd.localUsers'><a href='options/services-v/#opt-services.vsftpd.localUsers'>
+<code>services.vsftpd.localUsers</code>
+</a></h2>
+<p>Whether to enable FTP for local users.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/vsftpd.nix"><code>nixos/modules/services/networking/vsftpd.nix</code></a></p>
+<h2 id='opt-services.vsftpd.portPromiscuous'><a href='options/services-v/#opt-services.vsftpd.portPromiscuous'>
+<code>services.vsftpd.portPromiscuous</code>
+</a></h2>
+<p>Set to YES if you want to disable the PORT security check that ensures that
+outgoing data connections can only connect to the client. Only enable if you
+know what you are doing!</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/vsftpd.nix"><code>nixos/modules/services/networking/vsftpd.nix</code></a></p>
+<h2 id='opt-services.vsftpd.rsaCertFile'><a href='options/services-v/#opt-services.vsftpd.rsaCertFile'>
+<code>services.vsftpd.rsaCertFile</code>
+</a></h2>
+<p>RSA certificate file.</p>
+<p><em>Type:</em> null or absolute path</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/vsftpd.nix"><code>nixos/modules/services/networking/vsftpd.nix</code></a></p>
+<h2 id='opt-services.vsftpd.rsaKeyFile'><a href='options/services-v/#opt-services.vsftpd.rsaKeyFile'>
+<code>services.vsftpd.rsaKeyFile</code>
+</a></h2>
+<p>RSA private key file.</p>
+<p><em>Type:</em> null or absolute path</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/vsftpd.nix"><code>nixos/modules/services/networking/vsftpd.nix</code></a></p>
+<h2 id='opt-services.vsftpd.ssl_sslv2'><a href='options/services-v/#opt-services.vsftpd.ssl_sslv2'>
+<code>services.vsftpd.ssl_sslv2</code>
+</a></h2>
+<p>Only applies if <code>ssl_enable</code> is activated. If
+enabled, this option will permit SSL v2 protocol connections.
+TLS v1 connections are preferred.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/vsftpd.nix"><code>nixos/modules/services/networking/vsftpd.nix</code></a></p>
+<h2 id='opt-services.vsftpd.ssl_sslv3'><a href='options/services-v/#opt-services.vsftpd.ssl_sslv3'>
+<code>services.vsftpd.ssl_sslv3</code>
+</a></h2>
+<p>Only applies if <code>ssl_enable</code> is activated. If
+enabled, this option will permit SSL v3 protocol connections.
+TLS v1 connections are preferred.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/vsftpd.nix"><code>nixos/modules/services/networking/vsftpd.nix</code></a></p>
+<h2 id='opt-services.vsftpd.ssl_tlsv1'><a href='options/services-v/#opt-services.vsftpd.ssl_tlsv1'>
+<code>services.vsftpd.ssl_tlsv1</code>
+</a></h2>
+<p>Only applies if <code>ssl_enable</code> is activated. If
+enabled, this option will permit TLS v1 protocol connections.
+TLS v1 connections are preferred.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/vsftpd.nix"><code>nixos/modules/services/networking/vsftpd.nix</code></a></p>
+<h2 id='opt-services.vsftpd.userDbPath'><a href='options/services-v/#opt-services.vsftpd.userDbPath'>
+<code>services.vsftpd.userDbPath</code>
+</a></h2>
+<p>Only applies if <code>enableVirtualUsers</code> is true.
+Path pointing to the <code>pam_userdb</code> user
+database used by vsftpd to authenticate the virtual users.</p>
+<p>This user list should be stored in the Berkeley DB database
+format.</p>
+<p>To generate a new user database, create a text file, add
+your users using the following format:</p>
+<pre><code>user1
+password1
+user2
+password2
+</code></pre>
+<p>You can then install <code>pkgs.db</code> to generate
+the Berkeley DB using</p>
+<pre><code>db_load -T -t hash -f logins.txt userDb.db
+</code></pre>
+<p>Caution: <code>pam_userdb</code> will automatically
+append a <code>.db</code> suffix to the filename you
+provide though this option. This option shouldn't include
+this filetype suffix.</p>
+<p><em>Type:</em> null or string</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Example:</em> <code>&quot;/etc/vsftpd/userDb&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/vsftpd.nix"><code>nixos/modules/services/networking/vsftpd.nix</code></a></p>
+<h2 id='opt-services.vsftpd.userlist'><a href='options/services-v/#opt-services.vsftpd.userlist'>
+<code>services.vsftpd.userlist</code>
+</a></h2>
+<p>See <code>userlistFile</code>.</p>
+<p><em>Type:</em> list of string</p>
+<p><em>Default:</em> <code>[ ]</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/vsftpd.nix"><code>nixos/modules/services/networking/vsftpd.nix</code></a></p>
+<h2 id='opt-services.vsftpd.userlistDeny'><a href='options/services-v/#opt-services.vsftpd.userlistDeny'>
+<code>services.vsftpd.userlistDeny</code>
+</a></h2>
+<p>Specifies whether <code>userlistFile</code> is a list of user
+names to allow or deny access.
+The default <code>false</code> means whitelist/allow.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/vsftpd.nix"><code>nixos/modules/services/networking/vsftpd.nix</code></a></p>
+<h2 id='opt-services.vsftpd.userlistEnable'><a href='options/services-v/#opt-services.vsftpd.userlistEnable'>
+<code>services.vsftpd.userlistEnable</code>
+</a></h2>
+<p>Whether users are included.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/vsftpd.nix"><code>nixos/modules/services/networking/vsftpd.nix</code></a></p>
+<h2 id='opt-services.vsftpd.userlistFile'><a href='options/services-v/#opt-services.vsftpd.userlistFile'>
+<code>services.vsftpd.userlistFile</code>
+</a></h2>
+<p>Newline-separated list of names to be allowed/denied if <code>userlistEnable</code>
+is <code>true</code>. Meaning see <code>userlistDeny</code>.</p>
+<p>The default is a file containing the users from <code>userlist</code>.</p>
+<p>If explicitly set to null userlist_file will not be set in vsftpd's config file.</p>
+<p><em>Type:</em> absolute path</p>
+<p><em>Default:</em> <code>pkgs.writeText &quot;userlist&quot; (concatMapStrings (x: &quot;${x}\n&quot;) cfg.userlist)</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/vsftpd.nix"><code>nixos/modules/services/networking/vsftpd.nix</code></a></p>
+<h2 id='opt-services.vsftpd.virtualUseLocalPrivs'><a href='options/services-v/#opt-services.vsftpd.virtualUseLocalPrivs'>
+<code>services.vsftpd.virtualUseLocalPrivs</code>
+</a></h2>
+<p>If enabled, virtual users will use the same privileges as local
+users. By default, virtual users will use the same privileges as
+anonymous users, which tends to be more restrictive (especially
+in terms of write access).</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/vsftpd.nix"><code>nixos/modules/services/networking/vsftpd.nix</code></a></p>
+<h2 id='opt-services.vsftpd.writeEnable'><a href='options/services-v/#opt-services.vsftpd.writeEnable'>
+<code>services.vsftpd.writeEnable</code>
+</a></h2>
+<p>Whether any write activity is permitted to users.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/vsftpd.nix"><code>nixos/modules/services/networking/vsftpd.nix</code></a></p>
+<h2 id='opt-services.vsmartcard-vpcd.enable'><a href='options/services-v/#opt-services.vsmartcard-vpcd.enable'>
+<code>services.vsmartcard-vpcd.enable</code>
+</a></h2>
+<p>Whether to enable Virtual smart card driver..</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Example:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/development/vsmartcard-vpcd.nix"><code>nixos/modules/services/development/vsmartcard-vpcd.nix</code></a></p>
+<h2 id='opt-services.vsmartcard-vpcd.hostname'><a href='options/services-v/#opt-services.vsmartcard-vpcd.hostname'>
+<code>services.vsmartcard-vpcd.hostname</code>
+</a></h2>
+<p>Hostname of a waiting vpicc server vpcd will be connecting to. Use /dev/null for listening mode.</p>
+<p><em>Type:</em> string</p>
+<p><em>Default:</em> <code>&quot;/dev/null&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/development/vsmartcard-vpcd.nix"><code>nixos/modules/services/development/vsmartcard-vpcd.nix</code></a></p>
+<h2 id='opt-services.vsmartcard-vpcd.port'><a href='options/services-v/#opt-services.vsmartcard-vpcd.port'>
+<code>services.vsmartcard-vpcd.port</code>
+</a></h2>
+<p>Port number vpcd will be listening on.</p>
+<p><em>Type:</em> 16 bit unsigned integer; between 0 and 65535 (both inclusive)</p>
+<p><em>Default:</em> <code>35963</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/development/vsmartcard-vpcd.nix"><code>nixos/modules/services/development/vsmartcard-vpcd.nix</code></a></p>
+<h2 id='opt-services.vwifi.client.enable'><a href='options/services-v/#opt-services.vwifi.client.enable'>
+<code>services.vwifi.client.enable</code>
+</a></h2>
+<p>Whether to enable vwifi client.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Example:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/vwifi.nix"><code>nixos/modules/services/networking/vwifi.nix</code></a></p>
+<h2 id='opt-services.vwifi.client.extraArgs'><a href='options/services-v/#opt-services.vwifi.client.extraArgs'>
+<code>services.vwifi.client.extraArgs</code>
+</a></h2>
+<p>Extra arguments to pass to vwifi-client. You can use this if you want to bring
+the radios up using vwifi-client instead of at boot.</p>
+<p><em>Type:</em> list of string</p>
+<p><em>Default:</em> <code>[ ]</code></p>
+<p><em>Example:</em></p>
+<pre><code class="language-nix">[
+  &quot;--number&quot;
+  &quot;3&quot;
+]
+</code></pre>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/vwifi.nix"><code>nixos/modules/services/networking/vwifi.nix</code></a></p>
+<h2 id='opt-services.vwifi.client.serverAddress'><a href='options/services-v/#opt-services.vwifi.client.serverAddress'>
+<code>services.vwifi.client.serverAddress</code>
+</a></h2>
+<p>The address of the server. If set to null, will try to use the vsock protocol.
+Note that this assumes that the server is spawned on the host and passed through to
+QEMU, with something like:</p>
+<p>-device vhost-vsock-pci,id=vwifi0,guest-cid=42</p>
+<p><em>Type:</em> null or string</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/vwifi.nix"><code>nixos/modules/services/networking/vwifi.nix</code></a></p>
+<h2 id='opt-services.vwifi.client.serverPort'><a href='options/services-v/#opt-services.vwifi.client.serverPort'>
+<code>services.vwifi.client.serverPort</code>
+</a></h2>
+<p>The server port port. Set to null if we should leave it unset.</p>
+<p><em>Type:</em> null or 16 bit unsigned integer; between 0 and 65535 (both inclusive)</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/vwifi.nix"><code>nixos/modules/services/networking/vwifi.nix</code></a></p>
+<h2 id='opt-services.vwifi.client.spy'><a href='options/services-v/#opt-services.vwifi.client.spy'>
+<code>services.vwifi.client.spy</code>
+</a></h2>
+<p>Whether to enable spy mode, useful for wireless monitors.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Example:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/vwifi.nix"><code>nixos/modules/services/networking/vwifi.nix</code></a></p>
+<h2 id='opt-services.vwifi.module.enable'><a href='options/services-v/#opt-services.vwifi.module.enable'>
+<code>services.vwifi.module.enable</code>
+</a></h2>
+<p>Whether to enable mac80211_hwsim module.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Example:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/vwifi.nix"><code>nixos/modules/services/networking/vwifi.nix</code></a></p>
+<h2 id='opt-services.vwifi.module.macPrefix'><a href='options/services-v/#opt-services.vwifi.module.macPrefix'>
+<code>services.vwifi.module.macPrefix</code>
+</a></h2>
+<p>The prefix for MAC addresses to use, without the trailing ':'.
+If one radio is created, you can specify the whole MAC address here.
+The default is defined in vwifi/src/config.h.</p>
+<p><em>Type:</em> string matching the pattern ^(([0-9A-Fa-f]{2}:){0,5}[0-9A-Fa-f]{2})$</p>
+<p><em>Default:</em> <code>&quot;74:F8:F6&quot;</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/vwifi.nix"><code>nixos/modules/services/networking/vwifi.nix</code></a></p>
+<h2 id='opt-services.vwifi.module.numRadios'><a href='options/services-v/#opt-services.vwifi.module.numRadios'>
+<code>services.vwifi.module.numRadios</code>
+</a></h2>
+<p>The number of virtual radio interfaces to create.</p>
+<p><em>Type:</em> signed integer</p>
+<p><em>Default:</em> <code>1</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/vwifi.nix"><code>nixos/modules/services/networking/vwifi.nix</code></a></p>
+<h2 id='opt-services.vwifi.package'><a href='options/services-v/#opt-services.vwifi.package'>
+<code>services.vwifi.package</code>
+</a></h2>
+<p>The vwifi package to use.</p>
+<p><em>Type:</em> package</p>
+<p><em>Default:</em> <code>pkgs.vwifi</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/vwifi.nix"><code>nixos/modules/services/networking/vwifi.nix</code></a></p>
+<h2 id='opt-services.vwifi.server.enable'><a href='options/services-v/#opt-services.vwifi.server.enable'>
+<code>services.vwifi.server.enable</code>
+</a></h2>
+<p>Whether to enable vwifi server.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Example:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/vwifi.nix"><code>nixos/modules/services/networking/vwifi.nix</code></a></p>
+<h2 id='opt-services.vwifi.server.extraArgs'><a href='options/services-v/#opt-services.vwifi.server.extraArgs'>
+<code>services.vwifi.server.extraArgs</code>
+</a></h2>
+<p>Extra arguments to pass to vwifi-server. You can use this for things including
+changing the ports or inducing packet loss.</p>
+<p><em>Type:</em> list of string</p>
+<p><em>Default:</em> <code>[ ]</code></p>
+<p><em>Example:</em></p>
+<pre><code class="language-nix">[
+  &quot;--lost-packets&quot;
+]
+</code></pre>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/vwifi.nix"><code>nixos/modules/services/networking/vwifi.nix</code></a></p>
+<h2 id='opt-services.vwifi.server.openFirewall'><a href='options/services-v/#opt-services.vwifi.server.openFirewall'>
+<code>services.vwifi.server.openFirewall</code>
+</a></h2>
+<p>Whether to enable opening the firewall for the TCP and spy ports.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Example:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/vwifi.nix"><code>nixos/modules/services/networking/vwifi.nix</code></a></p>
+<h2 id='opt-services.vwifi.server.ports.control'><a href='options/services-v/#opt-services.vwifi.server.ports.control'>
+<code>services.vwifi.server.ports.control</code>
+</a></h2>
+<p>The control interface port. Set to null if we should leave it unset.</p>
+<p><em>Type:</em> null or 16 bit unsigned integer; between 0 and 65535 (both inclusive)</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/vwifi.nix"><code>nixos/modules/services/networking/vwifi.nix</code></a></p>
+<h2 id='opt-services.vwifi.server.ports.spy'><a href='options/services-v/#opt-services.vwifi.server.ports.spy'>
+<code>services.vwifi.server.ports.spy</code>
+</a></h2>
+<p>The spy interface port. Set to null if we should leave it unset.</p>
+<p><em>Type:</em> null or 16 bit unsigned integer; between 0 and 65535 (both inclusive)</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/vwifi.nix"><code>nixos/modules/services/networking/vwifi.nix</code></a></p>
+<h2 id='opt-services.vwifi.server.ports.tcp'><a href='options/services-v/#opt-services.vwifi.server.ports.tcp'>
+<code>services.vwifi.server.ports.tcp</code>
+</a></h2>
+<p>The TCP server port. Set to null if we should leave it unset.</p>
+<p><em>Type:</em> null or 16 bit unsigned integer; between 0 and 65535 (both inclusive)</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/vwifi.nix"><code>nixos/modules/services/networking/vwifi.nix</code></a></p>
+<h2 id='opt-services.vwifi.server.ports.vhost'><a href='options/services-v/#opt-services.vwifi.server.ports.vhost'>
+<code>services.vwifi.server.ports.vhost</code>
+</a></h2>
+<p>The vhost port. Set to null if we should leave it unset.</p>
+<p><em>Type:</em> null or 16 bit unsigned integer; between 0 and 65535 (both inclusive)</p>
+<p><em>Default:</em> <code>null</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/vwifi.nix"><code>nixos/modules/services/networking/vwifi.nix</code></a></p>
+<h2 id='opt-services.vwifi.server.vsock.enable'><a href='options/services-v/#opt-services.vwifi.server.vsock.enable'>
+<code>services.vwifi.server.vsock.enable</code>
+</a></h2>
+<p>Whether to enable vsock kernel module.</p>
+<p><em>Type:</em> boolean</p>
+<p><em>Default:</em> <code>false</code></p>
+<p><em>Example:</em> <code>true</code></p>
+<p><em>Declared by:</em> <a href="https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/vwifi.nix"><code>nixos/modules/services/networking/vwifi.nix</code></a></p>
+
+        <nav class='chapter-pagination' aria-label='Chapter pagination'>
+          <a class='chapter-pagination-link chapter-pagination-previous' href='options/services-u/#sec-options-services-u'><span class='chapter-pagination-label'>Previous</span><span class='chapter-pagination-title'>services (U)</span></a>
+          <a class='chapter-pagination-link chapter-pagination-next' href='options/services-w/#sec-options-services-w'><span class='chapter-pagination-label'>Next</span><span class='chapter-pagination-title'>services (W)</span></a>
+        </nav>
+        </main>
+      </div>
+    </section>
+<script defer src='highlight.pack.bb58bc6b7daef61c.js'></script>
+<script defer src='mmdoc.0eac5034aeb9595f.js'></script>
+<script defer src='mmdoc_search.1e3e2ead6263c722.js' data-search-index='search_index.fa825f5e481818a3.js' data-fuse='fuse.basic.min.296619aed362de6d.js'></script>
+  </div>
+  </body>
+</html>
