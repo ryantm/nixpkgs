@@ -15,9 +15,11 @@ jobs:
       - run: |
           nix build .#nixpkgs-manual-mmdoc -o result-nixpkgs
           nix build .#nixos-manual-mmdoc -o result-nixos
-          mkdir -p site/nixos
+          mkdir -p site/single site/nixos/single
           cp -r result-nixpkgs/multi/. site/
+          cp -r result-nixpkgs/single/. site/single/
           cp -r result-nixos/multi/. site/nixos/
+          cp -r result-nixos/single/. site/nixos/single/
       - if: success()
         uses: crazy-max/ghaction-github-pages@v5
         with:
